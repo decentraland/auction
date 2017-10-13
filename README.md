@@ -5,40 +5,31 @@
 ```
 {
     bids: [
-        { x, y, bid }
+        { x, y, amount }
     ],
     timestamp,
     address,
-    id
+    id,
+    
+    prevId,
+    message,
+    signature
 }
 ```
 
 Bid: (BidGroup + index)
 
-## Bid
-
-This data is completely created by the user.
+## Bid (denormalization of bidgroup)
 
 ```
 {
-   "type": "object",
-   "properties": {
-       "x": "number",
-       "y": "number",
-       "bid": "string", // BigNumber
-       
-       "timestamp": "number",
-       
-       "id": "string",
-       "address": "string",
-       
-       one of these two:
-       "prevId": "string",
-       "nonce": "number",
-       
-       "message": "string",
-       "signature": "string"
-   }
+    x
+    y
+    bidgroup
+    index
+    address
+    timpestamp
+    amount
 }
 ```
 
@@ -67,10 +58,10 @@ This data is completely created by the user.
 
 - x: number
 - y: number
-- currentValue: string (bignumber)
+- currentAmount: string (bignumber)
 - currentAddress: string (address of current winner)
 - auctionEnds: timestamp
-- currentBid: string (bid id)
+- currentBid: string (bidgroup id + index)
 
 # Process
 
@@ -111,7 +102,7 @@ Validation of each bid
         * bid > 1.1 * current bid
     - if invalid, create receipt of error and return
     - Create new parcelstate:
-        - current value
+        - current amount
         - current bidgroup+index
         - current address
         - auction ends
@@ -124,20 +115,22 @@ Validation of each bid
 ## Verification
 
 - Initialization: Same as setup
-- Bulk processing of all Bids received
+- Bulk processing of all BidGroups received
   * For each BidReceipt: fetch BidGroup, apply state change
 - Dump Final state for each parcel
 
 
 # API
 
-- AddressState fetch by id
+- AddressState fetch by address
+
+- BidGroups by address
 
 - ParcelState fetch by id
 
 - AddressParcelBids fetch for an user:
-  * My last bid on the parcel
-  * Current winning bid
+  * My last bid (amount) + bidgroup,index on the parcel
+  * ParcelState
 
 - Parcel Range query:
   * min x, max x, min y, max y
