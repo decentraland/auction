@@ -106,3 +106,15 @@ Return ParcelState to User
 - Bulk processing of all Bids received
   * For each BidReceipt: fetch Bid, apply state change
 - Dump Final state for each parcel
+
+
+# API
+
+- AddressState fetch by id
+- ParcelState fetch by id
+- AddressParcelBids fetch for an user:
+  * My last bid on the parcel
+  * Current winning bid
+- Parcel Range query:
+  * min x, max x, min y, max y
+  * Return parcel state for all these
