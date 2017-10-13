@@ -17,7 +17,7 @@
 }
 ```
 
-Bid: (BidGroup + index)
+Bid: (BidGroup + bidindex)
 
 ## Bid (denormalization of bidgroup)
 
@@ -26,7 +26,7 @@ Bid: (BidGroup + index)
     x
     y
     bidgroup
-    index
+    bidindex
     address
     timpestamp
     amount
@@ -51,17 +51,19 @@ Bid: (BidGroup + index)
 
 - address: string (primary key)
 - balance: string (bignumber)
-- latestBid: string (id to bid)
+- latestBidGroup: string (id to bid)
 
 
 ## ParcelState
 
+- id: string (hash of `x||','||y`)
 - x: number
 - y: number
-- currentAmount: string (bignumber)
-- currentAddress: string (address of current winner)
-- auctionEnds: timestamp
-- currentBid: string (bidgroup id + index)
+- amount: string (bignumber)
+- address: string (address of current winner)
+- endsAt: timestamp
+- bidgroup: string (bidgroup id)
+- bidIndex
 
 # Process
 
@@ -103,7 +105,7 @@ Validation of each bid
     - if invalid, create receipt of error and return
     - Create new parcelstate:
         - current amount
-        - current bidgroup+index
+        - current bidgroup+bidindex
         - current address
         - auction ends
     - Update in-memory state of the parcel
@@ -123,17 +125,16 @@ Validation of each bid
 # API
 
 - AddressState fetch by address
-
-- BidGroups by address
+    - /simple (without all bidgroups, to sign with current last id)
+    - /full contains all BidGroups
 
 - ParcelState fetch by id
+    - history of bids
 
-- AddressParcelBids fetch for an user:
-  * My last bid (amount) + bidgroup,index on the parcel
-  * ParcelState
+- ParcelState group fetch
+    - input: array of (x,y) o id (hash of x,y)
 
 - Parcel Range query:
-  * min x, max x, min y, max y
-  * Return parcel state for all these
+    - input: min x, max x, min y, max y
 
 - Submit BidGroup
