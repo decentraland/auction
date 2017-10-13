@@ -1,5 +1,20 @@
 # auction
 
+## BidGroup
+
+```
+{
+    bids: [
+        { x, y, bid }
+    ],
+    timestamp,
+    address,
+    id
+}
+```
+
+Bid: (BidGroup + index)
+
 ## Bid
 
 This data is completely created by the user.
@@ -72,49 +87,60 @@ This data is completely created by the user.
 - Input: x, y
 - Output: ParcelState
 
-## Upload a bid
+## Upload a bid group
 
 Input: signed message
 
-- Recover address from signed message
+- recover address from signed message
 
-Check preconditions:
+Validation of bid group
 
-- x, y, en rango
-- prevHash/nonce accordingly
+- uuid does not exist
+- prevhash/nonce accordingly
 - timestamp > prev user's bid timestamp
-- enough balance
-- parcel auction did not end
-- if current parcel bid: value of bid > 1.1 * current parcel bid
 
-Apply Bid:
+Validation of each bid
 
+- store temp variable with balance
+- fetch current state for all parcels involved
+- for each bid:
+    - check validity:
+        * x, y in range
+        * enough balance
+        * parcel autcion did not end
+        * bid > 1.1 * current bid
+    - if invalid, create receipt of error and return
+    - Create new parcelstate:
+        - current value
+        - current bidgroup+index
+        - current address
+        - auction ends
+    - Update in-memory state of the parcel
+    - Update database
+    - update temp balance
 - AddressState: decrease balance
-- AddressState: update latest bid
-- ParcelState: update current value
-- ParcelState: update current bid
-- ParcelState: update current address
-- ParcelState: update current auction ends
-
-Return BidReceipt to User
-
-Return ParcelState to User
+- AddressState: update latest bidgroup
 
 ## Verification
 
 - Initialization: Same as setup
 - Bulk processing of all Bids received
-  * For each BidReceipt: fetch Bid, apply state change
+  * For each BidReceipt: fetch BidGroup, apply state change
 - Dump Final state for each parcel
 
 
 # API
 
 - AddressState fetch by id
+
 - ParcelState fetch by id
+
 - AddressParcelBids fetch for an user:
   * My last bid on the parcel
   * Current winning bid
+
 - Parcel Range query:
   * min x, max x, min y, max y
   * Return parcel state for all these
+
+- Submit BidGroup
