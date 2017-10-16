@@ -1,0 +1,37 @@
+{
+  "name": "auction",
+  "version": "1.0.0",
+  "description": "Participate in the Decentraland's Auction",
+  "main": "index.js",
+  "scripts": {
+    "docs": "npx jsdoc -c conf.json -r src/**/*.js",
+    "lint": "npx eslint .",
+    "test": "npx mocha --compilers js:babel-register test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://decentraland.digital/dApps/auction.git"
+  },
+  "keywords": [
+    "decentraland",
+    "auction",
+    "dapp"
+  ],
+  "author": "Decentraland",
+  "license": "ISC",
+  "dependencies": {
+    "decentraland-commons": "git+ssh://git@decentraland.digital:decentraland/commons.git#release"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.0.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "eslint": "^4.8.0",
+    "eslint-config-prettier": "^2.6.0",
+    "eslint-plugin-prettier": "^2.3.1",
+    "jsdoc": "^3.5.5",
+    "mocha": "^4.0.1",
+    "prettier": "^1.7.4"
+  }
+}
