@@ -6,7 +6,7 @@
   "scripts": {
     "docs": "npx jsdoc -c conf.json -r src/**/*.js",
     "lint": "npx eslint .",
-    "test": "npx mocha --compilers js:babel-register test/*",
+    "test": "npx mocha -r babel-register -r test/testing_utils.js test/*",
     "start": "babel-node src/server.js"
   },
   "repository": {
@@ -28,9 +28,11 @@
   "devDependencies": {
     "babel-eslint": "^8.0.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
+    "chai-subset": "^1.6.0",
     "eslint": "^4.8.0",
     "eslint-config-prettier": "^2.6.0",
     "eslint-plugin-prettier": "^2.3.1",

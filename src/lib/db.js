@@ -1,13 +1,26 @@
-import { db } from "decentraland-commons";
+import { db, env } from "decentraland-commons";
 
 export default {
   ...db.postgres,
 
-  async connect(connectionString) {
-    await db.postgres.connect.call(this, connectionString);
+  async connect() {
+    const CONNECTION_STRING = env.getEnv(
+      "CONNECTION_STRING",
+      "postgres://localhost:5432/auction"
+    );
+
+    await db.postgres.connect.call(this, CONNECTION_STRING);
     await this.createSchema();
 
     return this;
+  },
+
+  async insertAddressState(address, { balance, lastBidGroupId }) {
+    return this.insert("address_states", {
+      address,
+      balance,
+      lastBidGroupId
+    });
   },
 
   async createSchema() {
@@ -48,9 +61,9 @@ export default {
     await this.createTable(
       "address_states",
       `"id" int NOT NULL DEFAULT nextval('address_states_id_seq'),
-      "address" varchar(42) NOT NULL,
+      "address" varchar(42) NOT NULL UNIQUE,
       "balance" text NOT NULL,
-      "lastBidGroupId" int NOT NULL`
+      "lastBidGroupId" int`
     );
 
     // id => string (hash of `x||','||y`)
