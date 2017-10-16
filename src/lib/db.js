@@ -15,13 +15,25 @@ export default {
     return this;
   },
 
+  // -----------------------------------------------
+  // Address State
+
+  async findAddressState(address) {
+    return await this.selectOne("address_states", {
+      address
+    });
+  },
+
   async insertAddressState(address, { balance, lastBidGroupId }) {
-    return this.insert("address_states", {
+    return await this.insert("address_states", {
       address,
       balance,
       lastBidGroupId
     });
   },
+
+  // -----------------------------------------------
+  // Helpers
 
   async createSchema() {
     // bids json = [{ x, y, amount }]

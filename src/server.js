@@ -42,8 +42,8 @@ if (env.isProduction()) {
 app.get(
   "/api/addressState/simple/:address",
   server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+    const address = server.extractFromReq("address");
+    return await db.findAddressState(address);
   })
 );
 

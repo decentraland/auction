@@ -35,5 +35,25 @@ describe("Describe", function() {
     });
   });
 
+  describe("#findAddressState", function() {
+    it("Should return the address state by address", async function() {
+      const address = "0xdeadbeef22";
+      const balance = "222222222222";
+
+      await db.insertAddressState("0xdeadbeef11", { balance: "111111111111" });
+      await db.insertAddressState(address, { balance });
+
+      const result = await db.findAddressState(address);
+      expect(result).to.containSubset({ address, balance });
+    });
+
+    it("Should return undefined if the address does not exist on the table", async function() {
+      await db.insertAddressState("0xdeadbeef11", { balance: "111111111111" });
+
+      const result = await db.findAddressState("0xnonsense");
+      expect(result).to.be.undefined;
+    });
+  });
+
   afterEach(() => db.truncate("address_states"));
 });
