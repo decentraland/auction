@@ -6,6 +6,8 @@ import path from "path";
 import { server, env } from "decentraland-commons";
 import db from "./lib/db";
 
+import { AddressState } from "./lib/models";
+
 env.load();
 
 const SERVER_PORT = env.getEnv("SERVER_PORT", 5000);
@@ -43,7 +45,7 @@ app.get(
   "/api/addressState/simple/:address",
   server.handleRequest(async (req, res) => {
     const address = server.extractFromReq("address");
-    return await db.findAddressState(address);
+    return await AddressState.findByAddress(address);
   })
 );
 
