@@ -1,9 +1,10 @@
+import { Model } from "decentraland-commons";
 import db from "../db";
 
 /**
  * Address state model. Interfaces with the database
  */
-class AddressState {
+class AddressState extends Model {
   static async findByAddress(address) {
     return await db.selectOne("address_states", {
       address
