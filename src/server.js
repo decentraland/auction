@@ -9,7 +9,10 @@ import db from "./lib/db";
 env.load();
 
 const SERVER_PORT = env.getEnv("SERVER_PORT", 5000);
-const CONNECTION_STRING = env.getEnv("CONNECTION_STRING", 'postgres://localhost:5432/auction');
+const CONNECTION_STRING = env.getEnv(
+  "CONNECTION_STRING",
+  "postgres://localhost:5432/auction"
+);
 
 const app = express();
 const httpServer = http.Server(app);
@@ -43,9 +46,11 @@ app.post(
   })
 );
 
-db.connect(CONNECTION_STRING).then(() => {
-  httpServer.listen(SERVER_PORT, () =>
-    console.log("Server running on port", SERVER_PORT)
-  );
-});
-
+db
+  .connect(CONNECTION_STRING)
+  .then(() => {
+    httpServer.listen(SERVER_PORT, () =>
+      console.log("Server running on port", SERVER_PORT)
+    );
+  })
+  .catch(console.error);

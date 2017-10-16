@@ -51,7 +51,7 @@ Bid: (BidGroup + bidindex)
 
 - address: string (primary key)
 - balance: string (bignumber)
-- latestBidGroup: string (id to bid)
+- lastBidGroup: string (id to bid)
 
 
 ## ParcelState
