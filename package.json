@@ -2,11 +2,12 @@
   "name": "auction",
   "version": "1.0.0",
   "description": "Participate in the Decentraland's Auction",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "docs": "npx jsdoc -c conf.json -r src/**/*.js",
     "lint": "npx eslint .",
-    "test": "npx mocha --compilers js:babel-register test/*"
+    "test": "npx mocha --compilers js:babel-register test/*",
+    "start": "babel-node src/server.js"
   },
   "repository": {
     "type": "git",
@@ -20,10 +21,13 @@
   "author": "Decentraland",
   "license": "ISC",
   "dependencies": {
-    "decentraland-commons": "git+ssh://git@decentraland.digital:decentraland/commons.git#release"
+    "body-parser": "^1.18.2",
+    "decentraland-commons": "git+ssh://git@decentraland.digital:decentraland/commons.git#release",
+    "express": "^4.16.2"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
