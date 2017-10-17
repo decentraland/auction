@@ -1,10 +1,20 @@
 import { expect } from "chai";
 
 import db from "../src/lib/db";
-import { ParcelState } from "../src/lib/models";
+import { ParcelState, BidGroup } from "../src/lib/models";
 
 describe("ParcelState", function() {
   before(() => db.connect());
+
+  const parcelState = {
+    x: 1,
+    y: 2,
+    amount: "20202020",
+    address: "0xbeebeef",
+    endsAt: new Date(),
+    bidGroupId: 1,
+    bidIndex: 0
+  };
 
   describe(".hashId", function() {
     it("should concat both coordinates with pipes", function() {
@@ -23,18 +33,9 @@ describe("ParcelState", function() {
 
   describe(".insert", function() {
     it("should insert the parcel state hashing the id", async function() {
-      const parcelState = {
-        x: 1,
-        y: 2,
-        amount: "20202020",
-        address: "0xbeebeef",
-        endsAt: new Date(),
-        bidGroupId: 1,
-        bidIndex: 0
-      };
       const insertedParcelState = {
         ...parcelState,
-        id: ParcelState.hashId(1, 2)
+        id: ParcelState.hashId(parcelState.x, parcelState.y)
       };
 
       let rows = await db.select("parcel_states");
@@ -49,5 +50,35 @@ describe("ParcelState", function() {
     });
   });
 
-  afterEach(() => db.truncate("parcel_states"));
+  describe(".findByIdWithBids", function() {
+    it("should attach an array of bid groups for the address", async function() {
+      const id = ParcelState.hashId(parcelState.x, parcelState.y)
+
+      const bidGroup = {
+        address: "0xbeebeef",
+        bids: [],
+        message: "some message",
+        signature: "some signature",
+        timestamp: new Date()
+      };
+
+      await ParcelState.insert(parcelState);
+      let result = await ParcelState.findByIdWithBids(id);
+      expect(result.bidGroups.length).to.be.equal(0);
+
+      await Promise.all([
+        await BidGroup.insert({ ...bidGroup, prevId: 0 }),
+        await BidGroup.insert({ ...bidGroup, prevId: 1 }),
+        await BidGroup.insert({ ...bidGroup, prevId: 2 })
+      ]);
+      result = await ParcelState.findByIdWithBids(id);
+
+      expect(result.bidGroups.length).to.be.equal(3);
+      expect(result.bidGroups.map(bg => bg.prevId)).to.be.deep.equal([0, 1, 2]);
+    });
+  });
+
+  afterEach(() =>
+    Promise.all([db.truncate("parcel_states"), db.truncate("bid_groups")])
+  );
 });

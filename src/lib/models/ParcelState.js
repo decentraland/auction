@@ -1,4 +1,5 @@
 import { Model, utils } from "decentraland-commons";
+import BidGroup from "./BidGroup";
 import db from "../db";
 
 class ParcelState extends Model {
@@ -13,7 +14,24 @@ class ParcelState extends Model {
   }
 
   static async findByIdWithBids(id) {
-    throw new Error("Not implemented");
+    const rows = await db.query(
+      `SELECT "parcel_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM parcel_states
+        LEFT JOIN bid_groups ON parcel_states."address" = bid_groups."address"
+        WHERE parcel_states."id" = $1`,
+      [id]
+    );
+
+    if (rows.length > 0) {
+      const parcelState = rows[0];
+
+      parcelState.bidGroups = rows
+        .filter(row => !!row.bidGroup)
+        .map(row => BidGroup.deserialize(row.bidGroup, "bytea"));
+
+      delete parcelState.bidGroup;
+
+      return parcelState;
+    }
   }
 
   static async insert(parcelState) {
