@@ -24,7 +24,8 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "decentraland-commons": "git+ssh://git@decentraland.digital:decentraland/commons.git#release",
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "sinon": "^4.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",

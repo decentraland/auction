@@ -12,7 +12,7 @@ export default class BidService {
     this.maximumX = 1e4;
     this.maximumY = 1e4;
 
-    this.gracePeriod = 36 * HOURS;
+    this.gracePeriod = 36 * HOURS_IN_MILLIS;
   }
 
   async processBidGroup(bidGroup) {
@@ -64,13 +64,12 @@ export default class BidService {
     }
     const latestBid = this.BidGroup.latestBid(bidGroup.address);
     if (latestBid) {
-      const latestNonce = bidGroup.nonce;
-      if (latestNonce !== bidGroup.nonce - 1) {
-        return `Invalid nonce for ${address}: stored ${latestNonce}, received ${bidGroup.nonce}`;
+      const expectedNonce = latestBid.nonce + 1;
+      if (expectedNonce !== bidGroup.nonce) {
+        return `Invalid nonce for ${bidGroup.address}: stored ${latestBid.nonce}, received ${bidGroup.nonce}`;
       }
-      if (latestBid.receivedTimestamp > bidGroup.receivedTimestamp) {
-        return `Invalid timestamp for BidGroup received ${bidGroup.id}:
-          latest was ${latestBid.receivedTimestamp}, received ${bidGroup.receivedTimestamp}`;
+      if (latestBid.timestamp > bidGroup.timestamp) {
+        return `Invalid timestamp for BidGroup received ${bidGroup.id}: latest was ${latestBid.timestamp}, received ${bidGroup.timestamp}`;
       }
     }
     return null;
@@ -87,7 +86,7 @@ export default class BidService {
         ${bid.y} is not between ${this.minimumY} and ${this.maximumY}`;
     }
     let newBalance = this.calculateNewBalance(
-      addressState,
+      fullAddressState,
       parcelState,
       bidGroup,
       bid,
