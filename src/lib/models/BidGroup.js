@@ -1,4 +1,4 @@
-import { Model } from "decentraland-commons";
+import { Model, utils } from "decentraland-commons";
 import signedMessage from "../signedMessage";
 import db from "../db";
 
@@ -20,23 +20,19 @@ class BidGroup extends Model {
   }
 
   static async insert(bidGroup) {
-    const {
-      bids,
-      address,
-      prevId,
-      message,
-      signature,
-      timestamp
-    } = BidGroup.serialize(bidGroup);
+    bidGroup = BidGroup.serialize(bidGroup);
 
-    return await db.insert("bid_groups", {
-      bids,
-      address,
-      prevId,
-      message,
-      signature,
-      timestamp
-    });
+    return await db.insert(
+      "bid_groups",
+      utils.pick(bidGroup, [
+        "bids",
+        "address",
+        "prevId",
+        "message",
+        "signature",
+        "timestamp"
+      ])
+    );
   }
 }
 

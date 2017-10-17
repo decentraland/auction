@@ -12,7 +12,7 @@ describe("AddressState", function() {
     lastBidGroupId: 1
   };
 
-  describe("#insert", function() {
+  describe(".insert", function() {
     it("should insert the address state on the database", async function() {
       let rows = await db.select("address_states");
       expect(rows.length).to.equal(0);
@@ -38,7 +38,7 @@ describe("AddressState", function() {
     });
   });
 
-  describe("#findByAddress", function() {
+  describe(".findByAddress", function() {
     it("should return the address state by address", async function() {
       const addressStateToFind = {
         address: "0xdeadbeef22",

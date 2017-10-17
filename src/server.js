@@ -6,7 +6,7 @@ import path from "path";
 import { server, env } from "decentraland-commons";
 import db from "./lib/db";
 
-import { AddressState } from "./lib/models";
+import { AddressState, ParcelState } from "./lib/models";
 
 env.load();
 
@@ -39,7 +39,7 @@ if (env.isProduction()) {
 /**
  * AddressState fetch by address: without bidgroups, to sign with last id.
  * @param  {string} address - User address
- * @return {object}         - Address state object
+ * @return {object}         - Address state object (with it's last bid, if any)
  */
 app.get(
   "/api/addressState/simple/:address",
@@ -52,7 +52,7 @@ app.get(
 /**
  * AddressState fetch by address: /full contains all BidGroups.
  * @param  {string} address - User address
- * @return {object}         - Address state object
+ * @return {object}         - Address state object with each placed bid
  */
 app.get(
   "/api/addressState/full/:address",
@@ -70,8 +70,8 @@ app.get(
 app.get(
   "/api/parcelState/:id",
   server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+    const id = server.extractFromReq(req, "id");
+    return ParcelState.findByIdWithBids(id);
   })
 );
 

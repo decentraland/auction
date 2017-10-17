@@ -1,4 +1,4 @@
-import { Model } from "decentraland-commons";
+import { Model, utils } from "decentraland-commons";
 import BidGroup from "./BidGroup";
 import db from "../db";
 
@@ -45,13 +45,10 @@ class AddressState extends Model {
   }
 
   static async insert(addressState) {
-    const { address, balance, lastBidGroupId } = addressState;
-
-    return await db.insert("address_states", {
-      address,
-      balance,
-      lastBidGroupId
-    });
+    return await db.insert(
+      "address_states",
+      utils.pick(addressState, ["address", "balance", "lastBidGroupId"])
+    );
   }
 }
 
