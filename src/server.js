@@ -43,9 +43,9 @@ if (env.isProduction()) {
  */
 app.get(
   "/api/addressState/simple/:address",
-  server.handleRequest(async (req, res) => {
+  server.handleRequest((req, res) => {
     const address = server.extractFromReq("address");
-    return await AddressState.findByAddress(address);
+    return AddressState.findByAddress(address);
   })
 );
 
@@ -56,9 +56,9 @@ app.get(
  */
 app.get(
   "/api/addressState/full/:address",
-  server.handleRequest(async (req, res) => {
+  server.handleRequest((req, res) => {
     const address = server.extractFromReq(req, "address");
-    return await AddressState.findByAddressWithBids(address);
+    return AddressState.findByAddressWithBids(address);
   })
 );
 
@@ -69,7 +69,7 @@ app.get(
  */
 app.get(
   "/api/parcelState/:id",
-  server.handleRequest(async (req, res) => {
+  server.handleRequest((req, res) => {
     const id = server.extractFromReq(req, "id");
     return ParcelState.findByIdWithBidGroups(id);
   })
@@ -96,9 +96,10 @@ app.get(
  */
 app.get(
   "/api/parcelState/range/:mincoords/:maxcoords",
-  server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+  server.handleRequest((req, res) => {
+    const mincoords = server.extractFromReq(req, "mincoords");
+    const maxcoords = server.extractFromReq(req, "maxcoords");
+    return ParcelState.inRange(mincoords, maxcoords);
   })
 );
 

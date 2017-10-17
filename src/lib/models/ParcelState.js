@@ -1,10 +1,11 @@
 import { Model, utils } from "decentraland-commons";
 import BidGroup from "./BidGroup";
+import coordinates from "../coordinates";
 import db from "../db";
 
 class ParcelState extends Model {
   static hashId(x, y) {
-    if (!x || !y) {
+    if (!coordinates.isValid([x, y])) {
       throw new Error(
         `You need to supply both coordinates to be able to hash them. x = ${x} y = ${y}`
       );
@@ -29,6 +30,18 @@ class ParcelState extends Model {
 
       return parcelState;
     }
+  }
+
+  static async inRange(min, max) {
+    const [minx, miny] = coordinates.toArray(min);
+    const [maxx, maxy] = coordinates.toArray(max);
+
+    return await db.query(
+      `SELECT "parcel_states".* FROM parcel_states
+        WHERE parcel_states."x" >= $1 AND parcel_states."y" >= $2
+          AND parcel_states."x" <= $3 AND parcel_states."y" <= $4`,
+      [minx, miny, maxx, maxy]
+    );
   }
 
   static async insert(parcelState) {

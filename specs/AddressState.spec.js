@@ -103,9 +103,9 @@ describe("AddressState", function() {
       expect(result.bidGroups.length).to.be.equal(0);
 
       await Promise.all([
-        await BidGroup.insert({ ...bidGroup, prevId: 0 }),
-        await BidGroup.insert({ ...bidGroup, prevId: 1 }),
-        await BidGroup.insert({ ...bidGroup, prevId: 2 })
+        BidGroup.insert({ ...bidGroup, prevId: 0 }),
+        BidGroup.insert({ ...bidGroup, prevId: 1 }),
+        BidGroup.insert({ ...bidGroup, prevId: 2 })
       ]);
       result = await AddressState.findByAddressWithBids(address);
 

@@ -1,5 +1,9 @@
 import parseBytea from "postgres-bytea";
 
+/**
+ * Serialize and deserialize messages for interfacing with external resources or the database.
+ * @namespace
+ */
 const signedMessage = {
   serialize(obj, encoding = "utf8") {
     return Object.assign({}, obj, {

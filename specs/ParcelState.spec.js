@@ -18,10 +18,11 @@ describe("ParcelState", function() {
 
   describe(".hashId", function() {
     it("should concat both coordinates with pipes", function() {
-      expect(ParcelState.hashId(22, "y coord")).to.equal("22||y coord");
+      expect(ParcelState.hashId(22, "30")).to.equal("22||30");
+      expect(ParcelState.hashId(0, 0)).to.equal("0||0");
     });
 
-    it("should throw if any coordinate is missing", function() {
+    it("should throw if any coordinate is invalid", function() {
       expect(() => ParcelState.hashId(22)).to.throw(
         "You need to supply both coordinates to be able to hash them. x = 22 y = undefined"
       );
@@ -67,14 +68,45 @@ describe("ParcelState", function() {
       expect(result.bidGroups.length).to.be.equal(0);
 
       await Promise.all([
-        await BidGroup.insert({ ...bidGroup, prevId: 0 }),
-        await BidGroup.insert({ ...bidGroup, prevId: 1 }),
-        await BidGroup.insert({ ...bidGroup, prevId: 2 })
+        BidGroup.insert({ ...bidGroup, prevId: 0 }),
+        BidGroup.insert({ ...bidGroup, prevId: 1 }),
+        BidGroup.insert({ ...bidGroup, prevId: 2 })
       ]);
       result = await ParcelState.findByIdWithBidGroups(id);
 
       expect(result.bidGroups.length).to.be.equal(3);
       expect(result.bidGroups.map(bg => bg.prevId)).to.be.deep.equal([0, 1, 2]);
+    });
+  });
+
+  describe(".inRange", function() {
+    it("should return an array of parcel states which are on the supplied range", async function() {
+      const inserts = [];
+      for (let x = 0; x < 10; x++) {
+        for (let y = 0; y < 10; y++) {
+          inserts.push(ParcelState.insert({ ...parcelState, x, y }));
+        }
+      }
+      await Promise.all(inserts);
+
+      const range = await ParcelState.inRange([2, 3], [5, 5]);
+      const coordinates = range.map(ps => `${ps.x},${ps.y}`);
+
+      expect(range.length).to.be.equal(12);
+      expect(coordinates).to.be.deep.equal([
+        "2,3",
+        "2,4",
+        "2,5",
+        "3,3",
+        "3,4",
+        "3,5",
+        "4,3",
+        "4,4",
+        "4,5",
+        "5,3",
+        "5,4",
+        "5,5"
+      ]);
     });
   });
 
