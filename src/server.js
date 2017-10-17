@@ -6,7 +6,7 @@ import path from "path";
 import { server, env } from "decentraland-commons";
 import db from "./lib/db";
 
-import { AddressState } from "./lib/models";
+import { AddressState, ParcelState, BidGroup } from "./lib/models";
 
 env.load();
 
@@ -39,52 +39,52 @@ if (env.isProduction()) {
 /**
  * AddressState fetch by address: without bidgroups, to sign with last id.
  * @param  {string} address - User address
- * @return {object}         - Address state object
+ * @return {object}         - Address state object (with it's last bid, if any)
  */
 app.get(
   "/api/addressState/simple/:address",
-  server.handleRequest(async (req, res) => {
+  server.handleRequest((req, res) => {
     const address = server.extractFromReq("address");
-    return await AddressState.findByAddress(address);
+    return AddressState.findByAddress(address);
   })
 );
 
 /**
  * AddressState fetch by address: /full contains all BidGroups.
  * @param  {string} address - User address
- * @return {object}         - Address state object
+ * @return {object}         - Address state object with each placed bid
  */
 app.get(
   "/api/addressState/full/:address",
-  server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+  server.handleRequest((req, res) => {
+    const address = server.extractFromReq(req, "address");
+    return AddressState.findByAddressWithBids(address);
   })
 );
 
 /**
- * ParcelState fetch by id. Attachs the bid history to the response
+ * ParcelState fetch by id. Attachs the bidGroup history to the response
  * @param  {string} id - ParcelState id
  * @return {object}    - ParcelState object
  */
 app.get(
   "/api/parcelState/:id",
-  server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+  server.handleRequest((req, res) => {
+    const id = server.extractFromReq(req, "id");
+    return ParcelState.findByIdWithBidGroups(id);
   })
 );
 
 /**
  * ParcelState group fetch. Get multiple parcel states at a time using an array
- * @param ${array} coordinates - array of parcel state ids (represented by x,y coordinates). If you need a single ParcelState, use "/api/parcelState/:id" or an array of a single element
+ * @param ${array} coordinates - array of parcel state coordinates. If you need a single ParcelState, use "/api/parcelState/:id" or an array of a single element
  * @return {array}             - array of ParcelState objects
  */
 app.get(
   "/api/parcelState/group/:coordinates",
   server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+    const coordinates = server.extractFromReq(req, "coordinates");
+    return ParcelState.findInCoordinates(coordinates);
   })
 );
 
@@ -96,9 +96,10 @@ app.get(
  */
 app.get(
   "/api/parcelState/range/:mincoords/:maxcoords",
-  server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+  server.handleRequest((req, res) => {
+    const mincoords = server.extractFromReq(req, "mincoords");
+    const maxcoords = server.extractFromReq(req, "maxcoords");
+    return ParcelState.inRange(mincoords, maxcoords);
   })
 );
 
@@ -110,8 +111,10 @@ app.get(
 app.post(
   "/api/bidgroup",
   server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+    const bidGroup = server.extractFromReq(req, "bidGroup");
+    // new BidService().checkValidBidGroup(bidGroup)
+    await BidGroup.insert(bidGroup);
+    return true;
   })
 );
 

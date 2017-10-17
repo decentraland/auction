@@ -1,7 +1,7 @@
 import { expect } from "chai";
 
 import db from "../src/lib/db";
-import { AddressState } from "../src/lib/models";
+import { AddressState, BidGroup } from "../src/lib/models";
 
 describe("AddressState", function() {
   before(() => db.connect());
@@ -12,7 +12,7 @@ describe("AddressState", function() {
     lastBidGroupId: 1
   };
 
-  describe("#insert", function() {
+  describe(".insert", function() {
     it("should insert the address state on the database", async function() {
       let rows = await db.select("address_states");
       expect(rows.length).to.equal(0);
@@ -22,7 +22,7 @@ describe("AddressState", function() {
       rows = await db.select("address_states");
 
       expect(rows.length).to.equal(1);
-      expect(rows[0]).to.containSubset(addressState); // it also has id and created/updated at cols
+      expect(rows[0]).to.equalRow(addressState);
     });
 
     it("should throw if the address exists", async function() {
@@ -38,11 +38,12 @@ describe("AddressState", function() {
     });
   });
 
-  describe("#findByAddress", function() {
-    it("Should return the address state by address", async function() {
+  describe(".findByAddress", function() {
+    it("should return the address state by address", async function() {
       const addressStateToFind = {
         address: "0xdeadbeef22",
-        balance: "222222222222"
+        balance: "222222222222",
+        lastBidGroupId: null
       };
 
       await AddressState.insert(addressStateToFind);
@@ -51,10 +52,34 @@ describe("AddressState", function() {
       const result = await AddressState.findByAddress(
         addressStateToFind.address
       );
-      expect(result).to.containSubset(addressStateToFind);
+      expect(result).to.equalRow(addressStateToFind);
     });
 
-    it("Should return undefined if the address does not exist on the table", async function() {
+    it("should attach the bidGroup to the address state", async function() {
+      const bidGroup = {
+        address: addressState.address,
+        bids: [],
+        prevId: 0,
+        message: "some message",
+        signature: "some signature",
+        timestamp: new Date()
+      };
+
+      await BidGroup.insert(bidGroup);
+      await AddressState.insert(addressState);
+
+      const result = await AddressState.findByAddress(addressState.address);
+      expect(result.bidGroup).to.equalRow(bidGroup);
+    });
+
+    it("should attach null if the lastBidGroupId doesn't exist", async function() {
+      await AddressState.insert(addressState);
+
+      const result = await AddressState.findByAddress(addressState.address);
+      expect(result.bidGroup).to.be.undefined;
+    });
+
+    it("should return undefined if the address does not exist on the table", async function() {
       await AddressState.insert(addressState);
 
       const result = await AddressState.findByAddress("0xnonsense");
@@ -62,5 +87,34 @@ describe("AddressState", function() {
     });
   });
 
-  afterEach(() => db.truncate("address_states"));
+  describe("findByAddressWithBids", function() {
+    it("should attach an array of bid groups for the address", async function() {
+      const address = addressState.address;
+      const bidGroup = {
+        address,
+        bids: [],
+        message: "some message",
+        signature: "some signature",
+        timestamp: new Date()
+      };
+
+      await AddressState.insert(addressState);
+      let result = await AddressState.findByAddressWithBids(address);
+      expect(result.bidGroups.length).to.be.equal(0);
+
+      await Promise.all([
+        BidGroup.insert({ ...bidGroup, prevId: 0 }),
+        BidGroup.insert({ ...bidGroup, prevId: 1 }),
+        BidGroup.insert({ ...bidGroup, prevId: 2 })
+      ]);
+      result = await AddressState.findByAddressWithBids(address);
+
+      expect(result.bidGroups.length).to.be.equal(3);
+      expect(result.bidGroups.map(bg => bg.prevId)).to.be.deep.equal([0, 1, 2]);
+    });
+  });
+
+  afterEach(() =>
+    Promise.all([db.truncate("address_states"), db.truncate("bid_groups")])
+  );
 });
