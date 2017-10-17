@@ -22,7 +22,7 @@ describe("AddressState", function() {
       rows = await db.select("address_states");
 
       expect(rows.length).to.equal(1);
-      expect(rows[0]).to.containSubset(addressState); // it also has id and created/updated at cols
+      expect(rows[0]).to.equalRow(addressState);
     });
 
     it("should throw if the address exists", async function() {
@@ -42,7 +42,8 @@ describe("AddressState", function() {
     it("should return the address state by address", async function() {
       const addressStateToFind = {
         address: "0xdeadbeef22",
-        balance: "222222222222"
+        balance: "222222222222",
+        lastBidGroupId: null
       };
 
       await AddressState.insert(addressStateToFind);
@@ -51,7 +52,7 @@ describe("AddressState", function() {
       const result = await AddressState.findByAddress(
         addressStateToFind.address
       );
-      expect(result).to.containSubset(addressStateToFind);
+      expect(result).to.equalRow(addressStateToFind);
     });
 
     it("should attach the bidGroup to the address state", async function() {
@@ -68,7 +69,7 @@ describe("AddressState", function() {
       await AddressState.insert(addressState);
 
       const result = await AddressState.findByAddress(addressState.address);
-      expect(result.bidGroup).to.containSubset(bidGroup);
+      expect(result.bidGroup).to.equalRow(bidGroup);
     });
 
     it("should attach null if the lastBidGroupId doesn't exist", async function() {

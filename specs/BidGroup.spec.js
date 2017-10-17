@@ -35,7 +35,7 @@ describe("BidGroup", function() {
       rows = await db.select("bid_groups");
 
       expect(rows.length).to.equal(1);
-      expect(rows[0]).to.containSubset(serializedBidGroup); // it also has id and created/updated at cols
+      expect(rows[0]).to.equalRow(serializedBidGroup);
     });
   });
 

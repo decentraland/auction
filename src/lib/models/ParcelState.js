@@ -13,7 +13,7 @@ class ParcelState extends Model {
   }
 
   static async findByIdWithBids(id) {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 
   static async insert(parcelState) {

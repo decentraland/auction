@@ -45,9 +45,9 @@ describe("ParcelState", function() {
       rows = await db.select("parcel_states");
 
       expect(rows.length).to.equal(1);
-      expect(rows[0]).to.containSubset(insertedParcelState); // it also has created/updated at cols
+      expect(rows[0]).to.equalRow(insertedParcelState);
     });
   });
 
-  afterEach(() => db.truncate("bid_groups"));
+  afterEach(() => db.truncate("parcel_states"));
 });
