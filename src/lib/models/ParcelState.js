@@ -24,10 +24,7 @@ class ParcelState extends Model {
     if (rows.length > 0) {
       const parcelState = rows[0];
 
-      parcelState.bidGroups = rows
-        .filter(row => !!row.bidGroup)
-        .map(row => BidGroup.deserialize(row.bidGroup, "bytea"));
-
+      parcelState.bidGroups = BidGroup.deserializeJoinedRows(rows);
       delete parcelState.bidGroup;
 
       return parcelState;

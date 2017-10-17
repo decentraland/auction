@@ -19,6 +19,12 @@ class BidGroup extends Model {
     return bidGroup;
   }
 
+  static deserializeJoinedRows(rows) {
+    return rows
+      .filter(row => !!row.bidGroup)
+      .map(row => BidGroup.deserialize(row.bidGroup, "bytea"));
+  }
+
   static async insert(bidGroup) {
     bidGroup = BidGroup.serialize(bidGroup);
 

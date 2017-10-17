@@ -52,7 +52,7 @@ describe("ParcelState", function() {
 
   describe(".findByIdWithBids", function() {
     it("should attach an array of bid groups for the address", async function() {
-      const id = ParcelState.hashId(parcelState.x, parcelState.y)
+      const id = ParcelState.hashId(parcelState.x, parcelState.y);
 
       const bidGroup = {
         address: "0xbeebeef",

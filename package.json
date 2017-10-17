@@ -7,6 +7,7 @@
     "docs": "npx jsdoc -c conf.json -r src/**/*.js",
     "lint": "npx eslint .",
     "test": "npx mocha -r babel-register -r specs/spec_utils.js specs/*",
+    "build": "npm run lint && npm run test",
     "start": "babel-node src/server.js"
   },
   "repository": {
