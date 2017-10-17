@@ -1,4 +1,4 @@
-class BidService {
+export default class BidService {
   constructor(BidGroupModel, AddressStateModel) {
     this.BidGroup = BidGroupModel
     this.AddressState = AddressStateModel
@@ -8,6 +8,33 @@ class BidService {
 
     this.maximumX = 1e4
     this.maximumY = 1e4
+  }
+
+  async processBidGroup(bidGroup) {
+    const bidGroupError = await this.getBidGroupValidationError(bidGroupError)
+    if (bidGroupError) {
+      return { error: bidGroupError }
+    }
+    const addressState = await this.AddressStateModel.getFullState(bidGroup.address)
+    const parcelMap = await this.ParcelStateModel.getParcelStates(bidGroup.bids.map(bid => [ bid.x, bid.y ]))
+    const results = []
+    for (let index in bidGroup.bids) {
+      const bid = bidGroup.bids[index]
+      const newState = this.getNewParcelState(addressState, parcelMap[bid.x][bid.y], bidGroup, index)
+      if (newState.error) {
+        results.push(newState)
+      }
+      if (parcelMap[bid.x][bid.y].address === bidGroup.address) {
+        addressState.balance += parcelMap[bid.x][bid.y].amount
+      }
+      addressState.balance -= newState.amount
+      parcelMap[bid.x][bid.y] = newState
+      await this.ParcelStateModel.updateParcelState(newState)
+      results.push(newState)
+    }
+    addressState.latestBid = bidGroup.id
+    await this.AddressStateModel.updateState(addressState)
+    return results
   }
 
   async checkValidBidGroup(bidGroup) {
@@ -27,9 +54,9 @@ class BidService {
       if (latestNonce !== bidGroup.nonce - 1) {
         return (`Invalid nonce for ${address}: stored ${latestNonce}, received ${bidGroup.nonce}`)
       }
-      if (latestBid.timestamp > bidGroup.timestamp) {
+      if (latestBid.receivedTimestamp > bidGroup.receivedTimestamp) {
         return (`Invalid timestamp for BidGroup received ${bidGroup.id}:
-          latest was ${latestBid.timestamp}, received ${bidGroup.timestamp}`
+          latest was ${latestBid.receivedTimestamp}, received ${bidGroup.receivedTimestamp}`
         )
       }
     }
@@ -56,7 +83,7 @@ class BidService {
       return `Insufficient balance to participate in the bid`
     }
     if (parcelState) {
-      if (parcelState.endsAt < bidGroup.timestamp) {
+      if (parcelState.endsAt < bidGroup.receivedTimestamp) {
         return `Auction ended at ${parcelState.endsAt}`
       }
       if (bid.amount < this.increment * parcelState.amount) {
@@ -64,5 +91,20 @@ class BidService {
       }
     }
     return null
+  }
+
+  getNewParcelState(fullAddressState, parcelState, bidGroup, index) {
+    const error = this.getBidValidationError(fullAddressState, parcelState, bidGroup, index)
+    if (error) {
+      return { error }
+    }
+    const bid = bidGroup[index]
+    return {
+      amount: bid.amount,
+      bidGroup: bidGroup.id,
+      bidIndex: index,
+      address: bidGroup.address,
+      endsAt: extendBid(parcelState, bidGroup.receivedTimestamp)
+    }
   }
 }
