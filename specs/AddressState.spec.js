@@ -1,7 +1,7 @@
 import { expect } from "chai";
 
 import db from "../src/lib/db";
-import { AddressState } from "../src/lib/models";
+import { AddressState, BidGroup } from "../src/lib/models";
 
 describe("AddressState", function() {
   before(() => db.connect());
@@ -39,7 +39,7 @@ describe("AddressState", function() {
   });
 
   describe("#findByAddress", function() {
-    it("Should return the address state by address", async function() {
+    it("should return the address state by address", async function() {
       const addressStateToFind = {
         address: "0xdeadbeef22",
         balance: "222222222222"
@@ -54,7 +54,31 @@ describe("AddressState", function() {
       expect(result).to.containSubset(addressStateToFind);
     });
 
-    it("Should return undefined if the address does not exist on the table", async function() {
+    it("should attach the bidGroup to the address state", async function() {
+      const bidGroup = {
+        address: addressState.address,
+        bids: [],
+        prevId: 0,
+        message: "some message",
+        signature: "some signature",
+        timestamp: new Date()
+      };
+
+      await BidGroup.insert(bidGroup);
+      await AddressState.insert(addressState);
+
+      const result = await AddressState.findByAddress(addressState.address);
+      expect(result.bidGroup).to.containSubset(bidGroup);
+    });
+
+    it("should attach null if the lastBidGroupId doesn't exist", async function() {
+      await AddressState.insert(addressState);
+
+      const result = await AddressState.findByAddress(addressState.address);
+      expect(result.bidGroup).to.be.undefined;
+    });
+
+    it("should return undefined if the address does not exist on the table", async function() {
       await AddressState.insert(addressState);
 
       const result = await AddressState.findByAddress("0xnonsense");
@@ -62,5 +86,7 @@ describe("AddressState", function() {
     });
   });
 
-  afterEach(() => db.truncate("address_states"));
+  afterEach(() =>
+    Promise.all([db.truncate("address_states"), db.truncate("bid_groups")])
+  );
 });

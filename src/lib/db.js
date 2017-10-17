@@ -20,12 +20,12 @@ export default {
     await this.createTable(
       "bid_groups",
       `"id" int NOT NULL DEFAULT nextval('bid_groups_id_seq'),
-      "prevId" int NOT NULL,
-      "address" varchar(42) NOT NULL,
       "bids" json NOT NULL,
-      "message" bytea DEFAULT NULL,
-      "signature" bytea DEFAULT NULL,
-      "timestamp" int NOT NULL`
+      "address" varchar(42) NOT NULL,
+      "prevId" int NOT NULL,
+      "message" BYTEA DEFAULT NULL,
+      "signature" BYTEA DEFAULT NULL,
+      "timestamp" timestamp NOT NULL`
     );
 
     // BidGroup denormalization, bid + index
@@ -43,11 +43,11 @@ export default {
     await this.createTable(
       "bid_receipts",
       `"id" int NOT NULL DEFAULT nextval('bid_receipts_id_seq'),
-      "timeReceived" int NOT NULL,
+      "timeReceived" timestamp NOT NULL,
       "messageHash" text NOT NULL,
       "serverAddress" text NOT NULL,
-      "serverSignature" bytea DEFAULT NULL,
-      "serverMessage" bytea DEFAULT NULL`
+      "serverSignature" BYTEA DEFAULT NULL,
+      "serverMessage" BYTEA DEFAULT NULL`
     );
 
     await this.createTable(

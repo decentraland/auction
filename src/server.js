@@ -57,8 +57,8 @@ app.get(
 app.get(
   "/api/addressState/full/:address",
   server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+    const address = server.extractFromReq(req, "address")
+    return await AddressState.findByAddress(address);
   })
 );
 
