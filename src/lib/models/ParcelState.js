@@ -13,7 +13,7 @@ class ParcelState extends Model {
     return `${x}||${y}`;
   }
 
-  static async findByIdWithBids(id) {
+  static async findByIdWithBidGroups(id) {
     const rows = await db.query(
       `SELECT "parcel_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM parcel_states
         LEFT JOIN bid_groups ON parcel_states."address" = bid_groups."address"

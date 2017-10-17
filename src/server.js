@@ -63,7 +63,7 @@ app.get(
 );
 
 /**
- * ParcelState fetch by id. Attachs the bid history to the response
+ * ParcelState fetch by id. Attachs the bidGroup history to the response
  * @param  {string} id - ParcelState id
  * @return {object}    - ParcelState object
  */
@@ -71,7 +71,7 @@ app.get(
   "/api/parcelState/:id",
   server.handleRequest(async (req, res) => {
     const id = server.extractFromReq(req, "id");
-    return ParcelState.findByIdWithBids(id);
+    return ParcelState.findByIdWithBidGroups(id);
   })
 );
 

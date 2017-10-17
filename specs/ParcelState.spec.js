@@ -50,7 +50,7 @@ describe("ParcelState", function() {
     });
   });
 
-  describe(".findByIdWithBids", function() {
+  describe(".findByIdWithBidGroups", function() {
     it("should attach an array of bid groups for the address", async function() {
       const id = ParcelState.hashId(parcelState.x, parcelState.y);
 
@@ -63,7 +63,7 @@ describe("ParcelState", function() {
       };
 
       await ParcelState.insert(parcelState);
-      let result = await ParcelState.findByIdWithBids(id);
+      let result = await ParcelState.findByIdWithBidGroups(id);
       expect(result.bidGroups.length).to.be.equal(0);
 
       await Promise.all([
@@ -71,7 +71,7 @@ describe("ParcelState", function() {
         await BidGroup.insert({ ...bidGroup, prevId: 1 }),
         await BidGroup.insert({ ...bidGroup, prevId: 2 })
       ]);
-      result = await ParcelState.findByIdWithBids(id);
+      result = await ParcelState.findByIdWithBidGroups(id);
 
       expect(result.bidGroups.length).to.be.equal(3);
       expect(result.bidGroups.map(bg => bg.prevId)).to.be.deep.equal([0, 1, 2]);
