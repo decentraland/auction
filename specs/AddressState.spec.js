@@ -86,6 +86,33 @@ describe("AddressState", function() {
     });
   });
 
+  describe("findByAddressWithBids", function() {
+    it("should attach an array of bid groups for the address", async function() {
+      const address = addressState.address;
+      const bidGroup = {
+        address,
+        bids: [],
+        message: "some message",
+        signature: "some signature",
+        timestamp: new Date()
+      };
+
+      await AddressState.insert(addressState);
+      let result = await AddressState.findByAddressWithBids(address);
+      expect(result.bidGroups.length).to.be.equal(0);
+
+      await Promise.all([
+        await BidGroup.insert({ ...bidGroup, prevId: 0 }),
+        await BidGroup.insert({ ...bidGroup, prevId: 1 }),
+        await BidGroup.insert({ ...bidGroup, prevId: 2 })
+      ]);
+      result = await AddressState.findByAddressWithBids(address);
+
+      expect(result.bidGroups.length).to.be.equal(3);
+      expect(result.bidGroups.map(bg => bg.prevId)).to.be.deep.equal([0, 1, 2]);
+    });
+  });
+
   afterEach(() =>
     Promise.all([db.truncate("address_states"), db.truncate("bid_groups")])
   );

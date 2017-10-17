@@ -15,7 +15,7 @@ const signedMessage = {
       message = parseBytea(message);
       signature = parseBytea(signature);
 
-      encoding = "utf8"
+      encoding = "utf8";
     }
 
     return Object.assign({}, obj, {
