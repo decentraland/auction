@@ -32,6 +32,19 @@ class ParcelState extends Model {
     }
   }
 
+  static async findInCoordinates(coords) {
+    let where = coords.map(coord => {
+      const [x, y] = coordinates.toArray(coord);
+      return `(x = ${x} AND y = ${y})`;
+    });
+
+    where = where.join(" OR ");
+
+    return await db.query(
+      `SELECT "parcel_states".* FROM parcel_states WHERE ${where}`
+    );
+  }
+
   static async inRange(min, max) {
     const [minx, miny] = coordinates.toArray(min);
     const [maxx, maxy] = coordinates.toArray(max);

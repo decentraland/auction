@@ -77,14 +77,14 @@ app.get(
 
 /**
  * ParcelState group fetch. Get multiple parcel states at a time using an array
- * @param ${array} coordinates - array of parcel state ids (represented by x,y coordinates). If you need a single ParcelState, use "/api/parcelState/:id" or an array of a single element
+ * @param ${array} coordinates - array of parcel state coordinates. If you need a single ParcelState, use "/api/parcelState/:id" or an array of a single element
  * @return {array}             - array of ParcelState objects
  */
 app.get(
   "/api/parcelState/group/:coordinates",
   server.handleRequest(async (req, res) => {
-    // const param = server.extractFromReq(req, 'param')
-    return "success";
+    const coordinates = server.extractFromReq(req, "coordinates");
+    return ParcelState.findInCoordinates(coordinates);
   })
 );
 

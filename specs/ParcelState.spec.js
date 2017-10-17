@@ -79,15 +79,32 @@ describe("ParcelState", function() {
     });
   });
 
+  describe(".findInCoordinates", function() {
+    it("should attach an array of bid groups for the address", async function() {
+      await insertMatrix(3, 3);
+
+      const result = await ParcelState.findInCoordinates([
+        "1,2",
+        "3,3",
+        "4,4",
+        "0,0"
+      ]);
+
+      expect(result.length).to.be.equal(3);
+    });
+
+    it("should throw if any coordinate is invalid", function() {
+      ParcelState.findInCoordinates(["1,1", "nonsense"]).catch(error =>
+        expect(error.message).to.equal(
+          'The coordinate "nonsense" are not valid'
+        )
+      );
+    });
+  });
+
   describe(".inRange", function() {
     it("should return an array of parcel states which are on the supplied range", async function() {
-      const inserts = [];
-      for (let x = 0; x < 10; x++) {
-        for (let y = 0; y < 10; y++) {
-          inserts.push(ParcelState.insert({ ...parcelState, x, y }));
-        }
-      }
-      await Promise.all(inserts);
+      await insertMatrix(10, 10);
 
       const range = await ParcelState.inRange([2, 3], [5, 5]);
       const coordinates = range.map(ps => `${ps.x},${ps.y}`);
@@ -109,6 +126,16 @@ describe("ParcelState", function() {
       ]);
     });
   });
+
+  function insertMatrix(maxx, maxy) {
+    const inserts = [];
+    for (let x = 0; x <= maxx; x++) {
+      for (let y = 0; y <= maxy; y++) {
+        inserts.push(ParcelState.insert({ ...parcelState, x, y }));
+      }
+    }
+    return Promise.all(inserts);
+  }
 
   afterEach(() =>
     Promise.all([db.truncate("parcel_states"), db.truncate("bid_groups")])
