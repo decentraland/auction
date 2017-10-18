@@ -18,36 +18,47 @@ export default class BidService {
   async processBidGroup(bidGroup) {
     const bidGroupError = await this.getBidGroupValidationError(bidGroupError);
     if (bidGroupError) {
-      return {error: bidGroupError};
+      return { error: bidGroupError };
     }
+
     const addressState = await this.AddressState.getFullState(bidGroup.address);
     const parcelMap = await this.ParcelState.getParcelStates(
-      bidGroup.bids.map(bid => [bid.x, bid.y]),
+      bidGroup.bids.map(bid => [bid.x, bid.y])
     );
+
     const results = [];
     for (let index in bidGroup.bids) {
       const bid = bidGroup.bids[index];
+      const parcelState = parcelMap[bid.x][bid.y];
+
       const newState = this.getNewParcelState(
         addressState,
-        parcelMap[bid.x][bid.y],
+        parcelState,
         bidGroup,
-        index,
+        index
       );
+
       if (newState.error) {
         results.push(newState);
+        continue;
       }
+
       addressState.balance = this.calculateNewBalance(
         addressState,
-        parcelMap[bid.x][bid.y],
+        parcelState,
         bidGroup,
-        bid,
+        bid
       );
+
       parcelMap[bid.x][bid.y] = newState;
       await this.ParcelState.updateParcelState(newState);
+
       results.push(newState);
     }
+
     addressState.latestBid = bidGroup.id;
     await this.AddressState.updateState(addressState);
+
     return results;
   }
 
@@ -76,7 +87,8 @@ export default class BidService {
   }
 
   getBidValidationError(fullAddressState, parcelState, bidGroup, index) {
-    const bid = bidGroup[index];
+    const bid = bidGroup.bids[index];
+
     if (bid.x < this.minimumX || bid.x > this.maximumX) {
       return `Invalid X coordinate for bid ${index} of bidGroup ${bidGroup.id}:
         ${bid.x} is not between ${this.minimumX} and ${this.maximumX}`;
@@ -85,11 +97,12 @@ export default class BidService {
       return `Invalid Y coordinate for bid ${index} of bidGroup ${bidGroup.id}:
         ${bid.y} is not between ${this.minimumY} and ${this.maximumY}`;
     }
+
     let newBalance = this.calculateNewBalance(
       fullAddressState,
       parcelState,
       bidGroup,
-      bid,
+      bid
     );
     if (newBalance < 0) {
       return `Insufficient balance to participate in the bid`;
@@ -117,18 +130,19 @@ export default class BidService {
       fullAddressState,
       parcelState,
       bidGroup,
-      index,
+      index
     );
     if (error) {
-      return {error};
+      return { error };
     }
-    const bid = bidGroup[index];
+
+    const bid = bidGroup.bids[index];
     return {
       amount: bid.amount,
       bidGroup: bidGroup.id,
       bidIndex: index,
       address: bidGroup.address,
-      endsAt: this.extendBid(parcelState, bidGroup.receivedTimestamp),
+      endsAt: this.extendBid(parcelState, bidGroup.receivedTimestamp)
     };
   }
 

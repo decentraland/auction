@@ -15,7 +15,11 @@
     "type": "git",
     "url": "https://decentraland.digital/dApps/auction.git"
   },
-  "keywords": ["decentraland", "auction", "dapp"],
+  "keywords": [
+    "decentraland",
+    "auction",
+    "dapp"
+  ],
   "author": "Decentraland",
   "license": "ISC",
   "dependencies": {
