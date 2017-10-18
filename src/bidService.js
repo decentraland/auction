@@ -16,7 +16,7 @@ export default class BidService {
   }
 
   async processBidGroup(bidGroup) {
-    const bidGroupError = await this.getBidGroupValidationError(bidGroupError);
+    const bidGroupError = await this.getBidGroupValidationError(bidGroup);
     if (bidGroupError) {
       return { error: bidGroupError };
     }
@@ -75,7 +75,7 @@ export default class BidService {
     if (await this.BidGroup.findOne(bidGroup.id)) {
       return `Id ${bidGroup.id} already exists in database`;
     }
-    const latestBid = this.BidGroup.getLatestBid(bidGroup.address);
+    const latestBid = await this.BidGroup.getLatestBid(bidGroup.address);
     if (latestBid) {
       const expectedNonce = latestBid.nonce + 1;
       if (expectedNonce !== bidGroup.nonce) {
