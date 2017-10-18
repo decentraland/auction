@@ -1,0 +1,17 @@
+{
+  "x": {
+    "min": 0,
+    "max": 3
+  },
+  "y": {
+    "min": 0,
+    "max": 5
+  },
+
+  "reserved": {
+    "decentraland": ["0,0", "0,1"],
+    "AETHERIAN project": ["10,20"]
+  },
+
+  "roads": ["2,2"]
+}

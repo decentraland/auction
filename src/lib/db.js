@@ -65,12 +65,25 @@ export default {
       `"id" text NOT NULL,
       "x" int NOT NULL,
       "y" int NOT NULL,
-      "address" varchar(42) NOT NULL,
+      "address" varchar(42),
       "amount" text,
       "endsAt" timestamp,
       "bidIndex" int,
-      "bidGroupId" int`,
+      "bidGroupId" int,
+      "projectId" TEXT`,
       { sequenceName: null }
+    );
+
+    await this.createTable(
+      "projects",
+      `"id" TEXT NOT NULL,
+      "name" TEXT,
+      "desc" TEXT,
+      "link" TEXT,
+      "public" BOOLEAN NOT NULL DEFAULT true,
+      "parcels" DECIMAL,
+      "priority" int,
+      "disabled" BOOLEAN NOT NULL DEFAULT false`
     );
   }
 };

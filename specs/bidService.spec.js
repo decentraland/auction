@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import sinon from "sinon";
 
-import BidService from "../src/BidService";
+import { BidService } from "../src/lib/services";
 
 const noop = () => undefined;
 
