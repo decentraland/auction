@@ -22,7 +22,7 @@ class ParcelState extends Model {
       );
     }
 
-    return `${x}||${y}`;
+    return `${x},${y}`;
   }
 
   static async findByIdWithBidGroups(id) {

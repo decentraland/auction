@@ -18,8 +18,8 @@ describe("ParcelState", function() {
 
   describe(".hashId", function() {
     it("should concat both coordinates with pipes", function() {
-      expect(ParcelState.hashId(22, "30")).to.equal("22||30");
-      expect(ParcelState.hashId(0, 0)).to.equal("0||0");
+      expect(ParcelState.hashId(22, "30")).to.equal("22,30");
+      expect(ParcelState.hashId(0, 0)).to.equal("0,0");
     });
 
     it("should throw if any coordinate is invalid", function() {

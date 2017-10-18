@@ -59,7 +59,7 @@ export default {
       "latestBidGroupId" int`
     );
 
-    // id => string (hash of `x||y`)
+    // id => string (hash of `x,y`)
     await this.createTable(
       "parcel_states",
       `"id" text NOT NULL,
