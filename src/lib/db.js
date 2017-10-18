@@ -9,7 +9,8 @@ export default {
       "postgres://localhost:5432/auction"
     );
 
-    await db.postgres.connect.call(this, CONNECTION_STRING);
+    this.client = await db.postgres.connect(CONNECTION_STRING);
+
     await this.createSchema();
 
     return this;
@@ -22,7 +23,6 @@ export default {
       `"id" int NOT NULL DEFAULT nextval('bid_groups_id_seq'),
       "bids" json NOT NULL,
       "address" varchar(42) NOT NULL,
-      "prevId" int NOT NULL,
       "message" BYTEA DEFAULT NULL,
       "signature" BYTEA DEFAULT NULL,
       "timestamp" timestamp NOT NULL`
@@ -34,6 +34,7 @@ export default {
       `"id" int NOT NULL DEFAULT nextval('bid_id_seq'),
       "x" int NOT NULL,
       "y" int NOT NULL,
+      "nonce" int NOT NULL,
       "bidIndex" int NOT NULL,
       "address" varchar(42) NOT NULL,
       "amount" text NOT NULL,
@@ -55,10 +56,10 @@ export default {
       `"id" int NOT NULL DEFAULT nextval('address_states_id_seq'),
       "address" varchar(42) NOT NULL UNIQUE,
       "balance" text NOT NULL,
-      "lastBidGroupId" int`
+      "latestBidGroupId" int`
     );
 
-    // id => string (hash of `x||','||y`)
+    // id => string (hash of `x||y`)
     await this.createTable(
       "parcel_states",
       `"id" text NOT NULL,

@@ -1,9 +1,20 @@
-import { Model, utils } from "decentraland-commons";
+import { Model } from "decentraland-commons";
 import BidGroup from "./BidGroup";
 import coordinates from "../coordinates";
-import db from "../db";
 
 class ParcelState extends Model {
+  static tableName = "parcel_states";
+  static columnNames = [
+    "id",
+    "x",
+    "y",
+    "amount",
+    "address",
+    "endsAt",
+    "bidGroupId",
+    "bidIndex"
+  ];
+
   static hashId(x, y) {
     if (!coordinates.isValid([x, y])) {
       throw new Error(
@@ -15,7 +26,7 @@ class ParcelState extends Model {
   }
 
   static async findByIdWithBidGroups(id) {
-    const rows = await db.query(
+    const rows = await this.db.query(
       `SELECT "parcel_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM parcel_states
         LEFT JOIN bid_groups ON parcel_states."address" = bid_groups."address"
         WHERE parcel_states."id" = $1`,
@@ -40,7 +51,7 @@ class ParcelState extends Model {
 
     where = where.join(" OR ");
 
-    return await db.query(
+    return await this.db.query(
       `SELECT "parcel_states".* FROM parcel_states WHERE ${where}`
     );
   }
@@ -49,7 +60,7 @@ class ParcelState extends Model {
     const [minx, miny] = coordinates.toArray(min);
     const [maxx, maxy] = coordinates.toArray(max);
 
-    return await db.query(
+    return await this.db.query(
       `SELECT "parcel_states".* FROM parcel_states
         WHERE parcel_states."x" >= $1 AND parcel_states."y" >= $2
           AND parcel_states."x" <= $3 AND parcel_states."y" <= $4`,
@@ -59,22 +70,9 @@ class ParcelState extends Model {
 
   static async insert(parcelState) {
     const { x, y } = parcelState;
-
     parcelState.id = ParcelState.hashId(x, y);
 
-    return await db.insert(
-      "parcel_states",
-      utils.pick(parcelState, [
-        "id",
-        "x",
-        "y",
-        "amount",
-        "address",
-        "endsAt",
-        "bidGroupId",
-        "bidIndex"
-      ])
-    );
+    return await super.insert(parcelState);
   }
 }
 

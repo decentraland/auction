@@ -9,22 +9,10 @@ describe("AddressState", function() {
   const addressState = {
     address: "0xdeadbeef",
     balance: "10000000000000",
-    lastBidGroupId: 1
+    latestBidGroupId: 1
   };
 
   describe(".insert", function() {
-    it("should insert the address state on the database", async function() {
-      let rows = await db.select("address_states");
-      expect(rows.length).to.equal(0);
-
-      await AddressState.insert(addressState);
-
-      rows = await db.select("address_states");
-
-      expect(rows.length).to.equal(1);
-      expect(rows[0]).to.equalRow(addressState);
-    });
-
     it("should throw if the address exists", async function() {
       await AddressState.insert(addressState);
 
@@ -43,7 +31,7 @@ describe("AddressState", function() {
       const addressStateToFind = {
         address: "0xdeadbeef22",
         balance: "222222222222",
-        lastBidGroupId: null
+        latestBidGroupId: null
       };
 
       await AddressState.insert(addressStateToFind);
@@ -59,7 +47,6 @@ describe("AddressState", function() {
       const bidGroup = {
         address: addressState.address,
         bids: [],
-        prevId: 0,
         message: "some message",
         signature: "some signature",
         timestamp: new Date()
@@ -72,7 +59,7 @@ describe("AddressState", function() {
       expect(result.bidGroup).to.equalRow(bidGroup);
     });
 
-    it("should attach null if the lastBidGroupId doesn't exist", async function() {
+    it("should attach null if the latestBidGroupId doesn't exist", async function() {
       await AddressState.insert(addressState);
 
       const result = await AddressState.findByAddress(addressState.address);
@@ -103,14 +90,18 @@ describe("AddressState", function() {
       expect(result.bidGroups.length).to.be.equal(0);
 
       await Promise.all([
-        BidGroup.insert({ ...bidGroup, prevId: 0 }),
-        BidGroup.insert({ ...bidGroup, prevId: 1 }),
-        BidGroup.insert({ ...bidGroup, prevId: 2 })
+        BidGroup.insert({ ...bidGroup, message: "0" }),
+        BidGroup.insert({ ...bidGroup, message: "1" }),
+        BidGroup.insert({ ...bidGroup, message: "2" })
       ]);
       result = await AddressState.findByAddressWithBids(address);
 
       expect(result.bidGroups.length).to.be.equal(3);
-      expect(result.bidGroups.map(bg => bg.prevId)).to.be.deep.equal([0, 1, 2]);
+      expect(result.bidGroups.map(bg => bg.message)).to.be.deep.equal([
+        "0",
+        "1",
+        "2"
+      ]);
     });
   });
 

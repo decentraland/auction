@@ -11,7 +11,6 @@
     address,
     id,
     
-    prevId,
     message,
     signature
 }
@@ -51,7 +50,7 @@ Bid: (BidGroup + bidindex)
 
 - address: string (primary key)
 - balance: string (bignumber)
-- lastBidGroup: string (id to bid)
+- latestBidGroupId: string (id to bid)
 
 
 ## ParcelState
@@ -138,3 +137,7 @@ Validation of each bid
     - input: min x, max x, min y, max y
 
 - Submit BidGroup
+
+- Devolver recibos con nonce por address
+
+- Get all receits

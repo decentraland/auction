@@ -68,14 +68,18 @@ describe("ParcelState", function() {
       expect(result.bidGroups.length).to.be.equal(0);
 
       await Promise.all([
-        BidGroup.insert({ ...bidGroup, prevId: 0 }),
-        BidGroup.insert({ ...bidGroup, prevId: 1 }),
-        BidGroup.insert({ ...bidGroup, prevId: 2 })
+        BidGroup.insert({ ...bidGroup, message: "0" }),
+        BidGroup.insert({ ...bidGroup, message: "1" }),
+        BidGroup.insert({ ...bidGroup, message: "2" })
       ]);
       result = await ParcelState.findByIdWithBidGroups(id);
 
       expect(result.bidGroups.length).to.be.equal(3);
-      expect(result.bidGroups.map(bg => bg.prevId)).to.be.deep.equal([0, 1, 2]);
+      expect(result.bidGroups.map(bg => bg.message)).to.be.deep.equal([
+        "0",
+        "1",
+        "2"
+      ]);
     });
   });
 

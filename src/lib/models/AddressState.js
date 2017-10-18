@@ -1,12 +1,14 @@
-import { Model, utils } from "decentraland-commons";
+import { Model } from "decentraland-commons";
 import BidGroup from "./BidGroup";
-import db from "../db";
 
 class AddressState extends Model {
+  static tableName = "address_states";
+  static columnNames = ["address", "balance", "latestBidGroupId"];
+
   static async findByAddress(address) {
-    const rows = await db.query(
+    const rows = await this.db.query(
       `SELECT "address_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM address_states
-        LEFT JOIN bid_groups ON address_states."lastBidGroupId" = bid_groups."id"
+        LEFT JOIN bid_groups ON address_states."latestBidGroupId" = bid_groups."id"
         WHERE address_states."address" = $1
         LIMIT 1`,
       [address]
@@ -25,7 +27,7 @@ class AddressState extends Model {
   }
 
   static async findByAddressWithBids(address) {
-    const rows = await db.query(
+    const rows = await this.db.query(
       `SELECT "address_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM address_states
         LEFT JOIN bid_groups ON bid_groups."address" = $1
         WHERE address_states."address" = $1`,
@@ -40,13 +42,6 @@ class AddressState extends Model {
 
       return addressState;
     }
-  }
-
-  static async insert(addressState) {
-    return await db.insert(
-      "address_states",
-      utils.pick(addressState, ["address", "balance", "lastBidGroupId"])
-    );
   }
 }
 

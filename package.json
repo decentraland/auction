@@ -7,7 +7,7 @@
     "docs": "npx jsdoc -c conf.json -r src/**/*.js",
     "lint": "npx eslint .",
     "fix": "npx eslint -f .",
-    "test": "npx mocha -r babel-register -r specs/spec_utils.js specs/*",
+    "test": "npx mocha -r babel-register -r specs/spec_utils.js specs/*.spec.js",
     "build": "npm run lint && npm run test",
     "start": "babel-node src/server.js"
   },
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.0",

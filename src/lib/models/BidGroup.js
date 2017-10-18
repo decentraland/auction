@@ -1,8 +1,11 @@
-import { Model, utils } from "decentraland-commons";
+import { Model } from "decentraland-commons";
+import Bid from "./Bid";
 import signedMessage from "../signedMessage";
-import db from "../db";
 
 class BidGroup extends Model {
+  static tableName = "bid_groups";
+  static columnNames = ["bids", "address", "message", "signature", "timestamp"];
+
   static serialize(bidGroup, encoding) {
     bidGroup = signedMessage.serialize(bidGroup);
     bidGroup.bids = JSON.stringify(bidGroup.bids);
@@ -25,20 +28,22 @@ class BidGroup extends Model {
       .map(row => BidGroup.deserialize(row.bidGroup, "bytea"));
   }
 
+  static async getLatestBid(address) {
+    const lastBidGroup = await this.db.selectOne(
+      this.tableName,
+      { address },
+      { timestamp: "DESC" }
+    );
+
+    if (lastBidGroup) {
+      const index = lastBidGroup.bids.length;
+      return await Bid.findInBidGroup(lastBidGroup.id, index);
+    }
+  }
+
   static async insert(bidGroup) {
     bidGroup = BidGroup.serialize(bidGroup);
-
-    return await db.insert(
-      "bid_groups",
-      utils.pick(bidGroup, [
-        "bids",
-        "address",
-        "prevId",
-        "message",
-        "signature",
-        "timestamp"
-      ])
-    );
+    return await super.insert(bidGroup);
   }
 }
 

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import sinon from "sinon";
 
-import BidService from "../src/bidService";
+import BidService from "../src/BidService";
 
 const noop = () => undefined;
 
@@ -12,7 +12,7 @@ describe("BidService", function() {
   let parcelState;
 
   beforeEach(() => {
-    bidGroup = { findOne: noop, latestBid: noop };
+    bidGroup = { findOne: noop, getLatestBid: noop };
     addressState = sinon.mock();
     parcelState = sinon.mock();
     bidService = new BidService(bidGroup, addressState, parcelState);
@@ -21,10 +21,12 @@ describe("BidService", function() {
   describe("getBidValidationError", function() {
     it("should reject a BidGroup with a matching id", async function() {
       const clashingId = "uuid-uuid-0123456-asdf";
+
       sinon
         .stub(bidGroup, "findOne")
         .withArgs(clashingId)
         .returns({ id: clashingId });
+
       expect(
         await bidService.getBidGroupValidationError({ id: clashingId })
       ).to.equal(`Id ${clashingId} already exists in database`);
@@ -40,7 +42,7 @@ describe("BidService", function() {
         .returns(null);
 
       sinon
-        .stub(bidGroup, "latestBid")
+        .stub(bidGroup, "getLatestBid")
         .withArgs(address)
         .returns({ nonce: 2 });
 
@@ -64,7 +66,7 @@ describe("BidService", function() {
         .returns(null);
 
       sinon
-        .stub(bidGroup, "latestBid")
+        .stub(bidGroup, "getLatestBid")
         .withArgs(address)
         .returns({ nonce: 2, timestamp: 2 });
 

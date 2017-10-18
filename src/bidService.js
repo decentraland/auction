@@ -21,8 +21,10 @@ export default class BidService {
       return { error: bidGroupError };
     }
 
-    const addressState = await this.AddressState.getFullState(bidGroup.address);
-    const parcelMap = await this.ParcelState.getParcelStates(
+    const addressState = await this.AddressState.findByAddress(
+      bidGroup.address
+    );
+    const parcelMap = await this.ParcelState.findInCoordinates(
       bidGroup.bids.map(bid => [bid.x, bid.y])
     );
 
@@ -51,13 +53,13 @@ export default class BidService {
       );
 
       parcelMap[bid.x][bid.y] = newState;
-      await this.ParcelState.updateParcelState(newState);
+      await this.ParcelState.update(newState, { id: bidGroup.id });
 
       results.push(newState);
     }
 
-    addressState.latestBid = bidGroup.id;
-    await this.AddressState.updateState(addressState);
+    addressState.latestBidGroupId = bidGroup.id;
+    await this.AddressState.update(addressState, { id: addressState.id });
 
     return results;
   }
@@ -73,7 +75,7 @@ export default class BidService {
     if (await this.BidGroup.findOne(bidGroup.id)) {
       return `Id ${bidGroup.id} already exists in database`;
     }
-    const latestBid = this.BidGroup.latestBid(bidGroup.address);
+    const latestBid = this.BidGroup.getLatestBid(bidGroup.address);
     if (latestBid) {
       const expectedNonce = latestBid.nonce + 1;
       if (expectedNonce !== bidGroup.nonce) {
