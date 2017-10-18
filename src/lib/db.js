@@ -23,6 +23,7 @@ export default {
       `"id" int NOT NULL DEFAULT nextval('bid_groups_id_seq'),
       "bids" json NOT NULL,
       "address" varchar(42) NOT NULL,
+      "nonce" int NOT NULL DEFAULT 0,
       "message" BYTEA DEFAULT NULL,
       "signature" BYTEA DEFAULT NULL,
       "timestamp" timestamp NOT NULL`
@@ -34,7 +35,6 @@ export default {
       `"id" int NOT NULL DEFAULT nextval('bid_id_seq'),
       "x" int NOT NULL,
       "y" int NOT NULL,
-      "nonce" int NOT NULL,
       "bidIndex" int NOT NULL,
       "address" varchar(42) NOT NULL,
       "amount" text NOT NULL,

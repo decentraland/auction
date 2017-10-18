@@ -47,6 +47,7 @@ describe("AddressState", function() {
       const bidGroup = {
         address: addressState.address,
         bids: [],
+        nonce: 0,
         message: "some message",
         signature: "some signature",
         timestamp: new Date()
@@ -80,6 +81,7 @@ describe("AddressState", function() {
       const bidGroup = {
         address,
         bids: [],
+        nonce: 0,
         message: "some message",
         signature: "some signature",
         timestamp: new Date()

@@ -1,10 +1,16 @@
 import { Model } from "decentraland-commons";
-import Bid from "./Bid";
 import signedMessage from "../signedMessage";
 
 class BidGroup extends Model {
   static tableName = "bid_groups";
-  static columnNames = ["bids", "address", "message", "signature", "timestamp"];
+  static columnNames = [
+    "bids",
+    "address",
+    "nonce",
+    "message",
+    "signature",
+    "timestamp"
+  ];
 
   static serialize(bidGroup, encoding) {
     bidGroup = signedMessage.serialize(bidGroup);
@@ -28,17 +34,12 @@ class BidGroup extends Model {
       .map(row => BidGroup.deserialize(row.bidGroup, "bytea"));
   }
 
-  static async getLatestBid(address) {
-    const lastBidGroup = await this.db.selectOne(
+  static async getLatestByAddress(address) {
+    return await this.db.selectOne(
       this.tableName,
       { address },
       { timestamp: "DESC" }
     );
-
-    if (lastBidGroup) {
-      const index = lastBidGroup.bids.length;
-      return await Bid.findInBidGroup(lastBidGroup.id, index);
-    }
   }
 
   static async insert(bidGroup) {

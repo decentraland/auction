@@ -12,7 +12,7 @@ describe("BidService", function() {
   let parcelState;
 
   beforeEach(() => {
-    bidGroup = { findOne: noop, getLatestBid: noop };
+    bidGroup = { findOne: noop, getLatestByAddress: noop };
     addressState = sinon.mock();
     parcelState = sinon.mock();
     bidService = new BidService(bidGroup, addressState, parcelState);
@@ -42,7 +42,7 @@ describe("BidService", function() {
         .returns(null);
 
       sinon
-        .stub(bidGroup, "getLatestBid")
+        .stub(bidGroup, "getLatestByAddress")
         .withArgs(address)
         .returns({ nonce: 2 });
 
@@ -66,7 +66,7 @@ describe("BidService", function() {
         .returns(null);
 
       sinon
-        .stub(bidGroup, "getLatestBid")
+        .stub(bidGroup, "getLatestByAddress")
         .withArgs(address)
         .returns({ nonce: 2, timestamp: 2 });
 

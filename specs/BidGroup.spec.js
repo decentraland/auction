@@ -16,6 +16,7 @@ describe("BidGroup", function() {
             y: 2
           }
         ],
+        nonce: 1,
         timestamp: new Date(),
         message: "some message",
         signature: "02md0dsdffuntimes"
