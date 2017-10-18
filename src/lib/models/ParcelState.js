@@ -12,7 +12,8 @@ class ParcelState extends Model {
     "address",
     "endsAt",
     "bidGroupId",
-    "bidIndex"
+    "bidIndex",
+    "projectId"
   ];
 
   static hashId(x, y) {
@@ -73,6 +74,10 @@ class ParcelState extends Model {
     parcelState.id = ParcelState.hashId(x, y);
 
     return await super.insert(parcelState);
+  }
+
+  isReserved() {
+    return !!this.get("projectId");
   }
 }
 

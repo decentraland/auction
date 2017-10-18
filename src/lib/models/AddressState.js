@@ -6,6 +6,10 @@ class AddressState extends Model {
   static columnNames = ["address", "balance", "latestBidGroupId"];
 
   static async findByAddress(address) {
+    return this.db.selectOne("address_states", { address });
+  }
+
+  static async findByAddressWithLastBidGroup(address) {
     const rows = await this.db.query(
       `SELECT "address_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM address_states
         LEFT JOIN bid_groups ON address_states."latestBidGroupId" = bid_groups."id"
@@ -26,7 +30,7 @@ class AddressState extends Model {
     }
   }
 
-  static async findByAddressWithBids(address) {
+  static async findByAddressWithBidGroups(address) {
     const rows = await this.db.query(
       `SELECT "address_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM address_states
         LEFT JOIN bid_groups ON bid_groups."address" = $1

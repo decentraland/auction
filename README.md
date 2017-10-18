@@ -64,6 +64,18 @@ Bid: (BidGroup + bidindex)
 - bidgroup: string (bidgroup id)
 - bidIndex
 
+
+## Projects
+
+- id: string (uuid4)
+- name: string, 
+- desc: string, 
+- link: string, 
+- public: boolean,
+- parcels: number,
+- priority: number,
+- disabled: boolean
+
 # Process
 
 ## Initialization of state

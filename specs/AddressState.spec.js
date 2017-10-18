@@ -26,7 +26,7 @@ describe("AddressState", function() {
     });
   });
 
-  describe(".findByAddress", function() {
+  describe(".findByAddressWithLastBidGroup", function() {
     it("should return the address state by address", async function() {
       const addressStateToFind = {
         address: "0xdeadbeef22",
@@ -37,7 +37,7 @@ describe("AddressState", function() {
       await AddressState.insert(addressStateToFind);
       await AddressState.insert(addressState);
 
-      const result = await AddressState.findByAddress(
+      const result = await AddressState.findByAddressWithLastBidGroup(
         addressStateToFind.address
       );
       expect(result).to.equalRow(addressStateToFind);
@@ -56,26 +56,26 @@ describe("AddressState", function() {
       await BidGroup.insert(bidGroup);
       await AddressState.insert(addressState);
 
-      const result = await AddressState.findByAddress(addressState.address);
+      const result = await AddressState.findByAddressWithLastBidGroup(addressState.address);
       expect(result.bidGroup).to.equalRow(bidGroup);
     });
 
     it("should attach null if the latestBidGroupId doesn't exist", async function() {
       await AddressState.insert(addressState);
 
-      const result = await AddressState.findByAddress(addressState.address);
+      const result = await AddressState.findByAddressWithLastBidGroup(addressState.address);
       expect(result.bidGroup).to.be.undefined;
     });
 
     it("should return undefined if the address does not exist on the table", async function() {
       await AddressState.insert(addressState);
 
-      const result = await AddressState.findByAddress("0xnonsense");
+      const result = await AddressState.findByAddressWithLastBidGroup("0xnonsense");
       expect(result).to.be.undefined;
     });
   });
 
-  describe("findByAddressWithBids", function() {
+  describe("findByAddressWithBidGroups", function() {
     it("should attach an array of bid groups for the address", async function() {
       const address = addressState.address;
       const bidGroup = {
@@ -88,7 +88,7 @@ describe("AddressState", function() {
       };
 
       await AddressState.insert(addressState);
-      let result = await AddressState.findByAddressWithBids(address);
+      let result = await AddressState.findByAddressWithBidGroups(address);
       expect(result.bidGroups.length).to.be.equal(0);
 
       await Promise.all([
@@ -96,7 +96,7 @@ describe("AddressState", function() {
         BidGroup.insert({ ...bidGroup, message: "1" }),
         BidGroup.insert({ ...bidGroup, message: "2" })
       ]);
-      result = await AddressState.findByAddressWithBids(address);
+      result = await AddressState.findByAddressWithBidGroups(address);
 
       expect(result.bidGroups.length).to.be.equal(3);
       expect(result.bidGroups.map(bg => bg.message)).to.be.deep.equal([

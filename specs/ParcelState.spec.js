@@ -2,6 +2,7 @@ import { expect } from "chai";
 
 import db from "../src/lib/db";
 import { ParcelState, BidGroup } from "../src/lib/models";
+import { ParcelStateService } from "../src/lib/services";
 
 describe("ParcelState", function() {
   before(() => db.connect());
@@ -13,7 +14,8 @@ describe("ParcelState", function() {
     address: "0xbeebeef",
     endsAt: new Date(),
     bidGroupId: 1,
-    bidIndex: 0
+    bidIndex: 0,
+    projectId: null
   };
 
   describe(".hashId", function() {
@@ -86,7 +88,7 @@ describe("ParcelState", function() {
 
   describe(".findInCoordinates", function() {
     it("should attach an array of bid groups for the address", async function() {
-      await insertMatrix(3, 3);
+      await new ParcelStateService(ParcelState).insertMatrix(3, 3);
 
       const result = await ParcelState.findInCoordinates([
         "1,2",
@@ -109,7 +111,7 @@ describe("ParcelState", function() {
 
   describe(".inRange", function() {
     it("should return an array of parcel states which are on the supplied range", async function() {
-      await insertMatrix(10, 10);
+      await new ParcelStateService(ParcelState).insertMatrix(10, 10);
 
       const range = await ParcelState.inRange([2, 3], [5, 5]);
       const coordinates = range.map(ps => `${ps.x},${ps.y}`);
@@ -131,16 +133,6 @@ describe("ParcelState", function() {
       ]);
     });
   });
-
-  function insertMatrix(maxx, maxy) {
-    const inserts = [];
-    for (let x = 0; x <= maxx; x++) {
-      for (let y = 0; y <= maxy; y++) {
-        inserts.push(ParcelState.insert({ ...parcelState, x, y }));
-      }
-    }
-    return Promise.all(inserts);
-  }
 
   afterEach(() =>
     Promise.all([db.truncate("parcel_states"), db.truncate("bid_groups")])

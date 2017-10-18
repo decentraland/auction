@@ -58,7 +58,7 @@ app.get(
   "/api/addressState/full/:address",
   server.handleRequest((req, res) => {
     const address = server.extractFromReq(req, "address");
-    return AddressState.findByAddressWithBids(address);
+    return AddressState.findByAddressWithBidGroups(address);
   })
 );
 
