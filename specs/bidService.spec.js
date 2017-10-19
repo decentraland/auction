@@ -7,13 +7,19 @@ const noop = () => undefined;
 
 describe("BidService", function() {
   let bidService;
-  let bidGroup;
+  let BidGroup;
+  let AddressState;
+  let ParcelState;
 
   beforeEach(() => {
-    bidGroup = { findOne: noop, getLatestByAddress: noop };
-    addressState = { findByAddress: noop, update: noop };
-    parcelState = { findInCoordinates: noop, update: noop };
-    bidService = new BidService(bidGroup, addressState, parcelState);
+    BidGroup = { findOne: noop, getLatestByAddress: noop };
+    AddressState = { findByAddress: noop, update: noop };
+    ParcelState = { findInCoordinates: noop, update: noop };
+
+    bidService = new BidService();
+    bidService.BidGroup = BidGroup;
+    bidService.AddressState = AddressState;
+    bidService.ParcelState = ParcelState;
   });
 
   describe("getBidValidationError", function() {
@@ -21,7 +27,7 @@ describe("BidService", function() {
       const clashingId = 1;
 
       sinon
-        .stub(bidGroup, "findOne")
+        .stub(BidGroup, "findOne")
         .withArgs(clashingId)
         .returns({ id: clashingId });
 
@@ -35,12 +41,12 @@ describe("BidService", function() {
       const address = "0xdeadbeef";
 
       sinon
-        .stub(bidGroup, "findOne")
+        .stub(BidGroup, "findOne")
         .withArgs(id)
         .returns(null);
 
       sinon
-        .stub(bidGroup, "getLatestByAddress")
+        .stub(BidGroup, "getLatestByAddress")
         .withArgs(address)
         .returns({ nonce: 2 });
 
@@ -59,12 +65,12 @@ describe("BidService", function() {
       const address = "0xdeadbeef";
 
       sinon
-        .stub(bidGroup, "findOne")
+        .stub(BidGroup, "findOne")
         .withArgs(id)
         .returns(null);
 
       sinon
-        .stub(bidGroup, "getLatestByAddress")
+        .stub(BidGroup, "getLatestByAddress")
         .withArgs(address)
         .returns({ nonce: 2, receivedTimestamp: 2 });
 
@@ -160,9 +166,9 @@ describe("BidService", function() {
 
   describe("processBidGroup", () => {
     it('returns an object with "error" if validation of group fails', async () => {
-      const id = "uuid-uuid-0123456-asdf";
+      const id = 1;
       sinon
-        .stub(bidGroup, "findOne")
+        .stub(BidGroup, "findOne")
         .withArgs(id)
         .returns({ id });
       expect(await bidService.processBidGroup({ id })).to.deep.equal({
@@ -170,33 +176,33 @@ describe("BidService", function() {
       });
     });
     it("calls updates correctly", async () => {
-      const id = "uuid-uuid-0123456-asdf";
+      const id = 1;
       const address = "0xdeadbeef";
 
       sinon
-        .stub(bidGroup, "findOne")
+        .stub(BidGroup, "findOne")
         .withArgs(id)
         .returns(null);
 
       sinon
-        .stub(bidGroup, "getLatestByAddress")
+        .stub(BidGroup, "getLatestByAddress")
         .withArgs(address)
         .returns({ nonce: 2, timestamp: 2 });
 
       sinon
-        .stub(addressState, "findByAddress")
+        .stub(AddressState, "findByAddress")
         .withArgs(address)
         .returns({ nonce: 2, timestamp: 2 });
 
       sinon
-        .stub(parcelState, "findInCoordinates")
+        .stub(ParcelState, "findInCoordinates")
         .returns({ 0: { 0: { x: 0, y: 0, amount: 100, endsAt: 5 } } });
 
       sinon
-        .stub(parcelState, "update")
+        .stub(ParcelState, "update")
         .returns({ x: 0, y: 0, amount: 100, address: "0xc0ffee" });
 
-      sinon.stub(addressState, "update").returns({ nonce: 2, timestamp: 2 });
+      sinon.stub(AddressState, "update").returns({ nonce: 2, timestamp: 2 });
 
       const bidGroupValue = {
         id,
