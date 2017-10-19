@@ -8,7 +8,7 @@ import { ParcelStateService } from "../src/lib/services";
 
 env.load();
 
-async function run() {
+export default async function initializeDatabase() {
   eth.connect();
 
   await upsertRoadsProject();
@@ -83,5 +83,5 @@ async function importAddressStates() {
 
 db
   .connect()
-  .then(run)
+  .then(initializeDatabase)
   .catch(console.error);
