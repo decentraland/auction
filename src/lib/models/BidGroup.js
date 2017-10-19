@@ -14,7 +14,7 @@ class BidGroup extends Model {
   ];
 
   static serialize(bidGroup, encoding) {
-    bidGroup = signedMessage.serialize(bidGroup);
+    bidGroup = signedMessage.serialize(bidGroup, encoding);
     bidGroup.bids = JSON.stringify(bidGroup.bids);
     return bidGroup;
   }

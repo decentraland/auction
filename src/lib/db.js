@@ -45,11 +45,10 @@ export default {
     await this.createTable(
       "bid_receipts",
       `"id" int NOT NULL DEFAULT nextval('bid_receipts_id_seq'),
+      "bidGroupId" int NOT NULL UNIQUE,
       "receivedTimestamp" timestamp NOT NULL,
-      "messageHash" text NOT NULL,
-      "serverAddress" text NOT NULL,
-      "serverSignature" BYTEA DEFAULT NULL,
-      "serverMessage" BYTEA DEFAULT NULL`
+      "signature" BYTEA DEFAULT NULL,
+      "message" BYTEA DEFAULT NULL`
     );
 
     await this.createTable(
