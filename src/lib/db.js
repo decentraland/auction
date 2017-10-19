@@ -31,10 +31,11 @@ export default {
 
     // BidGroup denormalization, bid + index
     await this.createTable(
-      "bid",
-      `"id" int NOT NULL DEFAULT nextval('bid_id_seq'),
+      "bids",
+      `"id" int NOT NULL DEFAULT nextval('bids_id_seq'),
       "x" int NOT NULL,
       "y" int NOT NULL,
+      "bidGroupId" int NOT NULL,
       "bidIndex" int NOT NULL,
       "address" varchar(42) NOT NULL,
       "amount" text NOT NULL,

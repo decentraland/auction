@@ -1,14 +1,14 @@
 import { Model } from "decentraland-commons";
 
 class Bid extends Model {
-  static tableName = "bid";
+  static tableName = "bids";
   static columnNames = [
     "x",
     "y",
-    "bidgroup",
-    "bidindex",
+    "bidGroupId",
+    "bidIndex",
     "address",
-    "timpestamp",
+    "timestamp",
     "amount"
   ];
 

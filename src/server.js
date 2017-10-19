@@ -6,7 +6,8 @@ import path from "path";
 import { server, env } from "decentraland-commons";
 import db from "./lib/db";
 
-import { AddressState, ParcelState, BidGroup } from "./lib/models";
+import { AddressState, ParcelState } from "./lib/models";
+import { BidService } from "./lib/service";
 
 env.load();
 
@@ -112,8 +113,7 @@ app.post(
   "/api/bidgroup",
   server.handleRequest(async (req, res) => {
     const bidGroup = server.extractFromReq(req, "bidGroup");
-    // new BidService().checkValidBidGroup(bidGroup)
-    await BidGroup.insert(bidGroup);
+    new BidService().insert(bidGroup);
     return true;
   })
 );

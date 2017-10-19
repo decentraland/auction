@@ -1,4 +1,5 @@
 import { Model } from "decentraland-commons";
+import Bid from "./Bid";
 import signedMessage from "../signedMessage";
 
 class BidGroup extends Model {
@@ -43,8 +44,18 @@ class BidGroup extends Model {
   }
 
   static async insert(bidGroup) {
-    bidGroup = BidGroup.serialize(bidGroup);
-    return await super.insert(bidGroup);
+    const inserted = await super.insert(BidGroup.serialize(bidGroup));
+
+    for (let [index, bid] of Object.entries(bidGroup.bids)) {
+      bid = Object.assign(
+        { bidIndex: index, bidGroupId: inserted.id },
+        bid,
+        bidGroup
+      );
+      await Bid.insert(bid);
+    }
+
+    return inserted;
   }
 }
 

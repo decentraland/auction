@@ -1,10 +1,12 @@
+import { BidGroup, AddressState, ParcelState } from "../models";
+
 const HOURS_IN_MILLIS = 60 * 60 * 1000;
 
 export default class BidService {
-  constructor(BidGroupModel, AddressStateModel, ParcelStateModel) {
-    this.BidGroup = BidGroupModel;
-    this.AddressState = AddressStateModel;
-    this.ParcelState = ParcelStateModel;
+  constructor() {
+    this.BidGroup = BidGroup;
+    this.AddressState = AddressState;
+    this.ParcelState = ParcelState;
 
     this.minimumX = -1e4;
     this.minimumY = -1e4;
@@ -13,6 +15,21 @@ export default class BidService {
     this.maximumY = 1e4;
 
     this.gracePeriod = 36 * HOURS_IN_MILLIS;
+  }
+
+  async insert(bidGroup) {
+    if (bidGroup.id) {
+      throw new Error(
+        `BidGroup seems to be inserted already, with id ${bidGroup.id}`
+      );
+    }
+
+    this.checkValidBidGroup(bidGroup);
+
+    bidGroup = await this.BidGroup.insert(bidGroup);
+    this.processBidGroup(bidGroup);
+
+    return bidGroup;
   }
 
   async processBidGroup(bidGroup) {
@@ -33,15 +50,15 @@ export default class BidService {
       const bid = bidGroup.bids[index];
       const parcelState = parcelMap[bid.x][bid.y];
 
-      const newState = this.getNewParcelState(
+      const newParceState = this.getNewParcelState(
         addressState,
         parcelState,
         bidGroup,
         index
       );
 
-      if (newState.error) {
-        results.push(newState);
+      if (newParceState.error) {
+        results.push(newParceState);
         continue;
       }
 
@@ -52,10 +69,10 @@ export default class BidService {
         bid
       );
 
-      parcelMap[bid.x][bid.y] = newState;
-      await this.ParcelState.update(newState, { id: bidGroup.id });
+      parcelMap[bid.x][bid.y] = newParceState;
+      await this.ParcelState.update(newParceState, { id: parcelState.id });
 
-      results.push(newState);
+      results.push(newParceState);
     }
 
     addressState.latestBidGroupId = bidGroup.id;
@@ -64,8 +81,8 @@ export default class BidService {
     return results;
   }
 
-  async checkValidBidGroup(bidGroup) {
-    const validationError = this.getValidationError(bidGroup);
+  checkValidBidGroup(bidGroup) {
+    const validationError = this.getBidGroupValidationError(bidGroup);
     if (validationError) {
       throw new Error(validationError);
     }

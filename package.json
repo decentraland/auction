@@ -26,7 +26,8 @@
     "body-parser": "^1.18.2",
     "decentraland-commons": "git+ssh://git@decentraland.digital:decentraland/commons.git#release",
     "express": "^4.16.2",
-    "postgres-bytea": "^1.0.0"
+    "postgres-bytea": "^1.0.0",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",

@@ -8,19 +8,19 @@ const noop = () => undefined;
 describe("BidService", function() {
   let bidService;
   let bidGroup;
-  let addressState;
-  let parcelState;
 
   beforeEach(() => {
     bidGroup = { findOne: noop, getLatestByAddress: noop };
-    addressState = sinon.mock();
-    parcelState = sinon.mock();
-    bidService = new BidService(bidGroup, addressState, parcelState);
+
+    bidService = new BidService();
+    bidService.BidGroup = bidGroup;
+    bidService.AddressState = sinon.mock();
+    bidService.ParcelState = sinon.mock();
   });
 
   describe("getBidValidationError", function() {
     it("should reject a BidGroup with a matching id", async function() {
-      const clashingId = "uuid-uuid-0123456-asdf";
+      const clashingId = 1;
 
       sinon
         .stub(bidGroup, "findOne")
@@ -33,7 +33,7 @@ describe("BidService", function() {
     });
 
     it("should reject a BidGroup with an invalid nonce", async function() {
-      const id = "uuid-uuid-0123456-asdf";
+      const id = 1;
       const address = "0xdeadbeef";
 
       sinon
@@ -57,7 +57,7 @@ describe("BidService", function() {
     });
 
     it("should reject a BidGroup with an invalid date", async function() {
-      const id = "uuid-uuid-0123456-asdf";
+      const id = 1;
       const address = "0xdeadbeef";
 
       sinon
