@@ -54,7 +54,7 @@ describe("BidReceiptService", function() {
 
       const bidRecepeitId = 30;
       const signature = "0x11d072f4fa63b4f1111111db50c1f17c931dd670";
-      const serverMessage = "301507399991050000Some message";
+      const serverMessage = "30||1507399991050000||Some message";
 
       const spy = sinon.spy(BidReceipt, "update");
 

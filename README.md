@@ -38,9 +38,8 @@ Bid: (BidGroup + bidindex)
 {
     "id": bid id
     "timeReceived": number
-    "messageHash": "string" // received message from user
+    "message": "string" // received message from user
     
-    "serverAddres": decentraland's private key
     "serverSignature": decentraland's signature
     "serverMessage": id+timereceived+messageHash objet, serialized, and signed above
 }
@@ -150,6 +149,4 @@ Validation of each bid
 
 - Submit BidGroup
 
-- Devolver recibos con nonce por address
-
-- Get all receits
+- Get all BidReceipts

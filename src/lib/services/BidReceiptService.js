@@ -30,12 +30,6 @@ export default class BidReceiptService {
     );
   }
 
-  getServerMessage(bidGroup) {
-    return this.eth.toHex(
-      `${bidGroup.id}${bidGroup.timeReceived.getTime()}${bidGroup.message}`
-    );
-  }
-
   async verify(bidRecepeit) {
     const { address } = await this.recover(bidRecepeit);
 
@@ -52,6 +46,12 @@ export default class BidReceiptService {
       address,
       message: this.eth.fromHex(message)
     };
+  }
+
+  getServerMessage(bidGroup) {
+    return this.eth.toHex(
+      `${bidGroup.id}||${bidGroup.timeReceived.getTime()}||${bidGroup.message}`
+    );
   }
 
   getServerAddress() {
