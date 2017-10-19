@@ -50,27 +50,33 @@ describe("AddressState", function() {
         nonce: 0,
         message: "some message",
         signature: "some signature",
-        timestamp: new Date()
+        receivedTimestamp: new Date()
       };
 
       await BidGroup.insert(bidGroup);
       await AddressState.insert(addressState);
 
-      const result = await AddressState.findByAddressWithLastBidGroup(addressState.address);
+      const result = await AddressState.findByAddressWithLastBidGroup(
+        addressState.address
+      );
       expect(result.bidGroup).to.equalRow(bidGroup);
     });
 
     it("should attach null if the latestBidGroupId doesn't exist", async function() {
       await AddressState.insert(addressState);
 
-      const result = await AddressState.findByAddressWithLastBidGroup(addressState.address);
+      const result = await AddressState.findByAddressWithLastBidGroup(
+        addressState.address
+      );
       expect(result.bidGroup).to.be.undefined;
     });
 
     it("should return undefined if the address does not exist on the table", async function() {
       await AddressState.insert(addressState);
 
-      const result = await AddressState.findByAddressWithLastBidGroup("0xnonsense");
+      const result = await AddressState.findByAddressWithLastBidGroup(
+        "0xnonsense"
+      );
       expect(result).to.be.undefined;
     });
   });
@@ -84,7 +90,7 @@ describe("AddressState", function() {
         nonce: 0,
         message: "some message",
         signature: "some signature",
-        timestamp: new Date()
+        receivedTimestamp: new Date()
       };
 
       await AddressState.insert(addressState);

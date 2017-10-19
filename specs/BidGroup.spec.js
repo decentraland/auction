@@ -12,7 +12,7 @@ describe("BidGroup", function() {
         address: "0xbeefdead",
         bids: [{ x: 1, y: 2, amount: "10000" }],
         nonce: 1,
-        timestamp: new Date(),
+        receivedTimestamp: new Date(),
         message: "some message",
         signature: "02md0dsdffuntimes"
       };
@@ -43,7 +43,7 @@ describe("BidGroup", function() {
         bids,
         address: "0xbeefdead",
         nonce: 1,
-        timestamp: new Date(),
+        receivedTimestamp: new Date(),
         message: "some message",
         signature: "02md0dsdffuntimes"
       };
@@ -54,7 +54,7 @@ describe("BidGroup", function() {
       bidGroup = await BidGroup.insert(bidGroup);
 
       const bidBase = {
-        timestamp: bidGroup.timestamp,
+        receivedTimestamp: bidGroup.receivedTimestamp,
         bidGroupId: bidGroup.id,
         address: bidGroup.address
       };

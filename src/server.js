@@ -7,7 +7,7 @@ import { server, env } from "decentraland-commons";
 import db from "./lib/db";
 
 import { AddressState, ParcelState } from "./lib/models";
-import { BidService } from "./lib/service";
+import { BidService } from "./lib/services";
 
 env.load();
 
@@ -113,7 +113,10 @@ app.post(
   "/api/bidgroup",
   server.handleRequest(async (req, res) => {
     const bidGroup = server.extractFromReq(req, "bidGroup");
+    bidGroup.receivedTimestamp = new Date();
+
     new BidService().insert(bidGroup);
+
     return true;
   })
 );

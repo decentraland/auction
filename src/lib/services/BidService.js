@@ -98,8 +98,8 @@ export default class BidService {
       if (expectedNonce !== bidGroup.nonce) {
         return `Invalid nonce for ${bidGroup.address}: stored ${latestBid.nonce}, received ${bidGroup.nonce}`;
       }
-      if (latestBid.timestamp > bidGroup.timestamp) {
-        return `Invalid timestamp for BidGroup received ${bidGroup.id}: latest was ${latestBid.timestamp}, received ${bidGroup.timestamp}`;
+      if (latestBid.receivedTimestamp > bidGroup.receivedTimestamp) {
+        return `Invalid timestamp for BidGroup received ${bidGroup.id}: latest was ${latestBid.receivedTimestamp}, received ${bidGroup.receivedTimestamp}`;
       }
     }
     return null;

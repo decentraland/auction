@@ -63,7 +63,7 @@ describe("ParcelState", function() {
         nonce: 0,
         message: "some message",
         signature: "some signature",
-        timestamp: new Date()
+        receivedTimestamp: new Date()
       };
 
       await ParcelState.insert(parcelState);

@@ -26,7 +26,7 @@ export default {
       "nonce" int NOT NULL DEFAULT 0,
       "message" BYTEA DEFAULT NULL,
       "signature" BYTEA DEFAULT NULL,
-      "timestamp" timestamp NOT NULL`
+      "receivedTimestamp" timestamp NOT NULL`
     );
 
     // BidGroup denormalization, bid + index
@@ -39,13 +39,13 @@ export default {
       "bidIndex" int NOT NULL,
       "address" varchar(42) NOT NULL,
       "amount" text NOT NULL,
-      "timestamp" timestamp NOT NULL`
+      "receivedTimestamp" timestamp NOT NULL`
     );
 
     await this.createTable(
       "bid_receipts",
       `"id" int NOT NULL DEFAULT nextval('bid_receipts_id_seq'),
-      "timeReceived" timestamp NOT NULL,
+      "receivedTimestamp" timestamp NOT NULL,
       "messageHash" text NOT NULL,
       "serverAddress" text NOT NULL,
       "serverSignature" BYTEA DEFAULT NULL,

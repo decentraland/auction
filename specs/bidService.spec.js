@@ -68,12 +68,12 @@ describe("BidService", function() {
       sinon
         .stub(bidGroup, "getLatestByAddress")
         .withArgs(address)
-        .returns({ nonce: 2, timestamp: 2 });
+        .returns({ nonce: 2, receivedTimestamp: 2 });
 
       const bidGroupValue = {
         id,
         nonce: 3,
-        timestamp: 1,
+        receivedTimestamp: 1,
         address
       };
 

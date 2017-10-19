@@ -10,7 +10,7 @@ class BidGroup extends Model {
     "nonce",
     "message",
     "signature",
-    "timestamp"
+    "receivedTimestamp"
   ];
 
   static serialize(bidGroup, encoding) {
@@ -22,8 +22,8 @@ class BidGroup extends Model {
   static deserialize(bidGroup, encoding) {
     bidGroup = signedMessage.deserialize(bidGroup, encoding);
 
-    if (typeof bidGroup.timestamp === "string") {
-      bidGroup.timestamp = new Date(bidGroup.timestamp);
+    if (typeof bidGroup.receivedTimestamp === "string") {
+      bidGroup.receivedTimestamp = new Date(bidGroup.receivedTimestamp);
     }
 
     return bidGroup;
@@ -39,7 +39,7 @@ class BidGroup extends Model {
     return await this.db.selectOne(
       this.tableName,
       { address },
-      { timestamp: "DESC" }
+      { receivedTimestamp: "DESC" }
     );
   }
 
