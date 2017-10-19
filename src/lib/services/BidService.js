@@ -14,6 +14,8 @@ export default class BidService {
     this.maximumX = 1e4;
     this.maximumY = 1e4;
 
+    this.increment = 1.1;
+
     this.gracePeriod = 36 * HOURS_IN_MILLIS;
   }
 
@@ -54,7 +56,7 @@ export default class BidService {
         addressState,
         parcelState,
         bidGroup,
-        index
+        -(-index)
       );
 
       if (newParceState.error) {
@@ -109,12 +111,12 @@ export default class BidService {
     const bid = bidGroup.bids[index];
 
     if (bid.x < this.minimumX || bid.x > this.maximumX) {
-      return `Invalid X coordinate for bid ${index} of bidGroup ${bidGroup.id}:
-        ${bid.x} is not between ${this.minimumX} and ${this.maximumX}`;
+      return `Invalid X coordinate for bid ${index} of bidGroup ${bidGroup.id}: ${bid.x} is not between ${this
+        .minimumX} and ${this.maximumX}`;
     }
     if (bid.y < this.minimumY || bid.y > this.maximumY) {
-      return `Invalid Y coordinate for bid ${index} of bidGroup ${bidGroup.id}:
-        ${bid.y} is not between ${this.minimumY} and ${this.maximumY}`;
+      return `Invalid Y coordinate for bid ${index} of bidGroup ${bidGroup.id}: ${bid.y} is not between ${this
+        .minimumY} and ${this.maximumY}`;
     }
 
     let newBalance = this.calculateNewBalance(
@@ -127,10 +129,10 @@ export default class BidService {
       return `Insufficient balance to participate in the bid`;
     }
     if (parcelState) {
-      if (parcelState.endsAt < bidGroup.receivedTimestamp) {
+      if (parcelState.endsAt < bidGroup.receivedAt) {
         return `Auction ended at ${parcelState.endsAt}`;
       }
-      if (bid.amount < this.increment * parcelState.amount) {
+      if (bid.amount < Math.round(this.increment * parcelState.amount)) {
         return `Insufficient increment from ${parcelState.amount} to ${bid.amount}`;
       }
     }
@@ -161,7 +163,7 @@ export default class BidService {
       bidGroup: bidGroup.id,
       bidIndex: index,
       address: bidGroup.address,
-      endsAt: this.extendBid(parcelState, bidGroup.receivedTimestamp)
+      endsAt: this.extendBid(parcelState, bidGroup.receivedAt)
     };
   }
 
