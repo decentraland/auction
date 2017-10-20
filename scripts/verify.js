@@ -13,8 +13,8 @@ env.load();
 export default async function verify() {
   await initializeDatabase();
 
-  const bidGroups = fileToJson("bidGroups.json");
-  const bidRecepeits = fileToJson("bidRecepeits.json");
+  const bidGroups = fileToJson("bid_groups.json");
+  const bidRecepeits = fileToJson("bid_recepeits.json");
 
   for (let bidGroup of bidGroups) {
     console.log(`Processing ${bidGroup.id}`);
