@@ -44,11 +44,13 @@ if (env.isProduction()) {
  */
 app.get(
   "/api/addressState/simple/:address",
-  server.handleRequest((req, res) => {
-    const address = server.extractFromReq("address");
-    return AddressState.findByAddress(address);
-  })
+  server.handleRequest(getSimpleAddressState)
 );
+
+export function getSimpleAddressState(req) {
+  const address = server.extractFromReq(req, "address");
+  return AddressState.findByAddress(address);
+}
 
 /**
  * AddressState fetch by address: /full contains all BidGroups.
@@ -57,24 +59,25 @@ app.get(
  */
 app.get(
   "/api/addressState/full/:address",
-  server.handleRequest((req, res) => {
-    const address = server.extractFromReq(req, "address");
-    return AddressState.findByAddressWithBidGroups(address);
-  })
+  server.handleRequest(getFullAddressState)
 );
+
+export function getFullAddressState(req) {
+  const address = server.extractFromReq(req, "address");
+  return AddressState.findByAddressWithBidGroups(address);
+}
 
 /**
  * ParcelState fetch by id. Attachs the bidGroup history to the response
  * @param  {string} id - ParcelState id
  * @return {object}    - ParcelState object
  */
-app.get(
-  "/api/parcelState/:id",
-  server.handleRequest((req, res) => {
-    const id = server.extractFromReq(req, "id");
-    return ParcelState.findByIdWithBidGroups(id);
-  })
-);
+app.get("/api/parcelState/:id", server.handleRequest(getParcelState));
+
+export function getParcelState(req) {
+  const id = server.extractFromReq(req, "id");
+  return ParcelState.findByIdWithBidGroups(id);
+}
 
 /**
  * ParcelState group fetch. Get multiple parcel states at a time using an array
@@ -83,11 +86,13 @@ app.get(
  */
 app.get(
   "/api/parcelState/group/:coordinates",
-  server.handleRequest(async (req, res) => {
-    const coordinates = server.extractFromReq(req, "coordinates");
-    return ParcelState.findInCoordinates(coordinates);
-  })
+  server.handleRequest(getParcelStateGroup)
 );
+
+export function getParcelStateGroup(req) {
+  const coordinates = server.extractFromReq(req, "coordinates");
+  return ParcelState.findInCoordinates(coordinates);
+}
 
 /**
  * Parcel Range query, gets parcel states via max/min coordinates
@@ -97,36 +102,42 @@ app.get(
  */
 app.get(
   "/api/parcelState/range/:mincoords/:maxcoords",
-  server.handleRequest((req, res) => {
-    const mincoords = server.extractFromReq(req, "mincoords");
-    const maxcoords = server.extractFromReq(req, "maxcoords");
-    return ParcelState.inRange(mincoords, maxcoords);
-  })
+  server.handleRequest(getParcelStateRange)
 );
+
+export function getParcelStateRange(req) {
+  const mincoords = server.extractFromReq(req, "mincoords");
+  const maxcoords = server.extractFromReq(req, "maxcoords");
+  return ParcelState.inRange(mincoords, maxcoords);
+}
 
 /**
  * Submit a BidGroup
  * @param  {object} bidgroup - BidGroup attributes
  * @return {boolean}         - Wether the operation was successfull or not
  */
-app.post(
-  "/api/bidgroup",
-  server.handleRequest(async (req, res) => {
-    const bidGroup = server.extractFromReq(req, "bidGroup");
-    bidGroup.receivedTimestamp = new Date();
+app.post("/api/bidgroup", server.handleRequest(postBidGroup));
 
-    const insertedBidGroup = new BidService().insert(bidGroup);
-    new BidReceiptService().sign(insertedBidGroup);
+export async function postBidGroup(req) {
+  const bidGroup = server.extractFromReq(req, "bidGroup");
+  bidGroup.receivedTimestamp = new Date();
 
-    return true;
-  })
-);
+  const insertedBidGroup = await new BidService().insert(bidGroup);
+  await new BidReceiptService().sign(insertedBidGroup);
 
-db
-  .connect()
-  .then(() => {
-    httpServer.listen(SERVER_PORT, () =>
-      console.log("Server running on port", SERVER_PORT)
-    );
-  })
-  .catch(console.error);
+  return true;
+}
+
+/**
+ * Start the server
+ */
+if (require.main === module) {
+  db
+    .connect()
+    .then(() => {
+      httpServer.listen(SERVER_PORT, () =>
+        console.log("Server running on port", SERVER_PORT)
+      );
+    })
+    .catch(console.error);
+}

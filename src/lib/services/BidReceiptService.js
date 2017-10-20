@@ -11,7 +11,7 @@ export default class BidReceiptService {
     this.checkBidGroup(bidGroup);
 
     const receipt = {
-      timeReceived: bidGroup.timeReceived,
+      receivedTimestamp: bidGroup.receivedTimestamp,
       bidGroupId: bidGroup.id
     };
 
@@ -30,16 +30,16 @@ export default class BidReceiptService {
     );
   }
 
-  async verify(bidRecepeit) {
-    const { address } = await this.recover(bidRecepeit);
+  async verify(bidRecepit) {
+    const { address } = await this.recover(bidRecepit);
 
     if (address !== this.getServerAddress()) {
       throw new Error("Invalid signature for message");
     }
   }
 
-  async recover(bidRecepeit) {
-    const { message, signature } = bidRecepeit;
+  async recover(bidRecepit) {
+    const { message, signature } = bidRecepit;
     const address = await this.eth.recover(message, signature);
 
     return {
@@ -50,7 +50,7 @@ export default class BidReceiptService {
 
   getServerMessage(bidGroup) {
     return this.eth.toHex(
-      `${bidGroup.id}||${bidGroup.timeReceived.getTime()}||${bidGroup.message}`
+      `${bidGroup.id}||${bidGroup.receivedTimestamp.getTime()}||${bidGroup.message}`
     );
   }
 
@@ -61,11 +61,11 @@ export default class BidReceiptService {
   }
 
   checkBidGroup(bidGroup) {
-    const required = ["id", "message", "timeReceived"];
+    const required = ["id", "message", "receivedTimestamp"];
 
     if (!required.every(prop => bidGroup[prop])) {
       throw new Error(
-        "Can't sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an timeReceived properties"
+        "Can't sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedTimestamp properties"
       );
     }
     if (typeof bidGroup.message !== "string") {

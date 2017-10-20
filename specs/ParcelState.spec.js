@@ -135,6 +135,6 @@ describe("ParcelState", function() {
   });
 
   afterEach(() =>
-    Promise.all([db.truncate("parcel_states"), db.truncate("bid_groups")])
+    Promise.all(["parcel_states", "bid_groups"].map(db.truncate.bind(db)))
   );
 });

@@ -114,6 +114,6 @@ describe("AddressState", function() {
   });
 
   afterEach(() =>
-    Promise.all([db.truncate("address_states"), db.truncate("bid_groups")])
+    Promise.all(["address_states", "bid_groups"].map(db.truncate.bind(db)))
   );
 });

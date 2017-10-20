@@ -23,6 +23,31 @@ describe("BidService", function() {
   });
 
   describe("getBidValidationError", function() {
+    it("should reject incomplete BidGroups", async function() {
+      const errorMessage =
+        "The BidGroup seems to be invalid, it should have defined all the columns to be inserted.";
+
+      expect(
+        await bidService.getBidGroupValidationError({
+          bids: "[]",
+          nonce: 0
+        })
+      ).to.equal(errorMessage);
+      expect(
+        await bidService.getBidGroupValidationError({
+          address: "0x1312123aabb",
+          nonce: 0
+        })
+      ).to.equal(errorMessage);
+      expect(
+        await bidService.getBidGroupValidationError({
+          address: "0x1312123aabb",
+          nonce: 0,
+          receivedTimestamp: new Date()
+        })
+      ).to.equal(errorMessage);
+    });
+
     it("should reject a BidGroup with a matching id", async function() {
       const clashingId = 1;
 

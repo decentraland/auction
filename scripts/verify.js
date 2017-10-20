@@ -14,12 +14,12 @@ export default async function verify() {
   await initializeDatabase();
 
   const bidGroups = fileToJson("bid_groups.json");
-  const bidRecepeits = fileToJson("bid_recepeits.json");
+  const bidRecepits = fileToJson("bid_receipts.json");
 
   for (let bidGroup of bidGroups) {
     console.log(`Processing ${bidGroup.id}`);
 
-    const bidRecepeit = bidRecepeits.find(
+    const bidRecepeit = bidRecepits.find(
       receipt => receipt.bidGroupId === bidGroup.id.toString()
     );
 

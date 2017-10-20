@@ -74,6 +74,6 @@ describe("BidGroup", function() {
   });
 
   afterEach(() =>
-    Promise.all([db.truncate("bid_groups"), db.truncate("bids")])
+    Promise.all(["bid_groups", "bids"].map(db.truncate.bind(db)))
   );
 });

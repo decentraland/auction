@@ -6,9 +6,11 @@ import parseBytea from "postgres-bytea";
  */
 const signedMessage = {
   serialize(obj, encoding = "utf8") {
+    let { message, signature } = obj;
+
     return Object.assign({}, obj, {
-      message: Buffer.from(obj.message, encoding),
-      signature: Buffer.from(obj.signature, encoding)
+      message: Buffer.from(message, encoding),
+      signature: Buffer.from(signature, encoding)
     });
   },
 

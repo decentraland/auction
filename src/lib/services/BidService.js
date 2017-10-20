@@ -26,7 +26,7 @@ export default class BidService {
       );
     }
 
-    this.checkValidBidGroup(bidGroup);
+    await this.checkValidBidGroup(bidGroup);
 
     bidGroup = await this.BidGroup.insert(bidGroup);
     this.processBidGroup(bidGroup);
@@ -83,18 +83,23 @@ export default class BidService {
     return results;
   }
 
-  checkValidBidGroup(bidGroup) {
-    const validationError = this.getBidGroupValidationError(bidGroup);
+  async checkValidBidGroup(bidGroup) {
+    const validationError = await this.getBidGroupValidationError(bidGroup);
     if (validationError) {
       throw new Error(validationError);
     }
   }
 
   async getBidGroupValidationError(bidGroup) {
+    if (this.BidGroup.isIncomplete(bidGroup)) {
+      return "The BidGroup seems to be invalid, it should have defined all the columns to be inserted.";
+    }
     if (await this.BidGroup.findOne(bidGroup.id)) {
       return `Id ${bidGroup.id} already exists in database`;
     }
+
     const latestBid = await this.BidGroup.getLatestByAddress(bidGroup.address);
+
     if (latestBid) {
       const expectedNonce = latestBid.nonce + 1;
       if (expectedNonce !== bidGroup.nonce) {

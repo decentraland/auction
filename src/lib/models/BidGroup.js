@@ -13,17 +13,31 @@ class BidGroup extends Model {
     "receivedTimestamp"
   ];
 
-  static serialize(bidGroup, encoding) {
-    bidGroup = signedMessage.serialize(bidGroup, encoding);
-    bidGroup.bids = JSON.stringify(bidGroup.bids);
+  static serialize(attributes, encoding) {
+    let { bids, message, signature } = attributes;
+    let bidGroup = Object.assign({}, attributes);
+
+    if (typeof bids !== "string") bidGroup.bids = JSON.stringify(bids);
+
+    if (message && signature) {
+      bidGroup = signedMessage.serialize(bidGroup, encoding);
+    }
+
     return bidGroup;
   }
 
-  static deserialize(bidGroup, encoding) {
-    bidGroup = signedMessage.deserialize(bidGroup, encoding);
+  static deserialize(attributes, encoding) {
+    let { receivedTimestamp, bids, message, signature } = attributes;
+    let bidGroup = Object.assign({}, attributes);
 
-    if (typeof bidGroup.receivedTimestamp === "string") {
-      bidGroup.receivedTimestamp = new Date(bidGroup.receivedTimestamp);
+    if (typeof bidGroup.bids === "string") bidGroup.bids = JSON.parse(bids);
+
+    if (typeof receivedTimestamp === "string") {
+      bidGroup.receivedTimestamp = new Date(receivedTimestamp);
+    }
+
+    if (message && signature) {
+      bidGroup = signedMessage.deserialize(bidGroup, encoding);
     }
 
     return bidGroup;
@@ -44,9 +58,10 @@ class BidGroup extends Model {
   }
 
   static async insert(bidGroup) {
-    const inserted = await super.insert(BidGroup.serialize(bidGroup));
+    let inserted = await super.insert(this.serialize(bidGroup));
+    inserted = this.deserialize(inserted);
 
-    for (let [index, bid] of Object.entries(bidGroup.bids)) {
+    for (let [index, bid] of Object.entries(inserted.bids)) {
       bid = Object.assign(
         { bidIndex: index, bidGroupId: inserted.id },
         bid,
