@@ -7,7 +7,6 @@ import { postBidGroup } from "../src/server";
 describe("server", function() {
   before(() => Promise.all([db.connect(), eth.connect()]));
 
-
   describe("POST /api/bidgroup", function() {
     it("should insert the BidGroup *and* BidReceipt in the database, returning true if the operation was successfull", async function() {
       const bidGroup = {

@@ -19,15 +19,15 @@ export default async function verify() {
   for (let bidGroup of bidGroups) {
     console.log(`Processing ${bidGroup.id}`);
 
-    const bidRecepeit = bidRecepits.find(
+    const bidRecepit = bidRecepits.find(
       receipt => receipt.bidGroupId === bidGroup.id.toString()
     );
 
-    if (!bidRecepeit) {
+    if (!bidRecepit) {
       throw new Error(`Could not find a valid BidReceipt for ${bidGroup.id}`);
     }
 
-    await BidReceiptService.verify(bidRecepeit);
+    await BidReceiptService.verify(bidRecepit);
     await BidService.processBidGroup(bidGroup);
   }
 
