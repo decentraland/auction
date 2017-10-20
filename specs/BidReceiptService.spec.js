@@ -49,16 +49,17 @@ describe("BidReceiptService", function() {
       ]);
     });
 
-    it("should insert a bid receipt with the message an signature for the bid group", async function() {
+    it("should insert a bid receipt with the message and signature for the bid group", async function() {
+      const timestamp = 1507399991050000
       const bidGroup = {
         id: 20,
         message: "Some message",
-        receivedTimestamp: new Date("Fri Aug 09 49737 05:44:10")
+        receivedTimestamp: new Date(timestamp)
       };
 
       const bidRecepitId = 30;
       const signature = "0x11d072f4fa63b4f1111111db50c1f17c931dd670";
-      const serverMessage = "30||1507399991050000||Some message";
+      const serverMessage = `30||${timestamp}||Some message`;
 
       const spy = sinon.spy(BidReceipt, "update");
 
