@@ -8,6 +8,7 @@
     "lint": "npx eslint .",
     "fix": "npx eslint -f .",
     "test": "npx mocha -r babel-register -r specs/spec_utils.js specs/*.spec.js",
+    "watch:test": "npx mocha -r babel-register -r specs/spec_utils.js specs/*.spec.js --watch",
     "build": "npm run lint && npm run test",
     "start": "babel-node src/server.js"
   },

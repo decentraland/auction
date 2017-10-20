@@ -109,7 +109,7 @@ describe("BidService", function() {
     let address, parcel, bidGroup, index;
 
     beforeEach(() => {
-      address = { address: "0xc0ffee", balance: 200 };
+      address = { address: "0xc0ffee", balance: '200' };
       parcel = { endsAt: 2, amount: 100, address: "0xdeadbeef" };
       bidGroup = {
         id: "bidgroup",
@@ -208,7 +208,7 @@ describe("BidService", function() {
       sinon
         .stub(AddressState, "findByAddress")
         .withArgs(address)
-        .returns({ nonce: 2, timestamp: 2 });
+        .returns({ nonce: 2, timestamp: 2, balance: 200 });
 
       sinon
         .stub(ParcelState, "findInCoordinates")
