@@ -1,12 +1,9 @@
 import { expect } from "chai";
-import { eth } from "decentraland-commons";
 
-import db from "../src/lib/db";
 import { postBidGroup } from "../src/server";
+import db from "../src/lib/db";
 
 describe("server", function() {
-  before(() => Promise.all([db.connect()]));
-
   describe("POST /api/bidgroup", function() {
     it("should insert the BidGroup *and* BidReceipt in the database, returning true if the operation was successfull", async function() {
       const bidGroup = {
@@ -32,17 +29,15 @@ describe("server", function() {
         params: {}
       };
 
-      // TODO: Don't require connect on ETH
-      // await postBidGroup(req);
+      await postBidGroup(req);
 
-      // const bidGroups = await db.select("bid_groups");
-      // const bids = await db.select("bids");
-      // const bidReceipts = await db.select("bid_receipts");
+      const bidGroups = await db.select("bid_groups");
+      const bids = await db.select("bids");
+      const bidReceipts = await db.select("bid_receipts");
 
-      expect(true).to.be.true;
-      // expect(bidGroups.length).to.be.equal(1);
-      // expect(bids.length).to.be.equal(2);
-      // expect(bidReceipts.length).to.be.equal(1);
+      expect(bidGroups.length).to.be.equal(1);
+      expect(bids.length).to.be.equal(2);
+      expect(bidReceipts.length).to.be.equal(1);
     });
   });
 

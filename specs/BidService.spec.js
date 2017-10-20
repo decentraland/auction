@@ -109,7 +109,7 @@ describe("BidService", function() {
     let address, parcel, bidGroup, index;
 
     beforeEach(() => {
-      address = { address: "0xc0ffee", balance: '200' };
+      address = { address: "0xc0ffee", balance: "200" };
       parcel = { endsAt: 2, amount: 100, address: "0xdeadbeef" };
       bidGroup = {
         id: "bidgroup",

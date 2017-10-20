@@ -7,8 +7,8 @@
     "docs": "npx jsdoc -c conf.json -r src/**/*.js",
     "lint": "npx eslint .",
     "fix": "npx eslint -f .",
-    "test": "npx mocha -r babel-register -r specs/spec_utils.js specs/*.spec.js",
-    "watch:test": "npx mocha -r babel-register -r specs/spec_utils.js specs/*.spec.js --watch",
+    "test": "npx mocha -r babel-register -r specs/spec_utils.js specs/setup.js specs/*.spec.js",
+    "watch:test": "npx mocha -r babel-register -r specs/spec_utils.js specs/setup.js specs/*.spec.js --watch",
     "build": "npm run lint && npm run test",
     "start": "babel-node src/server.js"
   },

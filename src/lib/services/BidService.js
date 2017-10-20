@@ -1,5 +1,5 @@
-import {BidGroup, AddressState, ParcelState} from '../models';
-import {eth} from 'decentraland-commons';
+import { eth } from "decentraland-commons";
+import { BidGroup, AddressState, ParcelState } from "../models";
 
 const HOURS_IN_MILLIS = 60 * 60 * 1000;
 
@@ -31,7 +31,7 @@ export default class BidService {
   async insert(bidGroup) {
     if (bidGroup.id) {
       throw new Error(
-        `BidGroup seems to be inserted already, with id ${bidGroup.id}`,
+        `BidGroup seems to be inserted already, with id ${bidGroup.id}`
       );
     }
 
@@ -46,14 +46,14 @@ export default class BidService {
   async processBidGroup(bidGroup) {
     const bidGroupError = await this.getBidGroupValidationError(bidGroup);
     if (bidGroupError) {
-      return {error: bidGroupError};
+      return { error: bidGroupError };
     }
 
     const addressState = await this.AddressState.findByAddress(
-      bidGroup.address,
+      bidGroup.address
     );
     const parcelMap = await this.ParcelState.findInCoordinates(
-      bidGroup.bids.map(bid => [bid.x, bid.y]),
+      bidGroup.bids.map(bid => [bid.x, bid.y])
     );
 
     const results = [];
@@ -65,7 +65,7 @@ export default class BidService {
         addressState,
         parcelState,
         bidGroup,
-        -(-index),
+        -(-index)
       );
 
       if (newParceState.error) {
@@ -77,17 +77,17 @@ export default class BidService {
         addressState,
         parcelState,
         bidGroup,
-        bid,
+        bid
       );
 
       parcelMap[bid.x][bid.y] = newParceState;
-      await this.ParcelState.update(newParceState, {id: parcelState.id});
+      await this.ParcelState.update(newParceState, { id: parcelState.id });
 
       results.push(newParceState);
     }
 
     addressState.latestBidGroupId = bidGroup.id;
-    await this.AddressState.update(addressState, {id: addressState.id});
+    await this.AddressState.update(addressState, { id: addressState.id });
 
     return results;
   }
@@ -101,7 +101,7 @@ export default class BidService {
 
   async getBidGroupValidationError(bidGroup) {
     if (this.BidGroup.isIncomplete(bidGroup)) {
-      return 'The BidGroup seems to be invalid, it should have defined all the columns to be inserted.';
+      return "The BidGroup seems to be invalid, it should have defined all the columns to be inserted.";
     }
     if (await this.BidGroup.findOne(bidGroup.id)) {
       return `Id ${bidGroup.id} already exists in database`;
@@ -124,23 +124,21 @@ export default class BidService {
   getBidValidationError(fullAddressState, parcelState, bidGroup, index) {
     const bid = bidGroup.bids[index];
 
-    const x = getBn(bid.x)
-    const y = getBn(bid.y)
+    const x = getBn(bid.x);
+    const y = getBn(bid.y);
 
     if (x.lessThan(this.minimumX) || x.greaterThan(this.maximumX)) {
-      return `Invalid X coordinate for bid ${index} of bidGroup ${bidGroup.id}: ${bid.x} is not between ${this
-        .minimumX.toString()} and ${this.maximumX.toString()}`;
+      return `Invalid X coordinate for bid ${index} of bidGroup ${bidGroup.id}: ${bid.x} is not between ${this.minimumX.toString()} and ${this.maximumX.toString()}`;
     }
     if (y.lessThan(this.minimumY) || y.greaterThan(this.maximumY)) {
-      return `Invalid Y coordinate for bid ${index} of bidGroup ${bidGroup.id}: ${bid.y} is not between ${this
-        .minimumY.toString()} and ${this.maximumY.toString()}`;
+      return `Invalid Y coordinate for bid ${index} of bidGroup ${bidGroup.id}: ${bid.y} is not between ${this.minimumY.toString()} and ${this.maximumY.toString()}`;
     }
 
     let newBalance = this.calculateNewBalance(
       fullAddressState,
       parcelState,
       bidGroup,
-      bid,
+      bid
     );
     if (newBalance.lessThan(getBn(0))) {
       return `Insufficient balance to participate in the bid`;
@@ -149,7 +147,11 @@ export default class BidService {
       if (parcelState.endsAt < bidGroup.receivedAt) {
         return `Auction ended at ${parcelState.endsAt}`;
       }
-      if (getBn(bid.amount).lessThan(this.increment.mul(getBn(parcelState.amount)))) {
+      if (
+        getBn(bid.amount).lessThan(
+          this.increment.mul(getBn(parcelState.amount))
+        )
+      ) {
         return `Insufficient increment from ${parcelState.amount} to ${bid.amount}`;
       }
     }
@@ -160,7 +162,9 @@ export default class BidService {
     if (parcelState.address !== bidGroup.address) {
       return getBn(addressState.balance).minus(getBn(bid.amount));
     }
-    return getBn(addressState.balance).minus(getBn(bid.amount)).plus(getBn(parcelState.amount));
+    return getBn(addressState.balance)
+      .minus(getBn(bid.amount))
+      .plus(getBn(parcelState.amount));
   }
 
   getNewParcelState(fullAddressState, parcelState, bidGroup, index) {
@@ -168,10 +172,10 @@ export default class BidService {
       fullAddressState,
       parcelState,
       bidGroup,
-      index,
+      index
     );
     if (error) {
-      return {error};
+      return { error };
     }
 
     const bid = bidGroup.bids[index];
@@ -180,7 +184,7 @@ export default class BidService {
       bidGroup: bidGroup.id,
       bidIndex: index,
       address: bidGroup.address,
-      endsAt: this.extendBid(parcelState, bidGroup.receivedAt),
+      endsAt: this.extendBid(parcelState, bidGroup.receivedAt)
     };
   }
 

@@ -16,13 +16,13 @@ export default class BidReceiptService {
     };
 
     const inserted = await this.BidReceipt.insert(receipt);
-    const serverAddress = this.getServerAddress();
+    const serverPrivKey = this.getServerPrivateKey();
 
     const serverMessage = this.getServerMessage({
       ...bidGroup,
       id: inserted.id
     });
-    const serverSignature = await this.eth.sign(serverMessage, serverAddress);
+    const serverSignature = this.eth.localSign(serverMessage, serverPrivKey);
 
     await this.BidReceipt.update(
       { message: serverMessage, signature: serverSignature },
@@ -31,32 +31,28 @@ export default class BidReceiptService {
   }
 
   async verify(bidRecepit) {
-    const { address } = await this.recover(bidRecepit);
+    const pubkey = await this.recover(bidRecepit);
+    const privkey = this.getServerPrivateKey();
 
-    if (address !== this.getServerAddress()) {
+    if (pubkey === eth.privateToPublic(privkey)) {
       throw new Error("Invalid signature for message");
     }
   }
 
   async recover(bidRecepit) {
     const { message, signature } = bidRecepit;
-    const address = await this.eth.recover(message, signature);
+    const pubkey = this.eth.localRecover(message, signature);
 
-    return {
-      address,
-      message: this.eth.fromHex(message)
-    };
+    return pubkey;
   }
 
   getServerMessage(bidGroup) {
-    return this.eth.toHex(
-      `${bidGroup.id}||${bidGroup.receivedTimestamp.getTime()}||${bidGroup.message}`
-    );
+    return `${bidGroup.id}||${bidGroup.receivedTimestamp.getTime()}||${bidGroup.message}`;
   }
 
-  getServerAddress() {
-    return env.getEnv("SERVER_ADDRESS", () => {
-      throw new Error("Missing server address to sign: SERVER_ADDRESS");
+  getServerPrivateKey() {
+    return env.getEnv("SERVER_PRIVATE_KEY", () => {
+      throw new Error("Missing server address to sign: SERVER_PRIVATE_KEY");
     });
   }
 

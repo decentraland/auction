@@ -5,8 +5,6 @@ import { ParcelState, BidGroup } from "../src/lib/models";
 import { ParcelStateService } from "../src/lib/services";
 
 describe("ParcelState", function() {
-  before(() => db.connect());
-
   const parcelState = {
     x: 1,
     y: 2,

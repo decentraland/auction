@@ -4,8 +4,6 @@ import db from "../src/lib/db";
 import { BidGroup } from "../src/lib/models";
 
 describe("BidGroup", function() {
-  before(() => db.connect());
-
   describe(".insert", function() {
     it("should insert the bidGroup serializing the necessary columns", async function() {
       const bidGroup = {

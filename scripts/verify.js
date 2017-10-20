@@ -10,7 +10,7 @@ import { BidReceiptService, BidService } from "../src/lib/services";
 
 env.load();
 
-export default async function verify() {
+async function verify() {
   await initializeDatabase();
 
   const bidGroups = fileToJson("bid_groups.json");
@@ -43,3 +43,5 @@ db
   .connect()
   .then(verify)
   .catch(console.error);
+
+export default verify;

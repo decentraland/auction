@@ -4,8 +4,6 @@ import db from "../src/lib/db";
 import { AddressState, BidGroup } from "../src/lib/models";
 
 describe("AddressState", function() {
-  before(() => db.connect());
-
   const addressState = {
     address: "0xdeadbeef",
     balance: "10000000000000",
