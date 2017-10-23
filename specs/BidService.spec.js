@@ -4,6 +4,10 @@ import sinon from "sinon";
 import { BidService } from "../src/lib/services";
 
 const noop = () => undefined;
+const identity = x => x;
+
+const TIMESTAMP = 1507399991050000;
+const DATE_TIMESTAMP = new Date(TIMESTAMP);
 
 describe("BidService", function() {
   let bidService;
@@ -12,9 +16,14 @@ describe("BidService", function() {
   let ParcelState;
 
   beforeEach(() => {
-    BidGroup = { findOne: noop, getLatestByAddress: noop, isIncomplete: noop };
+    BidGroup = {
+      findOne: noop,
+      getLatestByAddress: noop,
+      isIncomplete: noop,
+      insert: identity
+    };
     AddressState = { findByAddress: noop, update: noop };
-    ParcelState = { findInCoordinates: noop, update: noop };
+    ParcelState = { hashId: identity, findInCoordinates: noop, update: noop };
 
     bidService = new BidService();
     bidService.BidGroup = BidGroup;
@@ -88,19 +97,19 @@ describe("BidService", function() {
       sinon
         .stub(BidGroup, "getLatestByAddress")
         .withArgs(address)
-        .returns({ nonce: 2, receivedTimestamp: 2 });
+        .returns({ nonce: 2, receivedAt: DATE_TIMESTAMP });
 
       const bidGroupValue = {
         id,
         nonce: 3,
-        receivedTimestamp: 1,
+        receivedAt: new Date(TIMESTAMP - 10000),
         address
       };
 
       expect(
         await bidService.getBidGroupValidationError(bidGroupValue)
       ).to.equal(
-        `Invalid timestamp for BidGroup received ${id}: latest was 2, received 1`
+        `Invalid timestamp for BidGroup received ${id}: latest was 1507399991050000, received 1507399991040000`
       );
     });
   });
@@ -110,7 +119,7 @@ describe("BidService", function() {
 
     beforeEach(() => {
       address = { address: "0xc0ffee", balance: "200" };
-      parcel = { endsAt: 2, amount: 100, address: "0xdeadbeef" };
+      parcel = { endsAt: DATE_TIMESTAMP, amount: 100, address: "0xdeadbeef" };
       bidGroup = {
         id: "bidgroup",
         bids: [
@@ -120,7 +129,7 @@ describe("BidService", function() {
             amount: 110
           }
         ],
-        receivedAt: 2
+        receivedAt: DATE_TIMESTAMP
       };
       index = 0;
     });
@@ -167,10 +176,10 @@ describe("BidService", function() {
       ).to.equal(null);
     });
     it("should reject a bid if the auction ended", () => {
-      parcel.endsAt = 1;
+      parcel.endsAt = new Date(TIMESTAMP - 5000);
       expect(
         bidService.getBidValidationError(address, parcel, bidGroup, index)
-      ).to.equal(`Auction ended at 1`);
+      ).to.equal(`Auction ended at 1507399991045000`);
     });
     it("should enforce a 10% increase minimum", () => {
       bidGroup.bids[0].amount = 101;
@@ -194,6 +203,8 @@ describe("BidService", function() {
     it("calls updates correctly", async () => {
       const id = 1;
       const address = "0xdeadbeef";
+      const endsAt = new Date(TIMESTAMP + 5000);
+      const receivedAt = DATE_TIMESTAMP;
 
       sinon
         .stub(BidGroup, "findOne")
@@ -203,41 +214,52 @@ describe("BidService", function() {
       sinon
         .stub(BidGroup, "getLatestByAddress")
         .withArgs(address)
-        .returns({ nonce: 2, timestamp: 2 });
+        .returns({ nonce: 2, receivedAt });
 
       sinon
         .stub(AddressState, "findByAddress")
         .withArgs(address)
-        .returns({ nonce: 2, timestamp: 2, balance: 200 });
+        .returns({ nonce: 2, balance: 200 });
 
       sinon
         .stub(ParcelState, "findInCoordinates")
-        .returns({ 0: { 0: { x: 0, y: 0, amount: 100, endsAt: 5 } } });
+        .returns([{ id: "0,0", x: 0, y: 0, amount: 100, endsAt }]);
 
       sinon
         .stub(ParcelState, "update")
         .returns({ x: 0, y: 0, amount: 100, address: "0xc0ffee" });
 
-      sinon.stub(AddressState, "update").returns({ nonce: 2, timestamp: 2 });
+      sinon.stub(ParcelState, "hashId").returns("0,0");
+
+      sinon.stub(AddressState, "update").returns({ nonce: 2 });
 
       const bidGroupValue = {
         id,
         nonce: 3,
-        receivedAt: 3,
-        timestamp: 3,
+        receivedAt,
         address,
         bids: [
           {
             x: 0,
             y: 0,
-            amount: 110,
-            receivedAt: 3
+            amount: 110
           }
         ]
       };
-      expect(await bidService.processBidGroup(bidGroupValue)).to.deep.equal([
-        { address, amount: 110, bidGroup: id, bidIndex: 0, endsAt: 129600003 }
-      ]);
+
+      expect(await bidService.processBidGroup(bidGroupValue)).to.deep.equal({
+        bidGroup: bidGroupValue,
+        parcelStates: [
+          {
+            id: "0,0",
+            address,
+            amount: 110,
+            bidGroup: id,
+            bidIndex: 0,
+            endsAt: new Date(TIMESTAMP + 129600000)
+          }
+        ]
+      });
     });
   });
 });

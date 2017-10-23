@@ -4,9 +4,9 @@ class OutbidNotification extends Model {
   static tableName = "outbid_notifications";
   static columnNames = ["parcelStateId", "email", "active"];
 
-  static async findActiveByParcelId(parcelId) {
-    return await this.findOne({
-      parcelId,
+  static async findActiveByParcelStateId(parcelStateId) {
+    return await this.find({
+      parcelStateId,
       active: true
     });
   }

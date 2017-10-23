@@ -1,5 +1,7 @@
-export default class ParcelStateService {
-  constructor(ParcelState) {
+import { ParcelState } from "../models";
+
+class ParcelStateService {
+  constructor() {
     this.ParcelState = ParcelState;
   }
 
@@ -14,3 +16,5 @@ export default class ParcelStateService {
     return Promise.all(inserts);
   }
 }
+
+export default ParcelStateService;

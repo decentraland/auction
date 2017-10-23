@@ -37,7 +37,7 @@ async function initParcels() {
   const { x, y, reserved, roads } = JSON.parse(parcels);
 
   console.log(`Inserting a ${x.max}x${y.max} Matrix`);
-  new ParcelStateService(ParcelState).insertMatrix(x.max, y.max);
+  new ParcelStateService().insertMatrix(x.max, y.max);
 
   await reserveProjects(reserved);
   await reserveProjects(roads);

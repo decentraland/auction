@@ -28,23 +28,13 @@ export default class BidService {
     this.gracePeriod = 36 * HOURS_IN_MILLIS;
   }
 
-  async insert(bidGroup) {
-    if (bidGroup.id) {
-      throw new Error(
-        `BidGroup seems to be inserted already, with id ${bidGroup.id}`
-      );
-    }
-
-    await this.checkValidBidGroup(bidGroup);
-
-    return await this.BidGroup.insert(bidGroup);
-  }
-
   async processBidGroup(bidGroup) {
     const bidGroupError = await this.getBidGroupValidationError(bidGroup);
     if (bidGroupError) {
       return { error: bidGroupError };
     }
+
+    bidGroup = await this.BidGroup.insert(bidGroup);
 
     const addressState = await this.AddressState.findByAddress(
       bidGroup.address
@@ -53,20 +43,21 @@ export default class BidService {
       bidGroup.bids.map(bid => [bid.x, bid.y])
     );
 
-    const results = [];
+    const parcelStates = [];
     for (let index in bidGroup.bids) {
       const bid = bidGroup.bids[index];
-      const parcelState = parcelMap[bid.x][bid.y];
+      const parcelId = this.ParcelState.hashId(bid.x, bid.y);
+      const parcelState = parcelMap.find(parcel => parcel.id === parcelId);
 
       const newParceState = this.getNewParcelState(
         addressState,
         parcelState,
         bidGroup,
-        -(-index)
+        +index
       );
 
       if (newParceState.error) {
-        results.push(newParceState);
+        parcelStates.push(newParceState);
         continue;
       }
 
@@ -75,18 +66,17 @@ export default class BidService {
         parcelState,
         bidGroup,
         bid
-      );
+      ).toString();
 
-      parcelMap[bid.x][bid.y] = newParceState;
       await this.ParcelState.update(newParceState, { id: parcelState.id });
 
-      results.push(newParceState);
+      parcelStates.push(newParceState);
     }
 
     addressState.latestBidGroupId = bidGroup.id;
     await this.AddressState.update(addressState, { id: addressState.id });
 
-    return results;
+    return { bidGroup, parcelStates };
   }
 
   async checkValidBidGroup(bidGroup) {
@@ -111,8 +101,8 @@ export default class BidService {
       if (expectedNonce !== bidGroup.nonce) {
         return `Invalid nonce for ${bidGroup.address}: stored ${latestBid.nonce}, received ${bidGroup.nonce}`;
       }
-      if (latestBid.receivedTimestamp > bidGroup.receivedTimestamp) {
-        return `Invalid timestamp for BidGroup received ${bidGroup.id}: latest was ${latestBid.receivedTimestamp}, received ${bidGroup.receivedTimestamp}`;
+      if (latestBid.receivedAt > bidGroup.receivedAt) {
+        return `Invalid timestamp for BidGroup received ${bidGroup.id}: latest was ${latestBid.receivedAt.getTime()}, received ${bidGroup.receivedAt.getTime()}`;
       }
     }
     return null;
@@ -137,12 +127,13 @@ export default class BidService {
       bidGroup,
       bid
     );
+
     if (newBalance.lessThan(getBn(0))) {
       return `Insufficient balance to participate in the bid`;
     }
     if (parcelState) {
-      if (parcelState.endsAt < bidGroup.receivedAt) {
-        return `Auction ended at ${parcelState.endsAt}`;
+      if (parcelState.endsAt && parcelState.endsAt < bidGroup.receivedAt) {
+        return `Auction ended at ${parcelState.endsAt.getTime()}`;
       }
       if (
         getBn(bid.amount).lessThan(
@@ -177,15 +168,23 @@ export default class BidService {
 
     const bid = bidGroup.bids[index];
     return {
+      id: parcelState.id,
       amount: bid.amount,
       bidGroup: bidGroup.id,
       bidIndex: index,
       address: bidGroup.address,
-      endsAt: this.extendBid(parcelState, bidGroup.receivedAt)
+      endsAt: this.extendBid(parcelState.endsAt, bidGroup.receivedAt)
     };
   }
 
-  extendBid(parcelState, lastTimestamp) {
-    return Math.max(parcelState.endsAt, lastTimestamp + this.gracePeriod);
+  extendBid(endsAt, receivedAt) {
+    endsAt = endsAt || new Date();
+    receivedAt = receivedAt || new Date();
+
+    const endsTime = endsAt.getTime();
+    const receivedTime = receivedAt.getTime() + this.gracePeriod;
+    const time = Math.max(endsTime, receivedTime);
+
+    return new Date(time);
   }
 }

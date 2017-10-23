@@ -11,7 +11,7 @@ export default class BidReceiptService {
     this.checkBidGroup(bidGroup);
 
     const receipt = {
-      receivedTimestamp: bidGroup.receivedTimestamp,
+      receivedAt: bidGroup.receivedAt,
       bidGroupId: bidGroup.id
     };
 
@@ -50,7 +50,7 @@ export default class BidReceiptService {
   }
 
   getServerMessage(bidGroup) {
-    return `${bidGroup.id}||${bidGroup.receivedTimestamp.getTime()}||${bidGroup.message}`;
+    return `${bidGroup.id}||${bidGroup.receivedAt.getTime()}||${bidGroup.message}`;
   }
 
   getServerPrivateKey() {
@@ -60,11 +60,11 @@ export default class BidReceiptService {
   }
 
   checkBidGroup(bidGroup) {
-    const required = ["id", "message", "receivedTimestamp"];
+    const required = ["id", "message", "receivedAt"];
 
     if (!required.every(prop => bidGroup[prop])) {
       throw new Error(
-        "Can't sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedTimestamp properties"
+        "Can't sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedAt properties"
       );
     }
     if (typeof bidGroup.message !== "string") {

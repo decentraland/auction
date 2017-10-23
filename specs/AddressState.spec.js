@@ -48,7 +48,7 @@ describe("AddressState", function() {
         nonce: 0,
         message: "some message",
         signature: "some signature",
-        receivedTimestamp: new Date()
+        receivedAt: new Date()
       };
 
       await BidGroup.insert(bidGroup);
@@ -88,7 +88,7 @@ describe("AddressState", function() {
         nonce: 0,
         message: "some message",
         signature: "some signature",
-        receivedTimestamp: new Date()
+        receivedAt: new Date()
       };
 
       await AddressState.insert(addressState);

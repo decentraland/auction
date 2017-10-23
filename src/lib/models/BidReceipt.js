@@ -4,7 +4,7 @@ import signedMessage from "../signedMessage";
 class BidReceipt extends Model {
   static tableName = "bid_receipts";
   static columnNames = [
-    "receivedTimestamp",
+    "receivedAt",
     "bidGroupId",
     "message",
     "signature"

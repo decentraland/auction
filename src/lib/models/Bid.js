@@ -8,7 +8,7 @@ class Bid extends Model {
     "bidGroupId",
     "bidIndex",
     "address",
-    "receivedTimestamp",
+    "receivedAt",
     "amount"
   ];
 

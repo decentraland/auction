@@ -123,17 +123,26 @@ export function getParcelStateRange(req) {
 app.post("/api/bidgroup", server.handleRequest(postBidGroup));
 
 export async function postBidGroup(req) {
-  const bidGroup = server.extractFromReq(req, "bidGroup");
-  bidGroup.receivedTimestamp = new Date();
+  const newBidGroup = server.extractFromReq(req, "bidGroup");
+  newBidGroup.receivedAt = new Date();
 
-  const bidService = new BidService();
+  const {
+    bidGroup,
+    parcelStates,
+    error
+  } = await new BidService().processBidGroup(newBidGroup);
 
-  const insertedBidGroup = await bidService.insert(bidGroup);
-  const parcelStates = await bidService.processBidGroup(bidGroup);
+  const bidParcels = parcelStates.filter(ps => !ps.error);
 
-  await new BidReceiptService().sign(insertedBidGroup);
+  if (error || bidParcels.length === 0) {
+    throw new Error(`
+      An error occurred trying to bid.
+      ${JSON.stringify(parcelStates)} ${error || ""}
+    `);
+  }
 
-  new OutbidNotificationService().notificateOutbids(parcelStates); // async
+  await new BidReceiptService().sign(bidGroup);
+  new OutbidNotificationService().notificateOutbids(bidParcels); // async
 
   return true;
 }

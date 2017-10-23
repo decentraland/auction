@@ -3,11 +3,11 @@ import { OutbidNotification, Job, ParcelState } from "../models";
 
 const TEMPLATE_NAME = "outbid";
 
-export default class OutbidNotificationService {
+class OutbidNotificationService {
   constructor(SMTPClient) {
     this.OutbidNotification = OutbidNotification;
-    this.Job = Job;
     this.ParcelState = ParcelState;
+    this.Job = Job;
     this.smpt = null;
 
     this.setSMPTClient(SMTPClient);
@@ -50,7 +50,7 @@ export default class OutbidNotificationService {
       );
     }
 
-    const notifications = await this.OutbidNotification.findActiveByParcelId(
+    const notifications = await this.OutbidNotification.findActiveByParcelStateId(
       parcelStateId
     );
 
@@ -76,3 +76,5 @@ export default class OutbidNotificationService {
     });
   }
 }
+
+export default OutbidNotificationService;

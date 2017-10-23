@@ -4,8 +4,7 @@ import chai from "chai";
 
 import { env, utils } from "decentraland-commons";
 
-chai.use(require("chai-subset"));
-chai.use(require("chai-datetime"));
+chai.use(require("chai-as-promised"));
 
 env.load({ path: "./specs/.env" });
 

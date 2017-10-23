@@ -10,7 +10,7 @@ class BidGroup extends Model {
     "nonce",
     "message",
     "signature",
-    "receivedTimestamp"
+    "receivedAt"
   ];
 
   static serialize(attributes, encoding) {
@@ -27,13 +27,13 @@ class BidGroup extends Model {
   }
 
   static deserialize(attributes, encoding) {
-    let { receivedTimestamp, bids, message, signature } = attributes;
+    let { receivedAt, bids, message, signature } = attributes;
     let bidGroup = Object.assign({}, attributes);
 
     if (typeof bidGroup.bids === "string") bidGroup.bids = JSON.parse(bids);
 
-    if (typeof receivedTimestamp === "string") {
-      bidGroup.receivedTimestamp = new Date(receivedTimestamp);
+    if (typeof receivedAt === "string") {
+      bidGroup.receivedAt = new Date(receivedAt);
     }
 
     if (message && signature) {
@@ -50,7 +50,7 @@ class BidGroup extends Model {
   }
 
   static async getLatestByAddress(address) {
-    return await this.findOne({ address }, { receivedTimestamp: "DESC" });
+    return await this.findOne({ address }, { receivedAt: "DESC" });
   }
 
   static async insert(bidGroup) {

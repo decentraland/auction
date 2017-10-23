@@ -21,7 +21,7 @@ describe("BidReceiptService", function() {
   });
 
   describe("sign", function() {
-    it("should throw if the bidGroup is missing the id, message or receivedTimestamp or if the message is not a valid string", async function() {
+    it("should throw if the bidGroup is missing the id, message or receivedAt or if the message is not a valid string", async function() {
       let errorMessages = [];
 
       const sign = async bidGroup => {
@@ -35,10 +35,10 @@ describe("BidReceiptService", function() {
       await sign({ message: "Hey there" });
       await sign({ id: 22 });
       await sign({ id: 22, message: "Hello" });
-      await sign({ id: 22, message: {}, receivedTimestamp: new Date() });
+      await sign({ id: 22, message: {}, receivedAt: new Date() });
 
       const missingProps =
-        "Can't sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedTimestamp properties";
+        "Can't sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedAt properties";
       const invalidMessage = "Can't sign an invalid bid group. Invalid message";
 
       expect(errorMessages.length).to.equal(4);
@@ -55,7 +55,7 @@ describe("BidReceiptService", function() {
       const bidGroup = {
         id: 20,
         message: "Some message",
-        receivedTimestamp: new Date(timestamp)
+        receivedAt: new Date(timestamp)
       };
 
       const bidRecepitId = 30;
@@ -70,7 +70,7 @@ describe("BidReceiptService", function() {
         .stub(BidReceipt, "insert")
         .withArgs(
           sinon.match({
-            receivedTimestamp: sinon.match.date,
+            receivedAt: sinon.match.date,
             bidGroupId: bidGroup.id
           })
         )

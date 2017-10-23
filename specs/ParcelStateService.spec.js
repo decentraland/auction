@@ -9,7 +9,9 @@ describe("ParcelStateService", function() {
 
   beforeEach(() => {
     ParcelState = { insert: () => Promise.resolve() };
-    parcelStateService = new ParcelStateService(ParcelState);
+
+    parcelStateService = new ParcelStateService();
+    parcelStateService.ParcelState = ParcelState;
   });
 
   describe("#insertMatrix", function() {
@@ -33,19 +35,15 @@ describe("ParcelStateService", function() {
       ).to.be.true;
     });
 
-    it("should skip already created parcels", function(done) {
-      sinon
-        .stub(ParcelState, "insert")
-        .returns(
-          Promise.reject(
-            'duplicate key value violates unique constraint "parcel_states_pkey"'
-          )
-        );
+    it("should skip already created parcels", function() {
+      const error =
+        'duplicate key value violates unique constraint "parcel_states_pkey"';
 
-      parcelStateService
-        .insertMatrix(1, 1)
-        .then(() => done())
-        .catch(done);
+      sinon.stub(ParcelState, "insert").returns(Promise.reject(error));
+
+      return expect(
+        parcelStateService.insertMatrix(1, 1)
+      ).not.to.be.rejectedWith(error);
     });
   });
 });
