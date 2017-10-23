@@ -82,6 +82,7 @@ export default class BidService {
 
       parcelMap[bid.x][bid.y] = newParceState;
       await this.ParcelState.update(newParceState, { id: parcelState.id });
+      // Send outbid notification here
 
       results.push(newParceState);
     }

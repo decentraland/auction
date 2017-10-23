@@ -32,7 +32,7 @@ export default class OutbidNotificationService {
     }));
   }
 
-  async parcelStateOutbid(parcelStateId) {
+  async notificateParcelOutbid(parcelStateId) {
     const parcelState = await this.ParcelState.findOne(parcelStateId);
     if (!parcelState) {
       throw new Error(
