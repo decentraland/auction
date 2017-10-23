@@ -50,11 +50,7 @@ class BidGroup extends Model {
   }
 
   static async getLatestByAddress(address) {
-    return await this.db.selectOne(
-      this.tableName,
-      { address },
-      { receivedTimestamp: "DESC" }
-    );
+    return await this.findOne({ address }, { receivedTimestamp: "DESC" });
   }
 
   static async insert(bidGroup) {

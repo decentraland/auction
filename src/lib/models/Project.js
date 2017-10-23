@@ -15,7 +15,7 @@ class Project extends Model {
   ];
 
   static findByName(name) {
-    return this.db.selectOne(this.tableName, { name });
+    return this.findOne({ name });
   }
 
   static insert(project) {

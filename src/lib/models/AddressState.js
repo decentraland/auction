@@ -6,7 +6,7 @@ class AddressState extends Model {
   static columnNames = ["address", "balance", "latestBidGroupId"];
 
   static async findByAddress(address) {
-    return this.db.selectOne("address_states", { address });
+    return this.findOne({ address });
   }
 
   static async findByAddressWithLastBidGroup(address) {

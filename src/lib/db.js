@@ -75,6 +75,15 @@ export default {
     );
 
     await this.createTable(
+      "outbid_notifications",
+      `"id" int NOT NULL DEFAULT nextval('outbid_notifications_id_seq'),
+      "parcelStateId" int NOT NULL,
+      "email" text NOT NULL,
+      "active" boolean DEFAULT TRUE,
+       unique ("parcelStateId", "email")`
+    );
+
+    await this.createTable(
       "projects",
       `"id" TEXT NOT NULL,
       "name" TEXT,
@@ -83,7 +92,8 @@ export default {
       "public" BOOLEAN NOT NULL DEFAULT true,
       "parcels" DECIMAL,
       "priority" int,
-      "disabled" BOOLEAN NOT NULL DEFAULT false`
+      "disabled" BOOLEAN NOT NULL DEFAULT false`,
+      { sequenceName: null }
     );
   }
 };

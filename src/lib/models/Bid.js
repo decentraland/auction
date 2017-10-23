@@ -13,7 +13,7 @@ class Bid extends Model {
   ];
 
   static findInBidGroup(bidGroupId, index) {
-    return this.db.selectOne(this.tableName, { bidGroupId, index });
+    return this.findOne({ bidGroupId, index });
   }
 }
 

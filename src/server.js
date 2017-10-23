@@ -6,7 +6,7 @@ import path from "path";
 import { server, env } from "decentraland-commons";
 import db from "./lib/db";
 
-import { AddressState, ParcelState } from "./lib/models";
+import { AddressState, ParcelState, OutbidNotification } from "./lib/models";
 import { BidService, BidReceiptService } from "./lib/services";
 
 env.load();
@@ -140,7 +140,14 @@ app.post(
 
 export async function postOutbidNotification(req) {
   const email = server.extractFromReq(req, "email");
-  return !!email;
+  const parcelStateId = server.extractFromReq(req, "parcelStateId");
+
+  await OutbidNotification.insert({
+    email,
+    parcelStateId
+  });
+
+  return true;
 }
 
 /**
