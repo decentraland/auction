@@ -37,10 +37,7 @@ export default class BidService {
 
     await this.checkValidBidGroup(bidGroup);
 
-    bidGroup = await this.BidGroup.insert(bidGroup);
-    this.processBidGroup(bidGroup);
-
-    return bidGroup;
+    return await this.BidGroup.insert(bidGroup);
   }
 
   async processBidGroup(bidGroup) {

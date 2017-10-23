@@ -1,17 +1,19 @@
-import { env } from "decentraland-commons";
-import { OutbidNotification, ParcelState } from "../models";
+import { env, SMTP } from "decentraland-commons";
+import { OutbidNotification, Job, ParcelState } from "../models";
 
 const TEMPLATE_NAME = "outbid";
 
 export default class OutbidNotificationService {
-  constructor(SMTP) {
+  constructor(SMTPClient) {
     this.OutbidNotification = OutbidNotification;
+    this.Job = Job;
     this.ParcelState = ParcelState;
+    this.smpt = null;
 
-    this.smpt = this.setupNewSMPTClient(SMTP);
+    this.setSMPTClient(SMTPClient);
   }
 
-  setupNewSMPTClient(SMTP) {
+  setSMPTClient(SMTPClient = SMTP) {
     const emailSender = env.getEnv("MAIL_SENDER");
     const transportOptions = {
       hostname: env.getEnv("MAIL_HOSTNAME"),
@@ -20,7 +22,7 @@ export default class OutbidNotificationService {
       password: env.getEnv("MAIL_PASS")
     };
 
-    this.smpt = new SMTP(transportOptions);
+    this.smpt = new SMTPClient(transportOptions);
 
     this.smpt.setTemplate(TEMPLATE_NAME, opts => ({
       from: `The Decentraland Team <${emailSender}>`,
@@ -30,9 +32,17 @@ export default class OutbidNotificationService {
           Visit auction.decentrlaand.org/parcels/${opts.x},${opts.y} to place a new bid!`,
       html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.</p><p>Visit auction.decentrlaand.org/parcels/${opts.x},${opts.y} to place a new bid!</p>`
     }));
+
+    return this;
   }
 
-  async notificateParcelOutbid(parcelStateId) {
+  async notificateOutbids(parcelStates) {
+    for (let parcelState of parcelStates) {
+      await this.notificateOutbid(parcelState.id);
+    }
+  }
+
+  async notificateOutbid(parcelStateId) {
     const parcelState = await this.ParcelState.findOne(parcelStateId);
     if (!parcelState) {
       throw new Error(
@@ -44,12 +54,25 @@ export default class OutbidNotificationService {
       parcelStateId
     );
 
-    for (let { email, id } of notifications) {
-      await this.smtp.sendMail({ email }, TEMPLATE_NAME, {
-        ...parcelState,
-        email
-      });
-      await this.OutbidNotification.deactivate(id);
+    for (let { id, email } of notifications) {
+      await this.Job.perform(
+        {
+          type: "outbid_notification",
+          referenceId: id,
+          data: { parcelStateId, email }
+        },
+        async () => {
+          await this.sendMail(email, parcelState);
+          await this.OutbidNotification.deactivate(id);
+        }
+      );
     }
+  }
+
+  async sendMail(email, parcelState) {
+    return await this.smtp.sendMail({ email }, TEMPLATE_NAME, {
+      ...parcelState,
+      email
+    });
   }
 }

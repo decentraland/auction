@@ -75,15 +75,6 @@ export default {
     );
 
     await this.createTable(
-      "outbid_notifications",
-      `"id" int NOT NULL DEFAULT nextval('outbid_notifications_id_seq'),
-      "parcelStateId" int NOT NULL,
-      "email" text NOT NULL,
-      "active" boolean DEFAULT TRUE,
-       unique ("parcelStateId", "email", "active")`
-    );
-
-    await this.createTable(
       "projects",
       `"id" TEXT NOT NULL,
       "name" TEXT,
@@ -94,6 +85,23 @@ export default {
       "priority" int,
       "disabled" BOOLEAN NOT NULL DEFAULT false`,
       { sequenceName: null }
+    );
+
+    await this.createTable(
+      "outbid_notifications",
+      `"id" int NOT NULL DEFAULT nextval('outbid_notifications_id_seq'),
+      "parcelStateId" int NOT NULL,
+      "email" text NOT NULL,
+      "active" boolean DEFAULT TRUE`
+    );
+
+    await this.createTable(
+      "jobs",
+      `"id" int NOT NULL DEFAULT nextval('jobs_id_seq'),
+      "type" text NOT NULL,
+      "referenceId" int NOT NULL,
+      "state" text,
+      "data" json`
     );
   }
 };

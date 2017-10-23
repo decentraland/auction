@@ -7,7 +7,11 @@ import { server, env } from "decentraland-commons";
 import db from "./lib/db";
 
 import { AddressState, ParcelState, OutbidNotification } from "./lib/models";
-import { BidService, BidReceiptService } from "./lib/services";
+import {
+  BidService,
+  BidReceiptService,
+  OutbidNotificationService
+} from "./lib/services";
 
 env.load();
 
@@ -122,8 +126,14 @@ export async function postBidGroup(req) {
   const bidGroup = server.extractFromReq(req, "bidGroup");
   bidGroup.receivedTimestamp = new Date();
 
-  const insertedBidGroup = await new BidService().insert(bidGroup);
+  const bidService = new BidService();
+
+  const insertedBidGroup = await bidService.insert(bidGroup);
+  const parcelStates = await bidService.processBidGroup(bidGroup);
+
   await new BidReceiptService().sign(insertedBidGroup);
+
+  new OutbidNotificationService().notificateOutbids(parcelStates); // async
 
   return true;
 }
@@ -143,10 +153,12 @@ export async function postOutbidNotification(req) {
   const email = server.extractFromReq(req, "email");
   const parcelStateId = server.extractFromReq(req, "parcelStateId");
 
-  await OutbidNotification.insert({
-    email,
-    parcelStateId
-  });
+  if (!await OutbidNotification.findActiveByParcelId(parcelStateId)) {
+    await OutbidNotification.insert({
+      email,
+      parcelStateId
+    });
+  }
 
   return true;
 }

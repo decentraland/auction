@@ -2,7 +2,7 @@ import { Model } from "decentraland-commons";
 
 class OutbidNotification extends Model {
   static tableName = "outbid_notifications";
-  static columnNames = ["parcelStateId", "email"];
+  static columnNames = ["parcelStateId", "email", "active"];
 
   static async findActiveByParcelId(parcelId) {
     return await this.findOne({
