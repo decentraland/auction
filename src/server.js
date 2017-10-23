@@ -130,7 +130,8 @@ export async function postBidGroup(req) {
 
 /**
  * Register to an email notification service to be notified if you're outbid
- * @param  {string} email - Email to register to the notification service
+ * @param  {string} email         - Email to register to the notification service
+ * @param  {string} parcelStateId - Parcel state to watch
  * @return {boolean}      - Wether the operation was successfull or not
  */
 app.post(

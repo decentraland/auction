@@ -80,7 +80,7 @@ export default {
       "parcelStateId" int NOT NULL,
       "email" text NOT NULL,
       "active" boolean DEFAULT TRUE,
-       unique ("parcelStateId", "email")`
+       unique ("parcelStateId", "email", "active")`
     );
 
     await this.createTable(
