@@ -129,6 +129,21 @@ export async function postBidGroup(req) {
 }
 
 /**
+ * Register to an email notification service to be notified if you're outbid
+ * @param  {string} email - Email to register to the notification service
+ * @return {boolean}      - Wether the operation was successfull or not
+ */
+app.post(
+  "/api/outbidNotification",
+  server.handleRequest(postOutbidNotification)
+);
+
+export async function postOutbidNotification(req) {
+  const email = server.extractFromReq(req, "email");
+  return !!email;
+}
+
+/**
  * Start the server
  */
 if (require.main === module) {
