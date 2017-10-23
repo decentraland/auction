@@ -10,7 +10,7 @@ chai.use(require("chai-datetime"));
 env.load({ path: "./specs/.env" });
 
 chai.Assertion.addChainableMethod("equalRow", function(expectedRow) {
-  const ommitedProps = ["receivedTimestamp", "createdAt", "updatedAt"];
+  const ommitedProps = ["createdAt", "updatedAt"];
 
   if (!expectedRow.id) {
     ommitedProps.push("id");
@@ -21,7 +21,7 @@ chai.Assertion.addChainableMethod("equalRow", function(expectedRow) {
 });
 
 chai.Assertion.addChainableMethod("equalRows", function(expectedRows) {
-  const ommitedProps = ["receivedTimestamp", "createdAt", "updatedAt"];
+  const ommitedProps = ["createdAt", "updatedAt"];
 
   if (expectedRows.every(row => !row.id)) {
     ommitedProps.push("id");

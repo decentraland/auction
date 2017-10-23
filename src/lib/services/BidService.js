@@ -6,7 +6,7 @@ const HOURS_IN_MILLIS = 60 * 60 * 1000;
 const bnCache = {};
 const getBn = number => {
   if (!bnCache[number]) {
-    bnCache[number] = new eth.toBigNumber(number);
+    bnCache[number] = new eth.utils.toBigNumber(number);
   }
   return bnCache[number];
 };

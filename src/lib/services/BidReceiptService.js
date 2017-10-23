@@ -4,7 +4,7 @@ import { BidReceipt } from "../models";
 export default class BidReceiptService {
   constructor() {
     this.BidReceipt = BidReceipt;
-    this.eth = eth;
+    this.ethUtils = eth.utils;
   }
 
   async sign(bidGroup) {
@@ -22,7 +22,10 @@ export default class BidReceiptService {
       ...bidGroup,
       id: inserted.id
     });
-    const serverSignature = this.eth.localSign(serverMessage, serverPrivKey);
+    const serverSignature = this.ethUtils.localSign(
+      serverMessage,
+      serverPrivKey
+    );
 
     await this.BidReceipt.update(
       { message: serverMessage, signature: serverSignature },
@@ -34,14 +37,14 @@ export default class BidReceiptService {
     const pubkey = await this.recover(bidRecepit);
     const privkey = this.getServerPrivateKey();
 
-    if (pubkey === eth.privateToPublic(privkey)) {
+    if (pubkey === this.ethUtils.privateToPublic(privkey)) {
       throw new Error("Invalid signature for message");
     }
   }
 
   async recover(bidRecepit) {
     const { message, signature } = bidRecepit;
-    const pubkey = this.eth.localRecover(message, signature);
+    const pubkey = this.ethUtils.localRecover(message, signature);
 
     return pubkey;
   }

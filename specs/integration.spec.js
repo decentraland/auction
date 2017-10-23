@@ -27,7 +27,8 @@ describe("server", function() {
         ],
         nonce: 0,
         message: "this-is-the-message",
-        signature: "this-is-the-signature"
+        signature: "this-is-the-signature",
+        receivedTimestamp
       };
 
       const req = {
@@ -46,7 +47,8 @@ describe("server", function() {
           {
             address: bidGroup.address,
             bidGroupId: 1,
-            bidIndex: index
+            bidIndex: index,
+            receivedTimestamp
           },
           bid
         )
@@ -56,7 +58,8 @@ describe("server", function() {
         bidGroupId: 1,
         message: `1||${receivedTimestamp.getTime()}||this-is-the-message`,
         signature:
-          "003113fbe8cc559c3f5ef9a79dddeebc86e942fafb729d0220fff12a34cdefd5||6bee34cd9665f17fdf72022ee7282a2b85517c86c3b69cbbbc3fcce378a8ab1e||28"
+          "003113fbe8cc559c3f5ef9a79dddeebc86e942fafb729d0220fff12a34cdefd5||6bee34cd9665f17fdf72022ee7282a2b85517c86c3b69cbbbc3fcce378a8ab1e||28",
+        receivedTimestamp
       };
 
       await postBidGroup(req);
@@ -69,13 +72,9 @@ describe("server", function() {
 
       expect(dbBidGroups.length).to.be.equal(1);
       expect(BidGroup.deserialize(dbBidGroup)).to.be.equalRow(bidGroup);
-      expect(dbBidGroup.receivedTimestamp).to.be.equalDate(receivedTimestamp);
 
       expect(dbBids.length).to.be.equal(2);
       expect(dbBids).to.be.equalRows(bids);
-      dbBids.forEach(bid =>
-        expect(bid.receivedTimestamp).to.equalDate(receivedTimestamp)
-      );
 
       expect(dbBidReceipts.length).to.be.equal(1);
       expect(BidReceipt.deserialize(dbBidReceipt)).to.equalRow(bidReceipt);

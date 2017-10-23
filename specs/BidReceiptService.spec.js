@@ -9,15 +9,15 @@ const identity = x => x;
 describe("BidReceiptService", function() {
   let bidRecepitService;
   let BidReceipt;
-  let eth;
+  let ethUtils;
 
   beforeEach(() => {
     BidReceipt = { insert: identity, update: identity };
-    eth = { localSign: identity, localRecover: identity };
+    ethUtils = { localSign: identity, localRecover: identity };
 
     bidRecepitService = new BidReceiptService();
     bidRecepitService.BidReceipt = BidReceipt;
-    bidRecepitService.eth = eth;
+    bidRecepitService.ethUtils = ethUtils;
   });
 
   describe("sign", function() {
@@ -77,7 +77,7 @@ describe("BidReceiptService", function() {
         .returns({ id: bidRecepitId });
 
       sinon
-        .stub(eth, "localSign")
+        .stub(ethUtils, "localSign")
         .withArgs(serverMessage, serverPrivKey)
         .returns(signature);
 
