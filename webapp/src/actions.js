@@ -1,5 +1,18 @@
 import types from "./types";
 
+// -------------------------------------------------------------------------
+// Web3
+
+export function connectWeb3(address) {
+  return {
+    type: types.connectWeb3,
+    address
+  };
+}
+
+// -------------------------------------------------------------------------
+// Parcel States
+
 export function fetchParcelStateRange(mincoords, maxcoords) {
   return {
     type: types.fetchParcelStateRange,

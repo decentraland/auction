@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.17.0",
+    "decentraland-commons": "git+ssh://git@decentraland.digital:decentraland/commons.git#release",
     "history": "^4.7.2",
     "prop-types": "^15.5.10",
     "react": "^16.0.0",

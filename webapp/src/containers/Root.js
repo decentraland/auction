@@ -8,6 +8,10 @@ import Navbar from "../components/Navbar";
 import "./Root.css";
 
 class Root extends React.Component {
+  componentWillMount() {
+    this.props.connectWeb3();
+  }
+
   render() {
     return (
       <div className="Root">
