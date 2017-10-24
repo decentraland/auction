@@ -1,6 +1,6 @@
 export default {
   fetchParcelStateRange: "Fetch parcel range",
-  setParcelStates: "Fetch parcel range",
+  setParcelStates: "Set parcels",
 
   fetchFullAddressState: "Fetch full address state",
   addBidToGroup: "Add bid to group",

@@ -1,20 +1,12 @@
 import types from "./types";
 
-function filterAction(name, handler) {
-  return (store, action) => {
-    if (action.type === name) {
-      return handler(store, action);
+export default {
+  parcelStates: (state = { parcelStates: [] }, action) => {
+    switch (action.type) {
+      case types.setParcelStates:
+        return Object.assign({}, state, { parcelStates: action.parcelStates });
+      default:
+        return state;
     }
-    return store;
-  };
-}
-
-function pick(field) {
-  return (store, action) => action[field];
-}
-
-export default function reducers() {
-  return {
-    parcelStates: filterAction(types.setParcelStates, pick("parcelStates"))
-  };
-}
+  }
+};

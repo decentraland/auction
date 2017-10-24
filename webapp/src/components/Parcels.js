@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 
 import { fetchParcelStateRange } from "../actions";
+import selectors from "../selectors";
 
 class Parcels extends React.Component {
   componentWillMount() {
@@ -9,6 +10,10 @@ class Parcels extends React.Component {
   }
 
   render() {
+    const { parcelStates } = this.props;
+
+    console.log("Got the parcels", parcelStates);
+
     return (
       <div className="container">
         <h1>Parcels</h1>
@@ -17,6 +22,11 @@ class Parcels extends React.Component {
   }
 }
 
-export default connect(() => ({}), {
-  fetchParcelStateRange
-})(Parcels);
+export default connect(
+  state => ({
+    parcelStates: selectors.getParcelStates(state)
+  }),
+  {
+    fetchParcelStateRange
+  }
+)(Parcels);
