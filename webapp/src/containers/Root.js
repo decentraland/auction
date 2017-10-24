@@ -1,6 +1,9 @@
 import React from "react";
+import { connect } from "react-redux";
 
-import Navbar from "./Navbar";
+import { connectWeb3 } from "../actions";
+
+import Navbar from "../components/Navbar";
 
 import "./Root.css";
 
@@ -15,4 +18,6 @@ class Root extends React.Component {
   }
 }
 
-export default Root;
+export default connect(() => ({}), {
+  connectWeb3
+})(Root);

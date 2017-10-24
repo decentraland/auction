@@ -3,8 +3,8 @@ import { Route } from "react-router";
 
 import locations from "./locations";
 
-import Root from "./components/Root";
-import Parcels from "./components/Parcels";
+import Root from "./containers/Root";
+import Parcels from "./containers/Parcels";
 
 export default function Routes() {
   return (
