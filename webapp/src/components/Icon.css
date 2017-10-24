@@ -1,0 +1,12 @@
+.Icon {
+  background-position: 0 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.Icon-decentraland {
+  width: 152px;
+  height: 152px;
+  background-image: url("https://decentraland.org/images/icons.svg");
+}
