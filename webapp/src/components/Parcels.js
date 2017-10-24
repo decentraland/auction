@@ -1,11 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import actions from "../actions";
+import { fetchParcelStateRange } from "../actions";
 
 class Parcels extends React.Component {
   componentWillMount() {
-    this.props.dispatch(actions.fetchParcelStateRange("0,0", "5,5"));
+    this.props.fetchParcelStateRange("0,0", "5,5");
   }
 
   render() {
@@ -17,4 +17,6 @@ class Parcels extends React.Component {
   }
 }
 
-export default connect((state, ownProps) => ({}))(Parcels);
+export default connect(() => ({}), {
+  fetchParcelStateRange
+})(Parcels);

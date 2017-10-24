@@ -3,7 +3,7 @@ import { call, takeEvery, put } from "redux-saga/effects";
 
 // import locations from "./locations";
 import types from "./types";
-import actions from "./actions";
+import * as actions from "./actions";
 import api from "./lib/api";
 
 function* rootSaga() {
@@ -16,7 +16,7 @@ function* handleParcelRangeFetched(action) {
     api.fetchParcelStateRange(mincoords, maxcoords)
   );
 
-  yield put(actions.setParcelState(parcelStates));
+  yield put(actions.setParcelStates(parcelStates));
 }
 
 export default rootSaga;
