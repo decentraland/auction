@@ -13,7 +13,7 @@ function pick(field) {
   return (store, action) => action[field];
 }
 
-export default function() {
+export default function reducers() {
   return {
     parcelStates: filterAction(types.setParcelStates, pick("parcelStates"))
   };
