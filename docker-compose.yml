@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports: 
+      - 5000:5000
+    links:
+      - postgres
+    volumes:
+      - .:/usr/src/app/
+      # don't overwrite `node_modules` or mirror dir from container
+      - /usr/src/app/node_modules
+    environment:
+      CONNECTION_STRING: postgres://magiklander@postgres:5432/auction_test
+  postgres:
+    image: postgres:latest
+    ports: 
+      - 5432:5432
+    environment:
+      POSTGRES_USER: magiklander
+      POSTGRES_DB: auction
+    volumes:
+      - ./docker/10-init.sql:/docker-entrypoint-initdb.d/10-init.sql
