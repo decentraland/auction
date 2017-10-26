@@ -62,7 +62,7 @@ describe("BidReceiptService", function() {
       const signature =
         "de2f8161b2e3d6b4c83de7b04376d37f66d89dff15f2a4ac651a644fc8dfc9c7||0460522b69a46c9c654bb581f479538e8a70682048fb14205d6f1632460b167d||27";
       const serverMessage = `30||${timestamp}||Some message`;
-      const serverPrivKey = env.getEnv("SERVER_PRIVATE_KEY");
+      const serverPrivKey = env.get("SERVER_PRIVATE_KEY");
 
       const spy = sinon.spy(BidReceipt, "update");
 

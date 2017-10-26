@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.17.0",
-    "decentraland-commons": "git+ssh://git@decentraland.digital:decentraland/commons.git#release",
+    "decentraland-commons": "git+ssh://git@github.com/decentraland/commons.git#release",
     "history": "^4.7.2",
     "prop-types": "^15.5.10",
     "react": "^16.0.0",
@@ -33,6 +33,7 @@
     "eslint-config-prettier": "^2.6.0",
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.4.0",
-    "prettier": "^1.7.4"
+    "prettier": "^1.7.4",
+    "webpack-dotenv-plugin": "^2.0.2"
   }
 }

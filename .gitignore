@@ -4,3 +4,5 @@ out
 /node_modules/
 
 /webapp/package-lock.json
+
+.env

@@ -4,7 +4,7 @@ export default {
   ...db.postgres,
 
   async connect() {
-    const CONNECTION_STRING = env.getEnv(
+    const CONNECTION_STRING = env.get(
       "CONNECTION_STRING",
       "postgres://localhost:5432/auction"
     );

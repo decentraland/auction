@@ -14,12 +14,12 @@ class OutbidNotificationService {
   }
 
   setSMPTClient(SMTPClient = SMTP) {
-    const emailSender = env.getEnv("MAIL_SENDER");
+    const emailSender = env.get("MAIL_SENDER");
     const transportOptions = {
-      hostname: env.getEnv("MAIL_HOSTNAME"),
-      port: env.getEnv("MAIL_PORT"),
-      username: env.getEnv("MAIL_USERNAME"),
-      password: env.getEnv("MAIL_PASS")
+      hostname: env.get("MAIL_HOSTNAME"),
+      port: env.get("MAIL_PORT"),
+      username: env.get("MAIL_USERNAME"),
+      password: env.get("MAIL_PASS")
     };
 
     this.smpt = new SMTPClient(transportOptions);

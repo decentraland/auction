@@ -15,7 +15,7 @@ import {
 
 env.load();
 
-const SERVER_PORT = env.getEnv("SERVER_PORT", 5000);
+const SERVER_PORT = env.get("SERVER_PORT", 5000);
 
 const app = express();
 const httpServer = http.Server(app);
@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 if (env.isProduction()) {
-  const webappPath = env.getEnv(
+  const webappPath = env.get(
     "WEBAPP_PATH",
     path.join(__dirname, "..", "webapp/build")
   );

@@ -54,7 +54,7 @@ export default class BidReceiptService {
   }
 
   getServerPrivateKey() {
-    return env.getEnv("SERVER_PRIVATE_KEY", () => {
+    return env.get("SERVER_PRIVATE_KEY", () => {
       throw new Error("Missing server address to sign: SERVER_PRIVATE_KEY");
     });
   }
