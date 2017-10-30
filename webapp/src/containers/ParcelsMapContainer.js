@@ -16,15 +16,18 @@ class ParcelsMapContainer extends React.Component {
 
     console.log("Got the parcels", parcelStates);
 
-    return <ParcelsMap position={[51.505, -0.09]} zoom={13} />;
+    return (
+      <ParcelsMap
+        x={10}
+        y={10}
+        zoom={13}
+        onClick={(...args) => console.log("MAP CLICK", args)}
+      />
+    );
   }
 }
 
 export default connect(
-  state => ({
-    parcelStates: selectors.getParcelStates(state)
-  }),
-  {
-    fetchParcelStateRange
-  }
+  state => ({ parcelStates: selectors.getParcelStates(state) }),
+  { fetchParcelStateRange }
 )(ParcelsMapContainer);
