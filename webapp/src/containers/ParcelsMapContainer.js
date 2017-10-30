@@ -13,14 +13,14 @@ class ParcelsMapContainer extends React.Component {
 
   render() {
     const { parcelStates } = this.props;
-
     console.log("Got the parcels", parcelStates);
 
     return (
       <ParcelsMap
         x={10}
         y={10}
-        zoom={13}
+        zoom={10}
+        tileSize={50}
         onClick={(...args) => console.log("MAP CLICK", args)}
       />
     );

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import L from "leaflet";
 
 import "./ParcelsMap.css";
@@ -7,6 +8,19 @@ L.Icon.Default.imagePath =
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/images/";
 
 export default class ParcelsMap extends React.Component {
+  static propTypes = {
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    zoom: PropTypes.number.isRequired,
+    tileSize: PropTypes.number.isRequired,
+    center: PropTypes.number,
+    onClick: PropTypes.func
+  };
+
+  static defaultProps = {
+    onClick: () => {}
+  };
+
   componentWillMount() {
     this.map = null;
   }
@@ -16,42 +30,39 @@ export default class ParcelsMap extends React.Component {
   }
 
   createLeafletElement(container) {
-    const { x, zoom, onClick } = this.props;
-
-    var tiles = new L.GridLayer({
-      tileSize: 128
-    });
-
-    tiles.createTile = createTile;
-
-    const center = this.getCenter();
+    const { zoom, onClick } = this.props;
 
     const map = new L.Map("map", {
-      center: center,
+      center: this.getCenter(),
       minZoom: zoom,
       maxZoom: zoom,
       zoom: zoom,
-      layers: [tiles]
+      layers: [this.getGridLayer()]
     });
 
-    map.on("click", e => {
-      const c = latLngToCartesian(e.latlng);
-
-      if (inBounds(c.x, c.y)) {
-        onClick(c.x, c.y);
-      }
+    map.on("click", event => {
+      const { x, y } = point.latLngToCartesian(event.latlng);
+      onClick(x, y);
     });
-
-    if (!isNaN(x)) {
-      L.marker(center).addTo(map);
-    }
 
     return map;
   }
 
+  getGridLayer() {
+    const { tileSize } = this.props;
+
+    const tiles = new L.GridLayer({
+      tileSize
+    });
+
+    tiles.createTile = createTile.bind(tiles);
+
+    return tiles;
+  }
+
   getCenter() {
     const { x, y } = this.props;
-    return isNaN(x) ? new L.LatLng(-0.08, 0) : cartesianToLatLng({ x, y });
+    return isNaN(x) ? new L.LatLng(0, 0) : point.cartesianToLatLng({ x, y });
   }
 
   bindMap(container) {
@@ -73,23 +84,23 @@ export default class ParcelsMap extends React.Component {
   }
 }
 
+const OFFSET = 2622;
+
 function createTile(coords) {
-  var tile = L.DomUtil.create("canvas", "leaflet-tile");
-  var ctx = tile.getContext("2d");
-  const x = coords.x - 1024;
-  const y = coords.y - 1024;
+  const tile = L.DomUtil.create("canvas", "leaflet-tile");
+  const ctx = tile.getContext("2d");
+  const x = coords.x - OFFSET;
+  const y = coords.y - OFFSET;
 
-  tile.width = tile.height = 128;
+  const size = this.getTileSize();
+  tile.width = size.x;
+  tile.height = size.y;
 
-  var color = "white";
-  var textColor = "#777";
-
-  ctx.fillStyle = color;
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, 255, 255);
-  ctx.fillStyle = textColor;
-  ctx.font = "18px sans-serif";
-  ctx.fillText(`${x},${y}`, 24, 64);
-  ctx.textAlign = "left";
+  ctx.fillStyle = "#777";
+  ctx.font = "12px Helvetica, sans-serif";
+  ctx.fillText(`${x},${y}`, 10, 30);
   ctx.strokeStyle = "#555";
   ctx.beginPath();
   ctx.moveTo(0, 0);
@@ -102,21 +113,22 @@ function createTile(coords) {
   return tile;
 }
 
-// fixme magic numbers
-function cartesianToLatLng(c) {
-  const t = 180;
-  const halfTile = 0.08;
-  return new L.LatLng(-c.y / 1024 * t - halfTile, c.x / 1024 * t + halfTile);
-}
+const point = {
+  cartesianToLatLng({ x, y }) {
+    const t = 180;
+    const halfTile = 0.08;
 
-function latLngToCartesian(ll) {
-  const t = 180;
-  const halfTile = 0; // 0.04
-  const x = Math.floor((ll.lng + halfTile) * 1024 / t);
-  const y = Math.floor((-ll.lat + halfTile) * 1024 / t);
-  return { x, y };
-}
+    const lat = -y / OFFSET * t - halfTile;
+    const lng = x / OFFSET * t + halfTile;
 
-function inBounds(x, y) {
-  return x >= -8 && x < 8 && y >= -8 && y < 8;
-}
+    return new L.LatLng(lat, lng);
+  },
+
+  latLngToCartesian({ lng, lat }) {
+    const t = 180;
+    const halfTile = 0;
+    const x = Math.floor((lng + halfTile) * OFFSET / t);
+    const y = Math.floor((-lat + halfTile) * OFFSET / t);
+    return { x, y };
+  }
+};
