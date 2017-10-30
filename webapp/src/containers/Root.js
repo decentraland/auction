@@ -3,8 +3,6 @@ import { connect } from "react-redux";
 
 import { connectWeb3 } from "../actions";
 
-import Navbar from "../components/Navbar";
-
 import "./Root.css";
 
 class Root extends React.Component {
@@ -13,12 +11,7 @@ class Root extends React.Component {
   }
 
   render() {
-    return (
-      <div className="Root">
-        <Navbar />
-        {this.props.children}
-      </div>
-    );
+    return <div className="Root">{this.props.children}</div>;
   }
 }
 

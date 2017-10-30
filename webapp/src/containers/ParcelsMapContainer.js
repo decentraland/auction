@@ -4,7 +4,9 @@ import { connect } from "react-redux";
 import { fetchParcelStateRange } from "../actions";
 import selectors from "../selectors";
 
-class Parcels extends React.Component {
+import ParcelsMap from "../components/ParcelsMap";
+
+class ParcelsMapContainer extends React.Component {
   componentWillMount() {
     this.props.fetchParcelStateRange("0,0", "5,5");
   }
@@ -14,11 +16,7 @@ class Parcels extends React.Component {
 
     console.log("Got the parcels", parcelStates);
 
-    return (
-      <div className="container">
-        <h1>Parcels</h1>
-      </div>
-    );
+    return <ParcelsMap position={[51.505, -0.09]} zoom={13} />;
   }
 }
 
@@ -29,4 +27,4 @@ export default connect(
   {
     fetchParcelStateRange
   }
-)(Parcels);
+)(ParcelsMapContainer);
