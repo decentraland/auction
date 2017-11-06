@@ -5,6 +5,7 @@ import { fetchParcelStateRange } from "../actions";
 import selectors from "../selectors";
 
 import ParcelsMap from "../components/ParcelsMap";
+import Loading from "../components/Loading";
 
 class ParcelsMapContainer extends React.Component {
   componentWillMount() {
@@ -15,15 +16,20 @@ class ParcelsMapContainer extends React.Component {
     const { parcelStates } = this.props;
     console.log("Got the parcels", parcelStates);
 
-    return (
-      <ParcelsMap
-        x={10}
-        y={10}
-        zoom={10}
-        tileSize={50}
-        onClick={(...args) => console.log("MAP CLICK", args)}
-      />
-    );
+    const View =
+      parcelStates.length === 0 ? (
+        <Loading />
+      ) : (
+        <ParcelsMap
+          x={10}
+          y={10}
+          zoom={10}
+          tileSize={50}
+          onClick={(...args) => console.log("MAP CLICK", args)}
+        />
+      );
+
+    return View;
   }
 }
 

@@ -40,8 +40,24 @@ export default class ParcelsMap extends React.Component {
       layers: [this.getGridLayer()]
     });
 
+    let marker = null;
+
     map.on("click", event => {
       const { x, y } = point.latLngToCartesian(event.latlng);
+
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      marker = L.marker(event.latlng, { opacity: 0.01 });
+      marker
+        .bindTooltip(`${x},${y}`, {
+          className: "parcel-tooltip",
+          direction: "top",
+          offset: new L.Point(-2, 10)
+        })
+        .addTo(map);
+
       onClick(x, y);
     });
 
@@ -51,11 +67,9 @@ export default class ParcelsMap extends React.Component {
   getGridLayer() {
     const { tileSize } = this.props;
 
-    const tiles = new L.GridLayer({
-      tileSize
-    });
+    const tiles = new L.GridLayer({ tileSize });
 
-    tiles.createTile = createTile.bind(tiles);
+    tiles.createTile = createTile.bind(tiles, this.map);
 
     return tiles;
   }
@@ -86,29 +100,15 @@ export default class ParcelsMap extends React.Component {
 
 const OFFSET = 2622;
 
-function createTile(coords) {
-  const tile = L.DomUtil.create("canvas", "leaflet-tile");
-  const ctx = tile.getContext("2d");
-  const x = coords.x - OFFSET;
-  const y = coords.y - OFFSET;
+function createTile(map, coords) {
+  const tile = L.DomUtil.create("div", "leaflet-tile");
 
   const size = this.getTileSize();
-  tile.width = size.x;
-  tile.height = size.y;
 
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, 255, 255);
-  ctx.fillStyle = "#777";
-  ctx.font = "12px Helvetica, sans-serif";
-  ctx.fillText(`${x},${y}`, 10, 30);
-  ctx.strokeStyle = "#555";
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(255, 0);
-  ctx.lineTo(255, 255);
-  ctx.lineTo(0, 255);
-  ctx.closePath();
-  ctx.stroke();
+  tile.style.width = size.x;
+  tile.style.height = size.y;
+  tile.style.backgroundColor = "white";
+  tile.style.border = "1px solid #CCC";
 
   return tile;
 }
