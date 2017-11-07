@@ -1,0 +1,13 @@
+.ShowMenu {
+  padding: 16px;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.05);
+  border-radius: 8px;
+  background: #FFFFFF;
+  cursor: pointer;
+  z-index: 600;
+  position: relative;
+  display: inline-block;
+}
+
+.ShowMenu .Icon-hamburger {
+}

@@ -8,5 +8,17 @@
 .Icon-decentraland {
   width: 152px;
   height: 152px;
-  background-image: url("https://decentraland.org/images/icons.svg");
+  background-image: url("../images/logo.svg");
+}
+
+.Icon-hamburger {
+  width: 16px;
+  height: 11px;
+  background-image: url("../images/hamburger.svg");
+}
+
+.Icon-laquo {
+  width: 12px;
+  height: 10px;
+  background-image: url("../images/laquo.svg");
 }

@@ -5,7 +5,7 @@ import types from "./types";
 
 export function connectWeb3(address) {
   return {
-    type: types.connectWeb3,
+    type: types.connectWeb3.REQUEST,
     address
   };
 }

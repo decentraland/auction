@@ -10,3 +10,9 @@ export default {
     }
   }
 };
+
+export const selectors = {
+  getParcelStates(state) {
+    return state["parcelStates"];
+  }
+};

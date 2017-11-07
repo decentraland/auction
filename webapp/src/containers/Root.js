@@ -11,7 +11,7 @@ class Root extends React.Component {
   }
 
   render() {
-    return <div className="Root">{this.props.children}</div>;
+    return this.props.children;
   }
 }
 

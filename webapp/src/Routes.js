@@ -1,15 +1,19 @@
 import React from "react";
-import { Route } from "react-router";
+import { Switch, Route } from "react-router";
 
 import locations from "./locations";
 
 import Root from "./containers/Root";
-import ParcelsMapContainer from "./containers/ParcelsMapContainer";
+import HomePage from "./components/HomePage";
+import ErrorPage from "./components/ErrorPage";
 
 export default function Routes() {
   return (
     <Root>
-      <Route exact path={locations.root} component={ParcelsMapContainer} />
+      <Switch>
+        <Route exact path={locations.root} component={HomePage} />
+        <Route exact path={locations.error} component={ErrorPage} />
+      </Switch>
     </Root>
   );
 }

@@ -1,0 +1,11 @@
+.HomePage {
+  height: 100%;
+  position: relative;
+}
+
+.HomePage .controls {
+  height: 100%;
+  top: 24px;
+  left: 24px;
+  position: absolute;
+}

@@ -7,7 +7,7 @@ import * as actions from "./actions";
 // import api from "./lib/api";
 
 function* rootSaga() {
-  yield takeLatest(types.connectWeb3, connectWeb3);
+  yield takeLatest(types.connectWeb3.REQUEST, connectWeb3);
   yield takeEvery(types.fetchParcelStateRange, handleParcelRangeFetched);
 }
 
@@ -15,16 +15,23 @@ function* rootSaga() {
 // Web3
 
 function* connectWeb3(action) {
-  let retries = 0;
-  let connected = yield call(async () => await eth.connect(action.address));
+  try {
+    let retries = 0;
+    let connected = yield call(async () => await eth.connect(action.address));
 
-  while (!connected && retries < 3) {
-    yield delay(1000);
-    connected = yield call(async () => await eth.connect(action.address));
-    retries += 1;
+    while (!connected && retries < 3) {
+      yield delay(1000);
+      connected = yield call(async () => await eth.connect(action.address));
+      retries += 1;
+    }
+
+    if (!connected) throw new Error("Could not connect to web3");
+
+    yield put({ type: types.connectWeb3.SUCCEDED, web3Connected: true });
+  } catch (error) {
+    console.error(error);
+    yield put({ type: types.connectWeb3.FAILED, message: error.message });
   }
-
-  if (!connected) throw new Error("Could not connect to web3");
 }
 
 // -------------------------------------------------------------------------
