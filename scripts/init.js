@@ -36,8 +36,10 @@ async function initParcels() {
   const parcels = fs.readFileSync("parcelsDescription.example.json", "utf8");
   const { x, y, reserved, roads } = JSON.parse(parcels);
 
-  console.log(`Inserting a ${x.max}x${y.max} Matrix`);
-  new ParcelStateService().insertMatrix(x.max, y.max);
+  console.log(
+    `Inserting a matrix from coords (${x.min} ${y.min}) to (${x.max} ${y.max})`
+  );
+  new ParcelStateService().insertMatrix(x.min, y.min, x.max, y.max);
 
   await reserveProjects(reserved);
   await reserveProjects(roads);
