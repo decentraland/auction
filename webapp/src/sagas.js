@@ -3,7 +3,6 @@ import { call, takeLatest, select, takeEvery, put } from "redux-saga/effects";
 import { eth } from "decentraland-commons";
 
 import types from "./types";
-import * as actions from "./actions";
 import { selectors } from "./reducers";
 import api from "./lib/api";
 import { buildCoordinate } from "./util";

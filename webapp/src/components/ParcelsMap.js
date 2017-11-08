@@ -80,7 +80,7 @@ export default class ParcelsMap extends React.Component {
 
   onMapMoveEnd = (event) => {
     let bounds = {}
-    const position = point.latLngToCartesian(ev.latlng)
+    const position = point.latLngToCartesian(event.latlng)
 
     const mapBounds = this.map.getBounds()
     const sw = mapBounds.getSouthWest()

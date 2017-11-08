@@ -18,7 +18,7 @@ class API {
   fetchParcelStates(parcels) {
     return this.request(
       "post",
-      `/api/parcelState/group`
+      `/api/parcelState/group`,
       { coordinates: parcels }
     );
   }
