@@ -8,21 +8,21 @@ class PendingConfirmationContainer extends React.Component {
     const pendingConfirmation = [
       {
         land: "1.32",
-        yourBid: "16.000 MANA",
-        currentBid: "15.000 MANA",
+        yourBid: "16000",
+        currentBid: "15000",
         timeLeft: "12 hours",
         address: "0x34…abcd"
       },
       {
         land: "14.50",
-        yourBid: "3.300 MANA",
+        yourBid: "3300",
         currentBid: "N/A",
         timeLeft: "Not started yet",
         address: ""
       },
       {
         land: "9.3",
-        yourBid: "15.000 MANA",
+        yourBid: "15000",
         currentBid: "N/A",
         timeLeft: "Not started yet",
         address: ""

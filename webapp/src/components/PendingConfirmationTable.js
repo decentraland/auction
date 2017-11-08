@@ -4,10 +4,18 @@ import PropTypes from "prop-types";
 import "./PendingConfirmationTable.css";
 
 export default class PendingConfirmationTable extends React.Component {
+  getTotalMana() {
+    const { pendingConfirmation } = this.props;
+
+    // TODO: Use BigNumber?
+    return pendingConfirmation.reduce(
+      (total, confirmation) => total + parseInt(confirmation.yourBid, 10),
+      0
+    );
+  }
+
   render() {
     const { pendingConfirmation, onConfirmBids } = this.props;
-
-    // TODO: pendingConfirmation to render data
 
     return (
       <div className="PendingConfirmationTable">
@@ -22,26 +30,18 @@ export default class PendingConfirmationTable extends React.Component {
             <div className="col-address">ADDRESS</div>
           </div>
 
-          <div className="table-row">
-            <div className="col-land">1.32</div>
-            <div className="col-your-bid">16.000 MANA</div>
-            <div className="col-current-bid">15.000 MANA</div>
-            <div className="col-time-left">12 hours</div>
-            <div className="col-address">0x34…abcd</div>
-          </div>
-
-          <div className="table-row gray">
-            <div className="col-land">14.50</div>
-            <div className="col-your-bid">3.300 MANA</div>
-            <div className="col-current-bid">N/A</div>
-            <div className="col-time-left">Not started yet</div>
-            <div className="col-address" />
-          </div>
+          {pendingConfirmation.map((confirmation, index) => (
+            <ConfirmationTableRow
+              key={index}
+              confirmation={confirmation}
+              className={index % 2 === 0 ? "gray" : ""}
+            />
+          ))}
 
           <form method="POST" action="/confirmBids" onSubmit={onConfirmBids}>
             <div className="table-row confirm-bids">
               <div className="col-land">Total</div>
-              <div className="col-your-bid">19.000 MANA</div>
+              <div className="col-your-bid">{this.getTotalMana()} MANA</div>
               <div className="col-current-bid" />
               <div className="col-time-left" />
               <div className="col-address btn btn-default">Confirm Bids</div>
@@ -57,3 +57,15 @@ PendingConfirmationTable.propTypes = {
   pendingConfirmation: PropTypes.array.isRequired,
   onConfirmBids: PropTypes.func.isRequired
 };
+
+function ConfirmationTableRow({ confirmation, className }) {
+  return (
+    <div className={`table-row ${className}`}>
+      <div className="col-land">{confirmation.land} </div>
+      <div className="col-your-bid">{confirmation.yourBid} MANA</div>
+      <div className="col-current-bid">{confirmation.currentBid} MANA</div>
+      <div className="col-time-left">{confirmation.timeLeft} </div>
+      <div className="col-address">{confirmation.address} </div>
+    </div>
+  );
+}
