@@ -15,6 +15,14 @@ class API {
     );
   }
 
+  fetchParcelStates(parcels) {
+    return this.request(
+      "post",
+      `/api/parcelState/group`
+      { coordinates: parcels }
+    );
+  }
+
   request(method, path, params) {
     let options = {
       method,
