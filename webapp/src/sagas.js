@@ -44,6 +44,7 @@ function* handleParcelFetchRequest (action) {
     const parcelStates = yield call(() =>
       api.fetchParcelStates(action.parcels)
     );
+    console.log(parcelStates)
     yield put({ type: types.fetchParcels.success, parcelStates })
   } catch (e) {
     yield put({ ...action , type: types.fetchParcels.failed })
@@ -54,7 +55,7 @@ function* handleParcelFetchRequest (action) {
 function* handleParcelRangeChange(action) {
 
   // Retrieve the current state
-  const currentState = yield select(selectors.parcelStates)
+  const currentState = yield select(selectors.getParcelStates)
   const { minX, maxX, minY, maxY } = action
 
   // For each parcel in screen, if it is not loaded, request to fetch it
@@ -65,7 +66,7 @@ function* handleParcelRangeChange(action) {
     for (let y = minY; y <= maxY; y++) {
       const coor = buildCoordinate(x, y)
       const current = currentState[coor]
-      if (!current.data && !current.loading) {
+      if (!current || (!current.data && !current.loading)) {
         parcelsToFetch.push(coor)
       }
     }

@@ -3,15 +3,21 @@ import { connect } from "react-redux";
 
 import { selectors } from "../reducers";
 import { isEmptyObject } from "../util";
-import { fetchParcelStateRange } from "../actions";
+import { parcelRangeChange } from "../actions";
 
 import ParcelsMap from "../components/ParcelsMap";
 import Loading from "../components/Loading";
 
 class ParcelsMapContainer extends React.Component {
+  constructor(...args) {
+    super(...args)
+    this.onMoveEnd = ({ bounds }) => {
+      this.props.parcelRangeChange(bounds.min.x, bounds.max.x, bounds.min.y, bounds.max.y)
+    }
+  }
+
   componentWillMount() {
-    // TODO: fetch on pan
-    // this.props.fetchParcelStateRange("0,0", "5,5");
+    this.props.parcelRangeChange(-10, 10, -10, 10)
   }
 
   render() {
@@ -31,6 +37,7 @@ class ParcelsMapContainer extends React.Component {
           bounds={[[-20.5, -20.5], [20.5, 20.5]]}
           tileSize={128}
           onClick={(...args) => console.log("MAP CLICK", args)}
+          onMoveEnd={this.onMoveEnd}
         />
       );
 
@@ -40,5 +47,5 @@ class ParcelsMapContainer extends React.Component {
 
 export default connect(
   state => ({ parcelStates: selectors.getParcelStates(state) }),
-  { fetchParcelStateRange }
+  { parcelRangeChange }
 )(ParcelsMapContainer);

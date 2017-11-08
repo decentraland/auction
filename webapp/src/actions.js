@@ -5,7 +5,7 @@ import types from "./types";
 
 export function connectWeb3(address) {
   return {
-    type: types.connectWeb3.REQUEST,
+    type: types.connectWeb3.request,
     address
   };
 }
@@ -13,17 +13,10 @@ export function connectWeb3(address) {
 // -------------------------------------------------------------------------
 // Parcel States
 
-export function fetchParcelStateRange(minX, maxX, minY, maxY) {
+export function parcelRangeChange(minX, maxX, minY, maxY) {
   return {
-    type: types.fetchParcelStateRange,
+    type: types.parcelRangeChanged,
     minX, maxX,
     minY, maxY
-  };
-}
-
-export function setParcelStates(parcelStates) {
-  return {
-    type: types.setParcelStates,
-    parcelStates
   };
 }

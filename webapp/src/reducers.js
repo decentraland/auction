@@ -1,14 +1,21 @@
 import types from "./types";
 
 export default {
-  parcelStates: (state = { parcelStates: [] }, action) => {
+  parcelStates: (state = {}, action) => {
+    let newParcelStates
     switch (action.type) {
-      case types.fetchParcels.success:
-        const newParcelStates = Object.assign({}, state.parcelStates)
-        for (let newParcel of action.parcelStates) {
-          newParcelStates[newParcel.id] = newParcel
+      case types.fetchParcels.request:
+        newParcelStates = { ...state }
+        for (let newParcel of action.parcels) {
+          newParcelStates[newParcel] = { loading: true }
         }
-        return { ...state, parcelStates: newParcelStates }
+        return newParcelStates
+      case types.fetchParcels.success:
+        newParcelStates = { ...state }
+        for (let newParcel of action.parcelStates) {
+          newParcelStates[newParcel.id] = { loading: false, data: newParcel }
+        }
+        return newParcelStates
       default:
         return state;
     }
