@@ -103,5 +103,15 @@ export default {
       "state" text,
       "data" json`
     );
+
+    await this.createTable(
+      "buy_transactions",
+      `"id" int NOT NULL DEFAULT nextval('buy_transactions_id_seq'),
+      "txId" text NOT NULL UNIQUE,
+      "address" text NOT NULL,
+      "parcelStatesIds" text[] NOT NULL,
+      "totalCost" text NOT NULL,
+      "status" text`
+    );
   }
 };

@@ -6,3 +6,4 @@ export { default as Job } from "./Job";
 export { default as OutbidNotification } from "./OutbidNotification";
 export { default as ParcelState } from "./ParcelState";
 export { default as Project } from "./Project";
+export { default as BuyTransaction } from "./BuyTransaction";
