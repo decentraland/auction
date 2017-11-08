@@ -31,7 +31,7 @@ const coordinates = {
    * @param  {string|array} coordinates
    */
   isValid(coordinate) {
-    const match = coordinate.toString().match(/^(\d+)\s*,\s*(\d+)$/);
+    const match = coordinate.toString().match(/^-?(\d+)\s*,\s*-?(\d+)$/);
     return !!match;
   }
 };

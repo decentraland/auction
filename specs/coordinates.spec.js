@@ -21,6 +21,8 @@ describe("coordinates", function() {
 
     it("should not throw if the supplied coordinates valid", function() {
       expect(() => coordinates.checkIsValid("1,2")).not.to.throw();
+      expect(() => coordinates.checkIsValid("-1,2")).not.to.throw();
+      expect(() => coordinates.checkIsValid("1,-2")).not.to.throw();
       expect(() => coordinates.checkIsValid([22, 23])).not.to.throw();
       expect(() => coordinates.checkIsValid("1,   2")).not.to.throw();
     });
