@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 
 import { selectors } from "../reducers";
+import { isEmptyObject } from "../util";
 import { fetchParcelStateRange } from "../actions";
 
 import ParcelsMap from "../components/ParcelsMap";
@@ -20,7 +21,7 @@ class ParcelsMapContainer extends React.Component {
     // TODO: x,y from URL
 
     const View =
-      parcelStates.length === 0 ? (
+      isEmptyObject(parcelStates) ? (
         <Loading />
       ) : (
         <ParcelsMap

@@ -79,8 +79,15 @@ export default class ParcelsMap extends React.Component {
   }
 
   onMapMoveEnd = (event) => {
-    const { x, y } = point.latLngToCartesian(event.latlng);
-    this.props.onMoveEnd(x, y);
+    let bounds = {}
+    const position = point.latLngToCartesian(event.latlng)
+
+    const mapBounds = this.map.getBounds()
+    const sw = mapBounds.getSouthWest()
+    bounds.min = point.latLngToCartesian(sw)
+    const ne = bounds.getNorthWest()
+    bounds.max = point.latLngToCartesian(ne)
+    this.props.onMoveEnd({ position, bounds })
   }
 
   getGridLayer() {

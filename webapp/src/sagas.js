@@ -1,14 +1,16 @@
 import { delay } from "redux-saga";
-import { call, takeLatest, takeEvery, put } from "redux-saga/effects";
+import { call, takeLatest, select, takeEvery, put } from "redux-saga/effects";
 import { eth } from "decentraland-commons";
 
 import types from "./types";
-import * as actions from "./actions";
-// import api from "./lib/api";
+import { selectors } from "./reducers";
+import api from "./lib/api";
+import { buildCoordinate } from "./util";
 
 function* rootSaga() {
-  yield takeLatest(types.connectWeb3.REQUEST, connectWeb3);
-  yield takeEvery(types.fetchParcelStateRange, handleParcelRangeFetched);
+  yield takeLatest(types.connectWeb3.request, connectWeb3);
+  yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange);
+  yield takeEvery(types.fetchParcels.request, handleParcelFetchRequest);
 }
 
 // -------------------------------------------------------------------------
@@ -27,24 +29,50 @@ function* connectWeb3(action) {
 
     if (!connected) throw new Error("Could not connect to web3");
 
-    yield put({ type: types.connectWeb3.SUCCEDED, web3Connected: true });
+    yield put({ type: types.connectWeb3.success, web3Connected: true });
   } catch (error) {
     console.error(error);
-    yield put({ type: types.connectWeb3.FAILED, message: error.message });
+    yield put({ type: types.connectWeb3.failed, message: error.message });
   }
 }
 
 // -------------------------------------------------------------------------
 // Parcel States
 
-function* handleParcelRangeFetched(action) {
-  // const { mincoords, maxcoords } = action;
-  // const parcelStates = yield call(() =>
-  //   api.fetchParcelStateRange(mincoords, maxcoords)
-  // );
-  const parcelStates = [{ x: 2, y: 3 }];
+function* handleParcelFetchRequest (action) {
+  try {
+    const parcelStates = yield call(() =>
+      api.fetchParcelStates(action.parcels)
+    );
+    yield put({ type: types.fetchParcels.success, parcelStates })
+  } catch (e) {
+    yield put({ ...action , type: types.fetchParcels.failed })
+  }
 
-  yield put(actions.setParcelStates(parcelStates));
+}
+
+function* handleParcelRangeChange(action) {
+
+  // Retrieve the current state
+  const currentState = yield select(selectors.parcelStates)
+  const { minX, maxX, minY, maxY } = action
+
+  // For each parcel in screen, if it is not loaded, request to fetch it
+  // For parcels already loaded, we don't care in here
+  // (they are updated via push on websocket)
+  const parcelsToFetch = []
+  for (let x = minX; x <= maxX; x++) {
+    for (let y = minY; y <= maxY; y++) {
+      const coor = buildCoordinate(x, y)
+      const current = currentState[coor]
+      if (!current.data && !current.loading) {
+        parcelsToFetch.push(coor)
+      }
+    }
+  }
+  if (parcelsToFetch.length) {
+    yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch })
+  }
 }
 
 export default rootSaga;

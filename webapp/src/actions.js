@@ -13,11 +13,11 @@ export function connectWeb3(address) {
 // -------------------------------------------------------------------------
 // Parcel States
 
-export function fetchParcelStateRange(mincoords, maxcoords) {
+export function fetchParcelStateRange(minX, maxX, minY, maxY) {
   return {
     type: types.fetchParcelStateRange,
-    mincoords,
-    maxcoords
+    minX, maxX,
+    minY, maxY
   };
 }
 

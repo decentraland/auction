@@ -88,8 +88,8 @@ export function getParcelState(req) {
  * @param ${array} coordinates - array of parcel state coordinates. If you need a single ParcelState, use "/api/parcelState/:id" or an array of a single element
  * @return {array}             - array of ParcelState objects
  */
-app.get(
-  "/api/parcelState/group/:coordinates",
+app.post(
+  "/api/parcelState/group",
   server.handleRequest(getParcelStateGroup)
 );
 

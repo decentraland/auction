@@ -1,12 +1,17 @@
 export default {
   connectWeb3: {
-    REQUEST: "[Request] Connect to web3 provider",
-    SUCCEDED: "[Success] Connect to web3 provider",
-    FAILED: "[Failed] Connect to web3 provider"
+    request: "[Request] Connect to web3 provider",
+    success: "[Success] Connect to web3 provider",
+    failed: "[Failed] Connect to web3 provider"
   },
 
-  fetchParcelStateRange: "Fetch parcel range",
-  setParcelStates: "Set parcels",
+  fetchParcels: {
+    request: "[Request] Fetch parcels requested",
+    success: "[Success] Parcels retrieved",
+    failed: "[Failed] Failed to fetch parcels requested"
+  },
+
+  parcelRangeChanged: "Parcel range changed",
 
   fetchFullAddressState: "Fetch full address state",
 
