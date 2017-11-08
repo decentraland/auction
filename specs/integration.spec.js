@@ -68,7 +68,7 @@ describe("server", function() {
       };
 
       await AddressState.insert(addressState);
-      await new ParcelStateService().insertMatrix(6, 6);
+      await new ParcelStateService().insertMatrix(0, 0, 6, 6);
 
       await postBidGroup(req);
 

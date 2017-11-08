@@ -18,7 +18,7 @@ describe("ParcelStateService", function() {
     it("should call the `insert` method of parcel state for each element of the matrix", async function() {
       const spy = sinon.spy(ParcelState, "insert");
 
-      await parcelStateService.insertMatrix(1, 2);
+      await parcelStateService.insertMatrix(0, 0, 1, 2);
 
       expect(spy.callCount).to.be.equal(6);
       expect(
@@ -42,7 +42,7 @@ describe("ParcelStateService", function() {
       sinon.stub(ParcelState, "insert").returns(Promise.reject(error));
 
       return expect(
-        parcelStateService.insertMatrix(1, 1)
+        parcelStateService.insertMatrix(0, 0, 1, 1)
       ).not.to.be.rejectedWith(error);
     });
   });

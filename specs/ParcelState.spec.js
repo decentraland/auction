@@ -86,16 +86,17 @@ describe("ParcelState", function() {
 
   describe(".findInCoordinates", function() {
     it("should attach an array of bid groups for the address", async function() {
-      await new ParcelStateService().insertMatrix(3, 3);
+      await new ParcelStateService().insertMatrix(-1, -1, 3, 3);
 
       const result = await ParcelState.findInCoordinates([
         "1,2",
         "3,3",
         "4,4",
-        "0,0"
+        "0,0",
+        "-1,-1"
       ]);
 
-      expect(result.length).to.be.equal(3);
+      expect(result.length).to.be.equal(4);
     });
 
     it("should throw if any coordinate is invalid", function() {
@@ -107,7 +108,7 @@ describe("ParcelState", function() {
 
   describe(".inRange", function() {
     it("should return an array of parcel states which are on the supplied range", async function() {
-      await new ParcelStateService().insertMatrix(10, 10);
+      await new ParcelStateService().insertMatrix(0, 0, 10, 10);
 
       const range = await ParcelState.inRange([2, 3], [5, 5]);
       const coordinates = range.map(ps => `${ps.x},${ps.y}`);
