@@ -12,15 +12,19 @@ function isProccessed(parcelId) {
   return false;
 }
 
+// TODO: Filter out already done bids
+// TODO: Configurable batch size
+// TODO: Review response status for mined tx
+
 //The maximum is inclusive and the minimum is inclusive
-function getRandomInt(min, max) {
+const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};
 
 // Load test parcels
-async function loadTestParcels() {
+const loadTestParcels = async () => {
   const configs = [
     {
       address: "0x1",
@@ -31,6 +35,7 @@ async function loadTestParcels() {
       count: 10
     }
   ];
+
   try {
     await ParcelState.db.query("DELETE FROM parcel_states");
 
@@ -51,70 +56,140 @@ async function loadTestParcels() {
   } catch (err) {
     log.error(err);
   }
-}
+};
+
+// tx queue management
+
+let txQueue = [];
+
+const addPendingTx = txId => {
+  log.info(`(queue) Add pending tx : ${txId}`);
+  txQueue.push(txId);
+};
+
+const delPendingTx = txId => {
+  log.info(`(queue) Del pending tx : ${txId}`);
+  txQueue.splice(txQueue.indexOf(txId), 1);
+};
+
+const isPendingTx = txId => {
+  return txQueue.indexOf(txId) > -1;
+};
+
+// event handling
+
+const printState = () => {
+  log.info(`(state) Pending transactions: ${txQueue.length}`);
+};
+
+const onNewBlock = blockHash => {
+  log.info(`(block) Found new block ${blockHash}`);
+  printState();
+
+  eth.web3.eth.getBlock(blockHash, (err, block) => {
+    if (err || !block) {
+      log.error(err);
+      return;
+    }
+
+    block.transactions.forEach(async txId => {
+      try {
+        if (isPendingTx(txId)) {
+          delPendingTx(txId);
+
+          const receipt = await eth.fetchTxReceipt(txId);
+          await BuyTransaction.update(
+            { receipt, status: receipt.status == 1 ? "completed" : "error" },
+            { txId }
+          );
+        }
+      } catch (err) {
+        log.error(err);
+      }
+    });
+  });
+};
+
+const setupWatch = () => {
+  const filter = eth.setupFilter("latest");
+
+  filter.watch((err, blockHash) => {
+    if (err) {
+      log.error(err);
+      return;
+    }
+
+    onNewBlock(blockHash);
+  });
+
+  return filter;
+};
+
+const buildBuyTXData = (address, parcels) => {
+  const X = parcels.map(parcel => parcel.x);
+  const Y = parcels.map(parcel => parcel.y);
+  const totalCost = parcels
+    .map(parcel => eth.utils.toBigNumber(parcel.amount))
+    .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0));
+
+  log.info(
+    `(${address}) ${parcels.length} bids found = total cost: ${totalCost}`
+  );
+  log.info(`(${address}) X- > ${JSON.stringify(X)}`);
+  log.info(`(${address}) Y -> ${JSON.stringify(Y)}`);
+
+  return { address, X, Y, totalCost };
+};
 
 async function main() {
   const BATCH_SIZE = 20;
 
-  // Get current bids
   try {
+    await db.connect();
     await eth.connect();
     await loadTestParcels();
 
     const contract = eth.getContract("LANDTerraformSale");
 
-    // Get all addresses with bids
+    // setup watch for mined txs
+    const eventFilter = setupWatch();
+
+    // get all addresses with bids
     const rows = await ParcelState.findAllAddresses();
     log.info(`Got ${rows.length} addresses with winning bids`);
+
     for (const row of rows) {
-      // Get winning bids by address
-      log.info(`(${row.address}) Processing bids for address`);
-      const parcels = await ParcelState.findParcelsByAddress(row.address);
-
-      // Build TX data
       const address = row.address;
-      const X = parcels.map(parcel => parcel.x);
-      const Y = parcels.map(parcel => parcel.y);
-      const totalCost = parcels
-        .map(parcel => eth.utils.toBigNumber(parcel.amount))
-        .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0));
-      const parcelStatesIds = parcels.map(parcel => parcel.id);
 
-      log.info(
-        `(${row.address}) ${parcels.length} bids found = total cost: ${totalCost}`
+      // get parcels for address
+      log.info(`(${address}) Processing bids for address`);
+      const parcels = await ParcelState.findParcelsByAddress(address);
+
+      // build TX data
+      const txData = await buildBuyTXData(address, parcels);
+
+      // broadcast transaction
+      const txId = await contract.buyMany(
+        txData.address,
+        txData.X,
+        txData.Y,
+        txData.totalCost
       );
-      log.info(`(${row.address}) X- > ${JSON.stringify(X)}`);
-      log.info(`(${row.address}) Y -> ${JSON.stringify(Y)}`);
+      addPendingTx(txId);
 
-      // TODO: Filter out already done bids
-      // TODO: Configurable batch size
-
-      // Broadcast transactions
-      const txId = await contract.buyMany(address, X, Y, totalCost);
-      console.log(txId);
-
-      // Save transaction
+      // save transaction
+      const parcelStatesIds = parcels.map(parcel => parcel.id);
       await BuyTransaction.insert({
         txId,
         address,
         parcelStatesIds,
-        totalCost,
+        totalCost: txData.totalCost,
         status: "pending"
       });
-
-      // TODO: Wait for tx to mine
-      // TODO: Save the receipt to a table
-      const receipt = await eth.fetchTxReceipt(txId);
-      console.log(receipt);
     }
-
-    process.exit(0);
   } catch (err) {
     log.info(err);
   }
 }
 
-db
-  .connect()
-  .then(main)
-  .catch(log.error);
+main();
