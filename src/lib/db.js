@@ -114,5 +114,8 @@ export default {
       "status" text NOT NULL,
       "receipt" json`
     );
+    await this.createIndex("buy_transactions", "buy_transactions_status_idx", [
+      "status"
+    ]);
   }
 };

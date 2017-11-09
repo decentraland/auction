@@ -39,11 +39,12 @@ const loadTestParcels = async () => {
   try {
     await ParcelState.db.query("DELETE FROM parcel_states");
 
+    let j = 0;
     for (const config of configs) {
       for (let i = 0; i < config.count; i++) {
         await ParcelState.insert({
-          x: getRandomInt(0, 1000),
-          y: getRandomInt(0, 1000),
+          x: j * 1000 + i,
+          y: j * 1000 + i,
           amount: String(getRandomInt(1000, 10000)),
           address: config.address,
           endsAt: new Date(),
@@ -52,6 +53,7 @@ const loadTestParcels = async () => {
           projectId: null
         });
       }
+      j++;
     }
   } catch (err) {
     log.error(err);
@@ -102,6 +104,7 @@ const onNewBlock = blockHash => {
             { receipt, status: receipt.status == 1 ? "completed" : "error" },
             { txId }
           );
+          log.info(`(tx) Saved receipt for tx : ${txId}`);
         }
       } catch (err) {
         log.error(err);
@@ -133,10 +136,10 @@ const buildBuyTXData = (address, parcels) => {
     .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0));
 
   log.info(
-    `(${address}) ${parcels.length} bids found = total cost: ${totalCost}`
+    `(proc) [${address}] ${parcels.length} bids found = total cost: ${totalCost}`
   );
-  log.info(`(${address}) X- > ${JSON.stringify(X)}`);
-  log.info(`(${address}) Y -> ${JSON.stringify(Y)}`);
+  log.info(`(proc) [${address}] X- > ${JSON.stringify(X)}`);
+  log.info(`(proc) [${address}] Y -> ${JSON.stringify(Y)}`);
 
   return { address, X, Y, totalCost };
 };
@@ -145,47 +148,68 @@ async function main() {
   const BATCH_SIZE = 20;
 
   try {
+    // init
     await db.connect();
     await eth.connect();
     await loadTestParcels();
 
     const contract = eth.getContract("LANDTerraformSale");
+    log.info(`Using LANDTerraformSale contract at address ${contract.address}`);
 
     // setup watch for mined txs
     const eventFilter = setupWatch();
 
     // get all addresses with bids
     const rows = await ParcelState.findAllAddresses();
-    log.info(`Got ${rows.length} addresses with winning bids`);
+    log.info(`(proc) Got ${rows.length} addresses with winning bids`);
 
     for (const row of rows) {
       const address = row.address;
+      if (!address) {
+        log.error(`(proc) [${address}] Empty or invalid address`);
+        continue;
+      }
+
+      log.info(`(proc) [${address}] Processing bids for address...`);
 
       // get parcels for address
-      log.info(`(${address}) Processing bids for address`);
       const parcels = await ParcelState.findParcelsByAddress(address);
 
-      // build TX data
-      const txData = await buildBuyTXData(address, parcels);
+      // get already done parcels for address
+      const doneParcels = await BuyTransaction.findProcessedParcels(address);
 
-      // broadcast transaction
-      const txId = await contract.buyMany(
-        txData.address,
-        txData.X,
-        txData.Y,
-        txData.totalCost
+      // select parcels to send
+      const sendParcels = parcels.filter(e => !doneParcels.includes(e.id));
+
+      log.info(
+        `(proc) (${address}) Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
       );
-      addPendingTx(txId);
 
-      // save transaction
-      const parcelStatesIds = parcels.map(parcel => parcel.id);
-      await BuyTransaction.insert({
-        txId,
-        address,
-        parcelStatesIds,
-        totalCost: txData.totalCost,
-        status: "pending"
-      });
+      if (sendParcels.length > 0) {
+        // build TX data
+        const txData = await buildBuyTXData(address, sendParcels);
+
+        // broadcast transaction
+        const txId = await contract.buyMany(
+          txData.address,
+          txData.X,
+          txData.Y,
+          txData.totalCost
+        );
+        addPendingTx(txId);
+        log.info(`(proc) [${address}] Broadcasted tx : ${txId}`);
+
+        // save transaction
+        const parcelStatesIds = sendParcels.map(parcel => parcel.id);
+        await BuyTransaction.insert({
+          txId,
+          address,
+          parcelStatesIds,
+          totalCost: txData.totalCost,
+          status: "pending"
+        });
+        log.info(`(proc) [${address}] Saved tx : ${txId}`);
+      }
     }
   } catch (err) {
     log.info(err);
