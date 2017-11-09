@@ -8,7 +8,8 @@ class BuyTransaction extends Model {
     "address",
     "parcelStatesIds",
     "totalCost",
-    "status"
+    "status",
+    "receipt"
   ];
 }
 

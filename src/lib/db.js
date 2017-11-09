@@ -111,7 +111,8 @@ export default {
       "address" text NOT NULL,
       "parcelStatesIds" text[] NOT NULL,
       "totalCost" text NOT NULL,
-      "status" text`
+      "status" text NOT NULL,
+      "receipt" json`
     );
   }
 };
