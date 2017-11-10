@@ -56,7 +56,7 @@ export default class ParcelsMap extends React.Component {
     return this.map;
   }
 
-  onMapClick = (event) => {
+  onMapClick = event => {
     const { x, y } = point.latLngToCartesian(event.latlng);
 
     if (this.marker) {
@@ -76,19 +76,19 @@ export default class ParcelsMap extends React.Component {
     this.marker.openTooltip();
 
     this.props.onClick(x, y);
-  }
+  };
 
-  onMapMoveEnd = (event) => {
-    let bounds = {}
-    const position = point.latLngToCartesian(event.latlng)
+  onMapMoveEnd = event => {
+    let bounds = {};
+    const position = point.latLngToCartesian(event.latlng);
 
-    const mapBounds = this.map.getBounds()
-    const sw = mapBounds.getSouthWest()
-    bounds.min = point.latLngToCartesian(sw)
-    const ne = bounds.getNorthWest()
-    bounds.max = point.latLngToCartesian(ne)
-    this.props.onMoveEnd({ position, bounds })
-  }
+    const mapBounds = this.map.getBounds();
+    const sw = mapBounds.getSouthWest();
+    bounds.min = point.latLngToCartesian(sw);
+    const ne = bounds.getNorthWest();
+    bounds.max = point.latLngToCartesian(ne);
+    this.props.onMoveEnd({ position, bounds });
+  };
 
   getGridLayer() {
     const { tileSize } = this.props;

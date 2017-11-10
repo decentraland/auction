@@ -3,12 +3,7 @@ import signedMessage from "../signedMessage";
 
 class BidReceipt extends Model {
   static tableName = "bid_receipts";
-  static columnNames = [
-    "receivedAt",
-    "bidGroupId",
-    "message",
-    "signature"
-  ];
+  static columnNames = ["receivedAt", "bidGroupId", "message", "signature"];
 
   static serialize(attributes, encoding) {
     let { message, signature } = attributes;

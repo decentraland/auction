@@ -2,20 +2,20 @@ import types from "./types";
 
 export default {
   parcelStates: (state = {}, action) => {
-    let newParcelStates
+    let newParcelStates;
     switch (action.type) {
       case types.fetchParcels.request:
-        newParcelStates = { ...state }
+        newParcelStates = { ...state };
         for (let newParcel of action.parcels) {
-          newParcelStates[newParcel] = { loading: true }
+          newParcelStates[newParcel] = { loading: true };
         }
-        return newParcelStates
+        return newParcelStates;
       case types.fetchParcels.success:
-        newParcelStates = { ...state }
+        newParcelStates = { ...state };
         for (let newParcel of action.parcelStates) {
-          newParcelStates[newParcel.id] = { loading: false, data: newParcel }
+          newParcelStates[newParcel.id] = { loading: false, data: newParcel };
         }
-        return newParcelStates
+        return newParcelStates;
       default:
         return state;
     }

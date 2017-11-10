@@ -39,40 +39,38 @@ function* connectWeb3(action) {
 // -------------------------------------------------------------------------
 // Parcel States
 
-function* handleParcelFetchRequest (action) {
+function* handleParcelFetchRequest(action) {
   try {
     const parcelStates = yield call(() =>
       api.fetchParcelStates(action.parcels)
     );
-    console.log(parcelStates)
-    yield put({ type: types.fetchParcels.success, parcelStates })
+    console.log(parcelStates);
+    yield put({ type: types.fetchParcels.success, parcelStates });
   } catch (e) {
-    yield put({ ...action , type: types.fetchParcels.failed })
+    yield put({ ...action, type: types.fetchParcels.failed });
   }
-
 }
 
 function* handleParcelRangeChange(action) {
-
   // Retrieve the current state
-  const currentState = yield select(selectors.getParcelStates)
-  const { minX, maxX, minY, maxY } = action
+  const currentState = yield select(selectors.getParcelStates);
+  const { minX, maxX, minY, maxY } = action;
 
   // For each parcel in screen, if it is not loaded, request to fetch it
   // For parcels already loaded, we don't care in here
   // (they are updated via push on websocket)
-  const parcelsToFetch = []
+  const parcelsToFetch = [];
   for (let x = minX; x <= maxX; x++) {
     for (let y = minY; y <= maxY; y++) {
-      const coor = buildCoordinate(x, y)
-      const current = currentState[coor]
+      const coor = buildCoordinate(x, y);
+      const current = currentState[coor];
       if (!current || (!current.data && !current.loading)) {
-        parcelsToFetch.push(coor)
+        parcelsToFetch.push(coor);
       }
     }
   }
   if (parcelsToFetch.length) {
-    yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch })
+    yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch });
   }
 }
 

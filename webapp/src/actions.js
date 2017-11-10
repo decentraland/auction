@@ -16,7 +16,9 @@ export function connectWeb3(address) {
 export function parcelRangeChange(minX, maxX, minY, maxY) {
   return {
     type: types.parcelRangeChanged,
-    minX, maxX,
-    minY, maxY
+    minX,
+    maxX,
+    minY,
+    maxY
   };
 }
