@@ -1,6 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 
+import { selectors } from "../reducers";
+
 import ShowMenu from "../components/ShowMenu";
 import Menu from "../components/Menu";
 
@@ -50,12 +52,13 @@ class MenuContainer extends React.Component {
         address: "0x123...abcd"
       }
     ];
+    const { manaBalance } = this.props;
 
     return [
       <ShowMenu key="1" onShow={() => this.changeMenuVisibility(true)} />,
       <Menu
         key="2"
-        mana="234,123"
+        manaBalance={manaBalance}
         visible={menuVisible}
         outgoingAuctions={outgoingAuctions}
         onHide={() => this.changeMenuVisibility(false)}
@@ -64,4 +67,7 @@ class MenuContainer extends React.Component {
   }
 }
 
-export default connect(state => () => ({}), {})(MenuContainer);
+export default connect(
+  state => ({ manaBalance: selectors.getManaBalance(state) }),
+  {}
+)(MenuContainer);

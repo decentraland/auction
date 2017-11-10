@@ -1,18 +1,35 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import Loading from "./Loading";
 import Icon from "./Icon";
 
 import "./Menu.css";
 
 export default class Menu extends React.Component {
+  static propTypes = {
+    visible: PropTypes.bool,
+    manaBalance: PropTypes.shape({
+      loading: PropTypes.bool,
+      data: PropTypes.number,
+      error: PropTypes.string
+    }).isRequired,
+    onHide: PropTypes.func.isRequired,
+    outgoingAuctions: PropTypes.array
+  };
+
+  static defaultProps = {
+    visible: false,
+    outgoingAuctions: []
+  };
+
   getClassName() {
     const visibleClass = this.props.visible ? "in" : "";
     return `Menu ${visibleClass}`;
   }
 
   render() {
-    const { mana, onHide, outgoingAuctions } = this.props;
+    const { manaBalance, onHide, outgoingAuctions } = this.props;
 
     return (
       <div className={this.getClassName()}>
@@ -27,7 +44,11 @@ export default class Menu extends React.Component {
 
         <div className="your-balance">
           <h2>Your Balance</h2>
-          <div className="mana-value">{mana} MANA</div>
+          {manaBalance.loading ? (
+            <Loading />
+          ) : (
+            <div className="mana-value">{manaBalance.data} MANA</div>
+          )}
         </div>
 
         <div className="ongoing-auctions">
@@ -54,18 +75,6 @@ export default class Menu extends React.Component {
     );
   }
 }
-
-Menu.propTypes = {
-  visible: PropTypes.bool,
-  mana: PropTypes.string.isRequired,
-  onHide: PropTypes.func.isRequired,
-  outgoingAuctions: PropTypes.array
-};
-
-Menu.defaultProps = {
-  visible: false,
-  outgoingAuctions: []
-};
 
 function AuctionTableRow({ auction, className = "" }) {
   const statusClass = auction.status.toLowerCase();

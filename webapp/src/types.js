@@ -1,8 +1,14 @@
 export default {
   connectWeb3: {
-    request: "[Request] Connect to web3 provider",
-    success: "[Success] Connect to web3 provider",
-    failed: "[Failed] Connect to web3 provider"
+    request: "[Request] Connect to web3 provider requested",
+    success: "[Success] Connected to web3",
+    failed: "[Failed] Failed to connect to web3 provider"
+  },
+
+  fetchManaBalance: {
+    request: "[Request] Fetch MANA balance request",
+    success: "[Success] MANA balance fetched",
+    failed: "[Failed] Failed to fetch MANA balance"
   },
 
   fetchParcels: {

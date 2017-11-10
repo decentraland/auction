@@ -6,24 +6,20 @@ import { isEmptyObject } from "../util";
 import { parcelRangeChange } from "../actions";
 
 import ParcelsMap from "../components/ParcelsMap";
-import Loading from "../components/Loading";
 
 class ParcelsMapContainer extends React.Component {
-  constructor(...args) {
-    super(...args);
-    this.onMoveEnd = ({ bounds }) => {
-      this.props.parcelRangeChange(
-        bounds.min.x,
-        bounds.max.x,
-        bounds.min.y,
-        bounds.max.y
-      );
-    };
-  }
-
   componentWillMount() {
     this.props.parcelRangeChange(-10, 10, -10, 10);
   }
+
+  onMoveEnd = ({ bounds }) => {
+    this.props.parcelRangeChange(
+      bounds.min.x,
+      bounds.max.x,
+      bounds.min.y,
+      bounds.max.y
+    );
+  };
 
   render() {
     const { parcelStates } = this.props;
@@ -31,9 +27,7 @@ class ParcelsMapContainer extends React.Component {
     console.log("Got the parcels", parcelStates);
     // TODO: x,y from URL
 
-    const View = isEmptyObject(parcelStates) ? (
-      <Loading />
-    ) : (
+    const View = isEmptyObject(parcelStates) ? null : (
       <ParcelsMap
         x={0}
         y={0}

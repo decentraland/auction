@@ -3,7 +3,7 @@ import axios from "axios";
 import { env } from "decentraland-commons";
 
 const httpClient = axios.create();
-const URL = env.get("REACT_APP_API_URL");
+const URL = env.get("REACT_APP_API_URL", "");
 
 class API {
   fetchParcelStateRange(mincoords, maxcoords) {

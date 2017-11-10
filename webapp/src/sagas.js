@@ -1,5 +1,13 @@
 import { delay } from "redux-saga";
-import { call, takeLatest, select, takeEvery, put } from "redux-saga/effects";
+import {
+  fork,
+  call,
+  takeLatest,
+  select,
+  takeEvery,
+  put
+} from "redux-saga/effects";
+
 import { eth } from "decentraland-commons";
 
 import types from "./types";
@@ -11,12 +19,17 @@ function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3);
   yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange);
   yield takeEvery(types.fetchParcels.request, handleParcelFetchRequest);
+
+  yield takeLatest(types.connectWeb3.success, handleManaBalanceFetch);
+  yield takeEvery(types.fetchManaBalance.request, handleManaBalanceFetch);
+
+  yield fork(connectWeb3);
 }
 
 // -------------------------------------------------------------------------
 // Web3
 
-function* connectWeb3(action) {
+function* connectWeb3(action = {}) {
   try {
     let retries = 0;
     let connected = yield call(async () => await eth.connect(action.address));
@@ -31,7 +44,6 @@ function* connectWeb3(action) {
 
     yield put({ type: types.connectWeb3.success, web3Connected: true });
   } catch (error) {
-    console.error(error);
     yield put({ type: types.connectWeb3.failed, message: error.message });
   }
 }
@@ -44,10 +56,9 @@ function* handleParcelFetchRequest(action) {
     const parcelStates = yield call(() =>
       api.fetchParcelStates(action.parcels)
     );
-    console.log(parcelStates);
     yield put({ type: types.fetchParcels.success, parcelStates });
-  } catch (e) {
-    yield put({ ...action, type: types.fetchParcels.failed });
+  } catch (error) {
+    yield put({ type: types.fetchParcels.failed, error: error.message });
   }
 }
 
@@ -69,8 +80,33 @@ function* handleParcelRangeChange(action) {
       }
     }
   }
+
   if (parcelsToFetch.length) {
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch });
+  }
+}
+
+// -------------------------------------------------------------------------
+// MANA balance
+
+function* handleManaBalanceFetch(action) {
+  try {
+    const ethereum = yield select(selectors.getEthereum);
+
+    if (!ethereum.success) {
+      throw new Error(
+        "Tried to get the MANA balance without connecting to ethereum first"
+      );
+    }
+
+    const address = eth.getAddress();
+    const manaBalance = yield call(() =>
+      eth.getContract("MANAToken").getBalance(address)
+    );
+
+    yield put({ type: types.fetchManaBalance.success, manaBalance });
+  } catch (error) {
+    yield put({ type: types.fetchManaBalance.failed, error: error.message });
   }
 }
 
