@@ -8,13 +8,7 @@ const log = new Log("[LoadBids]");
 
 env.load();
 
-function isProccessed(parcelId) {
-  return false;
-}
-
-// TODO: Filter out already done bids
 // TODO: Configurable batch size
-// TODO: Review response status for mined tx
 
 //The maximum is inclusive and the minimum is inclusive
 const getRandomInt = (min, max) => {
@@ -24,7 +18,7 @@ const getRandomInt = (min, max) => {
 };
 
 // Load test parcels
-const loadTestParcels = async () => {
+const initTestParcels = async () => {
   const configs = [
     {
       address: "0x1",
@@ -62,21 +56,31 @@ const loadTestParcels = async () => {
 
 // tx queue management
 
-let txQueue = [];
+class TxQueue {
+  constructor() {
+    this.queue = [];
+  }
 
-const addPendingTx = txId => {
-  log.info(`(queue) Add pending tx : ${txId}`);
-  txQueue.push(txId);
-};
+  addPendingTx(txId) {
+    log.info(`(queue) Add pending tx : ${txId}`);
+    this.queue.push(txId);
+  }
 
-const delPendingTx = txId => {
-  log.info(`(queue) Del pending tx : ${txId}`);
-  txQueue.splice(txQueue.indexOf(txId), 1);
-};
+  delPendingTx(txId) {
+    log.info(`(queue) Del pending tx : ${txId}`);
+    this.queue.splice(this.queue.indexOf(txId), 1);
+  }
 
-const isPendingTx = txId => {
-  return txQueue.indexOf(txId) > -1;
-};
+  isPendingTx(txId) {
+    return this.queue.indexOf(txId) > -1;
+  }
+
+  get length() {
+    return this.queue.length;
+  }
+}
+
+const txQueue = new TxQueue();
 
 // event handling
 
@@ -96,8 +100,8 @@ const onNewBlock = blockHash => {
 
     block.transactions.forEach(async txId => {
       try {
-        if (isPendingTx(txId)) {
-          delPendingTx(txId);
+        if (txQueue.isPendingTx(txId)) {
+          txQueue.delPendingTx(txId);
 
           const receipt = await eth.fetchTxReceipt(txId);
           await BuyTransaction.update(
@@ -113,8 +117,8 @@ const onNewBlock = blockHash => {
   });
 };
 
-const setupWatch = () => {
-  const filter = eth.setupFilter("latest");
+const setupWatch = options => {
+  const filter = eth.setupFilter(options);
 
   filter.watch((err, blockHash) => {
     if (err) {
@@ -128,7 +132,7 @@ const setupWatch = () => {
   return filter;
 };
 
-const buildBuyTXData = (address, parcels) => {
+const buildBuyTxData = (address, parcels) => {
   const X = parcels.map(parcel => parcel.x);
   const Y = parcels.map(parcel => parcel.y);
   const totalCost = parcels
@@ -144,6 +148,87 @@ const buildBuyTXData = (address, parcels) => {
   return { address, X, Y, totalCost };
 };
 
+const loadParcelsForAddress = async (contract, address) => {
+  if (!address) {
+    log.error(`(proc) [${address}] Empty or invalid address`);
+    return;
+  }
+
+  log.info(`(proc) [${address}] Processing bids for address...`);
+
+  try {
+    // get parcels for address
+    const parcels = await ParcelState.findParcelsByAddress(address);
+
+    // get already done parcels for address
+    const doneParcels = await BuyTransaction.findProcessedParcels(address);
+
+    // select parcels to send
+    const sendParcels = parcels.filter(e => !doneParcels.includes(e.id));
+
+    log.info(
+      `(proc) (${address}) Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
+    );
+
+    if (sendParcels.length > 0) {
+      // build TX data
+      const txData = await buildBuyTxData(address, sendParcels);
+
+      // broadcast transaction
+      const txId = await contract.buyMany(
+        txData.address,
+        txData.X,
+        txData.Y,
+        txData.totalCost
+      );
+      txQueue.addPendingTx(txId);
+      log.info(`(proc) [${address}] Broadcasted tx : ${txId}`);
+
+      // save transaction
+      const parcelStatesIds = sendParcels.map(parcel => parcel.id);
+      await BuyTransaction.insert({
+        txId,
+        address,
+        parcelStatesIds,
+        totalCost: txData.totalCost,
+        status: "pending"
+      });
+      log.info(`(proc) [${address}] Saved tx : ${txId}`);
+    }
+  } catch (err) {
+    log.info(err);
+  }
+};
+
+const verifyPendingTxs = async () => {
+  try {
+    // setup watch for mined txs
+    const eventFilter = setupWatch("latest");
+
+    const pendingTxIds = await BuyTransaction.findAllPendingTxIds();
+    pendingTxIds.map(e => txQueue.addPendingTx(e));
+  } catch (err) {
+    log.error(err);
+  }
+};
+
+const loadAllParcels = async contract => {
+  try {
+    // setup watch for mined txs
+    const eventFilter = setupWatch("latest");
+
+    // get all addresses with bids
+    const rows = await ParcelState.findAllAddresses();
+    log.info(`(proc) Got ${rows.length} addresses with winning bids`);
+
+    for (const row of rows) {
+      await loadParcelsForAddress(contract, row.address);
+    }
+  } catch (err) {
+    log.error(err);
+  }
+};
+
 async function main() {
   const BATCH_SIZE = 20;
 
@@ -151,66 +236,13 @@ async function main() {
     // init
     await db.connect();
     await eth.connect();
-    await loadTestParcels();
+    await initTestParcels();
 
     const contract = eth.getContract("LANDTerraformSale");
     log.info(`Using LANDTerraformSale contract at address ${contract.address}`);
 
-    // setup watch for mined txs
-    const eventFilter = setupWatch();
-
-    // get all addresses with bids
-    const rows = await ParcelState.findAllAddresses();
-    log.info(`(proc) Got ${rows.length} addresses with winning bids`);
-
-    for (const row of rows) {
-      const address = row.address;
-      if (!address) {
-        log.error(`(proc) [${address}] Empty or invalid address`);
-        continue;
-      }
-
-      log.info(`(proc) [${address}] Processing bids for address...`);
-
-      // get parcels for address
-      const parcels = await ParcelState.findParcelsByAddress(address);
-
-      // get already done parcels for address
-      const doneParcels = await BuyTransaction.findProcessedParcels(address);
-
-      // select parcels to send
-      const sendParcels = parcels.filter(e => !doneParcels.includes(e.id));
-
-      log.info(
-        `(proc) (${address}) Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
-      );
-
-      if (sendParcels.length > 0) {
-        // build TX data
-        const txData = await buildBuyTXData(address, sendParcels);
-
-        // broadcast transaction
-        const txId = await contract.buyMany(
-          txData.address,
-          txData.X,
-          txData.Y,
-          txData.totalCost
-        );
-        addPendingTx(txId);
-        log.info(`(proc) [${address}] Broadcasted tx : ${txId}`);
-
-        // save transaction
-        const parcelStatesIds = sendParcels.map(parcel => parcel.id);
-        await BuyTransaction.insert({
-          txId,
-          address,
-          parcelStatesIds,
-          totalCost: txData.totalCost,
-          status: "pending"
-        });
-        log.info(`(proc) [${address}] Saved tx : ${txId}`);
-      }
-    }
+    await loadAllParcels(contract);
+    // await verifyPendingTxs(0);
   } catch (err) {
     log.info(err);
   }
