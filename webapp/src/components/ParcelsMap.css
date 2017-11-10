@@ -7,3 +7,10 @@
 .leaflet-tile {
   transform: translateZ(0);
 }
+
+.leaflet-coordinates {
+  font-size: 16px;
+  top: 40%;
+  left: 40%;
+  position: relative;
+}

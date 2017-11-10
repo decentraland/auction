@@ -128,11 +128,17 @@ const OFFSET = 1024;
 function createTile(coords) {
   const tile = L.DomUtil.create("div", "leaflet-tile");
   const size = this.getTileSize();
+  const x = coords.x - OFFSET;
+  const y = coords.y - OFFSET;
 
   tile.style.width = size.x;
   tile.style.height = size.y;
   tile.style.backgroundColor = "#EAEAEA";
   tile.style.border = "1px solid #FFF";
+
+  const coordinates = L.DomUtil.create("div", "leaflet-coordinates");
+  coordinates.innerHTML = `${x},${y}`;
+  tile.appendChild(coordinates)
 
   return tile;
 }
