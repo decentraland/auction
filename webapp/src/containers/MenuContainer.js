@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import addHours from "date-fns/add_hours";
 
 import { selectors } from "../reducers";
 
@@ -27,29 +28,29 @@ class MenuContainer extends React.Component {
         land: "1.32",
         status: "Outbid",
         amount: "15.000 MANA",
-        timeLeft: "24 hours",
-        address: "0x34…abcd"
+        endsAt: addHours(new Date(), 23),
+        address: "0x8f649FE750340A295dDdbBd7e1EC8f378cF24b42"
       },
       {
         land: "14.50",
         status: "Won",
         amount: "3.300 MANA",
-        timeLeft: "Finished",
+        endsAt: addHours(new Date(), -2),
         address: ""
       },
       {
         land: "9.3",
         status: "Winning",
         amount: "15.000 MANA",
-        timeLeft: "12 hours",
+        endsAt: addHours(new Date(), 12),
         address: ""
       },
       {
         land: "46.3",
         status: "Lost",
         amount: "3.926 MANA",
-        timeLeft: "Finished",
-        address: "0x123...abcd"
+        endsAt: addHours(new Date(), -5),
+        address: "0x8f649FE750340A295dDdbBd7e1EC8f378cF24b42"
       }
     ];
     const { manaBalance } = this.props;

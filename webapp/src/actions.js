@@ -22,3 +22,28 @@ export function parcelRangeChange(minX, maxX, minY, maxY) {
     maxY
   };
 }
+
+export function clickParcel(x, y) {
+  return {
+    type: types.clickParcel,
+    x,
+    y
+  };
+}
+
+// -------------------------------------------------------------------------
+// Modal
+
+export function openModal(name, data) {
+  return {
+    type: types.modal.open,
+    name,
+    data
+  };
+}
+
+export function closeModal() {
+  return {
+    type: types.modal.close
+  };
+}

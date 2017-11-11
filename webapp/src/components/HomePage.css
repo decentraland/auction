@@ -5,7 +5,8 @@
 
 .HomePage .controls {
   height: 100%;
-  top: 24px;
+  padding-top: 24px;
+  top: 0;
   left: 24px;
   position: absolute;
 }

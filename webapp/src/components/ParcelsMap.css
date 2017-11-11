@@ -5,6 +5,8 @@
 }
 
 .leaflet-tile {
+  border: 1px solid #FFF;
+  background-color: #EAEAEA;
   transform: translateZ(0);
 }
 
@@ -13,4 +15,8 @@
   top: 40%;
   left: 40%;
   position: relative;
+}
+
+.leaflet-popup .leaflet-popup-content-wrapper {
+  border-radius: 0;
 }

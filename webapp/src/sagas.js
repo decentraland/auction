@@ -17,8 +17,14 @@ import { buildCoordinate } from "./util";
 
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3);
+
   yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange);
   yield takeEvery(types.fetchParcels.request, handleParcelFetchRequest);
+
+  yield takeEvery(
+    types.fetchFullAddressState.request,
+    handleFullAddressFetchRequest
+  );
 
   yield takeLatest(types.connectWeb3.success, handleManaBalanceFetch);
   yield takeEvery(types.fetchManaBalance.request, handleManaBalanceFetch);
@@ -45,6 +51,29 @@ function* connectWeb3(action = {}) {
     yield put({ type: types.connectWeb3.success, web3Connected: true });
   } catch (error) {
     yield put({ type: types.connectWeb3.failed, message: error.message });
+  }
+}
+
+// -------------------------------------------------------------------------
+// Address States
+
+function* handleFullAddressFetchRequest(action) {
+  try {
+    if (!eth.getAddress) {
+      throw new Error(
+        "Tried to fetch the full address state without an address. Connect to Ethereum first."
+      );
+    }
+
+    const addressState = yield call(() =>
+      api.fetchFullAddressState(eth.getAddress())
+    );
+    yield put({ type: types.fetchFullAddressState.success, addressState });
+  } catch (error) {
+    yield put({
+      type: types.fetchFullAddressState.failed,
+      error: error.message
+    });
   }
 }
 

@@ -1,6 +1,11 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import L from "leaflet";
+import addHours from "date-fns/add_hours";
+
+import distanceInWordsToNow from "../lib/distanceInWordsToNow";
+import LeafletMapCoordinates from "../lib/LeafletMapCoordinates";
 
 import "./ParcelsMap.css";
 
@@ -16,20 +21,21 @@ export default class ParcelsMap extends React.Component {
     bounds: PropTypes.arrayOf(PropTypes.array),
     zoom: PropTypes.number.isRequired,
     tileSize: PropTypes.number.isRequired,
-    center: PropTypes.number,
-    onClick: PropTypes.func,
-    onMoveEnd: PropTypes.func
+    onParcelClick: PropTypes.func,
+    onMoveEnd: PropTypes.func,
+    onParcelBid: PropTypes.func
   };
 
   static defaultProps = {
     bounds: [],
-    onClick: () => {},
-    onMoveEnd: () => {}
+    onParcelClick: () => {},
+    onMoveEnd: () => {},
+    onParcelBid: () => {}
   };
 
   componentWillMount() {
     this.map = null;
-    this.marker = null;
+    this.mapCoordinates = new LeafletMapCoordinates(this.props.zoom);
   }
 
   componentWillUnmount() {
@@ -48,7 +54,7 @@ export default class ParcelsMap extends React.Component {
     });
 
     this.map.zoomControl.setPosition("topright");
-    this.map.setMaxBounds(point.toLatLngBounds(bounds));
+    this.map.setMaxBounds(this.mapCoordinates.toLatLngBounds(bounds));
 
     this.map.on("click", this.onMapClick);
     this.map.on("onmoveend", this.onMapMoveEnd);
@@ -57,51 +63,77 @@ export default class ParcelsMap extends React.Component {
   }
 
   onMapClick = event => {
-    const { x, y } = point.latLngToCartesian(event.latlng);
+    const { x, y } = this.mapCoordinates.latLngToCartesian(event.latlng);
 
     if (this.marker) {
       this.map.removeLayer(this.marker);
     }
 
-    this.marker = L.marker(event.latlng, { opacity: 0.01 });
+    this.addPopup(event.latlng, {
+      x,
+      y,
+      address: "0xdeadbeef22",
+      amount: "1800",
+      endsAt: addHours(new Date(), 2)
+    });
 
-    this.marker
-      .bindTooltip(`${x},${y}`, {
-        className: "parcel-tooltip",
-        direction: "top",
-        offset: new L.Point(-2, 10)
-      })
-      .addTo(this.map);
-
-    this.marker.openTooltip();
-
-    this.props.onClick(x, y);
+    this.props.onParcelClick(x, y);
   };
 
   onMapMoveEnd = event => {
-    let bounds = {};
-    const position = point.latLngToCartesian(event.latlng);
-
+    const bounds = { min: {}, max: {} };
+    const position = this.mapCoordinates.latLngToCartesian(event.latlng);
     const mapBounds = this.map.getBounds();
+
     const sw = mapBounds.getSouthWest();
-    bounds.min = point.latLngToCartesian(sw);
     const ne = bounds.getNorthWest();
-    bounds.max = point.latLngToCartesian(ne);
+    bounds.min = this.mapCoordinates.latLngToCartesian(sw);
+    bounds.max = this.mapCoordinates.latLngToCartesian(ne);
+
     this.props.onMoveEnd({ position, bounds });
   };
+
+  addPopup(latlng, parcel) {
+    const leafletPopup = L.popup({
+      className: "parcel-popup",
+      direction: "top"
+    });
+
+    const popup = renderToDOM(
+      <ParcelPopup
+        parcel={parcel}
+        onBid={parcel => {
+          this.onParcelBid(parcel);
+          leafletPopup.remove();
+        }}
+      />
+    );
+
+    leafletPopup
+      .setLatLng(latlng)
+      .setContent(popup)
+      .addTo(this.map);
+  }
+
+  onParcelBid(parcel, leafletPopup) {
+    this.props.onParcelBid(parcel);
+  }
 
   getGridLayer() {
     const { tileSize } = this.props;
     const tiles = new L.GridLayer({ tileSize });
 
-    tiles.createTile = createTile.bind(tiles);
+    tiles.createTile = coords => this.createTile(coords, tileSize);
 
     return tiles;
   }
 
   getCenter() {
     const { x, y } = this.props;
-    return isNaN(x) ? new L.LatLng(0, 0) : point.cartesianToLatLng({ x, y });
+
+    return isNaN(x)
+      ? new L.LatLng(0, 0)
+      : this.mapCoordinates.cartesianToLatLng({ x, y });
   }
 
   bindMap(container) {
@@ -118,56 +150,44 @@ export default class ParcelsMap extends React.Component {
     }
   }
 
+  createTile(coords, size) {
+    const { x, y } = this.mapCoordinates.coordsToCartesian(coords);
+    return renderToDOM(<Tile x={x} y={y} width={size} height={size} />);
+  }
+
   render() {
     return <div id={MAP_ID} ref={this.bindMap.bind(this)} />;
   }
 }
 
-const OFFSET = 1024;
-
-function createTile(coords) {
-  const tile = L.DomUtil.create("div", "leaflet-tile");
-  const size = this.getTileSize();
-  const x = coords.x - OFFSET;
-  const y = coords.y - OFFSET;
-
-  tile.style.width = size.x;
-  tile.style.height = size.y;
-  tile.style.backgroundColor = "#EAEAEA";
-  tile.style.border = "1px solid #FFF";
-
-  const coordinates = L.DomUtil.create("div", "leaflet-coordinates");
-  coordinates.innerHTML = `${x},${y}`;
-  tile.appendChild(coordinates)
-
-  return tile;
+function ParcelPopup({ parcel, onBid }) {
+  return (
+    <div>
+      <div>{parcel.address}</div>
+      <strong>
+        {parcel.x},{parcel.y}
+      </strong>
+      <div>{parcel.amount} MANA</div>
+      <div>Ends in {distanceInWordsToNow(parcel.endsAt)}</div>
+      <span onClick={event => onBid(parcel)}>BID</span>
+    </div>
+  );
 }
 
-const point = {
-  toLatLngBounds(bounds) {
-    let [lower, upper] = bounds;
+function Tile({ x, y, width, height }) {
+  const style = { width, height };
 
-    lower = point.cartesianToLatLng({ x: lower[0], y: lower[1] });
-    upper = point.cartesianToLatLng({ x: upper[0], y: upper[1] });
+  return (
+    <div className="leaflet-tile" style={style}>
+      <div className="leaflet-coordinates">
+        {x},{y}
+      </div>
+    </div>
+  );
+}
 
-    return new L.LatLngBounds(lower, upper);
-  },
-
-  cartesianToLatLng({ x, y }) {
-    const t = 180;
-    const halfTile = 0.08;
-
-    const lat = -y / OFFSET * t - halfTile;
-    const lng = x / OFFSET * t + halfTile;
-
-    return new L.LatLng(lat, lng);
-  },
-
-  latLngToCartesian({ lng, lat }) {
-    const t = 180;
-    const halfTile = 0;
-    const x = Math.floor((lng + halfTile) * OFFSET / t);
-    const y = Math.floor((-lat + halfTile) * OFFSET / t);
-    return { x, y };
-  }
-};
+function renderToDOM(Component) {
+  const div = L.DomUtil.create("div");
+  ReactDOM.render(Component, div);
+  return div;
+}

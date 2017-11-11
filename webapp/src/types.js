@@ -19,10 +19,21 @@ export default {
 
   parcelRangeChanged: "Parcel range changed",
 
-  fetchFullAddressState: "Fetch full address state",
+  clickParcel: "Parcel range changed",
+
+  fetchFullAddressState: {
+    request: "[Request] Fetch full address state requested",
+    success: "[Success] Full address state fetched",
+    failed: "[Failed] Failed fetching full address state"
+  },
 
   addBidToGroup: "Add bid to group",
   submitBidGroup: "Submit bid group",
 
-  storeEmail: "Store email"
+  storeEmail: "Store email",
+
+  modal: {
+    open: "Open Modal",
+    close: "Close Modal"
+  }
 };

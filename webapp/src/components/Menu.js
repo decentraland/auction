@@ -1,6 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import distanceInWordsToNow from "../lib/distanceInWordsToNow";
+import shortenAddress from "../lib/shortenAddress";
+
 import Loading from "./Loading";
 import Icon from "./Icon";
 
@@ -78,14 +81,15 @@ export default class Menu extends React.Component {
 
 function AuctionTableRow({ auction, className = "" }) {
   const statusClass = auction.status.toLowerCase();
+  const timeLeft = distanceInWordsToNow(auction.endsAt);
 
   return (
     <div className={`table-row ${className}`}>
       <div className="col-land">{auction.land}</div>
-      <div className="col-status">{auction.status}</div>
-      <div className={`col-amount ${statusClass}`}>{auction.amount}</div>
-      <div className="col-time-left">{auction.timeLeft}</div>
-      <div className="col-address">{auction.address}</div>
+      <div className={ `col-status ${statusClass}` }>{auction.status}</div>
+      <div className="col-amount">{auction.amount}</div>
+      <div className="col-time-left">{timeLeft}</div>
+      <div className="col-address">{shortenAddress(auction.address)}</div>
     </div>
   );
 }

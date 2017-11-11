@@ -36,16 +36,15 @@ class API {
 
     return httpClient
       .request(options)
-      .then(response => {
-        if (!response.ok) {
-          return Promise.reject({ message: response.error });
+      .then(({ data, error }) => {
+        if (data && !data.ok) {
+          return Promise.reject({ message: error });
         }
 
-        return response.data.data; // One for axios data, another for the servers data
+        return data.data; // One for axios data, another for the servers data
       })
       .catch(err => {
         let error;
-        console.error("RESPONSE ERROR", error);
 
         if (err.status === 401) {
           error = new AuthorizationError();

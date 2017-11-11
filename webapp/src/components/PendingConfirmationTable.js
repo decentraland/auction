@@ -1,6 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import distanceInWordsToNow from "../lib/distanceInWordsToNow";
+import shortenAddress from "../lib/shortenAddress";
+
 import "./PendingConfirmationTable.css";
 
 export default class PendingConfirmationTable extends React.Component {
@@ -9,7 +12,7 @@ export default class PendingConfirmationTable extends React.Component {
 
     // TODO: Use BigNumber?
     return pendingConfirmation.reduce(
-      (total, confirmation) => total + parseInt(confirmation.yourBid, 10),
+      (total, confirmation) => total + parseFloat(confirmation.yourBid, 10),
       0
     );
   }
@@ -59,13 +62,25 @@ PendingConfirmationTable.propTypes = {
 };
 
 function ConfirmationTableRow({ confirmation, className }) {
+  const currentBid = isAvailable(confirmation.currentBid)
+    ? `${confirmation.currentBid} MANA`
+    : "N/A";
+
+  const timeLeft = distanceInWordsToNow(confirmation.endsAt, {
+    endedText: "Not started yet"
+  });
+
   return (
     <div className={`table-row ${className}`}>
-      <div className="col-land">{confirmation.land} </div>
+      <div className="col-land">{confirmation.land}</div>
       <div className="col-your-bid">{confirmation.yourBid} MANA</div>
-      <div className="col-current-bid">{confirmation.currentBid} MANA</div>
-      <div className="col-time-left">{confirmation.timeLeft} </div>
-      <div className="col-address">{confirmation.address} </div>
+      <div className="col-current-bid">{currentBid}</div>
+      <div className="col-time-left">{timeLeft} </div>
+      <div className="col-address">{shortenAddress(confirmation.address)} </div>
     </div>
   );
+}
+
+function isAvailable(bidValue) {
+  return bidValue !== "N/A" && parseFloat(bidValue) > 0;
 }
