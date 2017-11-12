@@ -1,7 +1,7 @@
 import React from "react";
 
 import MenuContainer from "../containers/MenuContainer";
-import PendingConfirmationContainer from "../containers/PendingConfirmationContainer";
+import PendingConfirmationBidsContainer from "../containers/PendingConfirmationBidsContainer";
 import ParcelsMapContainer from "../containers/ParcelsMapContainer";
 import ModalContainer from "../containers/modals/ModalContainer";
 
@@ -13,7 +13,7 @@ export default class HomePage extends React.Component {
       <div className="HomePage">
         <div className="controls">
           <MenuContainer />
-          <PendingConfirmationContainer />
+          <PendingConfirmationBidsContainer />
         </div>
         <ParcelsMapContainer />
         <ModalContainer />

@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import preventDefault from "../../lib/preventDefault";
+import { ONE_LAND_IN_MANA } from "../../lib/land";
 
 import Modal from "./Modal";
 import Button from "../Button";
@@ -9,6 +10,13 @@ import Button from "../Button";
 import "./BidParcelModal.css";
 
 export default class BidParcelModal extends React.Component {
+  static propTypes = {
+    ...Modal.propTypes,
+    parcel: PropTypes.object.isRequired,
+    manaBalance: PropTypes.string.isRequired,
+    onBid: PropTypes.func.isRequired
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -17,12 +25,18 @@ export default class BidParcelModal extends React.Component {
   }
 
   onBid = event => {
-    this.props.onBid(this.state.bidValue);
+    const { bidValue } = this.state;
+    const { parcel, manaBalance } = this.props;
+
+    // TODO: Check the bidValue is bigger than the current bid
+    if (bidValue >= ONE_LAND_IN_MANA && bidValue <= manaBalance) {
+      this.props.onBid(parcel, bidValue);
+    }
   };
 
   onBidValueChange = event => {
-    const bidValue = parseFloat(event.currentTarget.value, 10) || 1000;
-    this.setState({ bidValue });
+    const bidValue = parseFloat(event.currentTarget.value, 10);
+    this.setState({ bidValue: bidValue || ONE_LAND_IN_MANA });
   };
 
   render() {
@@ -31,13 +45,13 @@ export default class BidParcelModal extends React.Component {
     return (
       <Modal className="BidParcelModal" onClose={onClose} {...props}>
         <div className="modal-body">
-          <p>
+          <p className="text">
             You are bidding on the LAND {parcel.x},{parcel.y}
             <br />
             The minimun cost is 1,000 MANA
           </p>
 
-          {manaBalance >= 1000 ? (
+          {manaBalance >= ONE_LAND_IN_MANA ? (
             <BidForm
               manaBalance={manaBalance}
               onBid={preventDefault(this.onBid)}
@@ -45,7 +59,7 @@ export default class BidParcelModal extends React.Component {
               onClose={onClose}
             />
           ) : (
-            <p>You don&#39;t have enough balance to bid.</p>
+            <p className="text">You don&#39;t have enough balance to bid.</p>
           )}
         </div>
       </Modal>
@@ -53,32 +67,30 @@ export default class BidParcelModal extends React.Component {
   }
 }
 
-BidParcelModal.propTypes = {
-  ...Modal.propTypes,
-  parcel: PropTypes.object.isRequired,
-  manaBalance: PropTypes.number.isRequired,
-  onBid: PropTypes.func.isRequired
-};
-
 function BidForm({ manaBalance, onBid, onBidValueChange, onClose }) {
   return (
     <form action="POST" onSubmit={onBid}>
-      <span className="limit">1000</span>
-      <input
-        type="number"
-        required="required"
-        placeholder="Mana to bid"
-        min="1000"
-        max={manaBalance}
-        onChange={onBidValueChange}
-      />
-      <span className="limit">{manaBalance}</span>
+      <div className="manaInput">
+        <span className="text">{ONE_LAND_IN_MANA}</span>
+        <input
+          type="number"
+          required="required"
+          placeholder="Mana to bid"
+          className="manaToBid"
+          min={ONE_LAND_IN_MANA}
+          max={manaBalance}
+          onChange={onBidValueChange}
+        />
+        <span className="text">{manaBalance}</span>
+      </div>
 
       <div className="buttons">
         <Button type="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="primary" isSubmit={ true }>Bid</Button>
+        <Button type="primary" isSubmit={true}>
+          Bid
+        </Button>
       </div>
     </form>
   );

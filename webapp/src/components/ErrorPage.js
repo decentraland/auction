@@ -1,33 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 import Navbar from "./Navbar";
 import "./ErrorPage.css";
 
-export default function ErrorPage() {
+export default function ErrorPage({ children }) {
   return (
     <div className="ErrorPage">
       <Navbar />
-
       <div className="error-message">
-        <div>
-          <h2>Wallet error</h2>
-          <p>We could not retrieve your account&#39;s information.</p>
-          <p>You may not be using a dApp compatible browser.</p>
-          <p>Is your account connected and unlocked?</p>
-          <br />
-          <p>
-            You can use&nbsp;
-            <Link to="https://metamask.io/" target="_blank">
-              Metamask
-            </Link>
-            &nbsp;or&nbsp;
-            <Link to="https://github.com/ethereum/mist" target="_blank">
-              Mist
-            </Link>.
-          </p>
-        </div>
+        <div>{children}</div>
       </div>
     </div>
   );
 }
+
+ErrorPage.propTypes = {
+  children: PropTypes.node.isRequired
+};

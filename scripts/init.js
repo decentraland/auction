@@ -14,6 +14,9 @@ async function initializeDatabase() {
   await upsertRoadsProject();
   await importAddressStates();
   await initParcels();
+
+  console.log("All done");
+  process.exit();
 }
 
 async function upsertRoadsProject() {
@@ -33,7 +36,7 @@ async function upsertRoadsProject() {
 }
 
 async function initParcels() {
-  const parcels = fs.readFileSync("parcelsDescription.example.json", "utf8");
+  const parcels = fs.readFileSync("./parcelsDescription.example.json", "utf8");
   const { x, y, reserved, roads } = JSON.parse(parcels);
 
   console.log(`Inserting a ${x.max}x${y.max} Matrix`);
@@ -63,11 +66,15 @@ async function reserveProjects(reservation) {
 
 async function importAddressStates() {
   // - Read a dump of address => Balance
-  let addresses = fs.readFileSync("addresses.example.txt", "utf8");
-  addresses = addresses.split("\n").slice(10);
+  let index = 1;
+  let addresses = fs.readFileSync("./addresses.example.txt", "utf8");
+  addresses = addresses.split("\n");
 
   for (let address of addresses) {
+    console.log(`Processing address ${index++}/${addresses.length}`);
     if (!address) continue;
+
+    address = address.toLowerCase();
 
     const balance = await eth.getContract("MANAToken").getBalance(address);
 

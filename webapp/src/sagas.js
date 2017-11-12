@@ -7,13 +7,15 @@ import {
   takeEvery,
   put
 } from "redux-saga/effects";
+import { replace } from "react-router-redux";
 
 import { eth } from "decentraland-commons";
 
+import locations from "./locations";
 import types from "./types";
 import { selectors } from "./reducers";
+import { buildCoordinate } from "./lib/util";
 import api from "./lib/api";
-import { buildCoordinate } from "./util";
 
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3);
@@ -21,13 +23,10 @@ function* rootSaga() {
   yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange);
   yield takeEvery(types.fetchParcels.request, handleParcelFetchRequest);
 
-  yield takeEvery(
-    types.fetchFullAddressState.request,
-    handleFullAddressFetchRequest
-  );
+  yield takeLatest(types.connectWeb3.success, handleAddressFetchRequest);
+  yield takeEvery(types.fetchManaBalance.request, handleAddressFetchRequest);
 
-  yield takeLatest(types.connectWeb3.success, handleManaBalanceFetch);
-  yield takeEvery(types.fetchManaBalance.request, handleManaBalanceFetch);
+  yield takeEvery(types.fetchAddressState.request, handleAddressFetchRequest);
 
   yield fork(connectWeb3);
 }
@@ -48,32 +47,41 @@ function* connectWeb3(action = {}) {
 
     if (!connected) throw new Error("Could not connect to web3");
 
-    yield put({ type: types.connectWeb3.success, web3Connected: true });
+    yield put({
+      type: types.connectWeb3.success,
+      web3Connected: true,
+      address: eth.getAddress()
+    });
   } catch (error) {
     yield put({ type: types.connectWeb3.failed, message: error.message });
+    yield put(replace(locations.walletError));
   }
 }
 
 // -------------------------------------------------------------------------
 // Address States
 
-function* handleFullAddressFetchRequest(action) {
+function* handleAddressFetchRequest(action) {
   try {
-    if (!eth.getAddress) {
+    const web3Connected = yield select(selectors.getWeb3Connected);
+
+    if (!web3Connected) {
       throw new Error(
-        "Tried to fetch the full address state without an address. Connect to Ethereum first."
+        "Tried to get the MANA balance without connecting to ethereum first"
       );
     }
 
     const addressState = yield call(() =>
       api.fetchFullAddressState(eth.getAddress())
     );
-    yield put({ type: types.fetchFullAddressState.success, addressState });
+
+    yield put({ type: types.fetchAddressState.success, addressState });
   } catch (error) {
     yield put({
-      type: types.fetchFullAddressState.failed,
+      type: types.fetchAddressState.failed,
       error: error.message
     });
+    yield put(replace(locations.addressError));
   }
 }
 
@@ -112,30 +120,6 @@ function* handleParcelRangeChange(action) {
 
   if (parcelsToFetch.length) {
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch });
-  }
-}
-
-// -------------------------------------------------------------------------
-// MANA balance
-
-function* handleManaBalanceFetch(action) {
-  try {
-    const ethereum = yield select(selectors.getEthereum);
-
-    if (!ethereum.success) {
-      throw new Error(
-        "Tried to get the MANA balance without connecting to ethereum first"
-      );
-    }
-
-    const address = eth.getAddress();
-    const manaBalance = yield call(() =>
-      eth.getContract("MANAToken").getBalance(address)
-    );
-
-    yield put({ type: types.fetchManaBalance.success, manaBalance });
-  } catch (error) {
-    yield put({ type: types.fetchManaBalance.failed, error: error.message });
   }
 }
 

@@ -5,14 +5,21 @@ import locations from "./locations";
 
 import Root from "./containers/Root";
 import HomePage from "./components/HomePage";
-import ErrorPage from "./components/ErrorPage";
+import WalletErrorPage from "./components/WalletErrorPage";
+import AddressErrorPage from "./components/AddressErrorPage";
 
 export default function Routes() {
   return (
     <Root>
       <Switch>
         <Route exact path={locations.root} component={HomePage} />
-        <Route exact path={locations.error} component={ErrorPage} />
+        <Route exact path={locations.walletError} component={WalletErrorPage} />
+        <Route
+          exact
+          path={locations.addressError}
+          component={AddressErrorPage}
+        />
+        <Route exact path={locations.error} component={WalletErrorPage} />
       </Switch>
     </Root>
   );

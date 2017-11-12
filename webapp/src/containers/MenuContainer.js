@@ -1,13 +1,19 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import addHours from "date-fns/add_hours";
 
 import { selectors } from "../reducers";
+import { stateData } from "../lib/propTypes";
 
 import ShowMenu from "../components/ShowMenu";
 import Menu from "../components/Menu";
 
 class MenuContainer extends React.Component {
+  static propTypes = {
+    addressState: stateData(PropTypes.object).isRequired
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -53,13 +59,13 @@ class MenuContainer extends React.Component {
         address: "0x8f649FE750340A295dDdbBd7e1EC8f378cF24b42"
       }
     ];
-    const { manaBalance } = this.props;
+    const { addressState } = this.props;
 
     return [
       <ShowMenu key="1" onShow={() => this.changeMenuVisibility(true)} />,
       <Menu
         key="2"
-        manaBalance={manaBalance}
+        addressState={addressState}
         visible={menuVisible}
         outgoingAuctions={outgoingAuctions}
         onHide={() => this.changeMenuVisibility(false)}
@@ -69,6 +75,6 @@ class MenuContainer extends React.Component {
 }
 
 export default connect(
-  state => ({ manaBalance: selectors.getManaBalance(state) }),
+  state => ({ addressState: selectors.getAddressState(state) }),
   {}
 )(MenuContainer);

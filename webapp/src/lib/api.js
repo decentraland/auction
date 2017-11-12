@@ -15,7 +15,11 @@ class API {
   }
 
   fetchParcelStates(parcels) {
-    return this.request("post", `/parcelState/group`, { coordinates: parcels });
+    return this.request("post", "/parcelState/group", { coordinates: parcels });
+  }
+
+  fetchFullAddressState(address) {
+    return this.request("get", `/addressState/full/${address}`, {});
   }
 
   request(method, path, params) {

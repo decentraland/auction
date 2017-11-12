@@ -11,10 +11,27 @@
   padding-bottom: 50px;
 }
 
-.BidParcelModal p {
+.BidParcelModal .text {
   font-size: 18px;
-  margin-bottom: 25px;
   color: #9A9A9A;
+}
+
+.BidParcelModal .manaInput {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.BidParcelModal .manaToBid {
+  width: 150px;
+  border: 1px solid #DCDCDC;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 17px;
+  margin: 0 15px;
+  text-align: center;
+  box-shadow: none;
+  outline-color: #30D7A9;
+  color: #30D7A9;
 }
 
 .BidParcelModal .buttons .btn-secondary {

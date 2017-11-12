@@ -1,9 +1,11 @@
 import types from "./types";
 
 const INITIAL_STATE = {
-  ethereum: { loading: true },
-  manaBalance: { loading: true },
+  web3Connected: false,
+  addressState: { loading: true },
+
   parcelStates: { loading: true },
+  pendingConfirmationBids: [],
 
   modal: {
     open: false,
@@ -13,40 +15,41 @@ const INITIAL_STATE = {
 };
 
 export const selectors = {
-  getEthereum(state) {
-    return state.ethereum;
+  getWeb3Connected(state) {
+    return state.web3Connected;
+  },
+  getAddressState(state) {
+    return state.addressState;
   },
   getParcelStates(state) {
     return state.parcelStates;
   },
-  getManaBalance(state) {
-    return state.manaBalance;
+  getPendingConfirmationBids(state) {
+    return state.pendingConfirmationBids;
   },
   getModal(state) {
     return state.modal;
   }
 };
 
-function ethereum(state = INITIAL_STATE.ethereum, action) {
+function web3Connected(state = INITIAL_STATE.web3Connected, action) {
   switch (action.type) {
-    case types.connectWeb3.request:
-      return { loading: true };
     case types.connectWeb3.success:
-      return { loading: false, success: true };
+      return true;
     case types.connectWeb3.failed:
-      return { loading: false, error: action.error };
+      return false;
     default:
       return state;
   }
 }
 
-function manaBalance(state = INITIAL_STATE.manaBalance, action) {
+function addressState(state = INITIAL_STATE.addressState, action) {
   switch (action.type) {
-    case types.fetchManaBalance.request:
+    case types.fetchAddressState.request:
       return { loading: true };
-    case types.fetchManaBalance.success:
-      return { loading: false, data: action.manaBalance };
-    case types.fetchManaBalance.failed:
+    case types.fetchAddressState.success:
+      return { loading: false, data: action.addressState };
+    case types.fetchAddressState.failed:
       return { loading: false, error: action.error };
     default:
       return state;
@@ -72,6 +75,24 @@ function parcelStates(state = INITIAL_STATE.parcelStates, action) {
   }
 }
 
+function pendingConfirmationBids(
+  state = INITIAL_STATE.pendingConfirmationBids,
+  action
+) {
+  const filterActionBid = () =>
+    state.filter(bid => bid.x !== action.bid.x || bid.y !== action.bid.y);
+
+  // TODO: LocalStorage?
+  switch (action.type) {
+    case types.appendUnconfirmedBid:
+      return [...filterActionBid(), action.bid];
+    case types.removeUnconfirmedBid:
+      return filterActionBid();
+    default:
+      return state;
+  }
+}
+
 function modal(state = INITIAL_STATE.modal, action) {
   switch (action.type) {
     case types.modal.open:
@@ -88,8 +109,9 @@ function modal(state = INITIAL_STATE.modal, action) {
 }
 
 export default {
-  ethereum,
+  web3Connected,
+  addressState,
   parcelStates,
-  manaBalance,
+  pendingConfirmationBids,
   modal
 };

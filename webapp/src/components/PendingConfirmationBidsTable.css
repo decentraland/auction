@@ -1,0 +1,53 @@
+
+.PendingConfirmationBidsTable {
+  width: 592px;
+  background-color: #FFF;
+  z-index: 600;
+  position: relative;
+}
+
+.PendingConfirmationBidsTable h3 {
+  margin-top: 24px;
+  margin-bottom: 0;
+  margin-left: 24px;
+  padding-top: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+}
+
+
+.PendingConfirmationBidsTable .table {
+}
+
+.PendingConfirmationBidsTable .table-row {
+  width: 100%;
+  height: 64px;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.PendingConfirmationBidsTable .table-header {
+  color: #7B7B7B;
+}
+
+.PendingConfirmationBidsTable .table-row.gray {
+  background-color: #FBFBFB;
+}
+
+.PendingConfirmationBidsTable .table-row > div {
+  float: left;
+}
+
+.PendingConfirmationBidsTable .confirm-bids {
+  background-color: #02B45D;
+  color: #FFF;
+}
+
+.PendingConfirmationBidsTable .table .col-land        { width: 10%; }
+.PendingConfirmationBidsTable .table .col-your-bid    { width: 20%; }
+.PendingConfirmationBidsTable .table .col-current-bid { width: 20%; }
+.PendingConfirmationBidsTable .table .col-time-left   { width: 20%; }
+.PendingConfirmationBidsTable .table .col-address     { width: 25%; }

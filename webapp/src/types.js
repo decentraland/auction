@@ -21,16 +21,14 @@ export default {
 
   clickParcel: "Parcel range changed",
 
-  fetchFullAddressState: {
-    request: "[Request] Fetch full address state requested",
-    success: "[Success] Full address state fetched",
-    failed: "[Failed] Failed fetching full address state"
+  fetchAddressState: {
+    request: "[Request] Fetch address state requested",
+    success: "[Success] Address state fetched",
+    failed: "[Failed] Failed fetching address state"
   },
 
-  addBidToGroup: "Add bid to group",
-  submitBidGroup: "Submit bid group",
-
-  storeEmail: "Store email",
+  appendUnconfirmedBid: "Append new unconfirmed bid",
+  removeUnconfirmedBid: "Remove unconfirmed bid",
 
   modal: {
     open: "Open Modal",

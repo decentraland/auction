@@ -32,6 +32,23 @@ export function clickParcel(x, y) {
 }
 
 // -------------------------------------------------------------------------
+// Pending Confirmation Bids
+
+export function appendUnconfirmedBid(bid) {
+  return {
+    type: types.appendUnconfirmedBid,
+    bid
+  };
+}
+
+export function removeUnconfirmedBid(bid) {
+  return {
+    type: types.removeUnconfirmedBid,
+    bid
+  };
+}
+
+// -------------------------------------------------------------------------
 // Modal
 
 export function openModal(name, data) {

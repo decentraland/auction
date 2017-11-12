@@ -1,8 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import distanceInWordsToNow from "../lib/distanceInWordsToNow";
+import { distanceInWordsToNow } from "../lib/dateUtils";
 import shortenAddress from "../lib/shortenAddress";
+import { stateData } from "../lib/propTypes";
 
 import Loading from "./Loading";
 import Icon from "./Icon";
@@ -12,11 +13,7 @@ import "./Menu.css";
 export default class Menu extends React.Component {
   static propTypes = {
     visible: PropTypes.bool,
-    manaBalance: PropTypes.shape({
-      loading: PropTypes.bool,
-      data: PropTypes.number,
-      error: PropTypes.string
-    }).isRequired,
+    addressState: stateData(PropTypes.object).isRequired,
     onHide: PropTypes.func.isRequired,
     outgoingAuctions: PropTypes.array
   };
@@ -32,7 +29,7 @@ export default class Menu extends React.Component {
   }
 
   render() {
-    const { manaBalance, onHide, outgoingAuctions } = this.props;
+    const { addressState, onHide, outgoingAuctions } = this.props;
 
     return (
       <div className={this.getClassName()}>
@@ -47,10 +44,10 @@ export default class Menu extends React.Component {
 
         <div className="your-balance">
           <h2>Your Balance</h2>
-          {manaBalance.loading ? (
+          {addressState.loading ? (
             <Loading />
           ) : (
-            <div className="mana-value">{manaBalance.data} MANA</div>
+            <div className="mana-value">{addressState.data.balance} MANA</div>
           )}
         </div>
 
@@ -86,7 +83,7 @@ function AuctionTableRow({ auction, className = "" }) {
   return (
     <div className={`table-row ${className}`}>
       <div className="col-land">{auction.land}</div>
-      <div className={ `col-status ${statusClass}` }>{auction.status}</div>
+      <div className={`col-status ${statusClass}`}>{auction.status}</div>
       <div className="col-amount">{auction.amount}</div>
       <div className="col-time-left">{timeLeft}</div>
       <div className="col-address">{shortenAddress(auction.address)}</div>

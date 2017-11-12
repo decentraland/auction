@@ -2,5 +2,7 @@ export default {
   root: "/",
   parcel: "/:x/:y",
 
-  errors: "/error"
+  error: "/error",
+  walletError: "/walletError",
+  addressError: "/addressError"
 };

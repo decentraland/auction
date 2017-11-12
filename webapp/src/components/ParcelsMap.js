@@ -2,10 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import L from "leaflet";
-import addHours from "date-fns/add_hours";
 
-import distanceInWordsToNow from "../lib/distanceInWordsToNow";
+import shortenAddress from "../lib/shortenAddress";
+import * as dateUtils from "../lib/dateUtils";
 import LeafletMapCoordinates from "../lib/LeafletMapCoordinates";
+
+import Button from "./Button";
 
 import "./ParcelsMap.css";
 
@@ -21,14 +23,14 @@ export default class ParcelsMap extends React.Component {
     bounds: PropTypes.arrayOf(PropTypes.array),
     zoom: PropTypes.number.isRequired,
     tileSize: PropTypes.number.isRequired,
-    onParcelClick: PropTypes.func,
+    getParcelData: PropTypes.func,
     onMoveEnd: PropTypes.func,
     onParcelBid: PropTypes.func
   };
 
   static defaultProps = {
     bounds: [],
-    onParcelClick: () => {},
+    getParcelData: () => ({}),
     onMoveEnd: () => {},
     onParcelBid: () => {}
   };
@@ -69,15 +71,8 @@ export default class ParcelsMap extends React.Component {
       this.map.removeLayer(this.marker);
     }
 
-    this.addPopup(event.latlng, {
-      x,
-      y,
-      address: "0xdeadbeef22",
-      amount: "1800",
-      endsAt: addHours(new Date(), 2)
-    });
-
-    this.props.onParcelClick(x, y);
+    const parcel = this.props.getParcelData(x, y);
+    this.addPopup(event.latlng, parcel);
   };
 
   onMapMoveEnd = event => {
@@ -161,15 +156,26 @@ export default class ParcelsMap extends React.Component {
 }
 
 function ParcelPopup({ parcel, onBid }) {
+  let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: "" });
+
+  if (!dateUtils.isBeforeToday(parcel.endsAt)) {
+    endsAt = `Ends in ${endsAt}`;
+  }
+
   return (
     <div>
-      <div>{parcel.address}</div>
-      <strong>
+      <div className="text">{shortenAddress(parcel.address)}</div>
+      <div className="coordinates">
         {parcel.x},{parcel.y}
-      </strong>
-      <div>{parcel.amount} MANA</div>
-      <div>Ends in {distanceInWordsToNow(parcel.endsAt)}</div>
-      <span onClick={event => onBid(parcel)}>BID</span>
+      </div>
+      <div className="text mana">
+        {parcel.amount && `${parcel.amount} MANA`}
+      </div>
+      <div className="text">{endsAt}</div>
+
+      <div className="text-center">
+        <Button onClick={event => onBid(parcel)}>BID</Button>
+      </div>
     </div>
   );
 }

@@ -1,27 +1,33 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import distanceInWordsToNow from "../lib/distanceInWordsToNow";
+import { distanceInWordsToNow } from "../lib/dateUtils";
+import { buildCoordinate } from "../lib/util";
 import shortenAddress from "../lib/shortenAddress";
 
-import "./PendingConfirmationTable.css";
+import "./PendingConfirmationBidsTable.css";
 
-export default class PendingConfirmationTable extends React.Component {
+export default class PendingConfirmationBidsTable extends React.Component {
   getTotalMana() {
-    const { pendingConfirmation } = this.props;
+    const { pendingConfirmationBids } = this.props;
 
     // TODO: Use BigNumber?
-    return pendingConfirmation.reduce(
+    return pendingConfirmationBids.reduce(
       (total, confirmation) => total + parseFloat(confirmation.yourBid, 10),
       0
     );
   }
 
   render() {
-    const { pendingConfirmation, onConfirmBids } = this.props;
+    const { pendingConfirmationBids, onConfirmBids } = this.props;
 
+    if (pendingConfirmationBids.length === 0) {
+      return null;
+    }
+
+    // TODO: Add `remove` button
     return (
-      <div className="PendingConfirmationTable">
+      <div className="PendingConfirmationBidsTable">
         <h3>Pending Confirmation</h3>
 
         <div className="table">
@@ -33,7 +39,7 @@ export default class PendingConfirmationTable extends React.Component {
             <div className="col-address">ADDRESS</div>
           </div>
 
-          {pendingConfirmation.map((confirmation, index) => (
+          {pendingConfirmationBids.map((confirmation, index) => (
             <ConfirmationTableRow
               key={index}
               confirmation={confirmation}
@@ -56,12 +62,14 @@ export default class PendingConfirmationTable extends React.Component {
   }
 }
 
-PendingConfirmationTable.propTypes = {
-  pendingConfirmation: PropTypes.array.isRequired,
+PendingConfirmationBidsTable.propTypes = {
+  pendingConfirmationBids: PropTypes.array.isRequired,
   onConfirmBids: PropTypes.func.isRequired
 };
 
 function ConfirmationTableRow({ confirmation, className }) {
+  const land = buildCoordinate(confirmation.x, confirmation.y);
+
   const currentBid = isAvailable(confirmation.currentBid)
     ? `${confirmation.currentBid} MANA`
     : "N/A";
@@ -72,7 +80,7 @@ function ConfirmationTableRow({ confirmation, className }) {
 
   return (
     <div className={`table-row ${className}`}>
-      <div className="col-land">{confirmation.land}</div>
+      <div className="col-land">{land}</div>
       <div className="col-your-bid">{confirmation.yourBid} MANA</div>
       <div className="col-current-bid">{currentBid}</div>
       <div className="col-time-left">{timeLeft} </div>

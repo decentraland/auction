@@ -1,19 +1,28 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 import { selectors } from "../reducers";
-import { isEmptyObject } from "../util";
 import { parcelRangeChange, openModal } from "../actions";
+import { isEmptyObject, buildCoordinate } from "../lib/util";
+import { stateData } from "../lib/propTypes";
 
 import ParcelsMap from "../components/ParcelsMap";
 
 class ParcelsMapContainer extends React.Component {
+  static propTypes = {
+    parcelStates: stateData(PropTypes.object).isRequired,
+    parcelRangeChange: PropTypes.func.isRequired,
+    openModal: PropTypes.func.isRequired
+  };
+
   componentWillMount() {
     this.props.parcelRangeChange(-10, 10, -10, 10);
   }
 
-  onParcelClick = (x, y) => {
-    console.log("Parcel CLICK", x, y);
+  getParcelData = (x, y) => {
+    // TODO: What if the parcel does not exist
+    return this.props.parcelStates[buildCoordinate(x, y)];
   };
 
   onMoveEnd = ({ bounds }) => {
@@ -34,6 +43,7 @@ class ParcelsMapContainer extends React.Component {
 
     console.log("Got the parcels", parcelStates);
     // TODO: x,y from URL
+    // TODO: review getParcelData. We could pass all parcel states and leave it to the component to fetch each one
 
     const View = isEmptyObject(parcelStates) ? null : (
       <ParcelsMap
@@ -42,7 +52,7 @@ class ParcelsMapContainer extends React.Component {
         zoom={10}
         bounds={[[-20.5, -20.5], [20.5, 20.5]]}
         tileSize={128}
-        onParcelClick={this.onParcelClick}
+        getParcelData={this.getParcelData}
         onMoveEnd={this.onMoveEnd}
         onParcelBid={this.onParcelBid}
       />

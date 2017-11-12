@@ -1,6 +1,8 @@
 export default function preventDefault(fn) {
   return function(event) {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     fn.call(this, event);
   };
 }

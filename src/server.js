@@ -42,7 +42,7 @@ if (env.isProduction()) {
 }
 
 /**
- * AddressState fetch by address: without bidgroups, to sign with last id.
+ * AddressState fetch by address: without bidgroups.
  * @param  {string} address - User address
  * @return {object}         - Address state object (with it's last bid, if any)
  */
@@ -53,7 +53,7 @@ app.get(
 
 export function getSimpleAddressState(req) {
   const address = server.extractFromReq(req, "address");
-  return AddressState.findByAddress(address);
+  return AddressState.findByAddress(address.toLowerCase());
 }
 
 /**
@@ -68,7 +68,7 @@ app.get(
 
 export function getFullAddressState(req) {
   const address = server.extractFromReq(req, "address");
-  return AddressState.findByAddressWithBidGroups(address);
+  return AddressState.findByAddressWithBidGroups(address.toLowerCase());
 }
 
 /**
