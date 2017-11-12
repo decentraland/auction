@@ -5,10 +5,10 @@ class ParcelStateService {
     this.ParcelState = ParcelState;
   }
 
-  insertMatrix(maxx, maxy) {
+  insertMatrix(minX, minY, maxX, maxY) {
     const inserts = [];
-    for (let x = 0; x <= maxx; x++) {
-      for (let y = 0; y <= maxy; y++) {
+    for (let x = minX; x <= maxX; x++) {
+      for (let y = minY; y <= maxY; y++) {
         const insert = this.ParcelState.insert({ x, y }).catch(() => {});
         inserts.push(insert);
       }
