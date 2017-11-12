@@ -4,17 +4,14 @@ import PropTypes from "prop-types";
 import { distanceInWordsToNow } from "../lib/dateUtils";
 import { buildCoordinate } from "../lib/util";
 import shortenAddress from "../lib/shortenAddress";
+import pendingBidsUtils from "../lib/pendingBidsUtils";
 
 import "./PendingConfirmationBidsTable.css";
 
 export default class PendingConfirmationBidsTable extends React.Component {
   getTotalMana() {
-    const { pendingConfirmationBids } = this.props;
-
-    // TODO: Use BigNumber?
-    return pendingConfirmationBids.reduce(
-      (total, confirmation) => total + parseFloat(confirmation.yourBid, 10),
-      0
+    return pendingBidsUtils.getTotalManaBidded(
+      this.props.pendingConfirmationBids
     );
   }
 

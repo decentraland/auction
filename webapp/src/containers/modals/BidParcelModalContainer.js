@@ -12,6 +12,7 @@ import { BidParcelModal } from "../../components/modals";
 class BidParcelModalContainer extends React.Component {
   static propTypes = {
     addressState: stateData(PropTypes.object).isRequired,
+    pendingConfirmationBids: PropTypes.array.isRequired,
     appendUnconfirmedBid: PropTypes.func.isRequired
   };
 
@@ -38,6 +39,8 @@ class BidParcelModalContainer extends React.Component {
   render() {
     const { data, addressState, ...props } = this.props;
 
+    // TODO: addressState could be loading here
+
     return (
       <BidParcelModal
         parcel={data}
@@ -51,7 +54,8 @@ class BidParcelModalContainer extends React.Component {
 
 export default connect(
   state => ({
-    addressState: selectors.getAddressState(state)
+    addressState: selectors.getAddressState(state),
+    pendingConfirmationBids: selectors.getPendingConfirmationBids(state)
   }),
   { appendUnconfirmedBid }
 )(BidParcelModalContainer);

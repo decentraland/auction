@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import preventDefault from "../../lib/preventDefault";
 import { ONE_LAND_IN_MANA } from "../../lib/land";
+import pendingBidsUtils from "../../lib/pendingBidsUtils";
 
 import Modal from "./Modal";
 import Button from "../Button";
@@ -14,6 +15,7 @@ export default class BidParcelModal extends React.Component {
     ...Modal.propTypes,
     parcel: PropTypes.object.isRequired,
     manaBalance: PropTypes.string.isRequired,
+    pendingConfirmationBids: PropTypes.array.isRequired,
     onBid: PropTypes.func.isRequired
   };
 
@@ -22,15 +24,23 @@ export default class BidParcelModal extends React.Component {
     this.state = {
       bidValue: null
     };
+
+    let { pendingConfirmationBids, manaBalance } = props;
+
+    // Cache for later use
+    this.pendingManaBalance = pendingBidsUtils.getTotalManaBidded(
+      pendingConfirmationBids
+    );
+    this.manaBalance = manaBalance - this.pendingManaBalance;
   }
 
   onBid = event => {
     const { bidValue } = this.state;
-    const { parcel, manaBalance } = this.props;
+    const { parcel, onBid } = this.props;
 
     // TODO: Check the bidValue is bigger than the current bid
-    if (bidValue >= ONE_LAND_IN_MANA && bidValue <= manaBalance) {
-      this.props.onBid(parcel, bidValue);
+    if (bidValue >= ONE_LAND_IN_MANA && bidValue <= this.manaBalance) {
+      onBid(parcel, bidValue);
     }
   };
 
@@ -40,20 +50,24 @@ export default class BidParcelModal extends React.Component {
   };
 
   render() {
-    const { parcel, manaBalance, onClose, ...props } = this.props;
+    const { parcel, onClose, ...props } = this.props;
 
     return (
       <Modal className="BidParcelModal" onClose={onClose} {...props}>
         <div className="modal-body">
           <p className="text">
-            You are bidding on the LAND {parcel.x},{parcel.y}
+            You are bidding on the LAND {parcel.x},{parcel.y}.
             <br />
-            The minimun cost is 1,000 MANA
+            The minimun cost is 1,000 MANA.
+            <br />
+            {this.pendingManaBalance
+              ? `You have ${this.pendingManaBalance} MANA pending.`
+              : ""}
           </p>
 
-          {manaBalance >= ONE_LAND_IN_MANA ? (
+          {this.manaBalance >= ONE_LAND_IN_MANA ? (
             <BidForm
-              manaBalance={manaBalance}
+              manaBalance={this.manaBalance}
               onBid={preventDefault(this.onBid)}
               onBidValueChange={this.onBidValueChange}
               onClose={onClose}
