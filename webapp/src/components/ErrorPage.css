@@ -1,7 +1,21 @@
 .ErrorPage {
+  height: 100%;
+}
+
+.ErrorPage .error-message {
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
 }
 
-.ErrorPage p {
-  font-size: 1.1em;
+.ErrorPage .error-message h2 {
+  margin-top: 0;
+  margin-bottom: 35px;
+  font-size: 2em;
+}
+
+.ErrorPage .error-message p {
+  font-size: 1.3em;
 }
