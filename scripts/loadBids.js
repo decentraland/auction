@@ -244,13 +244,14 @@ const loadAllParcels = async (contract, batchSize) => {
 
 const returnAllMANA = async (contract) => {
   try {
-    // get all address on the reserve
+    // get all address on the reserve (de donde lo saco?)
     // check burnt balance for each
     // get remained and send transaction
+    // const reserve = eth.getContract("TerraformReserve");
+    // const lockedMANAWei = await reserve.call("lockedBalance", address);
 
-    const txId = await contract.transferBackMANA(address, amount);
-    log.info(`(return) [${address}] Broadcasted tx : ${txId}`);
-
+    // const txId = await contract.transferBackMANA(address, amount);
+    // log.info(`(return) [${address}] Broadcasted tx : ${txId}`);
   } catch (err) {
     log.error(err)
   }
@@ -286,6 +287,8 @@ async function main() {
       await loadAllParcels(contract, argv.nbatch);
     } else if (argv.loadaddress) {
       await loadParcelsForAddress(contract, argv.loadaddress, argv.nbatch);
+    } else if (argv.returnmana === true) {
+      await returnAllMANA(contract);
     } else {
       log.error(`Invalid command. Use --verify or --load`)
       process.exit(0)
