@@ -118,7 +118,8 @@ const onNewBlock = blockHash => {
   });
 };
 
-const setupWatch = options => {
+const setupBlockWatch = options => {
+  log.info(`(watch) Setting up event filter for new blocks`)
   const filter = eth.setupFilter(options);
 
   filter.watch((err, blockHash) => {
@@ -231,9 +232,6 @@ const watchPendingTxs = time => {
 
 const loadAllParcels = async contract => {
   try {
-    // setup watch for mined txs
-    const eventFilter = setupWatch("latest");
-
     // get all addresses with bids
     const rows = await ParcelState.findAllAddresses();
     log.info(`(proc) Got ${rows.length} addresses with winning bids`);
@@ -262,6 +260,9 @@ async function main() {
 
     const contract = eth.getContract("LANDTerraformSale");
     log.info(`Using LANDTerraformSale contract at address ${contract.address}`);      
+
+    // setup watch for mined txs
+    const eventFilter = setupBlockWatch("latest");
 
     // commands
     if (argv.verify === true) {
