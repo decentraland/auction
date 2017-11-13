@@ -11,17 +11,30 @@ import ParcelsMap from "../components/ParcelsMap";
 
 class ParcelsMapContainer extends React.Component {
   static propTypes = {
+    center: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number
+    }),
     parcelStates: stateData(PropTypes.object).isRequired,
     parcelRangeChange: PropTypes.func.isRequired,
     openModal: PropTypes.func.isRequired
   };
 
+  static defaultProps = {
+    center: {
+      x: 0,
+      y: 0
+    }
+  };
+
   componentWillMount() {
-    this.props.parcelRangeChange(-10, 10, -10, 10);
+    const { x, y } = this.props.center;
+    // TODO: Don't overfetch. Check the bounds
+    this.props.parcelRangeChange(x - 10, x + 10, y - 10, y + 10);
   }
 
   getParcelData = (x, y) => {
-    // TODO: What if the parcel does not exist
+    // TODO: What if the parcel does not exist. We should probably fetch on-demand
     return this.props.parcelStates[buildCoordinate(x, y)];
   };
 
@@ -40,15 +53,15 @@ class ParcelsMapContainer extends React.Component {
 
   render() {
     const { parcelStates } = this.props;
+    const { x, y } = this.props.center;
 
     console.log("Got the parcels", parcelStates);
-    // TODO: x,y from URL
-    // TODO: review getParcelData. We could pass all parcel states and leave it to the component to fetch each one
 
+    // TODO: Review getParcelData. We could pass all parcel states and leave it to the component to get each one
     const View = isEmptyObject(parcelStates) ? null : (
       <ParcelsMap
-        x={0}
-        y={0}
+        x={x}
+        y={y}
         zoom={10}
         bounds={[[-20.5, -20.5], [20.5, 20.5]]}
         tileSize={128}

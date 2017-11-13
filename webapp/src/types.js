@@ -28,7 +28,7 @@ export default {
   },
 
   appendUnconfirmedBid: "Append new unconfirmed bid",
-  removeUnconfirmedBid: "Remove unconfirmed bid",
+  deleteUnconfirmedBid: "Remove unconfirmed bid",
 
   modal: {
     open: "Open Modal",

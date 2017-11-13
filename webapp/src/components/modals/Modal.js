@@ -3,15 +3,9 @@ import PropTypes from "prop-types";
 
 import "./Modal.css";
 
-export default function Modal({
-  className,
-  title,
-  visible,
-  body,
-  footer,
-  children,
-  onClose
-}) {
+export default function Modal(props) {
+  const { className, title, visible, body, footer, children, onClose } = props;
+
   const containerClassName = `${className} ${visible ? "modal-open" : ""}`;
   const modalClassName = `modal fade ${visible ? "in" : ""}`;
 

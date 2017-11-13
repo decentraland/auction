@@ -48,9 +48,34 @@ function addressState(state = INITIAL_STATE.addressState, action) {
     case types.fetchAddressState.request:
       return { loading: true };
     case types.fetchAddressState.success:
+      action.addressState.balance = parseFloat(action.addressState.balance, 10);
       return { loading: false, data: action.addressState };
     case types.fetchAddressState.failed:
       return { loading: false, error: action.error };
+    case types.appendUnconfirmedBid:
+      if (state.data) {
+        return {
+          ...state,
+          data: {
+            ...state.data,
+            balance: state.data.balance - action.bid.yourBid
+          }
+        };
+      } else {
+        return state;
+      }
+    case types.deleteUnconfirmedBid:
+      if (state.data) {
+        return {
+          ...state,
+          data: {
+            ...state.data,
+            balance: state.data.balance + action.bid.yourBid
+          }
+        };
+      } else {
+        return state;
+      }
     default:
       return state;
   }
@@ -86,7 +111,7 @@ function pendingConfirmationBids(
   switch (action.type) {
     case types.appendUnconfirmedBid:
       return [...filterActionBid(), action.bid];
-    case types.removeUnconfirmedBid:
+    case types.deleteUnconfirmedBid:
       return filterActionBid();
     default:
       return state;

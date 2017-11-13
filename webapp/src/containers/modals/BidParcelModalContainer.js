@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import addHours from "date-fns/add_hours";
 
 import { selectors } from "../../reducers";
 import { appendUnconfirmedBid } from "../../actions";
@@ -19,19 +18,14 @@ class BidParcelModalContainer extends React.Component {
   onBid = (parcel, value) => {
     const { appendUnconfirmedBid, addressState, onClose } = this.props;
 
-    // TODO: currentBid should come from the parcel
-    // TODO: endsAt?
-
     appendUnconfirmedBid({
       address: addressState.data.address,
       x: parcel.x,
       y: parcel.y,
-      currentBid: null,
+      currentBid: parcel.amount,
       yourBid: value,
-      endsAt: addHours(new Date(), 12)
+      endsAt: parcel.endsAt
     });
-
-    // TODO: update in-memory manaBalance
 
     onClose();
   };
@@ -39,12 +33,10 @@ class BidParcelModalContainer extends React.Component {
   render() {
     const { data, addressState, ...props } = this.props;
 
-    // TODO: addressState could be loading here
-
     return (
       <BidParcelModal
         parcel={data}
-        manaBalance={addressState.data.balance}
+        addressState={addressState}
         onBid={this.onBid}
         {...props}
       />

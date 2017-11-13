@@ -41,9 +41,9 @@ export function appendUnconfirmedBid(bid) {
   };
 }
 
-export function removeUnconfirmedBid(bid) {
+export function deleteUnconfirmedBid(bid) {
   return {
-    type: types.removeUnconfirmedBid,
+    type: types.deleteUnconfirmedBid,
     bid
   };
 }

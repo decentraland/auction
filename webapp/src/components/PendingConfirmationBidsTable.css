@@ -46,8 +46,18 @@
   color: #FFF;
 }
 
-.PendingConfirmationBidsTable .table .col-land        { width: 10%; }
-.PendingConfirmationBidsTable .table .col-your-bid    { width: 20%; }
-.PendingConfirmationBidsTable .table .col-current-bid { width: 20%; }
-.PendingConfirmationBidsTable .table .col-time-left   { width: 20%; }
-.PendingConfirmationBidsTable .table .col-address     { width: 25%; }
+.PendingConfirmationBidsTable .table .col-land        { width: 9%; }
+.PendingConfirmationBidsTable .table .col-your-bid    { width: 17%; }
+.PendingConfirmationBidsTable .table .col-current-bid { width: 17%; }
+.PendingConfirmationBidsTable .table .col-time-left   { width: 17%; }
+.PendingConfirmationBidsTable .table .col-address     { width: 20%; }
+.PendingConfirmationBidsTable .table .col-actions     { width: 10%; }
+
+.PendingConfirmationBidsTable .table .col-actions.delete {
+  text-align: center;
+  color: #f44336;
+  cursor: pointer;
+}
+.PendingConfirmationBidsTable .table .col-actions.delete:hover {
+  color: #bd4e4c;
+}

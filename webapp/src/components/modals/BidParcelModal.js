@@ -3,10 +3,12 @@ import PropTypes from "prop-types";
 
 import preventDefault from "../../lib/preventDefault";
 import { ONE_LAND_IN_MANA } from "../../lib/land";
+import { stateData } from "../../lib/propTypes";
 import pendingBidsUtils from "../../lib/pendingBidsUtils";
 
 import Modal from "./Modal";
 import Button from "../Button";
+import Loading from "../Loading";
 
 import "./BidParcelModal.css";
 
@@ -14,7 +16,7 @@ export default class BidParcelModal extends React.Component {
   static propTypes = {
     ...Modal.propTypes,
     parcel: PropTypes.object.isRequired,
-    manaBalance: PropTypes.string.isRequired,
+    addressState: stateData(PropTypes.object).isRequired,
     pendingConfirmationBids: PropTypes.array.isRequired,
     onBid: PropTypes.func.isRequired
   };
@@ -25,21 +27,19 @@ export default class BidParcelModal extends React.Component {
       bidValue: null
     };
 
-    let { pendingConfirmationBids, manaBalance } = props;
+    let { pendingConfirmationBids } = props;
 
     // Cache for later use
     this.pendingManaBalance = pendingBidsUtils.getTotalManaBidded(
       pendingConfirmationBids
     );
-    this.manaBalance = manaBalance - this.pendingManaBalance;
   }
 
   onBid = event => {
     const { bidValue } = this.state;
     const { parcel, onBid } = this.props;
 
-    // TODO: Check the bidValue is bigger than the current bid
-    if (bidValue >= ONE_LAND_IN_MANA && bidValue <= this.manaBalance) {
+    if (this.isValidBid(bidValue)) {
       onBid(parcel, bidValue);
     }
   };
@@ -49,8 +49,44 @@ export default class BidParcelModal extends React.Component {
     this.setState({ bidValue: bidValue || ONE_LAND_IN_MANA });
   };
 
+  isValidBid(bidValue) {
+    const { parcel } = this.props;
+    const manaBalance = this.getManaBalance();
+    const currentBidValue = parcel.amount || 0;
+
+    return (
+      bidValue >= ONE_LAND_IN_MANA &&
+      bidValue <= manaBalance &&
+      bidValue > currentBidValue
+    );
+  }
+
+  getManaBalance() {
+    const { addressState } = this.props;
+
+    if (!addressState.loading) {
+      return addressState.data.balance;
+    }
+  }
+
+  renderBidForm() {
+    const { onClose } = this.props;
+    const manaBalance = this.getManaBalance();
+
+    return manaBalance >= ONE_LAND_IN_MANA ? (
+      <BidForm
+        manaBalance={manaBalance}
+        onBid={preventDefault(this.onBid)}
+        onBidValueChange={this.onBidValueChange}
+        onClose={onClose}
+      />
+    ) : (
+      <p className="text">You don&#39;t have enough balance to bid.</p>
+    );
+  }
+
   render() {
-    const { parcel, onClose, ...props } = this.props;
+    const { parcel, addressState, onClose, ...props } = this.props;
 
     return (
       <Modal className="BidParcelModal" onClose={onClose} {...props}>
@@ -65,16 +101,7 @@ export default class BidParcelModal extends React.Component {
               : ""}
           </p>
 
-          {this.manaBalance >= ONE_LAND_IN_MANA ? (
-            <BidForm
-              manaBalance={this.manaBalance}
-              onBid={preventDefault(this.onBid)}
-              onBidValueChange={this.onBidValueChange}
-              onClose={onClose}
-            />
-          ) : (
-            <p className="text">You don&#39;t have enough balance to bid.</p>
-          )}
+          {addressState.loading ? <Loading /> : this.renderBidForm()}
         </div>
       </Modal>
     );
@@ -91,6 +118,7 @@ function BidForm({ manaBalance, onBid, onBidValueChange, onClose }) {
           required="required"
           placeholder="Mana to bid"
           className="manaToBid"
+          autoFocus={true}
           min={ONE_LAND_IN_MANA}
           max={manaBalance}
           onChange={onBidValueChange}

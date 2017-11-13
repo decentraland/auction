@@ -13,6 +13,7 @@ export default function Routes() {
     <Root>
       <Switch>
         <Route exact path={locations.root} component={HomePage} />
+        <Route exact path={locations.parcel} component={HomePage} />
         <Route exact path={locations.walletError} component={WalletErrorPage} />
         <Route
           exact

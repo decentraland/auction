@@ -52,7 +52,8 @@ export default class ParcelsMap extends React.Component {
       minZoom: zoom,
       maxZoom: zoom,
       zoom: zoom,
-      layers: [this.getGridLayer()]
+      layers: [this.getGridLayer()],
+      fadeAnimation: false
     });
 
     this.map.zoomControl.setPosition("topright");

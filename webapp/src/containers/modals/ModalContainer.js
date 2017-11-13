@@ -23,7 +23,13 @@ class ModalContainer extends React.Component {
       ModalComponent = modals.Modal;
     }
 
-    return <ModalComponent visible={open} data={data} onClose={preventDefault(closeModal)} />;
+    return (
+      <ModalComponent
+        visible={open}
+        data={data}
+        onClose={preventDefault(closeModal)}
+      />
+    );
   }
 }
 

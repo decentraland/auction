@@ -9,6 +9,15 @@ body {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
 }
 
+a {
+  color: #30D7A9;
+}
+
+a:hover {
+  color: #30D7A9;
+  text-decoration: none;
+}
+
 #app {
   height: 100%;
 }

@@ -31,28 +31,32 @@ class MenuContainer extends React.Component {
     const { menuVisible } = this.state;
     const outgoingAuctions = [
       {
-        land: "1.32",
+        x: 1,
+        y: 3,
         status: "Outbid",
         amount: "15.000 MANA",
         endsAt: addHours(new Date(), 23),
         address: "0x8f649FE750340A295dDdbBd7e1EC8f378cF24b42"
       },
       {
-        land: "14.50",
+        x: 2,
+        y: 1,
         status: "Won",
         amount: "3.300 MANA",
         endsAt: addHours(new Date(), -2),
         address: ""
       },
       {
-        land: "9.3",
+        x: 1,
+        y: 3,
         status: "Winning",
         amount: "15.000 MANA",
         endsAt: addHours(new Date(), 12),
         address: ""
       },
       {
-        land: "46.3",
+        x: 3,
+        y: 3,
         status: "Lost",
         amount: "3.926 MANA",
         endsAt: addHours(new Date(), -5),

@@ -8,6 +8,15 @@ import ModalContainer from "../containers/modals/ModalContainer";
 import "./HomePage.css";
 
 export default class HomePage extends React.Component {
+  getCenter() {
+    const { x, y } = this.props.match.params;
+
+    return {
+      x: parseInt(x, 10) || 0,
+      y: parseInt(y, 10) || 0
+    };
+  }
+
   render() {
     return (
       <div className="HomePage">
@@ -15,7 +24,7 @@ export default class HomePage extends React.Component {
           <MenuContainer />
           <PendingConfirmationBidsContainer />
         </div>
-        <ParcelsMapContainer />
+        <ParcelsMapContainer center={this.getCenter()} />
         <ModalContainer />
       </div>
     );
