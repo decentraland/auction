@@ -1,5 +1,6 @@
 #!/usr/bin/env babel-node
 
+import minimist from "minimist";
 import { eth, env, Log } from "decentraland-commons";
 import db from "../src/lib/db";
 import { ParcelState, BuyTransaction } from "../src/lib/models";
@@ -167,7 +168,7 @@ const loadParcelsForAddress = async (contract, address) => {
     const sendParcels = parcels.filter(e => !doneParcels.includes(e.id));
 
     log.info(
-      `(proc) (${address}) Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
+      `(proc) [${address}] Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
     );
 
     if (sendParcels.length > 0) {
@@ -203,13 +204,29 @@ const loadParcelsForAddress = async (contract, address) => {
 const verifyPendingTxs = async () => {
   try {
     // setup watch for mined txs
-    const eventFilter = setupWatch("latest");
-
     const pendingTxIds = await BuyTransaction.findAllPendingTxIds();
-    pendingTxIds.map(e => txQueue.addPendingTx(e));
+    log.info(`(tx) Total number of TXs to verify: ${pendingTxIds.length}`);
+
+    for (const txId of pendingTxIds) {
+      const receipt = await eth.fetchTxReceipt(txId);
+
+      if (receipt === null) {
+        log.info(`(tx) [${txId}] pending`);
+      } else if (receipt.status === 0) {
+        log.info(`(tx) [${txId}] error`);
+        await BuyTransaction.update({ receipt, status: "error" }, { txId });
+      } else if (receipt.status === 1) {
+        log.info(`(tx) [${txId}] completed`);
+        await BuyTransaction.update({ receipt, status: "completed" }, { txId });
+      }
+    }
   } catch (err) {
     log.error(err);
   }
+};
+
+const watchPendingTxs = time => {
+  setInterval(verifyPendingTxs, time);
 };
 
 const loadAllParcels = async contract => {
@@ -233,16 +250,31 @@ async function main() {
   const BATCH_SIZE = 20;
 
   try {
+    // args
+    const argv = minimist(process.argv.slice(2), {
+      string: ["loadaddress"]
+    });
+
     // init
     await db.connect();
     await eth.connect();
     await initTestParcels();
 
     const contract = eth.getContract("LANDTerraformSale");
-    log.info(`Using LANDTerraformSale contract at address ${contract.address}`);
+    log.info(`Using LANDTerraformSale contract at address ${contract.address}`);      
 
-    await loadAllParcels(contract);
-    // await verifyPendingTxs(0);
+    // commands
+    if (argv.verify === true) {
+      await watchPendingTxs(5000);
+    } else if (argv.load === true) {
+      await loadAllParcels(contract);
+    } else if (argv.loadaddress) {
+      await loadParcelsForAddress(contract, argv.loadaddress);
+    } else {
+      log.error(`Invalid command. Use --verify or --load`)
+      process.exit(0)
+    }
+
   } catch (err) {
     log.info(err);
   }
