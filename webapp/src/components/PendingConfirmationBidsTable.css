@@ -16,7 +16,6 @@
   color: #000000;
 }
 
-
 .PendingConfirmationBidsTable .table {
 }
 
@@ -52,6 +51,7 @@
 .PendingConfirmationBidsTable .table .col-time-left   { width: 17%; }
 .PendingConfirmationBidsTable .table .col-address     { width: 20%; }
 .PendingConfirmationBidsTable .table .col-actions     { width: 10%; }
+.PendingConfirmationBidsTable .table .col-confirm     { width: 30%; }
 
 .PendingConfirmationBidsTable .table .col-actions.delete {
   text-align: center;
@@ -60,4 +60,17 @@
 }
 .PendingConfirmationBidsTable .table .col-actions.delete:hover {
   color: #bd4e4c;
+}
+
+.PendingConfirmationBidsTable .table .col-confirm {
+  text-align: right;
+}
+
+.PendingConfirmationBidsTable .Button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  border-color: #CCC;
+  cursor: pointer;
+  color: #333;
 }

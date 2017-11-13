@@ -129,7 +129,7 @@ export async function postBidGroup(req) {
     error
   } = await new BidService().processBidGroup(newBidGroup);
 
-  const bidParcels = parcelStates.filter(ps => !ps.error);
+  const bidParcels = parcelStates ? parcelStates.filter(ps => !ps.error) : [];
 
   if (error || bidParcels.length === 0) {
     throw new Error(`

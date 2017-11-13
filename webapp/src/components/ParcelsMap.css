@@ -47,17 +47,16 @@
 }
 
 .leaflet-popup .coordinates {
+  margin-bottom: 10px;
+  font-size: 26px;
+  text-align: center;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
 }
 
-.leaflet-popup .text, .leaflet-popup .coordinates {
-  margin-bottom: 2px;
-}
-
-.leaflet-popup .mana, .leaflet-popup .coordinates {
-  margin-bottom: 15px;
+.leaflet-popup .text, .leaflet-popup .mana, .leaflet-popup .coordinates {
+  margin-bottom: 8px;
 }
 
 .leaflet-popup .btn {
-  margin-top: 20px;
+  margin-top: 10px;
 }

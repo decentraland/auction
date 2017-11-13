@@ -165,10 +165,10 @@ function ParcelPopup({ parcel, onBid }) {
 
   return (
     <div>
-      <div className="text">{shortenAddress(parcel.address)}</div>
       <div className="coordinates">
         {parcel.x},{parcel.y}
       </div>
+      <div className="text">{shortenAddress(parcel.address)}</div>
       <div className="text mana">
         {parcel.amount && `${parcel.amount} MANA`}
       </div>

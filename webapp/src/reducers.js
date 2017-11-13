@@ -45,6 +45,8 @@ function web3Connected(state = INITIAL_STATE.web3Connected, action) {
 
 function addressState(state = INITIAL_STATE.addressState, action) {
   switch (action.type) {
+    case types.addressStateLoading:
+      return { ...state, loading: action.loading };
     case types.fetchAddressState.request:
       return { loading: true };
     case types.fetchAddressState.success:
@@ -113,6 +115,8 @@ function pendingConfirmationBids(
       return [...filterActionBid(), action.bid];
     case types.deleteUnconfirmedBid:
       return filterActionBid();
+    case types.confirmBids.success:
+      return INITIAL_STATE.pendingConfirmationBids;
     default:
       return state;
   }

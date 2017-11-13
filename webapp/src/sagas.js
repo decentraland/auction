@@ -28,6 +28,12 @@ function* rootSaga() {
 
   yield takeEvery(types.fetchAddressState.request, handleAddressFetchRequest);
 
+  yield takeLatest(types.confirmBids.request, handleAddresStateStartLoading);
+  yield takeLatest(types.confirmBids.request, handleConfirmBidsRequest);
+  yield takeLatest(types.confirmBids.success, handleAddressFetchRequest);
+  yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading);
+
+  // Start
   yield fork(connectWeb3);
 }
 
@@ -53,8 +59,8 @@ function* connectWeb3(action = {}) {
       address: eth.getAddress()
     });
   } catch (error) {
-    yield put({ type: types.connectWeb3.failed, message: error.message });
     yield put(replace(locations.walletError));
+    yield put({ type: types.connectWeb3.failed, message: error.message });
   }
 }
 
@@ -77,12 +83,20 @@ function* handleAddressFetchRequest(action) {
 
     yield put({ type: types.fetchAddressState.success, addressState });
   } catch (error) {
+    yield put(replace(locations.addressError));
     yield put({
       type: types.fetchAddressState.failed,
       error: error.message
     });
-    yield put(replace(locations.addressError));
   }
+}
+
+function* handleAddresStateStartLoading(action) {
+  yield put({ type: types.addressStateLoading, loading: true });
+}
+
+function* handleAddresStateFinishLoading(action) {
+  yield put({ type: types.addressStateLoading, loading: false });
 }
 
 // -------------------------------------------------------------------------
@@ -110,10 +124,10 @@ function* handleParcelRangeChange(action) {
   const parcelsToFetch = [];
   for (let x = minX; x <= maxX; x++) {
     for (let y = minY; y <= maxY; y++) {
-      const coor = buildCoordinate(x, y);
-      const current = currentState[coor];
+      const coordinate = buildCoordinate(x, y);
+      const current = currentState[coordinate];
       if (!current || (!current.data && !current.loading)) {
-        parcelsToFetch.push(coor);
+        parcelsToFetch.push(coordinate);
       }
     }
   }
@@ -121,6 +135,45 @@ function* handleParcelRangeChange(action) {
   if (parcelsToFetch.length) {
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch });
   }
+}
+
+function* handleConfirmBidsRequest(action) {
+  const addressState = yield select(selectors.getAddressState);
+  const { address, bidGroups } = addressState.data;
+  const bids = action.bids;
+
+  try {
+    const payload = buildBidsSignPayload(bids);
+    const message = eth.utils.toHex(payload);
+    const signature = yield call(() => eth.remoteSign(message, address));
+    const nonce = getBidGroupsNonce(bidGroups);
+
+    const bidGroup = { address, bids, message, signature, nonce };
+    yield call(() => api.postBidGroup(bidGroup));
+
+    const parcelsToFetch = bids.map(bid => buildCoordinate(bid.x, bid.y));
+
+    yield put({ type: types.confirmBids.success });
+    yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch });
+  } catch (error) {
+    // TODO: Manage API errors
+    yield put({ type: types.confirmBids.failed, error: error.message });
+  }
+}
+
+function buildBidsSignPayload(bids) {
+  const payloadBids = bids
+    .map(bid => `- (${buildCoordinate(bid.x, bid.y)}) for ${bid.amount} MANA`)
+    .join("\n");
+
+  return `Bids (${bids.length}):
+  ${payloadBids}
+Time: ${new Date().getTime()}`;
+}
+
+function getBidGroupsNonce(bidGroups) {
+  const nonces = bidGroups.map(bidGroup => bidGroup.nonce).sort(); // DESC
+  return nonces.length > 0 ? nonces.pop() + 1 : 0;
 }
 
 export default rootSaga;

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import preventDefault from "../../lib/preventDefault";
+import { preventDefault } from "../../lib/util";
 import { ONE_LAND_IN_MANA } from "../../lib/land";
 import { stateData } from "../../lib/propTypes";
 import pendingBidsUtils from "../../lib/pendingBidsUtils";
@@ -37,10 +37,10 @@ export default class BidParcelModal extends React.Component {
 
   onBid = event => {
     const { bidValue } = this.state;
-    const { parcel, onBid } = this.props;
+    const { onBid } = this.props;
 
     if (this.isValidBid(bidValue)) {
-      onBid(parcel, bidValue);
+      onBid(bidValue);
     }
   };
 
@@ -50,14 +50,12 @@ export default class BidParcelModal extends React.Component {
   };
 
   isValidBid(bidValue) {
-    const { parcel } = this.props;
     const manaBalance = this.getManaBalance();
-    const currentBidValue = parcel.amount || 0;
 
     return (
       bidValue >= ONE_LAND_IN_MANA &&
       bidValue <= manaBalance &&
-      bidValue > currentBidValue
+      bidValue > this.getCurrentBidValue()
     );
   }
 
@@ -75,6 +73,7 @@ export default class BidParcelModal extends React.Component {
 
     return manaBalance >= ONE_LAND_IN_MANA ? (
       <BidForm
+        currentBidValue={this.getCurrentBidValue()}
         manaBalance={manaBalance}
         onBid={preventDefault(this.onBid)}
         onBidValueChange={this.onBidValueChange}
@@ -83,6 +82,11 @@ export default class BidParcelModal extends React.Component {
     ) : (
       <p className="text">You don&#39;t have enough balance to bid.</p>
     );
+  }
+
+  getCurrentBidValue() {
+    const { parcel } = this.props;
+    return parcel.amount || ONE_LAND_IN_MANA;
   }
 
   render() {
@@ -94,7 +98,7 @@ export default class BidParcelModal extends React.Component {
           <p className="text">
             You are bidding on the LAND {parcel.x},{parcel.y}.
             <br />
-            The minimun cost is 1,000 MANA.
+            The minimun bid is {this.getCurrentBidValue()} MANA.
             <br />
             {this.pendingManaBalance
               ? `You have ${this.pendingManaBalance} MANA pending.`
@@ -108,7 +112,13 @@ export default class BidParcelModal extends React.Component {
   }
 }
 
-function BidForm({ manaBalance, onBid, onBidValueChange, onClose }) {
+function BidForm({
+  currentBidValue,
+  manaBalance,
+  onBid,
+  onBidValueChange,
+  onClose
+}) {
   return (
     <form action="POST" onSubmit={onBid}>
       <div className="manaInput">

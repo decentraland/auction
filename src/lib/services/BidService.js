@@ -135,15 +135,18 @@ export default class BidService {
       if (parcelState.endsAt && parcelState.endsAt < bidGroup.receivedAt) {
         return `Auction ended at ${parcelState.endsAt.getTime()}`;
       }
-      if (
-        getBn(bid.amount).lessThan(
-          this.increment.mul(getBn(parcelState.amount))
-        )
-      ) {
+
+      if (this.isSufficientIncrement(parcelState, bid)) {
         return `Insufficient increment from ${parcelState.amount} to ${bid.amount}`;
       }
     }
     return null;
+  }
+
+  isSufficientIncrement(parcelState, bid) {
+    return getBn(bid.amount).lessThan(
+      this.increment.mul(getBn(parcelState.amount))
+    );
   }
 
   calculateNewBalance(addressState, parcelState, bidGroup, bid) {

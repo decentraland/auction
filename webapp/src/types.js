@@ -21,6 +21,8 @@ export default {
 
   clickParcel: "Parcel range changed",
 
+  addressStateLoading: "[Loading] Address state loading changed",
+
   fetchAddressState: {
     request: "[Request] Fetch address state requested",
     success: "[Success] Address state fetched",
@@ -29,6 +31,12 @@ export default {
 
   appendUnconfirmedBid: "Append new unconfirmed bid",
   deleteUnconfirmedBid: "Remove unconfirmed bid",
+
+  confirmBids: {
+    request: "[Request] Confirm bids requested",
+    success: "[Success] Bids confirmed",
+    failed: "[Failed] Failed to confirm bids"
+  },
 
   modal: {
     open: "Open Modal",

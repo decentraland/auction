@@ -15,8 +15,9 @@ class BidParcelModalContainer extends React.Component {
     appendUnconfirmedBid: PropTypes.func.isRequired
   };
 
-  onBid = (parcel, value) => {
-    const { appendUnconfirmedBid, addressState, onClose } = this.props;
+  onBid = value => {
+    const { appendUnconfirmedBid, addressState, data, onClose } = this.props;
+    const parcel = data;
 
     appendUnconfirmedBid({
       address: addressState.data.address,

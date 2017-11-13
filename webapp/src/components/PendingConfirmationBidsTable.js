@@ -3,11 +3,13 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 import { distanceInWordsToNow } from "../lib/dateUtils";
-import { buildCoordinate } from "../lib/util";
+import { preventDefault, buildCoordinate } from "../lib/util";
 import shortenAddress from "../lib/shortenAddress";
 import pendingBidsUtils from "../lib/pendingBidsUtils";
 
 import locations from "../locations";
+
+import Button from "./Button";
 
 import "./PendingConfirmationBidsTable.css";
 
@@ -54,13 +56,25 @@ export default class PendingConfirmationBidsTable extends React.Component {
             />
           ))}
 
-          <form method="POST" action="/confirmBids" onSubmit={onConfirmBids}>
+          <form
+            method="POST"
+            action="/confirmBids"
+            onSubmit={preventDefault(onConfirmBids)}
+          >
             <div className="table-row confirm-bids">
               <div className="col-land">Total</div>
               <div className="col-your-bid">{this.getTotalMana()} MANA</div>
               <div className="col-current-bid" />
               <div className="col-time-left" />
-              <div className="col-address btn btn-default">Confirm Bids</div>
+              <div className="col-confirm">
+                <Button
+                  type="default"
+                  className="btn btn-default"
+                  isSubmit={true}
+                >
+                  Confirm Bids
+                </Button>
+              </div>
             </div>
           </form>
         </div>

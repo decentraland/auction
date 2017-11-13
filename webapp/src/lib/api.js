@@ -22,6 +22,10 @@ class API {
     return this.request("get", `/addressState/full/${address}`, {});
   }
 
+  postBidGroup(bidGroup) {
+    return this.request("post", "/bidGroup", { bidGroup });
+  }
+
   request(method, path, params) {
     let options = {
       method,

@@ -1,15 +1,22 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 import { selectors } from "../../reducers";
 import { closeModal } from "../../actions";
 
-import preventDefault from "../../lib/preventDefault";
+import { preventDefault } from "../../lib/util";
 
 import * as modals from "../../components/modals";
 import * as modalContainers from "./index";
 
 class ModalContainer extends React.Component {
+  static propTypes = {
+    visible: PropTypes.bool,
+    data: PropTypes.object,
+    onClose: PropTypes.func
+  };
+
   render() {
     const { modal, closeModal } = this.props;
     const { open, name, data } = modal;

@@ -48,6 +48,13 @@ export function deleteUnconfirmedBid(bid) {
   };
 }
 
+export function confirmBids(bids) {
+  return {
+    type: types.confirmBids.request,
+    bids
+  };
+}
+
 // -------------------------------------------------------------------------
 // Modal
 

@@ -6,7 +6,7 @@ import "./Button.css";
 
 const propTypes = Object.freeze({
   className: PropTypes.string,
-  type: PropTypes.oneOf(["primary", "secondary"]),
+  type: PropTypes.oneOf(["primary", "secondary", "default"]),
   size: PropTypes.oneOf(["small", "medium", "big"]),
   isSubmit: PropTypes.bool,
   children: PropTypes.node
