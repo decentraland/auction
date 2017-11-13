@@ -9,8 +9,6 @@ const log = new Log("[LoadBids]");
 
 env.load();
 
-// TODO: Configurable batch size
-
 //The maximum is inclusive and the minimum is inclusive
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -150,7 +148,7 @@ const buildBuyTxData = (address, parcels) => {
   return { address, X, Y, totalCost };
 };
 
-const loadParcelsForAddress = async (contract, address) => {
+const loadParcelsForAddress = async (contract, address, batchSize) => {
   if (!address) {
     log.error(`(proc) [${address}] Empty or invalid address`);
     return;
@@ -166,7 +164,7 @@ const loadParcelsForAddress = async (contract, address) => {
     const doneParcels = await BuyTransaction.findProcessedParcels(address);
 
     // select parcels to send
-    const sendParcels = parcels.filter(e => !doneParcels.includes(e.id));
+    const sendParcels = parcels.filter(e => !doneParcels.includes(e.id)).splice(0, batchSize);
 
     log.info(
       `(proc) [${address}] Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
@@ -230,27 +228,44 @@ const watchPendingTxs = time => {
   setInterval(verifyPendingTxs, time);
 };
 
-const loadAllParcels = async contract => {
+const loadAllParcels = async (contract, batchSize) => {
   try {
     // get all addresses with bids
     const rows = await ParcelState.findAllAddresses();
     log.info(`(proc) Got ${rows.length} addresses with winning bids`);
 
     for (const row of rows) {
-      await loadParcelsForAddress(contract, row.address);
+      await loadParcelsForAddress(contract, row.address, batchSize);
     }
   } catch (err) {
     log.error(err);
   }
 };
 
+const returnAllMANA = async (contract) => {
+  try {
+    // get all address on the reserve
+    // check burnt balance for each
+    // get remained and send transaction
+
+    const txId = await contract.transferBackMANA(address, amount);
+    log.info(`(return) [${address}] Broadcasted tx : ${txId}`);
+
+  } catch (err) {
+    log.error(err)
+  }
+}
+
 async function main() {
-  const BATCH_SIZE = 20;
+  const DEFAULT_BATCH_SIZE = 20;
 
   try {
     // args
     const argv = minimist(process.argv.slice(2), {
-      string: ["loadaddress"]
+      string: ["loadaddress"],
+      default: {
+        "nbatch": DEFAULT_BATCH_SIZE
+      }
     });
 
     // init
@@ -268,9 +283,9 @@ async function main() {
     if (argv.verify === true) {
       await watchPendingTxs(5000);
     } else if (argv.load === true) {
-      await loadAllParcels(contract);
+      await loadAllParcels(contract, argv.nbatch);
     } else if (argv.loadaddress) {
-      await loadParcelsForAddress(contract, argv.loadaddress);
+      await loadParcelsForAddress(contract, argv.loadaddress, argv.nbatch);
     } else {
       log.error(`Invalid command. Use --verify or --load`)
       process.exit(0)
