@@ -180,6 +180,7 @@ export default class ParcelsMap extends React.Component {
     );
   }
 
+  // TODO: This could be a className to avoid having to add more props to the style="" attribute
   getParcelColor = (x, y) => {
     const { addressState } = this.props;
     const parcel = this.getParcelData(x, y);
@@ -251,10 +252,15 @@ function CurrentBidStatus({ addressState, parcel }) {
 
 function Tile({ x, y, width, height, isCenter, color }) {
   const style = { width, height, backgroundColor: color };
-  const className = `leaflet-tile ${isCenter ? "highlight" : ""}`;
+
+  const addHighlightClass = tile => {
+    if (isCenter) {
+      setTimeout(() => tile.classList.add("highlight"), 50);
+    }
+  };
 
   return (
-    <div className={className} style={style}>
+    <div className="leaflet-tile" ref={addHighlightClass} style={style}>
       <div className="leaflet-coordinates">
         {x},{y}
       </div>

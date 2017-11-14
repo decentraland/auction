@@ -10,7 +10,7 @@
   visibility: visible;
 }
 .leaflet-tile.highlight {
-  animation: highlight 0.6s;
+  animation: highlight 0.4s;
 }
 
 .leaflet-coordinates {
