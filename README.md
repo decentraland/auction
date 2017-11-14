@@ -188,5 +188,5 @@ For a production environment, the server should be enough.
 
 ### Closing notes
 
-Remember that for the auction font to work, you need to have a wallet provider like (MetaMask)[https://metamask.io/] installed, and that your wallet address should be present on the `address_states` table (and by extension, on the terraform app).
+Remember that for the auction font to work, you need to have a wallet provider like [MetaMask](https://metamask.io/) installed, and that your wallet address should be present on the `address_states` table (and by extension, on the terraform app).
 You can mock all of this by inserting the necessary row into that table (with an amount).
