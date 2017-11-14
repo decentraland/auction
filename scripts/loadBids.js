@@ -3,7 +3,13 @@
 import minimist from "minimist";
 import { eth, env, Log } from "decentraland-commons";
 import db from "../src/lib/db";
-import { BuyTransaction, DistrictEntry, LockedBalanceEvent, ParcelState, ReturnTransaction } from "../src/lib/models";
+import { 
+  BuyTransaction, 
+  DistrictEntry, 
+  LockedBalanceEvent, 
+  ParcelState, 
+  ReturnTransaction 
+} from "../src/lib/models";
 
 const log = new Log("[LoadBids]");
 
@@ -315,14 +321,14 @@ const returnAllMANA = async (contract) => {
         Math.floor(beforeNovBalance * BEFORE_NOVEMBER_DISCOUNT) + 
         Math.floor(afterNovBalance * AFTER_NOVEMBER_DISCOUNT) + 
         totalLandBalance;
-      log.info(`(return) [${address}] before:${beforeNovBalance} + after:${afterNovBalance} + land:${totalLandBalance} = reserved: ${manaReserved}`);
+      log.info(`(return) [${address}] before(${beforeNovBalance}) + after(${afterNovBalance}) + land(${totalLandBalance}) = reserved(${manaReserved})`);
 
       // calculate remaining MANA to return
       const totalBurnedMANA = await BuyTransaction.totalBurnedMANAByAddress(address);
       const remainingMANA = eth.web3.toWei(eth.utils.toBigNumber(manaReserved)).minus(totalBurnedMANA);
 
       if (remainingMANA > 0) {
-        log.info(`(return) [${address}] burned: ${totalBurnedMANA} = ${remainingMANA}`);
+        log.info(`(return) [${address}] burned(${totalBurnedMANA.toString(10)}) = ${remainingMANA.toString(10)}`);
         const txId = await contract.transferBackMANA(address, remainingMANA);
 
         log.info(`(return) [${address}] Broadcasted tx : ${txId}`);
@@ -355,7 +361,7 @@ async function main() {
 
     // init
     await db.connect();
-    await eth.connect();
+    await eth.connect('', '', {httpProviderUrl: 'http://localhost:8545'});
     await initTestParcels();
 
     const contract = eth.getContract("LANDTerraformSale");
