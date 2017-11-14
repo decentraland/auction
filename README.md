@@ -180,6 +180,7 @@ Validation of each bid
 If you're in development you need to have two processes running:
 
 `/webapp/npm run start` for the front end
+<br />
 `babel-node src/server.js` for the server
 
 If you're having problems connecting the two, check your environment!
