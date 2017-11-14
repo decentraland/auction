@@ -36,8 +36,6 @@ class ParcelsMapContainer extends React.Component {
   }
 
   componentWillMount() {
-    const { x, y } = this.state.center;
-
     this.lowerBound = -160;
     this.upperBound = 160;
     this.bounds = [
@@ -45,7 +43,19 @@ class ParcelsMapContainer extends React.Component {
       [this.upperBound, this.upperBound]
     ];
 
-    this.fetchParcelRange(x - 3, x + 3, y - 3, y + 3);
+    this.fetchCoordinateVicinity(this.state.center);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { center } = this.props;
+    const nextCenter = nextProps.center;
+
+    if (center.x !== nextCenter.x || center.y !== nextCenter.y) {
+      this.setState({
+        center: nextCenter
+      });
+      this.fetchCoordinateVicinity(nextCenter);
+    }
   }
 
   onMoveEnd = ({ position, bounds }) => {
@@ -64,6 +74,10 @@ class ParcelsMapContainer extends React.Component {
   onParcelBid = parcel => {
     this.props.openModal("BidParcelModal", parcel);
   };
+
+  fetchCoordinateVicinity({ x, y }) {
+    this.fetchParcelRange(x - 3, x + 3, y - 3, y + 3);
+  }
 
   fetchParcelRange(minX, maxX, minY, maxY) {
     this.props.parcelRangeChange(
