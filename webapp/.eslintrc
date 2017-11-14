@@ -8,6 +8,7 @@
   },
   "globals": {
     "document": true,
+    "console": true,
     "window": true
   },
   "parserOptions": {

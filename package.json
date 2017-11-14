@@ -11,7 +11,11 @@
     "watch:test": "npx mocha -r babel-register -r specs/spec_utils.js specs/setup.js specs/*.spec.js --watch",
     "build": "npm run lint && npm run test",
     "start": "babel-node src/server.js",
-    "dev": "nodemon --exec npm run start"
+    "dev": "nodemon --exec npm run start",
+    "docker:dev:build": "docker-compose -f docker-compose.yml -f docker-compose.development.yml build",
+    "docker:dev:run": "docker-compose -f docker-compose.yml -f docker-compose.development.yml up",
+    "docker:prod:build": "docker-compose -f docker-compose.yml -f docker-compose.production.yml build",
+    "docker:prod:start": "docker-compose -f docker-compose.yml -f docker-compose.production.yml up -d"
   },
   "repository": {
     "type": "git",

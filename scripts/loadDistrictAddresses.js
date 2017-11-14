@@ -14,7 +14,7 @@ function readJSON(filename) {
 }
 
 async function main() {
-  try {  
+  try {
     // init
     await db.connect();
 
@@ -24,7 +24,7 @@ async function main() {
     for (const [name, address] of Object.entries(input.districts)) {
       const project = await Project.findByName(name);
 
-      if (project) {        
+      if (project) {
         await ParcelState.update({address}, {projectId: project.id});
       } else {
         log.error(`Project "${name}" not found`);

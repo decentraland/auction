@@ -14,7 +14,7 @@
   "dependencies": {
     "axios": "^0.17.0",
     "date-fns": "^1.29.0",
-    "decentraland-commons": "git+ssh://git@github.com/decentraland/commons.git#release",
+    "decentraland-commons": "https://github.com/decentraland/commons#release",
     "history": "^4.7.2",
     "leaflet": "^1.2.0",
     "prop-types": "^15.5.10",
@@ -24,7 +24,7 @@
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.6",
-    "react-scripts": "1.0.14",
+    "react-scripts": "^1.0.17",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-saga": "^0.16.0",
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
+    "babel-polyfill": "^6.26.0",
     "eslint": "^4.2.0",
     "eslint-config-prettier": "^2.6.0",
     "eslint-plugin-prettier": "^2.3.1",

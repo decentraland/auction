@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  web:
+    ports:
+      - 3000:3000
+    environment:
+      REACT_APP_API_HOST: http://localhost:5000
+      NODE_ENV: 'development'
+      PORT: 3000
+
+  postgres:
+    volumes:
+      - ./docker/10-init-development.sql:/docker-entrypoint-initdb.d/10-init.sql
+
+  api:
+    environment:
+      CONNECTION_STRING: postgres://magiklander@postgres:5432/auction
+      PORT: 5000
+    ports:
+      - 0.0.0.0:5000:5000

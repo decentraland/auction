@@ -5,6 +5,7 @@ import { eth, env, Log } from "decentraland-commons";
 import db from "../src/lib/db";
 import {
   BuyTransaction,
+  DistrictEntry,
   LockedBalanceEvent,
   ParcelState,
   ReturnTransaction
@@ -295,6 +296,24 @@ const returnAllMANA = async contract => {
         address
       );
 
+      // adjust MANA balances to bonuses
+      const beforeNovBalance = calculateTotalForMonths(
+        monthlyLandBalances, monthlyLockedBalances, [9, 10]
+      );
+      const afterNovBalance = calculateTotalForMonths(
+        monthlyLandBalances, monthlyLockedBalances, [11, 12, 1]
+      );
+
+      // total MANA locked in districts
+      const totalLandBalance = Object.values(monthlyLandBalances).reduce((total, value) => total + value, 0);
+
+      // total MANA reserved
+      const manaReserved =
+        Math.floor(beforeNovBalance * BEFORE_NOVEMBER_DISCOUNT) +
+        Math.floor(afterNovBalance * AFTER_NOVEMBER_DISCOUNT) +
+        totalLandBalance;
+      log.info(`(return) [${address}] before(${beforeNovBalance}) + after(${afterNovBalance}) + land(${totalLandBalance}) = reserved(${manaReserved})`);
+
       // calculate remaining MANA to return
       const remainingMANA = eth.web3
         .toWei(eth.utils.toBigNumber(totalLockedMANA))
@@ -346,6 +365,9 @@ async function main() {
 
     const contract = eth.getContract("LANDTerraformSale");
     log.info(`Using LANDTerraformSale contract at address ${contract.address}`);
+
+    // setup watch for mined txs
+    const eventFilter = setupBlockWatch("latest");
 
     // commands
     if (argv.verifybuys === true) {

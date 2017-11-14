@@ -1,24 +1,44 @@
 version: '3'
 
 services:
-  web:
+  api:
     build: .
-    ports: 
-      - 5000:5000
-    links:
-      - postgres
     volumes:
       - .:/usr/src/app/
-      # don't overwrite `node_modules` or mirror dir from container
       - /usr/src/app/node_modules
     environment:
       CONNECTION_STRING: postgres://magiklander@postgres:5432/auction_test
+      LETSENCRYPT_HOST: api.auction.decentraland.today
+      PORT: 80
+    networks:
+      - db
+      - web
+
+  web:
+    build: ./webapp
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    environment:
+      REACT_APP_API_HOST: https://api.auction.decentraland.today
+      LETSENCRYPT_HOST: auction.decentraland.today
+      PORT: 80
+    networks:
+      - web
+
   postgres:
     image: postgres:latest
-    ports: 
+    ports:
       - 5432:5432
+    volumes:
+      - ./data/postgres:/var/lib/postgresql
     environment:
       POSTGRES_USER: magiklander
       POSTGRES_DB: auction
-    volumes:
-      - ./docker/10-init.sql:/docker-entrypoint-initdb.d/10-init.sql
+    networks:
+      - db
+
+networks:
+  web:
+    driver: bridge
+  db:
+    internal: true
