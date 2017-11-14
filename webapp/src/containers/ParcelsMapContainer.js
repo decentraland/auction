@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 import { selectors } from "../reducers";
-import { parcelRangeChange, openModal } from "../actions";
+import locations from "../locations";
+import { parcelRangeChange, openModal, locationChange } from "../actions";
 import { stateData } from "../lib/propTypes";
 
 import ParcelsMap from "../components/ParcelsMap";
@@ -17,7 +18,8 @@ class ParcelsMapContainer extends React.Component {
     parcelStates: stateData(PropTypes.object).isRequired,
     addressState: stateData(PropTypes.object).isRequired,
     parcelRangeChange: PropTypes.func.isRequired,
-    openModal: PropTypes.func.isRequired
+    openModal: PropTypes.func.isRequired,
+    locationChange: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -27,14 +29,6 @@ class ParcelsMapContainer extends React.Component {
     }
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      center: { ...props.center }
-    };
-  }
-
   componentWillMount() {
     this.lowerBound = -160;
     this.upperBound = 160;
@@ -43,25 +37,11 @@ class ParcelsMapContainer extends React.Component {
       [this.upperBound, this.upperBound]
     ];
 
-    this.fetchCoordinateVicinity(this.state.center);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { center } = this.props;
-    const nextCenter = nextProps.center;
-
-    if (center.x !== nextCenter.x || center.y !== nextCenter.y) {
-      this.setState({
-        center: nextCenter
-      });
-      this.fetchCoordinateVicinity(nextCenter);
-    }
+    this.fetchCoordinateVicinity(this.props.center);
   }
 
   onMoveEnd = ({ position, bounds }) => {
-    this.setState({
-      center: position
-    });
+    this.props.locationChange(locations.parcelDetail(position.x, position.y));
 
     this.fetchParcelRange(
       bounds.min.x,
@@ -98,7 +78,7 @@ class ParcelsMapContainer extends React.Component {
 
   render() {
     const { parcelStates, addressState } = this.props;
-    const { x, y } = this.state.center;
+    const { x, y } = this.props.center;
 
     return (
       <ParcelsMap
@@ -123,5 +103,5 @@ export default connect(
     parcelStates: selectors.getParcelStates(state),
     addressState: selectors.getAddressState(state)
   }),
-  { parcelRangeChange, openModal }
+  { parcelRangeChange, openModal, locationChange }
 )(ParcelsMapContainer);

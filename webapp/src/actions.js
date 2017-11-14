@@ -1,4 +1,5 @@
 import types from "./types";
+import { push } from "react-router-redux";
 
 // -------------------------------------------------------------------------
 // Web3
@@ -76,4 +77,11 @@ export function closeModal() {
   return {
     type: types.modal.close
   };
+}
+
+// -------------------------------------------------------------------------
+// Locations
+
+export function locationChange(url) {
+  return push(url);
 }
