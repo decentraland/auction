@@ -253,14 +253,8 @@ function CurrentBidStatus({ addressState, parcel }) {
 function Tile({ x, y, width, height, isCenter, color }) {
   const style = { width, height, backgroundColor: color };
 
-  const addHighlightClass = tile => {
-    if (isCenter) {
-      setTimeout(() => tile.classList.add("highlight"), 50);
-    }
-  };
-
   return (
-    <div className="leaflet-tile" ref={addHighlightClass} style={style}>
+    <div className="leaflet-tile" style={style}>
       <div className="leaflet-coordinates">
         {x},{y}
       </div>
