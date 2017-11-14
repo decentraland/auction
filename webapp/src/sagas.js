@@ -121,8 +121,7 @@ function* handleParcelFetchRequest(action) {
 }
 
 function* handleParcelRangeChange(action) {
-  // Retrieve the current state
-  const currentState = yield select(selectors.getParcelStates);
+  const parcelStates = yield select(selectors.getParcelStates);
   const { minX, maxX, minY, maxY } = action;
 
   // For each parcel in screen, if it is not loaded, request to fetch it
@@ -132,8 +131,9 @@ function* handleParcelRangeChange(action) {
   for (let x = minX; x <= maxX; x++) {
     for (let y = minY; y <= maxY; y++) {
       const coordinate = buildCoordinate(x, y);
-      const current = currentState[coordinate];
-      if (!current || (!current.data && !current.loading)) {
+      const current = parcelStates[coordinate];
+
+      if (!current) {
         parcelsToFetch.push(coordinate);
       }
     }

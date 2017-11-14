@@ -57,6 +57,7 @@ export default {
     );
 
     // id => string (hash of `x,y`)
+    // TODO: x and y need an index. See ParcelState#findInCoordinates
     await this.createTable(
       "parcel_states",
       `"id" text NOT NULL,

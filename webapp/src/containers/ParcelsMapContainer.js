@@ -27,8 +27,16 @@ class ParcelsMapContainer extends React.Component {
     }
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      center: { ...props.center }
+    };
+  }
+
   componentWillMount() {
-    const { x, y } = this.props.center;
+    const { x, y } = this.state.center;
 
     this.lowerBound = -160;
     this.upperBound = 160;
@@ -37,10 +45,14 @@ class ParcelsMapContainer extends React.Component {
       [this.upperBound, this.upperBound]
     ];
 
-    this.fetchParcelRange(x - 10, x + 10, y - 10, y + 10);
+    this.fetchParcelRange(x - 3, x + 3, y - 3, y + 3);
   }
 
-  onMoveEnd = ({ bounds }) => {
+  onMoveEnd = ({ position, bounds }) => {
+    this.setState({
+      center: position
+    });
+
     this.fetchParcelRange(
       bounds.min.x,
       bounds.max.x,
@@ -72,7 +84,7 @@ class ParcelsMapContainer extends React.Component {
 
   render() {
     const { parcelStates, addressState } = this.props;
-    const { x, y } = this.props.center;
+    const { x, y } = this.state.center;
 
     return (
       <ParcelsMap

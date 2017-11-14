@@ -4,12 +4,14 @@ import { routerReducer, routerMiddleware } from "react-router-redux";
 import createHistory from "history/createBrowserHistory";
 import createSagasMiddleware from "redux-saga";
 import reduxThunk from "redux-thunk";
-import reduxLogger from "redux-logger";
+import { createLogger } from "redux-logger";
 
 import reducers from "./reducers";
 import rootSaga from "./sagas";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const logger = createLogger({ collapsed: () => true });
 
 // dispatch navigation actions from anywhere! like this: store.dispatch(push(locations.root))
 const history = createHistory();
@@ -22,7 +24,7 @@ const store = createStore(
     router: routerReducer
   }),
   composeEnhancers(
-    applyMiddleware(reduxThunk, reduxLogger, sagasMiddleware, historyMiddleware)
+    applyMiddleware(reduxThunk, logger, sagasMiddleware, historyMiddleware)
   )
 );
 

@@ -65,7 +65,7 @@ export default class ParcelsMap extends React.Component {
     this.map.setMaxBounds(this.mapCoordinates.toLatLngBounds(bounds));
 
     this.map.on("click", this.onMapClick);
-    this.map.on("onmoveend", this.onMapMoveEnd);
+    this.map.on("moveend", this.onMapMoveEnd);
 
     return this.map;
   }
@@ -79,13 +79,22 @@ export default class ParcelsMap extends React.Component {
 
   onMapMoveEnd = event => {
     const bounds = { min: {}, max: {} };
-    const position = this.mapCoordinates.latLngToCartesian(event.latlng);
+    const latlng = this.map.getCenter();
+    const position = this.mapCoordinates.latLngToCartesian(latlng);
     const mapBounds = this.map.getBounds();
 
-    const sw = mapBounds.getSouthWest();
-    const ne = bounds.getNorthWest();
-    bounds.min = this.mapCoordinates.latLngToCartesian(sw);
-    bounds.max = this.mapCoordinates.latLngToCartesian(ne);
+    const sw = this.mapCoordinates.latLngToCartesian(mapBounds.getSouthWest());
+    const ne = this.mapCoordinates.latLngToCartesian(mapBounds.getNorthEast());
+
+    bounds.min = {
+      x: sw.x,
+      y: ne.y
+    };
+
+    bounds.max = {
+      x: ne.x,
+      y: sw.y
+    };
 
     this.props.onMoveEnd({ position, bounds });
   };
@@ -147,6 +156,7 @@ export default class ParcelsMap extends React.Component {
 
   removeMap() {
     if (this.map) {
+      this.map.off();
       this.map.remove();
       this.map = null;
     }
@@ -176,6 +186,7 @@ export default class ParcelsMap extends React.Component {
   render() {
     const { parcelStates, addressState } = this.props;
 
+    console.log("Render map");
     return isEmptyObject(parcelStates) || !addressState.data ? (
       <Loading />
     ) : (
