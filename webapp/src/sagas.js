@@ -46,13 +46,11 @@ function* connectWeb3(action = {}) {
     let connected = eth.connect(action.address);
 
     while (!connected && retries <= 3) {
-      console.log("Retrying web3 connection", { connected, retries });
       yield delay(1500);
       connected = eth.connect(action.address);
       retries += 1;
     }
 
-    console.log("FINISHED web3 CHECK", { connected, retries });
     if (!connected) throw new Error("Could not connect to web3");
 
     yield put({

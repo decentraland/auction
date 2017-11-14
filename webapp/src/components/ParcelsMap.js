@@ -225,7 +225,7 @@ function CurrentBidStatus({ addressState, parcel }) {
 
   return (
     <small className="current-bid-status">
-      {text.length && `(${text.join(" ")})`}
+      {text.length > 0 && `(${text.join(", ")})`}
     </small>
   );
 }

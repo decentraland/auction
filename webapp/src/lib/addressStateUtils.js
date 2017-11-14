@@ -14,7 +14,7 @@ export function getBidParcels(addressState) {
 }
 
 export function getBidCoordinates(addressState) {
-  const bidParcels = getBidCoordinates(addressState);
+  const bidParcels = getBidParcels(addressState);
   return Object.keys(bidParcels);
 }
 
