@@ -71,10 +71,11 @@ export default class ParcelsMap extends React.Component {
   }
 
   onMapClick = event => {
-    if (this.marker) {
-      this.map.removeLayer(this.marker);
+    const { parcelStates } = this.props;
+
+    if (!parcelStates.loading) {
+      this.addPopup(event.latlng);
     }
-    this.addPopup(event.latlng);
   };
 
   onMapMoveEnd = event => {
@@ -165,9 +166,17 @@ export default class ParcelsMap extends React.Component {
   createTile(coords, size) {
     const { x, y } = this.mapCoordinates.coordsToCartesian(coords);
     const color = this.getParcelColor(x, y);
+    const isCenter = x === this.props.x && y === this.props.y;
 
     return renderToDOM(
-      <Tile x={x} y={y} width={size} height={size} color={color} />
+      <Tile
+        x={x}
+        y={y}
+        width={size}
+        height={size}
+        isCenter={isCenter}
+        color={color}
+      />
     );
   }
 
@@ -186,7 +195,6 @@ export default class ParcelsMap extends React.Component {
   render() {
     const { parcelStates, addressState } = this.props;
 
-    console.log("Render map");
     return isEmptyObject(parcelStates) || !addressState.data ? (
       <Loading />
     ) : (
@@ -241,11 +249,12 @@ function CurrentBidStatus({ addressState, parcel }) {
   );
 }
 
-function Tile({ x, y, width, height, color }) {
+function Tile({ x, y, width, height, isCenter, color }) {
   const style = { width, height, backgroundColor: color };
+  const className = `leaflet-tile ${isCenter ? "highlight" : ""}`;
 
   return (
-    <div className="leaflet-tile" style={style}>
+    <div className={className} style={style}>
       <div className="leaflet-coordinates">
         {x},{y}
       </div>

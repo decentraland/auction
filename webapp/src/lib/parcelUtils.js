@@ -8,15 +8,19 @@ export function getBidStatus(parcel, ownerAddress) {
 
   let status = "";
 
-  const finished = Date.now() >= parcel.endsAt.getTime();
+  const ended = hasEnded(parcel);
   const byAddress = parcel.address === ownerAddress;
 
-  if (finished) {
+  if (ended) {
     status = byAddress ? "Won" : "Lost";
   } else {
     status = byAddress ? "Winning" : "Outbid";
   }
   return status;
+}
+
+export function hasEnded(parcel) {
+  return parcel.endsAt && Date.now() >= parcel.endsAt.getTime();
 }
 
 export const COLORS = {
@@ -31,13 +35,17 @@ export const COLORS = {
 };
 
 export function getColor(parcel, addressState) {
-  if (!parcel || !parcel.amount) return COLORS.Default;
+  if (!parcel) return COLORS.default;
+  if (parcel.projectId) return COLORS.Taken;
+  if (!parcel.amount) return COLORS.Default;
 
   let color = "";
 
   if (addressStateUtils.hasBidInParcel(addressState, parcel)) {
     const status = getBidStatus(parcel, addressState.address);
     color = COLORS[status] || COLORS.Default;
+  } else if (hasEnded(parcel)) {
+    color = COLORS.Taken;
   } else {
     // toHsv() => { h: 0, s: 1, v: 1, a: 1 }
     const minHSV = tinycolor2(COLORS.LittleValue).toHsv();

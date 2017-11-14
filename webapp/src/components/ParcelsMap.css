@@ -9,6 +9,9 @@
   transform: translateZ(0);
   visibility: visible;
 }
+.leaflet-tile.highlight {
+  animation: highlight 0.6s;
+}
 
 .leaflet-coordinates {
   font-size: 16px;
@@ -68,4 +71,14 @@
 
 .leaflet-popup .btn {
   margin-top: 10px;
+}
+
+
+@keyframes highlight {
+  0% {
+    background: #FFD27F;
+  }
+  100% {
+    background: inherit;
+  }
 }

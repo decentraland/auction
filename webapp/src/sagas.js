@@ -12,6 +12,8 @@ import * as addressStateUtils from "./lib/addressStateUtils";
 import * as parcelUtils from "./lib/parcelUtils";
 import api from "./lib/api";
 
+// TODO: We need to avoid having a infinite spinner when an error occurs and the user navigates back to the root location.
+//       We can listen to URL changes and try to load web3 in that particular case
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3);
 
