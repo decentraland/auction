@@ -41,7 +41,7 @@ Modal.propTypes = {
   onClose: PropTypes.func.isRequired
 };
 
-Modal.defaultTypes = {
+Modal.defaultProps = {
   className: "",
   visible: false
 };

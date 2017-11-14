@@ -88,6 +88,14 @@
   padding: 24px;
 }
 
+.ongoing-auctions .table-row-empty {
+  width: 100%;
+  padding-left: 24px;
+  font-size: 15px;
+  color: #7B7B7B;
+}
+
+
 .ongoing-auctions .table-header {
   color: #7B7B7B;
 }

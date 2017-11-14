@@ -56,29 +56,45 @@ export default class Menu extends React.Component {
 
         <div className="ongoing-auctions">
           <h3>Ongoing auctions</h3>
-          <div className="table">
-            <div className="table-row table-header">
-              <div className="col-land">Land</div>
-              <div className="col-status">Status</div>
-              <div className="col-amount">Amount</div>
-              <div className="col-time-left">Time left</div>
-              <div className="col-address" />
-            </div>
-
-            {ongoingAuctions.loading ? (
-              <Loading />
-            ) : (
-              ongoingAuctions.data.map((auction, index) => (
-                <AuctionTableRow
-                  key={index}
-                  auction={auction}
-                  onLandClick={onHide}
-                  className={index % 2 === 0 ? "gray" : ""}
-                />
-              ))
-            )}
-          </div>
+          {ongoingAuctions.loading ? (
+            <Loading />
+          ) : (
+            <AuctionTable auctions={ongoingAuctions.data} onHide={onHide} />
+          )}
         </div>
+      </div>
+    );
+  }
+}
+
+function AuctionTable({ auctions, onHide }) {
+  if (auctions.length) {
+    return (
+      <div className="table">
+        <div className="table-row table-header">
+          <div className="col-land">Land</div>
+          <div className="col-status">Status</div>
+          <div className="col-amount">Amount</div>
+          <div className="col-time-left">Time left</div>
+          <div className="col-address" />
+        </div>
+
+        {auctions.map((auction, index) => (
+          <AuctionTableRow
+            key={index}
+            auction={auction}
+            onLandClick={onHide}
+            className={index % 2 === 0 ? "gray" : ""}
+          />
+        ))}
+      </div>
+    );
+  } else {
+    return (
+      <div className="table-row-empty">
+        You have no ongoing auctions yet.
+        <br />
+        You can click on any parcel you like to bid on it!
       </div>
     );
   }
