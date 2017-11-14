@@ -173,7 +173,7 @@ export default class BidService {
     return {
       id: parcelState.id,
       amount: bid.amount,
-      bidGroup: bidGroup.id,
+      bidGroupId: bidGroup.id,
       bidIndex: index,
       address: bidGroup.address,
       endsAt: this.extendBid(parcelState.endsAt, bidGroup.receivedAt)
