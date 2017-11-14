@@ -3,7 +3,7 @@
 import minimist from "minimist";
 import { eth, env, Log } from "decentraland-commons";
 import db from "../src/lib/db";
-import { ParcelState, BuyTransaction } from "../src/lib/models";
+import { BuyTransaction, DistrictEntry, LockedBalanceEvent, ParcelState, ReturnTransaction } from "../src/lib/models";
 
 const log = new Log("[LoadBids]");
 
@@ -135,6 +135,7 @@ const setupBlockWatch = options => {
 const buildBuyTxData = (address, parcels) => {
   const X = parcels.map(parcel => parcel.x);
   const Y = parcels.map(parcel => parcel.y);
+  // This should be stored as WEI in the database
   const totalCost = parcels
     .map(parcel => eth.utils.toBigNumber(parcel.amount))
     .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0));
@@ -190,7 +191,7 @@ const loadParcelsForAddress = async (contract, address, batchSize) => {
         txId,
         address,
         parcelStatesIds,
-        totalCost: txData.totalCost,
+        totalCost: txData.totalCost.toString(10),
         status: "pending"
       });
       log.info(`(proc) [${address}] Saved tx : ${txId}`);
@@ -242,16 +243,88 @@ const loadAllParcels = async (contract, batchSize) => {
   }
 };
 
+const ONE_LAND_IN_MANA = 1000;
+const BEFORE_NOVEMBER_DISCOUNT = 1.15;
+const AFTER_NOVEMBER_DISCOUNT = 1.10;
+
+const calculateTotalForMonths = (monthlyLandBalances, monthlyLockedBalances, months) => {
+  return months.reduce((total, index) => {
+    return total + monthlyLockedBalances[index] - monthlyLandBalances[index];
+  }, 0);
+}
+
+const getMonthlySubmissionMANA = (submissions) => {
+  const months = new Array(12).fill(0);
+  const monthlyLandBalance = months.reduce((obj, _, index) =>
+    Object.assign(obj, { [index+1]: 0 })
+  , {});
+
+  submissions.forEach(submission => {
+    const month = new Date(+submission.userTimestamp).getMonth() + 1;
+    monthlyLandBalance[month] += submission.lands * ONE_LAND_IN_MANA;
+  });
+
+  return monthlyLandBalance;
+}
+
+const toLockedBalancesByMonth = (lockedBalances) => {
+  const months = new Array(12).fill(0);
+  const lockedBalancesByMonth = months.reduce((obj, _, index) => { obj[index+1] = 0; return obj }, {});
+
+  for (let { month, mana } of lockedBalances) {
+    lockedBalancesByMonth[month] = parseInt(mana, 10);
+  }
+  return lockedBalancesByMonth;
+}
+
 const returnAllMANA = async (contract) => {
   try {
-    // get all address on the reserve (de donde lo saco?)
-    // check burnt balance for each
-    // get remained and send transaction
-    // const reserve = eth.getContract("TerraformReserve");
-    // const lockedMANAWei = await reserve.call("lockedBalance", address);
+    // get all addresses that locked MANA
+    const addresses = await LockedBalanceEvent.getLockedAddresses();
 
-    // const txId = await contract.transferBackMANA(address, amount);
-    // log.info(`(return) [${address}] Broadcasted tx : ${txId}`);
+    for (const address of addresses) {
+      // get MANA locked in districts
+      const submissions = await DistrictEntry.getSubmissions(address)
+      const monthlyLandBalances = getMonthlySubmissionMANA(submissions);
+
+      // get MANA locked
+      const monthlyLockedBalances = toLockedBalancesByMonth(
+        await LockedBalanceEvent.getMonthlyLockedBalanceByAddress(address)
+      );
+
+      // adjust MANA balances to bonuses
+      const beforeNovBalance = calculateTotalForMonths(
+        monthlyLandBalances, monthlyLockedBalances, [9, 10]
+      );
+      const afterNovBalance = calculateTotalForMonths(
+        monthlyLandBalances, monthlyLockedBalances, [11, 12, 1]
+      );
+
+      // total MANA locked in districts
+      const totalLandBalance = Object.values(monthlyLandBalances).reduce((total, value) => total + value, 0);
+
+      // total MANA reserved
+      const manaReserved =
+        Math.floor(beforeNovBalance * BEFORE_NOVEMBER_DISCOUNT) + 
+        Math.floor(afterNovBalance * AFTER_NOVEMBER_DISCOUNT) + 
+        totalLandBalance;
+      log.info(`(return) [${address}] before:${beforeNovBalance} + after:${afterNovBalance} + land:${totalLandBalance} = reserved: ${manaReserved}`);
+
+      const totalBurnedMANA = await BuyTransaction.totalBurnedMANAByAddress(address);
+      const remainingMANA = eth.web3.toWei(eth.utils.toBigNumber(manaReserved)).minus(totalBurnedMANA);
+      if (remainingMANA > 0) {
+        log.info(`(return) [${address}] burned: ${totalBurnedMANA} = ${remainingMANA}`);
+        const txId = await contract.transferBackMANA(address, remainingMANA);
+
+        log.info(`(return) [${address}] Broadcasted tx : ${txId}`);
+        await ReturnTransaction.insert({
+          txId,
+          address,
+          amount: remainingMANA.toString(10),
+          status: "pending"
+        });
+      }
+    }
   } catch (err) {
     log.error(err)
   }

@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { eth } from "decentraland-commons";
 
 import db from "../src/lib/db";
 import { BuyTransaction } from "../src/lib/models";
@@ -70,7 +71,7 @@ describe("BuyTransaction", () => {
   });
 
   describe(".findAllPendingTxIds", async () => {
-    it("should get an array of pending tx ids", async function() {
+    it("should get an array of pending tx ids", async () => {
       const txIds = await BuyTransaction.findAllPendingTxIds();
       expect(txIds.length).to.be.equal(pendingTxIds.length);
 
@@ -80,12 +81,19 @@ describe("BuyTransaction", () => {
   });
 
   describe(".findProcessedParcels", () => {
-    it("should get an array of processed parcel ids", async function() {
+    it("should get an array of processed parcel ids", async () => {
       const processedParcelIds = await BuyTransaction.findProcessedParcels(addresses[0]);
       const isContained = arrayContainsArray(
         [...parcelIds[0], ...parcelIds[2]], processedParcelIds
       );
       expect(isContained).to.be.true;
+    });
+  });
+
+  describe(".totalBurnedMANAByAddress", () => {
+    it("should get total MANA burned for a certain address", async () => {
+      const total = await BuyTransaction.totalBurnedMANAByAddress(addresses[0]);
+      expect(total.equals(eth.utils.toBigNumber(7000000000000000000000))).to.be.true;
     });
   });
 });
