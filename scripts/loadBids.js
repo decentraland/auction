@@ -283,6 +283,13 @@ const returnAllMANA = async (contract) => {
     const addresses = await LockedBalanceEvent.getLockedAddresses();
 
     for (const address of addresses) {
+      // if already sent avoid
+      const returnTx = await ReturnTransaction.findByAddress(address);
+      if (returnTx) {
+        log.info(`(return) [${address}] TX already sent for address`);
+        continue;
+      }
+
       // get MANA locked in districts
       const submissions = await DistrictEntry.getSubmissions(address)
       const monthlyLandBalances = getMonthlySubmissionMANA(submissions);
@@ -310,8 +317,10 @@ const returnAllMANA = async (contract) => {
         totalLandBalance;
       log.info(`(return) [${address}] before:${beforeNovBalance} + after:${afterNovBalance} + land:${totalLandBalance} = reserved: ${manaReserved}`);
 
+      // calculate remaining MANA to return
       const totalBurnedMANA = await BuyTransaction.totalBurnedMANAByAddress(address);
       const remainingMANA = eth.web3.toWei(eth.utils.toBigNumber(manaReserved)).minus(totalBurnedMANA);
+
       if (remainingMANA > 0) {
         log.info(`(return) [${address}] burned: ${totalBurnedMANA} = ${remainingMANA}`);
         const txId = await contract.transferBackMANA(address, remainingMANA);

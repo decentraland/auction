@@ -10,6 +10,10 @@ class ReturnTransaction extends Model {
     "status",
     "receipt"
   ];
+
+  static findByAddress(address) {
+    return this.findOne({ address });
+  }
 }
 
 export default ReturnTransaction;
