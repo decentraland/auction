@@ -36,7 +36,7 @@ async function upsertRoadsProject() {
 }
 
 async function initParcels() {
-  const parcels = fs.readFileSync("./parcelsDescription.example.json", "utf8");
+  const parcels = fs.readFileSync("./parcelsDescription.json", "utf8");
   const { x, y, reserved, roads } = JSON.parse(parcels);
 
   console.log(
@@ -69,7 +69,7 @@ async function reserveProjects(reservation) {
 async function importAddressStates() {
   // - Read a dump of address => Balance
   let index = 1;
-  let addresses = fs.readFileSync("./addresses.example.txt", "utf8");
+  let addresses = fs.readFileSync("./addresses.txt", "utf8");
   addresses = addresses.split("\n");
 
   for (let address of addresses) {
