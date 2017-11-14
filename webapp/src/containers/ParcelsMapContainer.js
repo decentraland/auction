@@ -30,7 +30,7 @@ class ParcelsMapContainer extends React.Component {
   componentWillMount() {
     const { x, y } = this.props.center;
     // TODO: Don't overfetch. Check the bounds
-    this.props.parcelRangeChange(x - 10, x + 10, y - 10, y + 10);
+    this.props.parcelRangeChange(x - 2, x + 2, y - 2, y + 2);
   }
 
   getParcelData = (x, y) => {

@@ -28,6 +28,11 @@ function* rootSaga() {
 
   yield takeEvery(types.fetchAddressState.request, handleAddressFetchRequest);
 
+  yield takeEvery(
+    types.fetchOngoingAuctions.request,
+    handleOngoingAuctionsFetchRequest
+  );
+
   yield takeLatest(types.confirmBids.request, handleAddresStateStartLoading);
   yield takeLatest(types.confirmBids.request, handleConfirmBidsRequest);
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest);
@@ -107,6 +112,12 @@ function* handleParcelFetchRequest(action) {
     const parcelStates = yield call(() =>
       api.fetchParcelStates(action.parcels)
     );
+
+    for (let coordinate in parcelStates) {
+      const parcel = parcelStates[coordinate];
+      parcel.endsAt = new Date(parcel.endsAt);
+    }
+
     yield put({ type: types.fetchParcels.success, parcelStates });
   } catch (error) {
     yield put({ type: types.fetchParcels.failed, error: error.message });
@@ -135,6 +146,74 @@ function* handleParcelRangeChange(action) {
   if (parcelsToFetch.length) {
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch });
   }
+}
+
+// -------------------------------------------------------------------------
+// Bids
+
+function* handleOngoingAuctionsFetchRequest(action) {
+  try {
+    const addressState = yield select(selectors.getAddressState);
+    let parcelStates = yield select(selectors.getParcelStates);
+
+    const { address, bidGroups } = addressState.data;
+
+    const ongoingAuctions = [];
+    const biddedCoordinates = getBiddedCoordinates(bidGroups);
+
+    if (biddedCoordinates.length) {
+      yield call(() =>
+        handleParcelFetchRequest({ parcels: biddedCoordinates })
+      );
+      parcelStates = yield select(selectors.getParcelStates);
+    }
+
+    for (const coordinate of biddedCoordinates) {
+      const parcel = parcelStates[coordinate];
+      const status = getParcelBidStatus(parcel, address);
+
+      ongoingAuctions.push({
+        address,
+        status,
+        x: parcel.x,
+        y: parcel.y,
+        amount: parcel.amount,
+        endsAt: parcel.endsAt
+      });
+    }
+
+    yield put({ type: types.fetchOngoingAuctions.success, ongoingAuctions });
+  } catch (error) {
+    yield put({
+      type: types.fetchOngoingAuctions.failed,
+      error: error.message
+    });
+  }
+}
+
+function getBiddedCoordinates(bidGroups) {
+  const biddedCoordinates = new Set(); // test with set
+
+  for (const bidGroup of bidGroups) {
+    for (const bid of bidGroup.bids) {
+      const coordinate = buildCoordinate(bid.x, bid.y);
+      biddedCoordinates.add(coordinate);
+    }
+  }
+  return [...biddedCoordinates];
+}
+
+function getParcelBidStatus(parcel, address) {
+  const finished = Date.now() >= parcel.endsAt.getTime();
+  const byAddress = parcel.address === address;
+
+  let status = "";
+  if (finished) {
+    status = byAddress ? "Won" : "Lost";
+  } else {
+    status = byAddress ? "Wining" : "Outbid";
+  }
+  return status;
 }
 
 function* handleConfirmBidsRequest(action) {

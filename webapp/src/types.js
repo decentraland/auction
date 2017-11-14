@@ -32,6 +32,12 @@ export default {
   appendUnconfirmedBid: "Append new unconfirmed bid",
   deleteUnconfirmedBid: "Remove unconfirmed bid",
 
+  fetchOngoingAuctions: {
+    request: "[Request] Ongoing auctions requested",
+    success: "[Success] Ongoing auctions fetched",
+    failed: "[Failed] Failed to fetch ongoing auctions"
+  },
+
   confirmBids: {
     request: "[Request] Confirm bids requested",
     success: "[Success] Bids confirmed",

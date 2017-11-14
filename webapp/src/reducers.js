@@ -7,6 +7,8 @@ const INITIAL_STATE = {
   parcelStates: { loading: true },
   pendingConfirmationBids: [],
 
+  ongoingAuctions: { loading: true },
+
   modal: {
     open: false,
     name: "",
@@ -26,6 +28,9 @@ export const selectors = {
   },
   getPendingConfirmationBids(state) {
     return state.pendingConfirmationBids;
+  },
+  getOngoinAuctions(state) {
+    return state.ongoingAuctions;
   },
   getModal(state) {
     return state.modal;
@@ -122,6 +127,19 @@ function pendingConfirmationBids(
   }
 }
 
+function ongoingAuctions(state = INITIAL_STATE.ongoingAuctions, action) {
+  switch (action.type) {
+    case types.fetchOngoingAuctions.request:
+      return { loading: true };
+    case types.fetchOngoingAuctions.success:
+      return { loading: false, data: action.ongoingAuctions };
+    case types.fetchOngoingAuctions.failed:
+      return { ...state, loading: false, error: action.error };
+    default:
+      return state;
+  }
+}
+
 function modal(state = INITIAL_STATE.modal, action) {
   switch (action.type) {
     case types.modal.open:
@@ -142,5 +160,6 @@ export default {
   addressState,
   parcelStates,
   pendingConfirmationBids,
+  ongoingAuctions,
   modal
 };

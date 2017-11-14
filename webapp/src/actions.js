@@ -32,7 +32,7 @@ export function clickParcel(x, y) {
 }
 
 // -------------------------------------------------------------------------
-// Pending Confirmation Bids
+// Bids
 
 export function appendUnconfirmedBid(bid) {
   return {
@@ -45,6 +45,12 @@ export function deleteUnconfirmedBid(bid) {
   return {
     type: types.deleteUnconfirmedBid,
     bid
+  };
+}
+
+export function fetchOngoingAuctions() {
+  return {
+    type: types.fetchOngoingAuctions.request
   };
 }
 

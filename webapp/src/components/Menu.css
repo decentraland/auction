@@ -97,14 +97,15 @@
 }
 
 .ongoing-auctions .table-row > div {
+  height: 100%;
   float: left;
 }
 
-.ongoing-auctions .table .col-land      { height: 100%; width: 10%; }
-.ongoing-auctions .table .col-status    { height: 100%; width: 20%; }
-.ongoing-auctions .table .col-amount    { height: 100%; width: 30%; }
-.ongoing-auctions .table .col-time-left { height: 100%; width: 15%; }
-.ongoing-auctions .table .col-address   { height: 100%; width: 25%; }
+.ongoing-auctions .table .col-land      { width: 10%; }
+.ongoing-auctions .table .col-status    { width: 20%; }
+.ongoing-auctions .table .col-amount    { width: 25%; }
+.ongoing-auctions .table .col-time-left { width: 20%; }
+.ongoing-auctions .table .col-address   { width: 25%; }
 
 .ongoing-auctions .table .won     { color: #4A90E2; }
 .ongoing-auctions .table .winning { color: #02B45D; }

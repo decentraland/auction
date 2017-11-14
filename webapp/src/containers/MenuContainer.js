@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import addHours from "date-fns/add_hours";
 
 import { selectors } from "../reducers";
+import { fetchOngoingAuctions } from "../actions";
 import { stateData } from "../lib/propTypes";
 
 import ShowMenu from "../components/ShowMenu";
@@ -11,7 +11,9 @@ import Menu from "../components/Menu";
 
 class MenuContainer extends React.Component {
   static propTypes = {
-    addressState: stateData(PropTypes.object).isRequired
+    addressState: stateData(PropTypes.object).isRequired,
+    ongoingAuctions: stateData(PropTypes.array),
+    fetchOngoingAuctions: PropTypes.func
   };
 
   constructor(props) {
@@ -22,48 +24,17 @@ class MenuContainer extends React.Component {
   }
 
   changeMenuVisibility(menuVisible) {
-    this.setState({
-      menuVisible
-    });
+    this.setState({ menuVisible });
+
+    if (menuVisible) {
+      // Wait a bit for the Menu animation to end
+      setTimeout(() => this.props.fetchOngoingAuctions(), 500);
+    }
   }
 
   render() {
     const { menuVisible } = this.state;
-    const outgoingAuctions = [
-      {
-        x: 1,
-        y: 3,
-        status: "Outbid",
-        amount: "15.000 MANA",
-        endsAt: addHours(new Date(), 23),
-        address: "0x8f649FE750340A295dDdbBd7e1EC8f378cF24b42"
-      },
-      {
-        x: 2,
-        y: 1,
-        status: "Won",
-        amount: "3.300 MANA",
-        endsAt: addHours(new Date(), -2),
-        address: ""
-      },
-      {
-        x: 1,
-        y: 3,
-        status: "Winning",
-        amount: "15.000 MANA",
-        endsAt: addHours(new Date(), 12),
-        address: ""
-      },
-      {
-        x: 3,
-        y: 3,
-        status: "Lost",
-        amount: "3.926 MANA",
-        endsAt: addHours(new Date(), -5),
-        address: "0x8f649FE750340A295dDdbBd7e1EC8f378cF24b42"
-      }
-    ];
-    const { addressState } = this.props;
+    const { addressState, ongoingAuctions } = this.props;
 
     return [
       <ShowMenu key="1" onShow={() => this.changeMenuVisibility(true)} />,
@@ -71,7 +42,7 @@ class MenuContainer extends React.Component {
         key="2"
         addressState={addressState}
         visible={menuVisible}
-        outgoingAuctions={outgoingAuctions}
+        ongoingAuctions={ongoingAuctions}
         onHide={() => this.changeMenuVisibility(false)}
       />
     ];
@@ -79,6 +50,9 @@ class MenuContainer extends React.Component {
 }
 
 export default connect(
-  state => ({ addressState: selectors.getAddressState(state) }),
-  {}
+  state => ({
+    addressState: selectors.getAddressState(state),
+    ongoingAuctions: selectors.getOngoinAuctions(state)
+  }),
+  { fetchOngoingAuctions }
 )(MenuContainer);

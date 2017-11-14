@@ -50,12 +50,15 @@ export default class BidParcelModal extends React.Component {
   };
 
   isValidBid(bidValue) {
+    // We don't use `getCurrentBidValue` here because if the parcel doesn't have a bid yet,
+    // we want to be able to bid ONE_LAND_IN_MANA
+    const parcelAmount = this.props.parcel.amount || 0;
     const manaBalance = this.getManaBalance();
 
     return (
       bidValue >= ONE_LAND_IN_MANA &&
-      bidValue <= manaBalance &&
-      bidValue > this.getCurrentBidValue()
+      bidValue > parcelAmount &&
+      bidValue <= manaBalance
     );
   }
 

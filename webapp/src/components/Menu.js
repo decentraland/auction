@@ -18,13 +18,12 @@ export default class Menu extends React.Component {
   static propTypes = {
     visible: PropTypes.bool,
     addressState: stateData(PropTypes.object).isRequired,
-    onHide: PropTypes.func.isRequired,
-    outgoingAuctions: PropTypes.array
+    ongoingAuctions: stateData(PropTypes.array).isRequired,
+    onHide: PropTypes.func.isRequired
   };
 
   static defaultProps = {
-    visible: false,
-    outgoingAuctions: []
+    visible: false
   };
 
   getClassName() {
@@ -33,7 +32,7 @@ export default class Menu extends React.Component {
   }
 
   render() {
-    const { addressState, onHide, outgoingAuctions } = this.props;
+    const { addressState, onHide, ongoingAuctions } = this.props;
 
     return (
       <div className={this.getClassName()}>
@@ -66,14 +65,18 @@ export default class Menu extends React.Component {
               <div className="col-address" />
             </div>
 
-            {outgoingAuctions.map((auction, index) => (
-              <AuctionTableRow
-                key={index}
-                auction={auction}
-                onLandClick={onHide}
-                className={index % 2 === 0 ? "gray" : ""}
-              />
-            ))}
+            {ongoingAuctions.loading ? (
+              <Loading />
+            ) : (
+              ongoingAuctions.data.map((auction, index) => (
+                <AuctionTableRow
+                  key={index}
+                  auction={auction}
+                  onLandClick={onHide}
+                  className={index % 2 === 0 ? "gray" : ""}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -97,7 +100,7 @@ function AuctionTableRow({ auction, className, onLandClick }) {
         </Link>
       </div>
       <div className={`col-status ${statusClass}`}>{auction.status}</div>
-      <div className="col-amount">{auction.amount}</div>
+      <div className="col-amount">{auction.amount} MANA</div>
       <div className="col-time-left">{timeLeft}</div>
       <div className="col-address">{shortenAddress(auction.address)}</div>
     </div>
