@@ -323,6 +323,8 @@ const returnAllMANA = async (contract) => {
           amount: remainingMANA.toString(10),
           status: "pending"
         });
+      } else {
+        log.error(`(return) [${address}] Remaining MANA is below 0`);
       }
     }
   } catch (err) {
