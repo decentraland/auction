@@ -23,14 +23,20 @@ export const selectors = {
   getAddressState(state) {
     return state.addressState;
   },
+  getAddressStateData(state) {
+    return state.addressState.data;
+  },
   getParcelStates(state) {
     return state.parcelStates;
   },
   getPendingConfirmationBids(state) {
     return state.pendingConfirmationBids;
   },
-  getOngoinAuctions(state) {
+  getOngoingAuctions(state) {
     return state.ongoingAuctions;
+  },
+  getOngoingAuctionsData(state) {
+    return state.ongoingAuctions.data;
   },
   getModal(state) {
     return state.modal;

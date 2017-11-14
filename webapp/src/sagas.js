@@ -1,12 +1,5 @@
 import { delay } from "redux-saga";
-import {
-  fork,
-  call,
-  takeLatest,
-  select,
-  takeEvery,
-  put
-} from "redux-saga/effects";
+import { call, takeLatest, select, takeEvery, put } from "redux-saga/effects";
 import { replace } from "react-router-redux";
 
 import { eth } from "decentraland-commons";
@@ -15,6 +8,8 @@ import locations from "./locations";
 import types from "./types";
 import { selectors } from "./reducers";
 import { buildCoordinate } from "./lib/util";
+import * as addressStateUtils from "./lib/addressStateUtils";
+import * as parcelUtils from "./lib/parcelUtils";
 import api from "./lib/api";
 
 function* rootSaga() {
@@ -39,7 +34,7 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading);
 
   // Start
-  yield fork(connectWeb3);
+  yield call(connectWeb3);
 }
 
 // -------------------------------------------------------------------------
@@ -48,14 +43,16 @@ function* rootSaga() {
 function* connectWeb3(action = {}) {
   try {
     let retries = 0;
-    let connected = yield call(async () => await eth.connect(action.address));
+    let connected = eth.connect(action.address);
 
-    while (!connected && retries < 3) {
-      yield delay(1000);
-      connected = yield call(async () => await eth.connect(action.address));
+    while (!connected && retries <= 3) {
+      console.log("Retrying web3 connection", { connected, retries });
+      yield delay(1500);
+      connected = eth.connect(action.address);
       retries += 1;
     }
 
+    console.log("FINISHED web3 CHECK", { connected, retries });
     if (!connected) throw new Error("Could not connect to web3");
 
     yield put({
@@ -115,6 +112,7 @@ function* handleParcelFetchRequest(action) {
 
     for (let coordinate in parcelStates) {
       const parcel = parcelStates[coordinate];
+      parcel.amount = parseFloat(parcel.amount, 10) || null;
       parcel.endsAt = new Date(parcel.endsAt);
     }
 
@@ -153,24 +151,22 @@ function* handleParcelRangeChange(action) {
 
 function* handleOngoingAuctionsFetchRequest(action) {
   try {
-    const addressState = yield select(selectors.getAddressState);
     let parcelStates = yield select(selectors.getParcelStates);
+    let addressState = yield select(selectors.getAddressStateData);
 
-    const { address, bidGroups } = addressState.data;
-
+    const address = addressState.address;
     const ongoingAuctions = [];
-    const biddedCoordinates = getBiddedCoordinates(bidGroups);
 
-    if (biddedCoordinates.length) {
-      yield call(() =>
-        handleParcelFetchRequest({ parcels: biddedCoordinates })
-      );
+    const bidCoordinates = addressStateUtils.getBidCoordinates(addressState);
+
+    if (bidCoordinates.length) {
+      yield call(() => handleParcelFetchRequest({ parcels: bidCoordinates }));
       parcelStates = yield select(selectors.getParcelStates);
     }
 
-    for (const coordinate of biddedCoordinates) {
+    for (const coordinate of bidCoordinates) {
       const parcel = parcelStates[coordinate];
-      const status = getParcelBidStatus(parcel, address);
+      const status = parcelUtils.getBidStatus(parcel, address);
 
       ongoingAuctions.push({
         address,
@@ -189,31 +185,6 @@ function* handleOngoingAuctionsFetchRequest(action) {
       error: error.message
     });
   }
-}
-
-function getBiddedCoordinates(bidGroups) {
-  const biddedCoordinates = new Set(); // test with set
-
-  for (const bidGroup of bidGroups) {
-    for (const bid of bidGroup.bids) {
-      const coordinate = buildCoordinate(bid.x, bid.y);
-      biddedCoordinates.add(coordinate);
-    }
-  }
-  return [...biddedCoordinates];
-}
-
-function getParcelBidStatus(parcel, address) {
-  const finished = Date.now() >= parcel.endsAt.getTime();
-  const byAddress = parcel.address === address;
-
-  let status = "";
-  if (finished) {
-    status = byAddress ? "Won" : "Lost";
-  } else {
-    status = byAddress ? "Wining" : "Outbid";
-  }
-  return status;
 }
 
 function* handleConfirmBidsRequest(action) {

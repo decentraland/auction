@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 
 import { selectors } from "../reducers";
 import { parcelRangeChange, openModal } from "../actions";
-import { isEmptyObject, buildCoordinate } from "../lib/util";
 import { stateData } from "../lib/propTypes";
 
 import ParcelsMap from "../components/ParcelsMap";
@@ -16,6 +15,7 @@ class ParcelsMapContainer extends React.Component {
       y: PropTypes.number
     }),
     parcelStates: stateData(PropTypes.object).isRequired,
+    addressState: stateData(PropTypes.object).isRequired,
     parcelRangeChange: PropTypes.func.isRequired,
     openModal: PropTypes.func.isRequired
   };
@@ -29,17 +29,19 @@ class ParcelsMapContainer extends React.Component {
 
   componentWillMount() {
     const { x, y } = this.props.center;
-    // TODO: Don't overfetch. Check the bounds
-    this.props.parcelRangeChange(x - 2, x + 2, y - 2, y + 2);
+
+    this.lowerBound = -160;
+    this.upperBound = 160;
+    this.bounds = [
+      [this.lowerBound, this.lowerBound],
+      [this.upperBound, this.upperBound]
+    ];
+
+    this.fetchParcelRange(x - 10, x + 10, y - 10, y + 10);
   }
 
-  getParcelData = (x, y) => {
-    // TODO: What if the parcel does not exist. We should probably fetch on-demand
-    return this.props.parcelStates[buildCoordinate(x, y)];
-  };
-
   onMoveEnd = ({ bounds }) => {
-    this.props.parcelRangeChange(
+    this.fetchParcelRange(
       bounds.min.x,
       bounds.max.x,
       bounds.min.y,
@@ -51,31 +53,49 @@ class ParcelsMapContainer extends React.Component {
     this.props.openModal("BidParcelModal", parcel);
   };
 
+  fetchParcelRange(minX, maxX, minY, maxY) {
+    this.props.parcelRangeChange(
+      this.fixToBounds(minX),
+      this.fixToBounds(maxX),
+      this.fixToBounds(minY),
+      this.fixToBounds(maxY)
+    );
+  }
+
+  fixToBounds(coordinate) {
+    return Math.floor(
+      coordinate < this.lowerBound || coordinate > this.upperBound
+        ? this.bound
+        : coordinate
+    );
+  }
+
   render() {
-    const { parcelStates } = this.props;
+    const { parcelStates, addressState } = this.props;
     const { x, y } = this.props.center;
 
-    console.log("Got the parcels", parcelStates);
-
-    // TODO: Review getParcelData. We could pass all parcel states and leave it to the component to get each one
-    const View = isEmptyObject(parcelStates) ? null : (
+    return (
       <ParcelsMap
         x={x}
         y={y}
         zoom={10}
-        bounds={[[-20.5, -20.5], [20.5, 20.5]]}
+        bounds={this.bounds}
         tileSize={128}
+        parcelStates={parcelStates}
+        addressState={addressState}
         getParcelData={this.getParcelData}
+        getParcelColor={this.getParcelColor}
         onMoveEnd={this.onMoveEnd}
         onParcelBid={this.onParcelBid}
       />
     );
-
-    return View;
   }
 }
 
 export default connect(
-  state => ({ parcelStates: selectors.getParcelStates(state) }),
+  state => ({
+    parcelStates: selectors.getParcelStates(state),
+    addressState: selectors.getAddressState(state)
+  }),
   { parcelRangeChange, openModal }
 )(ParcelsMapContainer);

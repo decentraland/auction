@@ -6,7 +6,6 @@
 
 .leaflet-tile {
   border: 1px solid #FFF;
-  background-color: #EAEAEA;
   transform: translateZ(0);
   visibility: visible;
 }
@@ -20,6 +19,10 @@
 
 .leaflet-popup {
   z-index: 800;
+}
+
+.leaflet-popup .current-bid-status:first-letter {
+  text-transform: capitalize;
 }
 
 .leaflet-popup a.leaflet-popup-close-button {
@@ -44,6 +47,12 @@
 
 .leaflet-popup .text {
   color: #7B7B7B;
+}
+.leaflet-popup .text small {
+  font-size: 70%;
+  font-style: italic;
+  display: block;
+  text-align: center;
 }
 
 .leaflet-popup .coordinates {

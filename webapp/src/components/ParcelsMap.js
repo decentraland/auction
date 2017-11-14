@@ -4,10 +4,15 @@ import PropTypes from "prop-types";
 import L from "leaflet";
 
 import shortenAddress from "../lib/shortenAddress";
+import { isEmptyObject, buildCoordinate } from "../lib/util";
+import { stateData } from "../lib/propTypes";
 import * as dateUtils from "../lib/dateUtils";
+import * as parcelUtils from "../lib/parcelUtils";
+import * as addressStateUtils from "../lib/addressStateUtils";
 import LeafletMapCoordinates from "../lib/LeafletMapCoordinates";
 
 import Button from "./Button";
+import Loading from "./Loading";
 
 import "./ParcelsMap.css";
 
@@ -23,14 +28,14 @@ export default class ParcelsMap extends React.Component {
     bounds: PropTypes.arrayOf(PropTypes.array),
     zoom: PropTypes.number.isRequired,
     tileSize: PropTypes.number.isRequired,
-    getParcelData: PropTypes.func,
+    parcelStates: stateData(PropTypes.object).isRequired,
+    addressState: stateData(PropTypes.object).isRequired,
     onMoveEnd: PropTypes.func,
     onParcelBid: PropTypes.func
   };
 
   static defaultProps = {
-    bounds: [],
-    getParcelData: () => ({}),
+    bounds: [[], []],
     onMoveEnd: () => {},
     onParcelBid: () => {}
   };
@@ -66,14 +71,10 @@ export default class ParcelsMap extends React.Component {
   }
 
   onMapClick = event => {
-    const { x, y } = this.mapCoordinates.latLngToCartesian(event.latlng);
-
     if (this.marker) {
       this.map.removeLayer(this.marker);
     }
-
-    const parcel = this.props.getParcelData(x, y);
-    this.addPopup(event.latlng, parcel);
+    this.addPopup(event.latlng);
   };
 
   onMapMoveEnd = event => {
@@ -89,7 +90,11 @@ export default class ParcelsMap extends React.Component {
     this.props.onMoveEnd({ position, bounds });
   };
 
-  addPopup(latlng, parcel) {
+  addPopup(latlng) {
+    const { x, y } = this.mapCoordinates.latLngToCartesian(latlng);
+    const { addressState } = this.props;
+    const parcel = this.getParcelData(x, y);
+
     const leafletPopup = L.popup({
       className: "parcel-popup",
       direction: "top"
@@ -98,6 +103,7 @@ export default class ParcelsMap extends React.Component {
     const popup = renderToDOM(
       <ParcelPopup
         parcel={parcel}
+        addressState={addressState.data}
         onBid={parcel => {
           this.onParcelBid(parcel);
           leafletPopup.remove();
@@ -148,15 +154,37 @@ export default class ParcelsMap extends React.Component {
 
   createTile(coords, size) {
     const { x, y } = this.mapCoordinates.coordsToCartesian(coords);
-    return renderToDOM(<Tile x={x} y={y} width={size} height={size} />);
+    const color = this.getParcelColor(x, y);
+
+    return renderToDOM(
+      <Tile x={x} y={y} width={size} height={size} color={color} />
+    );
   }
 
+  getParcelColor = (x, y) => {
+    const { addressState } = this.props;
+    const parcel = this.getParcelData(x, y);
+
+    return parcelUtils.getColor(parcel, addressState.data);
+  };
+
+  getParcelData = (x, y) => {
+    // TODO: What if the parcel does not exist.
+    return this.props.parcelStates[buildCoordinate(x, y)];
+  };
+
   render() {
-    return <div id={MAP_ID} ref={this.bindMap.bind(this)} />;
+    const { parcelStates, addressState } = this.props;
+
+    return isEmptyObject(parcelStates) || !addressState.data ? (
+      <Loading />
+    ) : (
+      <div id={MAP_ID} ref={this.bindMap.bind(this)} />
+    );
   }
 }
 
-function ParcelPopup({ parcel, onBid }) {
+function ParcelPopup({ parcel, addressState, onBid }) {
   let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: "" });
 
   if (!dateUtils.isBeforeToday(parcel.endsAt)) {
@@ -168,7 +196,10 @@ function ParcelPopup({ parcel, onBid }) {
       <div className="coordinates">
         {parcel.x},{parcel.y}
       </div>
-      <div className="text">{shortenAddress(parcel.address)}</div>
+      <div className="text">
+        {shortenAddress(parcel.address)}
+        <CurrentBidStatus addressState={addressState} parcel={parcel} />
+      </div>
       <div className="text mana">
         {parcel.amount && `${parcel.amount} MANA`}
       </div>
@@ -181,8 +212,26 @@ function ParcelPopup({ parcel, onBid }) {
   );
 }
 
-function Tile({ x, y, width, height }) {
-  const style = { width, height };
+function CurrentBidStatus({ addressState, parcel }) {
+  const isOwner = addressState.address === parcel.address;
+  const hasBid = addressStateUtils.hasBidInParcel(addressState, parcel);
+
+  const status = parcelUtils.getBidStatus(parcel, addressState.address);
+
+  const text = [];
+
+  if (isOwner) text.push("that's you");
+  if (hasBid) text.push(`you're ${status.toLowerCase()}`);
+
+  return (
+    <small className="current-bid-status">
+      {text.length && `(${text.join(" ")})`}
+    </small>
+  );
+}
+
+function Tile({ x, y, width, height, color }) {
+  const style = { width, height, backgroundColor: color };
 
   return (
     <div className="leaflet-tile" style={style}>

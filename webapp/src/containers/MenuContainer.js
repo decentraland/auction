@@ -52,7 +52,7 @@ class MenuContainer extends React.Component {
 export default connect(
   state => ({
     addressState: selectors.getAddressState(state),
-    ongoingAuctions: selectors.getOngoinAuctions(state)
+    ongoingAuctions: selectors.getOngoingAuctions(state)
   }),
   { fetchOngoingAuctions }
 )(MenuContainer);

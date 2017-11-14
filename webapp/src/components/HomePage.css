@@ -10,3 +10,8 @@
   left: 24px;
   position: absolute;
 }
+
+.HomePage > .Loading {
+  font-size: 10px;
+  top: 25%;
+}
