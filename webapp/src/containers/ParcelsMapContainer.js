@@ -5,9 +5,11 @@ import { connect } from "react-redux";
 import { selectors } from "../reducers";
 import locations from "../locations";
 import { parcelRangeChange, openModal, locationChange } from "../actions";
+import { isEmptyObject } from "../lib/util";
 import { stateData } from "../lib/propTypes";
 
 import ParcelsMap from "../components/ParcelsMap";
+import Loading from "../components/Loading";
 
 class ParcelsMapContainer extends React.Component {
   static propTypes = {
@@ -76,21 +78,29 @@ class ParcelsMapContainer extends React.Component {
     );
   }
 
+  getAddressState = () => {
+    return this.props.addressState.data;
+  };
+
+  getParcelStates = () => {
+    return this.props.parcelStates;
+  };
+
   render() {
     const { parcelStates, addressState } = this.props;
     const { x, y } = this.props.center;
 
-    return (
+    return isEmptyObject(parcelStates) || !addressState.data ? (
+      <Loading />
+    ) : (
       <ParcelsMap
         x={x}
         y={y}
         zoom={10}
         bounds={this.bounds}
         tileSize={128}
-        parcelStates={parcelStates}
-        addressState={addressState}
-        getParcelData={this.getParcelData}
-        getParcelColor={this.getParcelColor}
+        getAddressState={this.getAddressState}
+        getParcelStates={this.getParcelStates}
         onMoveEnd={this.onMoveEnd}
         onParcelBid={this.onParcelBid}
       />

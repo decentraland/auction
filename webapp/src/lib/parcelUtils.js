@@ -31,12 +31,13 @@ export const COLORS = {
   Taken: "#3E396B",
   LittleValue: "#EAFF28",
   BigValue: "#FF1111",
-  Default: "#EAEAEA"
+  Default: "#EAEAEA",
+  Loading: "#D0D0D0"
 };
 
 export function getColor(parcel, addressState) {
-  if (!parcel) return COLORS.default;
-  if (parcel.projectId) return COLORS.Taken;
+  if (!parcel) return COLORS.Loading;
+  if (isTaken(parcel)) return COLORS.Taken;
   if (!parcel.amount) return COLORS.Default;
 
   let color = "";
@@ -58,6 +59,10 @@ export function getColor(parcel, addressState) {
   }
 
   return color;
+}
+
+export function isTaken(parcel) {
+  return !!parcel.projectId;
 }
 
 function calulateColorValue(parcel, minValue, maxValue) {

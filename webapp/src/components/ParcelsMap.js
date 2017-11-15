@@ -4,15 +4,13 @@ import PropTypes from "prop-types";
 import L from "leaflet";
 
 import shortenAddress from "../lib/shortenAddress";
-import { isEmptyObject, buildCoordinate } from "../lib/util";
-import { stateData } from "../lib/propTypes";
+import { buildCoordinate } from "../lib/util";
 import * as dateUtils from "../lib/dateUtils";
 import * as parcelUtils from "../lib/parcelUtils";
 import * as addressStateUtils from "../lib/addressStateUtils";
 import LeafletMapCoordinates from "../lib/LeafletMapCoordinates";
 
 import Button from "./Button";
-import Loading from "./Loading";
 
 import "./ParcelsMap.css";
 
@@ -28,8 +26,8 @@ export default class ParcelsMap extends React.Component {
     bounds: PropTypes.arrayOf(PropTypes.array),
     zoom: PropTypes.number.isRequired,
     tileSize: PropTypes.number.isRequired,
-    parcelStates: stateData(PropTypes.object).isRequired,
-    addressState: stateData(PropTypes.object).isRequired,
+    getAddressState: PropTypes.func.isRequired,
+    getParcelStates: PropTypes.func.isRequired,
     onMoveEnd: PropTypes.func,
     onParcelBid: PropTypes.func
   };
@@ -41,6 +39,7 @@ export default class ParcelsMap extends React.Component {
   };
 
   componentWillMount() {
+    this.panInProgress = false;
     this.map = null;
     this.mapCoordinates = new LeafletMapCoordinates(this.props.zoom);
   }
@@ -49,11 +48,32 @@ export default class ParcelsMap extends React.Component {
     this.removeMap();
   }
 
+  componentWillReceiveProps(nextProps) {
+    const shouldUpdateCenter =
+      !this.panInProgress &&
+      (this.props.x !== nextProps.x || this.props.y !== nextProps.y);
+
+    const shouldRedraw = this.map && !nextProps.getParcelStates().loading;
+
+    if (shouldUpdateCenter) {
+      this.map.panTo(this.getCenter(nextProps.x, nextProps.y));
+    }
+
+    if (shouldRedraw) {
+      this.redrawMap();
+      this.panInProgress = false;
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return false;
+  }
+
   createLeafletElement(container) {
-    const { bounds, zoom } = this.props;
+    const { x, y, bounds, zoom } = this.props;
 
     this.map = new L.Map(MAP_ID, {
-      center: this.getCenter(),
+      center: this.getCenter(x, y),
       minZoom: zoom,
       maxZoom: zoom,
       zoom: zoom,
@@ -64,14 +84,27 @@ export default class ParcelsMap extends React.Component {
     this.map.zoomControl.setPosition("topright");
     this.map.setMaxBounds(this.mapCoordinates.toLatLngBounds(bounds));
 
+    this.map.on("movestart", this.onMapMoveStart);
     this.map.on("click", this.onMapClick);
     this.map.on("moveend", this.onMapMoveEnd);
 
     return this.map;
   }
 
+  redrawMap() {
+    this.map.eachLayer(layer => {
+      if (layer.redraw) {
+        layer.redraw();
+      }
+    });
+  }
+
+  onMapMoveStart = event => {
+    this.panInProgress = true;
+  };
+
   onMapClick = event => {
-    const { parcelStates } = this.props;
+    const parcelStates = this.props.getParcelStates();
 
     if (!parcelStates.loading) {
       this.addPopup(event.latlng);
@@ -102,7 +135,7 @@ export default class ParcelsMap extends React.Component {
 
   addPopup(latlng) {
     const { x, y } = this.mapCoordinates.latLngToCartesian(latlng);
-    const { addressState } = this.props;
+    const addressState = this.props.getAddressState();
     const parcel = this.getParcelData(x, y);
 
     const leafletPopup = L.popup({
@@ -113,7 +146,7 @@ export default class ParcelsMap extends React.Component {
     const popup = renderToDOM(
       <ParcelPopup
         parcel={parcel}
-        addressState={addressState.data}
+        addressState={addressState}
         onBid={parcel => {
           this.onParcelBid(parcel);
           leafletPopup.remove();
@@ -140,9 +173,7 @@ export default class ParcelsMap extends React.Component {
     return tiles;
   }
 
-  getCenter() {
-    const { x, y } = this.props;
-
+  getCenter(x, y) {
     return isNaN(x)
       ? new L.LatLng(0, 0)
       : this.mapCoordinates.cartesianToLatLng({ x, y });
@@ -166,41 +197,28 @@ export default class ParcelsMap extends React.Component {
   createTile(coords, size) {
     const { x, y } = this.mapCoordinates.coordsToCartesian(coords);
     const color = this.getParcelColor(x, y);
-    const isCenter = x === this.props.x && y === this.props.y;
 
     return renderToDOM(
-      <Tile
-        x={x}
-        y={y}
-        width={size}
-        height={size}
-        isCenter={isCenter}
-        color={color}
-      />
+      <Tile x={x} y={y} width={size} height={size} color={color} />
     );
   }
 
   // TODO: This could be a className to avoid having to add more props to the style="" attribute
   getParcelColor = (x, y) => {
-    const { addressState } = this.props;
+    const addressState = this.props.getAddressState();
     const parcel = this.getParcelData(x, y);
 
-    return parcelUtils.getColor(parcel, addressState.data);
+    return parcelUtils.getColor(parcel, addressState);
   };
 
   getParcelData = (x, y) => {
     // TODO: What if the parcel does not exist.
-    return this.props.parcelStates[buildCoordinate(x, y)];
+    const parcelStates = this.props.getParcelStates();
+    return parcelStates[buildCoordinate(x, y)];
   };
 
   render() {
-    const { parcelStates, addressState } = this.props;
-
-    return isEmptyObject(parcelStates) || !addressState.data ? (
-      <Loading />
-    ) : (
-      <div id={MAP_ID} ref={this.bindMap.bind(this)} />
-    );
+    return <div id={MAP_ID} ref={this.bindMap.bind(this)} />;
   }
 }
 
@@ -235,11 +253,13 @@ function ParcelPopup({ parcel, addressState, onBid }) {
 function CurrentBidStatus({ addressState, parcel }) {
   const isOwner = addressState.address === parcel.address;
   const hasBid = addressStateUtils.hasBidInParcel(addressState, parcel);
+  const isTaken = parcelUtils.isTaken(parcel);
 
   const status = parcelUtils.getBidStatus(parcel, addressState.address);
 
   const text = [];
 
+  if (isTaken) text.push("The parcel is taken by a road or project");
   if (isOwner) text.push("that's you");
   if (hasBid) text.push(`you're ${status.toLowerCase()}`);
 
@@ -250,7 +270,7 @@ function CurrentBidStatus({ addressState, parcel }) {
   );
 }
 
-function Tile({ x, y, width, height, isCenter, color }) {
+function Tile({ x, y, width, height, color }) {
   const style = { width, height, backgroundColor: color };
 
   return (
