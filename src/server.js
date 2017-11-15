@@ -6,7 +6,13 @@ import path from "path";
 import { server, env } from "decentraland-commons";
 import db from "./lib/db";
 
-import { AddressState, ParcelState, OutbidNotification } from "./lib/models";
+import {
+  AddressState,
+  ParcelState,
+  Project,
+  OutbidNotification
+} from "./lib/models";
+
 import {
   BidService,
   BidReceiptService,
@@ -142,6 +148,16 @@ export async function postBidGroup(req) {
   new OutbidNotificationService().notificateOutbids(bidParcels); // async
 
   return true;
+}
+
+/**
+ * Get all projects
+ * @return {array} - Project list
+ */
+app.get("/api/projects", server.handleRequest(getProjects));
+
+export function getProjects(req) {
+  return Project.find();
 }
 
 /**

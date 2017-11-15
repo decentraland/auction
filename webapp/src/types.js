@@ -29,6 +29,12 @@ export default {
     failed: "[Failed] Failed fetching address state"
   },
 
+  fetchProjects: {
+    request: "[Request] Fetch projects requested",
+    success: "[Success] Projects fetched",
+    failed: "[Failed] Failed to fetch projects"
+  },
+
   appendUnconfirmedBid: "Append new unconfirmed bid",
   deleteUnconfirmedBid: "Remove unconfirmed bid",
 
@@ -47,5 +53,7 @@ export default {
   modal: {
     open: "Open Modal",
     close: "Close Modal"
-  }
+  },
+
+  changeLocation: "Change location URL"
 };

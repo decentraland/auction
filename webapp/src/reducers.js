@@ -5,6 +5,8 @@ const INITIAL_STATE = {
 
   addressState: { loading: true },
 
+  projects: { loading: true },
+
   parcelStates: { loading: true }, // doest NOT use a `data` property
   pendingConfirmationBids: [],
 
@@ -26,6 +28,12 @@ export const selectors = {
   },
   getAddressStateData(state) {
     return state.addressState.data;
+  },
+  getProjects(state) {
+    return state.projects;
+  },
+  getProjectsData(state) {
+    return state.projects.data;
   },
   getParcelStates(state) {
     return state.parcelStates;
@@ -95,6 +103,18 @@ function addressState(state = INITIAL_STATE.addressState, action) {
   }
 }
 
+function projects(state = INITIAL_STATE.projects, action) {
+  switch (action.type) {
+    case types.fetchProjects.request:
+      return { loading: true };
+    case types.fetchProjects.success:
+      return { loading: false, data: action.projects };
+    case types.fetchProjects.failed:
+      return { ...state, loading: false, error: action.error };
+    default:
+      return state;
+  }
+}
 function parcelStates(state = INITIAL_STATE.parcelStates, action) {
   switch (action.type) {
     case types.fetchParcels.request:
@@ -165,6 +185,7 @@ function modal(state = INITIAL_STATE.modal, action) {
 export default {
   web3Connected,
   addressState,
+  projects,
   parcelStates,
   pendingConfirmationBids,
   ongoingAuctions,

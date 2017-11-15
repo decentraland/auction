@@ -1,6 +1,6 @@
 import { delay } from "redux-saga";
 import { call, takeLatest, select, takeEvery, put } from "redux-saga/effects";
-import { replace } from "react-router-redux";
+import { push, replace } from "react-router-redux";
 
 import { eth } from "decentraland-commons";
 
@@ -17,6 +17,8 @@ import api from "./lib/api";
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3);
 
+  yield takeLatest(types.changeLocation, handleLocationChange);
+
   yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange);
   yield takeEvery(types.fetchParcels.request, handleParcelFetchRequest);
 
@@ -24,6 +26,8 @@ function* rootSaga() {
   yield takeEvery(types.fetchManaBalance.request, handleAddressFetchRequest);
 
   yield takeEvery(types.fetchAddressState.request, handleAddressFetchRequest);
+
+  yield takeEvery(types.fetchProjects.request, handleProjectsFetchRequest);
 
   yield takeEvery(
     types.fetchOngoingAuctions.request,
@@ -67,6 +71,13 @@ function* connectWeb3(action = {}) {
 }
 
 // -------------------------------------------------------------------------
+// Location
+
+function* handleLocationChange(action) {
+  yield put(push(action.url));
+}
+
+// -------------------------------------------------------------------------
 // Address States
 
 function* handleAddressFetchRequest(action) {
@@ -99,6 +110,19 @@ function* handleAddresStateStartLoading(action) {
 
 function* handleAddresStateFinishLoading(action) {
   yield put({ type: types.addressStateLoading, loading: false });
+}
+
+// -------------------------------------------------------------------------
+// Projects
+
+function* handleProjectsFetchRequest(action) {
+  try {
+    const projects = yield call(() => api.fetchProjects());
+
+    yield put({ type: types.fetchProjects.success, projects });
+  } catch (error) {
+    yield put({ type: types.fetchProjects.failed, error: error.message });
+  }
 }
 
 // -------------------------------------------------------------------------

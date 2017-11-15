@@ -1,5 +1,4 @@
 import types from "./types";
-import { push } from "react-router-redux";
 
 // -------------------------------------------------------------------------
 // Web3
@@ -8,6 +7,15 @@ export function connectWeb3(address) {
   return {
     type: types.connectWeb3.request,
     address
+  };
+}
+
+// -------------------------------------------------------------------------
+// Projects
+
+export function fetchProjects() {
+  return {
+    type: types.fetchProjects.request
   };
 }
 
@@ -83,5 +91,8 @@ export function closeModal() {
 // Locations
 
 export function changeLocation(url) {
-  return push(url);
+  return {
+    type: types.changeLocation,
+    url
+  };
 }

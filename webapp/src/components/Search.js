@@ -2,29 +2,64 @@ import React from "react";
 import PropTypes from "prop-types";
 import Autocomplete from "react-autocomplete";
 
-import { buildCoordinate } from "../lib/util";
-
 import "./Search.css";
+
+const hasLettersRegex = /[a-zA-Z]/;
 
 export default class Search extends React.Component {
   static propTypes = {
-    coordinates: PropTypes.arrayOf(PropTypes.string).isRequired,
+    coordinates: PropTypes.arrayOf(PropTypes.shape({ name: PropTypes.string })),
+    projects: PropTypes.arrayOf(PropTypes.object),
     onSelect: PropTypes.func.isRequired
+  };
+
+  static defaultProps = {
+    coordinates: [],
+    projects: []
   };
 
   constructor(props) {
     super(props);
 
-    this.maxResults = 10;
+    this.maxResults = 5;
     this.state = {
       value: ""
     };
   }
 
-  renderMenu(items, value, style) {
+  renderMenu(menuItems, value, style) {
+    // This is (sadly) the only way to make a custom menu for react-autocomplete
+    // See: https://github.com/reactjs/react-autocomplete/blob/master/examples/custom-menu/app.js
+    let headers = {
+      coords: false,
+      projects: false
+    };
+
+    style = { ...style, ...this.menuStyle };
+
     return (
-      <div style={{ ...style, ...this.menuStyle }}>
-        {items.slice(0, this.maxResults)}
+      <div style={style}>
+        {menuItems.map(menuItem => {
+          if (headers.coordinates && headers.projects) {
+            return menuItem;
+          }
+
+          const name = menuItem.props.name;
+
+          if (name.match(hasLettersRegex)) {
+            if (!headers.projects) {
+              menuItem = [<h4 key="projects-header">Projects</h4>, menuItem];
+              headers.projects = true;
+            }
+          } else {
+            if (!headers.coordinates) {
+              menuItem = [<h4 key="coords-header">Coordinates</h4>, menuItem];
+              headers.coordinates = true;
+            }
+          }
+
+          return menuItem;
+        })}
       </div>
     );
   }
@@ -35,48 +70,70 @@ export default class Search extends React.Component {
       : ""}`;
 
     return (
-      <div key={item} className={className}>
-        {item}
+      <div key={item.name} className={className} name={item.name}>
+        {item.name}
       </div>
     );
   };
 
   getItems() {
-    const { coordinates } = this.props;
+    let { coordinates, projects } = this.props;
     const { value } = this.state;
 
-    const sliceBegining = this.valueIsEmpty()
-      ? coordinates.findIndex(coord => coord === buildCoordinate(0, 0))
-      : 0;
+    if (this.valueIsEmpty(value)) {
+      coordinates = [
+        { name: "0,0" },
+        { name: "0,1" },
+        { name: "1,0" },
+        { name: "1,1" }
+      ];
 
-    return coordinates
-      .filter(item => this.isMatch(item, value))
-      .slice(sliceBegining, sliceBegining + this.maxResults);
+      projects = projects.slice(0, this.maxResults);
+    } else {
+      if (value.match(hasLettersRegex)) {
+        coordinates = [];
+      }
+
+      coordinates = coordinates
+        .filter(coord => this.isMatch(coord.name, value))
+        .slice(0, this.maxResults);
+
+      projects = projects
+        .filter(project => this.isMatch(project.name, value))
+        .slice(0, this.maxResults);
+    }
+
+    return coordinates.concat(projects);
   }
 
-  valueIsEmpty() {
-    return this.state.value.trim() === "";
+  valueIsEmpty(value) {
+    return value == null || value.trim() === "";
   }
 
   getItemValue = item => {
-    return item;
-  };
-
-  shouldItemRender = (item, value) => {
-    return !value || this.isMatch(item, value);
+    return item.name;
   };
 
   onChange = event => {
     this.setState({ value: event.target.value });
   };
 
-  onSelect = value => {
+  onSelect = (value, item) => {
+    if (item.id) {
+      // Get the project center
+      value = item.center || "0,0";
+    }
+
+    console.log("SELECTED ", value, "\n");
+
     this.props.onSelect(value);
     this.setState({ value: "" });
   };
 
-  isMatch(item, value) {
-    return item.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+  isMatch(itemValue, value) {
+    itemValue = itemValue.toLowerCase();
+    value = value.toLowerCase();
+    return itemValue === value || itemValue.startsWith(value);
   }
 
   render() {
@@ -89,11 +146,11 @@ export default class Search extends React.Component {
         renderItem={this.renderItem}
         items={this.getItems()}
         getItemValue={this.getItemValue}
-        shouldItemRender={this.shouldItemRender}
         value={value}
         placeholder="Search for districts or coordinates"
         onChange={this.onChange}
         onSelect={this.onSelect}
+        onClick={this.onSelect}
       />
     );
   }

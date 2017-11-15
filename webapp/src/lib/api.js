@@ -26,6 +26,10 @@ class API {
     return this.request("post", "/bidGroup", { bidGroup });
   }
 
+  fetchProjects(address) {
+    return this.request("get", '/projects', {});
+  }
+
   request(method, path, params) {
     let options = {
       method,

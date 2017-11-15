@@ -59,7 +59,7 @@ export default class ParcelsMap extends React.Component {
 
     if (shouldUpdateCenter) {
       const newCenter = this.getCenter(nextProps.x, nextProps.y);
-      this.map.panTo(newCenter);
+      this.map.setView(newCenter);
     }
 
     if (shouldRedraw) {
