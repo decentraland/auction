@@ -2,6 +2,7 @@ import types from "./types";
 
 const INITIAL_STATE = {
   web3Connected: false,
+
   addressState: { loading: true },
 
   parcelStates: { loading: true }, // doest NOT use a `data` property

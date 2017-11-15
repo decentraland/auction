@@ -1,6 +1,7 @@
 import tinycolor2 from "tinycolor2";
 
 import { ONE_LAND_IN_MANA } from "./land";
+import { buildCoordinate } from "./util";
 import * as addressStateUtils from "./addressStateUtils";
 
 export function getBidStatus(parcel, ownerAddress) {
@@ -68,4 +69,14 @@ export function isTaken(parcel) {
 function calulateColorValue(parcel, minValue, maxValue) {
   const priceRate = parcel.amount - ONE_LAND_IN_MANA;
   return (maxValue - minValue) * parcel.amount / (priceRate + minValue);
+}
+
+export function generateMatrix(minX, minY, maxX, maxY) {
+  const matrix = [];
+  for (let x = minX; x <= maxX; x++) {
+    for (let y = minY; y <= maxY; y++) {
+      matrix.push(buildCoordinate(x, y));
+    }
+  }
+  return matrix;
 }

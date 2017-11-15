@@ -124,22 +124,13 @@ function* handleParcelFetchRequest(action) {
 
 function* handleParcelRangeChange(action) {
   const parcelStates = yield select(selectors.getParcelStates);
-  const { minX, maxX, minY, maxY } = action;
+  const { minX, minY, maxX, maxY } = action;
 
   // For each parcel in screen, if it is not loaded, request to fetch it
   // For parcels already loaded, we don't care in here
-  // (they are updated via push on websocket)
-  const parcelsToFetch = [];
-  for (let x = minX; x <= maxX; x++) {
-    for (let y = minY; y <= maxY; y++) {
-      const coordinate = buildCoordinate(x, y);
-      const current = parcelStates[coordinate];
-
-      if (!current) {
-        parcelsToFetch.push(coordinate);
-      }
-    }
-  }
+  const parcelsToFetch = parcelUtils
+    .generateMatrix(minX, minY, maxX, maxY)
+    .filter(coordinate => !parcelStates[coordinate]);
 
   if (parcelsToFetch.length) {
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch });

@@ -144,8 +144,10 @@ export default class ParcelsMap extends React.Component {
 
   addPopup(latlng) {
     const { x, y } = this.mapCoordinates.latLngToCartesian(latlng);
-    const addressState = this.props.getAddressState();
     const parcel = this.getParcelData(x, y);
+    const addressState = this.props.getAddressState();
+
+    if (!parcel) return; // TODO: we could fetch on-demand here
 
     const leafletPopup = L.popup({
       className: "parcel-popup",

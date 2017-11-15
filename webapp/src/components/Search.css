@@ -1,0 +1,25 @@
+.Search {
+  margin-left: 16px;
+  position: relative;
+  z-index: 600;
+}
+
+.Search > input {
+  width: 480px;
+  height: 48px;
+  padding: 5px 20px;
+  font-size: 15px;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.05);
+  border-radius: 8px;
+  border: none;
+}
+
+.autocomplete-item {
+  padding: 5px 20px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.autocomplete-highlight {
+  background-color: #FFD27F;
+}

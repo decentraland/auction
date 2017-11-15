@@ -14,12 +14,12 @@ export function connectWeb3(address) {
 // -------------------------------------------------------------------------
 // Parcel States
 
-export function parcelRangeChange(minX, maxX, minY, maxY) {
+export function parcelRangeChange(minX, minY, maxX, maxY) {
   return {
     type: types.parcelRangeChanged,
     minX,
-    maxX,
     minY,
+    maxX,
     maxY
   };
 }
@@ -82,6 +82,6 @@ export function closeModal() {
 // -------------------------------------------------------------------------
 // Locations
 
-export function locationChange(url) {
+export function changeLocation(url) {
   return push(url);
 }

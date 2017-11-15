@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import { selectors } from "../reducers";
 import locations from "../locations";
-import { parcelRangeChange, openModal, locationChange } from "../actions";
+import { parcelRangeChange, openModal, changeLocation } from "../actions";
 import { isEmptyObject } from "../lib/util";
 import { stateData } from "../lib/propTypes";
 
@@ -21,7 +21,7 @@ class ParcelsMapContainer extends React.Component {
     addressState: stateData(PropTypes.object).isRequired,
     parcelRangeChange: PropTypes.func.isRequired,
     openModal: PropTypes.func.isRequired,
-    locationChange: PropTypes.func.isRequired
+    changeLocation: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -55,14 +55,14 @@ class ParcelsMapContainer extends React.Component {
   }
 
   onMoveEnd = ({ position, bounds }) => {
-    this.props.locationChange(locations.parcelDetail(position.x, position.y));
+    this.props.changeLocation(locations.parcelDetail(position.x, position.y));
 
     const offset = this.getBoundsOffset();
 
     this.fetchParcelRange(
       bounds.min.x + offset,
-      bounds.max.x - offset,
       bounds.min.y + offset,
+      bounds.max.x - offset,
       bounds.max.y - offset
     );
   };
@@ -76,14 +76,14 @@ class ParcelsMapContainer extends React.Component {
   };
 
   fetchCoordinateVicinity({ x, y }) {
-    this.fetchParcelRange(x - 3, x + 3, y - 3, y + 3);
+    this.fetchParcelRange(x - 3, y - 3, x + 3, y + 3);
   }
 
-  fetchParcelRange(minX, maxX, minY, maxY) {
+  fetchParcelRange(minX, minY, maxX, maxY) {
     this.props.parcelRangeChange(
       this.fixToBounds(minX),
-      this.fixToBounds(maxX),
       this.fixToBounds(minY),
+      this.fixToBounds(maxX),
       this.fixToBounds(maxY)
     );
   }
@@ -142,5 +142,5 @@ export default connect(
     parcelStates: selectors.getParcelStates(state),
     addressState: selectors.getAddressState(state)
   }),
-  { parcelRangeChange, openModal, locationChange }
+  { parcelRangeChange, openModal, changeLocation }
 )(ParcelsMapContainer);
