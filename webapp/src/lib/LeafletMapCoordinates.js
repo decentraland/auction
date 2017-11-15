@@ -3,6 +3,7 @@ import L from "leaflet";
 export default class LeafletMapCoordinates {
   constructor(zoom) {
     this.zoom = zoom;
+    this.offset = Math.pow(2, this.zoom);
   }
 
   toLatLngBounds(bounds) {
@@ -44,7 +45,7 @@ export default class LeafletMapCoordinates {
 
   getOffset() {
     // leaflet renders `2^zoomlevel` tiles across
-    return Math.pow(2, this.zoom);
+    return this.offset;
   }
 
   getMapSize() {

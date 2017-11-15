@@ -56,7 +56,8 @@ export default class ParcelsMap extends React.Component {
     const shouldRedraw = this.map && !nextProps.getParcelStates().loading;
 
     if (shouldUpdateCenter) {
-      this.map.panTo(this.getCenter(nextProps.x, nextProps.y));
+      const newCenter = this.getCenter(nextProps.x, nextProps.y);
+      this.map.panTo(newCenter);
     }
 
     if (shouldRedraw) {
@@ -223,6 +224,8 @@ export default class ParcelsMap extends React.Component {
 }
 
 function ParcelPopup({ parcel, addressState, onBid }) {
+  const canBid = !parcelUtils.isTaken(parcel) && !parcelUtils.hasEnded(parcel);
+
   let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: "" });
 
   if (!dateUtils.isBeforeToday(parcel.endsAt)) {
@@ -244,7 +247,7 @@ function ParcelPopup({ parcel, addressState, onBid }) {
       <div className="text">{endsAt}</div>
 
       <div className="text-center">
-        <Button onClick={event => onBid(parcel)}>BID</Button>
+        {canBid && <Button onClick={event => onBid(parcel)}>BID</Button>}
       </div>
     </div>
   );

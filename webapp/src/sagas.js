@@ -113,7 +113,7 @@ function* handleParcelFetchRequest(action) {
     for (let coordinate in parcelStates) {
       const parcel = parcelStates[coordinate];
       parcel.amount = parseFloat(parcel.amount, 10) || null;
-      parcel.endsAt = new Date(parcel.endsAt);
+      parcel.endsAt = parcel.endsAt ? new Date(parcel.endsAt) : null;
     }
 
     yield put({ type: types.fetchParcels.success, parcelStates });
