@@ -24,6 +24,8 @@ export default class ParcelsMap extends React.Component {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.array),
+    minZoom: PropTypes.number.isRequired,
+    maxZoom: PropTypes.number.isRequired,
     zoom: PropTypes.number.isRequired,
     tileSize: PropTypes.number.isRequired,
     getAddressState: PropTypes.func.isRequired,
@@ -73,13 +75,13 @@ export default class ParcelsMap extends React.Component {
   }
 
   createLeafletElement(container) {
-    const { x, y, bounds, zoom } = this.props;
+    const { x, y, minZoom, maxZoom, bounds, zoom } = this.props;
 
     this.map = new L.Map(MAP_ID, {
+      minZoom,
+      maxZoom,
+      zoom,
       center: this.getCenter(x, y),
-      minZoom: zoom - 1,
-      maxZoom: zoom + 1,
-      zoom: zoom,
       layers: [this.getGridLayer()],
       fadeAnimation: false,
       zoomAnimation: false

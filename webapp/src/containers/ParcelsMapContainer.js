@@ -124,6 +124,8 @@ class ParcelsMapContainer extends React.Component {
       <ParcelsMap
         x={x}
         y={y}
+        minZoom={this.baseZoom - 1}
+        maxZoom={this.baseZoom + 1}
         zoom={zoom}
         bounds={this.bounds}
         tileSize={this.getTileSize()}
