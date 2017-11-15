@@ -80,3 +80,12 @@ export function generateMatrix(minX, minY, maxX, maxY) {
   }
   return matrix;
 }
+
+export function getBounds() {
+  return {
+    minX: -160,
+    minY: -160,
+    maxX: 160,
+    maxY: 160
+  };
+}

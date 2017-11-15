@@ -6,6 +6,7 @@ import { selectors } from "../reducers";
 import locations from "../locations";
 import { parcelRangeChange, openModal, changeLocation } from "../actions";
 import { isEmptyObject } from "../lib/util";
+import * as parcelUtils from "../lib/parcelUtils";
 import { stateData } from "../lib/propTypes";
 
 import ParcelsMap from "../components/ParcelsMap";
@@ -34,13 +35,8 @@ class ParcelsMapContainer extends React.Component {
   constructor(props) {
     super(props);
 
-    this.lowerBound = -160;
-    this.upperBound = 160;
-
-    this.bounds = [
-      [this.lowerBound, this.lowerBound],
-      [this.upperBound, this.upperBound]
-    ];
+    const { minX, minY, maxX, maxY } = parcelUtils.getBounds();
+    this.bounds = [[minX, minY], [maxX, maxY]];
 
     this.baseZoom = 10;
     this.baseTileSize = 128;
@@ -80,19 +76,13 @@ class ParcelsMapContainer extends React.Component {
   }
 
   fetchParcelRange(minX, minY, maxX, maxY) {
-    this.props.parcelRangeChange(
-      this.fixToBounds(minX),
-      this.fixToBounds(minY),
-      this.fixToBounds(maxX),
-      this.fixToBounds(maxY)
-    );
-  }
+    const bounds = parcelUtils.getBounds();
 
-  fixToBounds(coordinate) {
-    return Math.floor(
-      coordinate < this.lowerBound || coordinate > this.upperBound
-        ? this.bound
-        : coordinate
+    this.props.parcelRangeChange(
+      bounds.minX > minX ? bounds.minX : minX,
+      bounds.minY > minY ? bounds.minY : minY,
+      bounds.maxX < maxX ? bounds.maxX : maxX,
+      bounds.maxY < maxY ? bounds.maxY : maxY
     );
   }
 

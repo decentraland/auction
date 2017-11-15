@@ -25,8 +25,10 @@ class SearchContainer extends React.Component {
   };
 
   getCoordinates() {
+    const { minX, minY, maxX, maxY } = parcelUtils.getBounds();
+
     return parcelUtils
-      .generateMatrix(-160, -160, 160, 160)
+      .generateMatrix(minX, minY, maxX, maxY)
       .map(coordinate => ({ name: coordinate }));
   }
 
