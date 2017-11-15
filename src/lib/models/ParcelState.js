@@ -57,6 +57,16 @@ class ParcelState extends Model {
     );
   }
 
+  static findAllAddresses() {
+    return this.db.query(`SELECT DISTINCT(address) FROM ${this.tableName}`);
+  }
+
+  static findParcelsByAddress(address) {
+    return this.db.query(`SELECT * FROM ${this.tableName} WHERE address = $1`, [
+      address
+    ]);
+  }
+
   static async inRange(min, max) {
     const [minx, miny] = coordinates.toArray(min);
     const [maxx, maxy] = coordinates.toArray(max);
