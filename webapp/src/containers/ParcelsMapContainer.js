@@ -31,26 +31,44 @@ class ParcelsMapContainer extends React.Component {
     }
   };
 
-  componentWillMount() {
+  constructor(props) {
+    super(props);
+
     this.lowerBound = -160;
     this.upperBound = 160;
+
     this.bounds = [
       [this.lowerBound, this.lowerBound],
       [this.upperBound, this.upperBound]
     ];
 
+    this.baseZoom = 10;
+    this.baseTileSize = 128;
+
+    this.state = {
+      zoom: this.baseZoom
+    };
+  }
+
+  componentWillMount() {
     this.fetchCoordinateVicinity(this.props.center);
   }
 
   onMoveEnd = ({ position, bounds }) => {
     this.props.locationChange(locations.parcelDetail(position.x, position.y));
 
+    const offset = this.getBoundsOffset();
+
     this.fetchParcelRange(
-      bounds.min.x,
-      bounds.max.x,
-      bounds.min.y,
-      bounds.max.y
+      bounds.min.x + offset,
+      bounds.max.x - offset,
+      bounds.min.y + offset,
+      bounds.max.y - offset
     );
+  };
+
+  onZoomEnd = zoom => {
+    this.setState({ zoom });
   };
 
   onParcelBid = parcel => {
@@ -86,7 +104,17 @@ class ParcelsMapContainer extends React.Component {
     return this.props.parcelStates;
   };
 
+  getTileSize() {
+    const zoomDifference = this.baseZoom - this.state.zoom;
+    return this.baseTileSize / Math.pow(2, zoomDifference);
+  }
+
+  getBoundsOffset() {
+    return 3 * (this.baseZoom - this.state.zoom);
+  }
+
   render() {
+    const { zoom } = this.state;
     const { parcelStates, addressState } = this.props;
     const { x, y } = this.props.center;
 
@@ -96,12 +124,13 @@ class ParcelsMapContainer extends React.Component {
       <ParcelsMap
         x={x}
         y={y}
-        zoom={10}
+        zoom={zoom}
         bounds={this.bounds}
-        tileSize={128}
+        tileSize={this.getTileSize()}
         getAddressState={this.getAddressState}
         getParcelStates={this.getParcelStates}
         onMoveEnd={this.onMoveEnd}
+        onZoomEnd={this.onZoomEnd}
         onParcelBid={this.onParcelBid}
       />
     );

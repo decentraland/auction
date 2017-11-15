@@ -29,12 +29,14 @@ export default class ParcelsMap extends React.Component {
     getAddressState: PropTypes.func.isRequired,
     getParcelStates: PropTypes.func.isRequired,
     onMoveEnd: PropTypes.func,
+    onZoomEnd: PropTypes.func,
     onParcelBid: PropTypes.func
   };
 
   static defaultProps = {
     bounds: [[], []],
     onMoveEnd: () => {},
+    onZoomEnd: () => {},
     onParcelBid: () => {}
   };
 
@@ -67,7 +69,7 @@ export default class ParcelsMap extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return false;
+    return this.props.tileSize !== nextProps.tileSize;
   }
 
   createLeafletElement(container) {
@@ -75,11 +77,12 @@ export default class ParcelsMap extends React.Component {
 
     this.map = new L.Map(MAP_ID, {
       center: this.getCenter(x, y),
-      minZoom: zoom,
-      maxZoom: zoom,
+      minZoom: zoom - 1,
+      maxZoom: zoom + 1,
       zoom: zoom,
       layers: [this.getGridLayer()],
-      fadeAnimation: false
+      fadeAnimation: false,
+      zoomAnimation: false
     });
 
     this.map.zoomControl.setPosition("topright");
@@ -88,6 +91,7 @@ export default class ParcelsMap extends React.Component {
     this.map.on("movestart", this.onMapMoveStart);
     this.map.on("click", this.onMapClick);
     this.map.on("moveend", this.onMapMoveEnd);
+    this.map.on("zoomend", this.onZoomEnd);
 
     return this.map;
   }
@@ -132,6 +136,10 @@ export default class ParcelsMap extends React.Component {
     };
 
     this.props.onMoveEnd({ position, bounds });
+  };
+
+  onZoomEnd = event => {
+    this.props.onZoomEnd(this.map.getZoom());
   };
 
   addPopup(latlng) {
