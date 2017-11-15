@@ -131,6 +131,90 @@ describe("ParcelState", function() {
     });
   });
 
+  describe(".findAllAddresses", function() {
+    it("should return a list of different addresses with winning bids", async function() {
+      const address1 = "0xbeebeea";
+      const address2 = "0xbeebeeb";
+      await ParcelState.insert({
+        x: 0,
+        y: 1,
+        amount: "1000",
+        address: address1,
+        endsAt: new Date(),
+        bidGroupId: 1,
+        bidIndex: 0,
+        projectId: null
+      });
+      await ParcelState.insert({
+        x: 0,
+        y: 2,
+        amount: "2000",
+        address: address1,
+        endsAt: new Date(),
+        bidGroupId: 1,
+        bidIndex: 0,
+        projectId: null
+      });
+      await ParcelState.insert({
+        x: 0,
+        y: 3,
+        amount: "3000",
+        address: address2,
+        endsAt: new Date(),
+        bidGroupId: 1,
+        bidIndex: 0,
+        projectId: null
+      });
+
+      const result = await ParcelState.findAllAddresses();
+      const addresses = result.map(row => row.address);
+      expect(addresses.length).to.be.equal(2);
+      expect(addresses.includes(address1)).to.be.equal(true);
+      expect(addresses.includes(address2)).to.be.equal(true);
+    });
+  });
+
+  describe(".findParcelsByAddress", function() {
+    it("should return array of parcels for address", async function() {
+      const address1 = "0xbeebeea";
+      const address2 = "0xbeebeeb";
+      await ParcelState.insert({
+        x: 0,
+        y: 1,
+        amount: "1000",
+        address: address1,
+        endsAt: new Date(),
+        bidGroupId: 1,
+        bidIndex: 0,
+        projectId: null
+      });
+      await ParcelState.insert({
+        x: 0,
+        y: 2,
+        amount: "2000",
+        address: address1,
+        endsAt: new Date(),
+        bidGroupId: 1,
+        bidIndex: 0,
+        projectId: null
+      });
+      await ParcelState.insert({
+        x: 0,
+        y: 3,
+        amount: "3000",
+        address: address2,
+        endsAt: new Date(),
+        bidGroupId: 1,
+        bidIndex: 0,
+        projectId: null
+      });
+
+      const result = await ParcelState.findParcelsByAddress(address1);
+      expect(result.length).to.be.equal(2);
+      expect(result.every(row => row.address === address1)).to.be.equal(true);
+    });
+  });
+
   afterEach(() =>
     Promise.all(["parcel_states", "bid_groups"].map(db.truncate.bind(db)))
   );

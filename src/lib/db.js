@@ -101,5 +101,29 @@ export default {
       "state" text,
       "data" json`
     );
+
+    await this.createTable(
+      "buy_transactions",
+      `"id" int NOT NULL DEFAULT nextval('buy_transactions_id_seq'),
+      "txId" text NOT NULL UNIQUE,
+      "address" text NOT NULL,
+      "parcelStatesIds" text[] NOT NULL,
+      "totalCost" text NOT NULL,
+      "status" text NOT NULL,
+      "receipt" json`
+    );
+    await this.createIndex("buy_transactions", "buy_transactions_status_idx", [
+      "status"
+    ]);
+
+    await this.createTable(
+      "return_transactions",
+      `"id" int NOT NULL DEFAULT nextval('return_transactions_id_seq'),
+      "txId" text NOT NULL UNIQUE,
+      "address" text NOT NULL,
+      "amount" text NOT NULL,
+      "status" text NOT NULL,
+      "receipt" json`
+    );
   }
 };
