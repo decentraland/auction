@@ -1,9 +1,10 @@
 #!/usr/bin/env babel-node
 
 import fs from "fs";
+import { execSync } from "child_process";
 import { env, Log } from "decentraland-commons";
 import db from "../src/lib/db";
-import { AddressState, ParcelState, Project } from "../src/lib/models";
+import { AddressState, ParcelState, DistrictEntry, Project, LockedBalanceEvent } from "../src/lib/models";
 import { AddressService, ParcelStateService } from "../src/lib/services";
 
 const log = new Log("[init]");
@@ -12,6 +13,8 @@ env.load();
 
 async function initializeDatabase() {
   await upsertRoadsProject();
+  await upsertDistrictEntries();
+  await upsertLockedBalanceEvents();
   await importAddressStates();
   await initParcels();
 
@@ -33,6 +36,22 @@ async function upsertRoadsProject() {
       disabled: false
     });
   }
+}
+
+async function upsertDistrictEntries() {
+  const query = await DistrictEntry.countSubmissions()
+  if (query.amount > 0) {
+    return;
+  }
+  return execSync(`psql $CONNECTION_STRING -f ./districtEntries.sql`);
+}
+
+async function upsertLockedBalanceEvents() {
+  const query = await LockedBalanceEvent.countEvents()
+  if (query.amount > 0) {
+    return;
+  }
+  return execSync(`psql $CONNECTION_STRING -f ./lockedBalanceEvents.sql`);
 }
 
 async function initParcels() {
