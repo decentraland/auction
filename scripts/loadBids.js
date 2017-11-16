@@ -164,14 +164,7 @@ const buildBuyTxData = (address, parcels) => {
   return { address, X, Y, totalCost };
 };
 
-const loadParcelsForAddress = async (contract, address, batchSize) => {
-  if (!address) {
-    log.error(`(proc) [${address}] Empty or invalid address`);
-    return;
-  }
-
-  log.info(`(proc) [${address}] Processing bids for address...`);
-
+const findParcelsToBuy = async (address, batchSize) => {
   try {
     // get parcels for address
     const parcels = await ParcelState.findParcelsByAddress(address);
@@ -189,8 +182,30 @@ const loadParcelsForAddress = async (contract, address, batchSize) => {
         parcels.length
       } = selected ${sendParcels.length}`
     );
+    return sendParcels;
 
-    if (sendParcels.length > 0) {
+  } catch (err) {
+    log.error(err);
+    return [];
+  }
+}
+
+const loadParcelsForAddress = async (contract, address, batchSize) => {
+  try {
+    if (!address) {
+      throw new Error(`(proc) [${address}] Empty or invalid address`);
+    }
+    log.info(`(proc) [${address}] Processing bids for address...`);
+
+    while (true) {
+      const sendParcels = await findParcelsToBuy(address, batchSize);
+
+      // no more parcels to send
+      if (sendParcels.length === 0) {
+        log.info(`(proc) [${address}] Sent all parcels for address`);
+        break;
+      }
+
       // build TX data
       const txData = await buildBuyTxData(address, sendParcels);
 
