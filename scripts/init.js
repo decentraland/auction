@@ -1,18 +1,16 @@
 #!/usr/bin/env babel-node
 
 import fs from "fs";
-import { eth, env, Log } from "decentraland-commons";
+import { env, Log } from "decentraland-commons";
 import db from "../src/lib/db";
 import { AddressState, ParcelState, Project } from "../src/lib/models";
-import { ParcelStateService } from "../src/lib/services";
+import { AddressService, ParcelStateService } from "../src/lib/services";
 
 const log = new Log("[init]");
 
 env.load();
 
 async function initializeDatabase() {
-  eth.connect();
-
   await upsertRoadsProject();
   await importAddressStates();
   await initParcels();
@@ -68,29 +66,32 @@ async function reserveProjects(reservation) {
   }
 }
 
-async function importAddressStates() {
+const importAddressStates = async () => {
   // - Read a dump of address => Balance
   let index = 1;
-  let addresses = fs.readFileSync("./addresses.txt", "utf8");
-  addresses = addresses.split("\n");
+  const addresses = fs
+    .readFileSync("./addresses.txt", "utf8")
+    .split("\n")
+    .map(address => address.toLowerCase());
 
-  for (let address of addresses) {
+  for (const address of addresses) {
     log.info(`Processing address ${index++}/${addresses.length}`);
-    if (!address) continue;
+    if (!address) {
+      log.warn("Empty address");
+      continue;
+    }
 
-    address = address.toLowerCase();
-
-    const balance = await eth.getContract("MANAToken").getBalance(address);
+    const balance = await AddressService.lockedMANABalanceOf(address);
 
     if (await AddressState.findByAddress(address)) {
-      log.info(`Updating the balance of address state with ${balance}`);
+      log.info(`[${address}] Updating balance(${balance})`);
       await AddressState.update({ balance }, { address });
     } else {
-      log.info(`Inserting address ${address} with the balance ${balance}`);
+      log.info(`[${address}] Inserting balance(${balance})`);
       await AddressState.insert({ address, balance });
     }
   }
-}
+};
 
 db
   .connect()
