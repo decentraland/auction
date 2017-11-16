@@ -61,6 +61,11 @@ const initTestParcels = async () => {
   }
 };
 
+const setIntervalAndExecute = (fn, t) => {
+  fn();
+  return setInterval(fn, t);
+}
+
 // tx queue management
 
 class TxQueue {
@@ -240,7 +245,7 @@ const verifyPendingTxs = async watchedModel => {
 };
 
 const watchPendingTxs = (watchedModel, time) => {
-  setInterval(() => verifyPendingTxs(watchedModel), time);
+  setIntervalAndExecute(() => verifyPendingTxs(watchedModel), time);
 };
 
 const loadAllParcels = async (contract, batchSize) => {
