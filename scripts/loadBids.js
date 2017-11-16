@@ -3,17 +3,19 @@
 import minimist from "minimist";
 import { eth, env, Log } from "decentraland-commons";
 import db from "../src/lib/db";
-import { 
-  BuyTransaction, 
-  DistrictEntry, 
-  LockedBalanceEvent, 
-  ParcelState, 
-  ReturnTransaction 
+import {
+  BuyTransaction,
+  DistrictEntry,
+  LockedBalanceEvent,
+  ParcelState,
+  ReturnTransaction
 } from "../src/lib/models";
 
 const log = new Log("[LoadBids]");
 
 env.load();
+
+const DEFAULT_BATCH_SIZE = 20;
 
 //The maximum is inclusive and the minimum is inclusive
 const getRandomInt = (min, max) => {
@@ -59,6 +61,11 @@ const initTestParcels = async () => {
   }
 };
 
+const setIntervalAndExecute = (fn, t) => {
+  fn();
+  return setInterval(fn, t);
+}
+
 // tx queue management
 
 class TxQueue {
@@ -93,7 +100,7 @@ const printState = () => {
   log.info(`(state) Pending transactions: ${txQueue.length}`);
 };
 
-const onNewBlock = blockHash => {
+const onNewBlock = (blockHash, watchedModel) => {
   log.info(`(block) Found new block ${blockHash}`);
   printState();
 
@@ -109,7 +116,7 @@ const onNewBlock = blockHash => {
           txQueue.delPendingTx(txId);
 
           const receipt = await eth.fetchTxReceipt(txId);
-          await BuyTransaction.update(
+          await watchedModel.update(
             { receipt, status: receipt.status == 1 ? "completed" : "error" },
             { txId }
           );
@@ -122,8 +129,8 @@ const onNewBlock = blockHash => {
   });
 };
 
-const setupBlockWatch = options => {
-  log.info(`(watch) Setting up event filter for new blocks`)
+const setupBlockWatch = (options, watchedModel) => {
+  log.info(`(watch) Setting up event filter for new blocks`);
   const filter = eth.setupFilter(options);
 
   filter.watch((err, blockHash) => {
@@ -132,7 +139,7 @@ const setupBlockWatch = options => {
       return;
     }
 
-    onNewBlock(blockHash);
+    onNewBlock(blockHash, watchedModel);
   });
 
   return filter;
@@ -147,7 +154,9 @@ const buildBuyTxData = (address, parcels) => {
     .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0));
 
   log.info(
-    `(proc) [${address}] ${parcels.length} bids found = total cost: ${totalCost}`
+    `(proc) [${address}] ${parcels.length} bids found = total cost: ${
+      totalCost
+    }`
   );
   log.info(`(proc) [${address}] X- > ${JSON.stringify(X)}`);
   log.info(`(proc) [${address}] Y -> ${JSON.stringify(Y)}`);
@@ -171,10 +180,14 @@ const loadParcelsForAddress = async (contract, address, batchSize) => {
     const doneParcels = await BuyTransaction.findProcessedParcels(address);
 
     // select parcels to send
-    const sendParcels = parcels.filter(e => !doneParcels.includes(e.id)).splice(0, batchSize);
+    const sendParcels = parcels
+      .filter(e => !doneParcels.includes(e.id))
+      .splice(0, batchSize);
 
     log.info(
-      `(proc) [${address}] Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
+      `(proc) [${address}] Progress => ${doneParcels.length} out of ${
+        parcels.length
+      } = selected ${sendParcels.length}`
     );
 
     if (sendParcels.length > 0) {
@@ -207,10 +220,10 @@ const loadParcelsForAddress = async (contract, address, batchSize) => {
   }
 };
 
-const verifyPendingTxs = async () => {
+const verifyPendingTxs = async watchedModel => {
   try {
     // setup watch for mined txs
-    const pendingTxIds = await BuyTransaction.findAllPendingTxIds();
+    const pendingTxIds = await watchedModel.findAllPendingTxIds();
     log.info(`(tx) Total number of TXs to verify: ${pendingTxIds.length}`);
 
     for (const txId of pendingTxIds) {
@@ -220,10 +233,10 @@ const verifyPendingTxs = async () => {
         log.info(`(tx) [${txId}] pending`);
       } else if (receipt.status === 0) {
         log.info(`(tx) [${txId}] error`);
-        await BuyTransaction.update({ receipt, status: "error" }, { txId });
+        await watchedModel.update({ receipt, status: "error" }, { txId });
       } else if (receipt.status === 1) {
         log.info(`(tx) [${txId}] completed`);
-        await BuyTransaction.update({ receipt, status: "completed" }, { txId });
+        await watchedModel.update({ receipt, status: "completed" }, { txId });
       }
     }
   } catch (err) {
@@ -231,8 +244,8 @@ const verifyPendingTxs = async () => {
   }
 };
 
-const watchPendingTxs = time => {
-  setInterval(verifyPendingTxs, time);
+const watchPendingTxs = (watchedModel, time) => {
+  setIntervalAndExecute(() => verifyPendingTxs(watchedModel), time);
 };
 
 const loadAllParcels = async (contract, batchSize) => {
@@ -251,19 +264,24 @@ const loadAllParcels = async (contract, batchSize) => {
 
 const ONE_LAND_IN_MANA = 1000;
 const BEFORE_NOVEMBER_DISCOUNT = 1.15;
-const AFTER_NOVEMBER_DISCOUNT = 1.10;
+const AFTER_NOVEMBER_DISCOUNT = 1.1;
 
-const calculateTotalForMonths = (monthlyLandBalances, monthlyLockedBalances, months) => {
+const calculateTotalForMonths = (
+  monthlyLandBalances,
+  monthlyLockedBalances,
+  months
+) => {
   return months.reduce((total, index) => {
     return total + monthlyLockedBalances[index] - monthlyLandBalances[index];
   }, 0);
-}
+};
 
-const getMonthlySubmissionMANA = (submissions) => {
+const getMonthlySubmissionMANA = submissions => {
   const months = new Array(12).fill(0);
-  const monthlyLandBalance = months.reduce((obj, _, index) =>
-    Object.assign(obj, { [index+1]: 0 })
-  , {});
+  const monthlyLandBalance = months.reduce(
+    (obj, _, index) => Object.assign(obj, { [index + 1]: 0 }),
+    {}
+  );
 
   submissions.forEach(submission => {
     const month = new Date(+submission.userTimestamp).getMonth() + 1;
@@ -271,19 +289,22 @@ const getMonthlySubmissionMANA = (submissions) => {
   });
 
   return monthlyLandBalance;
-}
+};
 
-const toLockedBalancesByMonth = (lockedBalances) => {
+const toLockedBalancesByMonth = lockedBalances => {
   const months = new Array(12).fill(0);
-  const lockedBalancesByMonth = months.reduce((obj, _, index) => { obj[index+1] = 0; return obj }, {});
+  const lockedBalancesByMonth = months.reduce((obj, _, index) => {
+    obj[index + 1] = 0;
+    return obj;
+  }, {});
 
   for (let { month, mana } of lockedBalances) {
     lockedBalancesByMonth[month] = parseInt(mana, 10);
   }
   return lockedBalancesByMonth;
-}
+};
 
-const returnAllMANA = async (contract) => {
+const returnAllMANA = async contract => {
   try {
     // get all addresses that locked MANA
     const addresses = await LockedBalanceEvent.getLockedAddresses();
@@ -297,7 +318,7 @@ const returnAllMANA = async (contract) => {
       }
 
       // get MANA locked in districts
-      const submissions = await DistrictEntry.getSubmissions(address)
+      const submissions = await DistrictEntry.getSubmissions(address);
       const monthlyLandBalances = getMonthlySubmissionMANA(submissions);
 
       // get MANA locked
@@ -307,29 +328,49 @@ const returnAllMANA = async (contract) => {
 
       // adjust MANA balances to bonuses
       const beforeNovBalance = calculateTotalForMonths(
-        monthlyLandBalances, monthlyLockedBalances, [9, 10]
+        monthlyLandBalances,
+        monthlyLockedBalances,
+        [9, 10]
       );
       const afterNovBalance = calculateTotalForMonths(
-        monthlyLandBalances, monthlyLockedBalances, [11, 12, 1]
+        monthlyLandBalances,
+        monthlyLockedBalances,
+        [11, 12, 1]
       );
 
       // total MANA locked in districts
-      const totalLandBalance = Object.values(monthlyLandBalances).reduce((total, value) => total + value, 0);
+      const totalLandBalance = Object.values(monthlyLandBalances).reduce(
+        (total, value) => total + value,
+        0
+      );
 
       // total MANA reserved
       const manaReserved =
-        Math.floor(beforeNovBalance * BEFORE_NOVEMBER_DISCOUNT) + 
-        Math.floor(afterNovBalance * AFTER_NOVEMBER_DISCOUNT) + 
+        Math.floor(beforeNovBalance * BEFORE_NOVEMBER_DISCOUNT) +
+        Math.floor(afterNovBalance * AFTER_NOVEMBER_DISCOUNT) +
         totalLandBalance;
-      log.info(`(return) [${address}] before(${beforeNovBalance}) + after(${afterNovBalance}) + land(${totalLandBalance}) = reserved(${manaReserved})`);
+      log.info(
+        `(return) [${address}] before(${beforeNovBalance}) + after(${
+          afterNovBalance
+        }) + land(${totalLandBalance}) = reserved(${manaReserved})`
+      );
 
       // calculate remaining MANA to return
-      const totalBurnedMANA = await BuyTransaction.totalBurnedMANAByAddress(address);
-      const remainingMANA = eth.web3.toWei(eth.utils.toBigNumber(manaReserved)).minus(totalBurnedMANA);
+      const totalBurnedMANA = await BuyTransaction.totalBurnedMANAByAddress(
+        address
+      );
+      const remainingMANA = eth.web3
+        .toWei(eth.utils.toBigNumber(manaReserved))
+        .minus(totalBurnedMANA);
 
       if (remainingMANA > 0) {
-        log.info(`(return) [${address}] burned(${totalBurnedMANA.toString(10)}) = ${remainingMANA.toString(10)}`);
+        log.info(
+          `(return) [${address}] burned(${totalBurnedMANA.toString(
+            10
+          )}) = ${remainingMANA.toString(10)}`
+        );
         const txId = await contract.transferBackMANA(address, remainingMANA);
+        txQueue.addPendingTx(txId);
 
         log.info(`(return) [${address}] Broadcasted tx : ${txId}`);
         await ReturnTransaction.insert({
@@ -343,47 +384,50 @@ const returnAllMANA = async (contract) => {
       }
     }
   } catch (err) {
-    log.error(err)
+    log.error(err);
   }
-}
+};
+
+const parseArgs = () => minimist(process.argv.slice(2), {
+  string: ["loadaddress"],
+  default: {
+    nbatch: DEFAULT_BATCH_SIZE
+  }
+});
 
 async function main() {
-  const DEFAULT_BATCH_SIZE = 20;
-
   try {
     // args
-    const argv = minimist(process.argv.slice(2), {
-      string: ["loadaddress"],
-      default: {
-        "nbatch": DEFAULT_BATCH_SIZE
-      }
-    });
+    const argv = parseArgs();
 
     // init
     await db.connect();
-    await eth.connect('', '', {httpProviderUrl: 'http://localhost:8545'});
+    await eth.connect("", "", { httpProviderUrl: "http://localhost:18545" });
     await initTestParcels();
 
     const contract = eth.getContract("LANDTerraformSale");
-    log.info(`Using LANDTerraformSale contract at address ${contract.address}`);      
-
-    // setup watch for mined txs
-    const eventFilter = setupBlockWatch("latest");
+    log.info(`Using LANDTerraformSale contract at address ${contract.address}`);
 
     // commands
-    if (argv.verify === true) {
-      await watchPendingTxs(5000);
+    if (argv.verifybuys === true) {
+      await watchPendingTxs(BuyTransaction, 30000);
+    } else if (argv.verifyreturns === true) {
+      await watchPendingTxs(ReturnTransaction, 30000);
     } else if (argv.load === true) {
+      setupBlockWatch("latest", BuyTransaction);
       await loadAllParcels(contract, argv.nbatch);
     } else if (argv.loadaddress) {
+      setupBlockWatch("latest", BuyTransaction);
       await loadParcelsForAddress(contract, argv.loadaddress, argv.nbatch);
     } else if (argv.returnmana === true) {
+      setupBlockWatch("latest", ReturnTransaction);
       await returnAllMANA(contract);
     } else {
-      log.error(`Invalid command. Use --verify or --load`)
-      process.exit(0)
+      console.log(
+        `Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnmana`
+      );
+      process.exit(0);
     }
-
   } catch (err) {
     log.info(err);
   }

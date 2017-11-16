@@ -11,6 +11,12 @@ class ReturnTransaction extends Model {
     "receipt"
   ];
 
+  static findAllPendingTxIds() {
+    return this.find({ status: "pending" }).then(rows =>
+      rows.map(row => row.txId)
+    );
+  }
+
   static findByAddress(address) {
     return this.findOne({ address });
   }
