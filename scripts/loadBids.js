@@ -15,6 +15,8 @@ const log = new Log("[LoadBids]");
 
 env.load();
 
+const DEFAULT_BATCH_SIZE = 20;
+
 //The maximum is inclusive and the minimum is inclusive
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -381,17 +383,17 @@ const returnAllMANA = async contract => {
   }
 };
 
-async function main() {
-  const DEFAULT_BATCH_SIZE = 20;
+const parseArgs = () => minimist(process.argv.slice(2), {
+  string: ["loadaddress"],
+  default: {
+    nbatch: DEFAULT_BATCH_SIZE
+  }
+});
 
+async function main() {
   try {
     // args
-    const argv = minimist(process.argv.slice(2), {
-      string: ["loadaddress"],
-      default: {
-        nbatch: DEFAULT_BATCH_SIZE
-      }
-    });
+    const argv = parseArgs();
 
     // init
     await db.connect();
