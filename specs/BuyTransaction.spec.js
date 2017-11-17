@@ -4,7 +4,6 @@ import { eth } from "decentraland-commons";
 import db from "../src/lib/db";
 import { BuyTransaction } from "../src/lib/models";
 
-
 /* Returns TRUE if the first specified array contains all elements
  * from the second one. FALSE otherwise.
  *
@@ -13,9 +12,9 @@ import { BuyTransaction } from "../src/lib/models";
  *
  * @returns {boolean}
  */
-function arrayContainsArray (superset, subset) {
-  return subset.every(function (value) {
-    return (superset.indexOf(value) >= 0);
+function arrayContainsArray(superset, subset) {
+  return subset.every(function(value) {
+    return superset.indexOf(value) >= 0;
   });
 }
 
@@ -26,15 +25,43 @@ describe("BuyTransaction", () => {
     "0xf20bcedfd86c1147d13c475253446dbd52c05a8cec5eb6aca7439e9c4ebdca57",
     "0x7b2b127407fd583441461534819be5a4cd12b0e3e79bd1febbd0c04be7ccd694"
   ];
-  const pendingTxIds = [txIds[0], txIds[1]]
-  const addresses = [
-    "0x2b5634c42055806a59e9107ed44d43c426e58258",
-    "0xfbb1b73c4f0bda4f67dca266ce6ef42f520fbb98",
-    "0x6bf34e55e6a93fd75be0db9d812fe98c261828ca"
-  ];
+  const pendingTxIds = [txIds[0], txIds[1]];
+  const addresses = ["0xdead", "0xffff", "0xbeef"];
   const parcelIds = [
-    ["23,23","24,24","25,25","26,26","27,27","28,28","29,29","30,30","31,31","32,32","33,33","34,34","35,35","36,36","37,37","38,38","39,39","40,40","41,41","42,42"],
-    ["1000,1000","1001,1001","1002,1002","1003,1003","1004,1004","1005,1005","1006,1006","1007,1007","1008,1008","1009,1009"],
+    [
+      "23,23",
+      "24,24",
+      "25,25",
+      "26,26",
+      "27,27",
+      "28,28",
+      "29,29",
+      "30,30",
+      "31,31",
+      "32,32",
+      "33,33",
+      "34,34",
+      "35,35",
+      "36,36",
+      "37,37",
+      "38,38",
+      "39,39",
+      "40,40",
+      "41,41",
+      "42,42"
+    ],
+    [
+      "1000,1000",
+      "1001,1001",
+      "1002,1002",
+      "1003,1003",
+      "1004,1004",
+      "1005,1005",
+      "1006,1006",
+      "1007,1007",
+      "1008,1008",
+      "1009,1009"
+    ],
     ["2000,2000", "3000,3000"],
     ["8000,8000", "9000,9000"]
   ];
@@ -82,9 +109,12 @@ describe("BuyTransaction", () => {
 
   describe(".findProcessedParcels", () => {
     it("should get an array of processed parcel ids", async () => {
-      const processedParcelIds = await BuyTransaction.findProcessedParcels(addresses[0]);
+      const processedParcelIds = await BuyTransaction.findProcessedParcels(
+        addresses[0]
+      );
       const isContained = arrayContainsArray(
-        [...parcelIds[0], ...parcelIds[2]], processedParcelIds
+        [...parcelIds[0], ...parcelIds[2]],
+        processedParcelIds
       );
       expect(isContained).to.be.true;
     });
@@ -93,7 +123,14 @@ describe("BuyTransaction", () => {
   describe(".totalBurnedMANAByAddress", () => {
     it("should get total MANA burned for a certain address", async () => {
       const total = await BuyTransaction.totalBurnedMANAByAddress(addresses[0]);
-      expect(total.equals(eth.utils.toBigNumber(7000000000000000000000))).to.be.true;
+      expect(total.equals(eth.utils.toBigNumber(7000000000000000000000))).to.be
+        .true;
     });
+  });
+
+  after(async () => {
+    await Promise.all(
+      addresses.map(address => BuyTransaction.delete({ address }))
+    );
   });
 });
