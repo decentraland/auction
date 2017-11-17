@@ -1,4 +1,3 @@
-import { eth } from "decentraland-commons";
 import {
   AddressState,
   DistrictEntry,

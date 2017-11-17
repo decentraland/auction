@@ -7,7 +7,8 @@ class DistrictEntry extends Model {
     "address",
     "project_id",
     "lands",
-    "userTimestamp"
+    "userTimestamp",
+    "action"
   ];
 
   static getSubmissions(address) {
