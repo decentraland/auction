@@ -1,27 +1,27 @@
 #!/usr/bin/env babel-node
 
 import fs from "fs";
-import { eth, env } from "decentraland-commons";
+import { env, Log } from "decentraland-commons";
 import db from "../src/lib/db";
 import { AddressState, ParcelState, Project } from "../src/lib/models";
-import { ParcelStateService } from "../src/lib/services";
+import { AddressService, ParcelStateService } from "../src/lib/services";
+
+const log = new Log("[init]");
 
 env.load();
 
 async function initializeDatabase() {
-  eth.connect();
-
   await upsertRoadsProject();
   await importAddressStates();
   await initParcels();
 
-  console.log("All done");
+  log.info("All done");
   process.exit();
 }
 
 async function upsertRoadsProject() {
   if (!await Project.findByName("Roads")) {
-    console.log("Inserting Roads project");
+    log.info("Inserting Roads project");
 
     await Project.insert({
       name: "Roads",
@@ -39,7 +39,7 @@ async function initParcels() {
   const parcels = fs.readFileSync("./parcelsDescription.json", "utf8");
   const { x, y, reserved, roads } = JSON.parse(parcels);
 
-  console.log(
+  log.info(
     `Inserting a matrix from coords (${x.min} ${y.min}) to (${x.max} ${y.max}). This might take a while.`
   );
   await new ParcelStateService().insertMatrix(x.min, y.min, x.max, y.max);
@@ -49,7 +49,7 @@ async function initParcels() {
 }
 
 async function reserveProjects(reservation) {
-  console.log("Reserving project parcels");
+  log.info("Reserving project parcels");
 
   for (const projectName in reservation) {
     const project = await Project.findByName(projectName);
@@ -58,7 +58,7 @@ async function reserveProjects(reservation) {
     }
 
     for (let coord of reservation[projectName]) {
-      console.log(
+      log.info(
         `Reserving parcel ${coord} for project ${projectName} ( ${project.id} )`
       );
       await ParcelState.update({ projectId: project.id }, { id: coord });
@@ -66,29 +66,32 @@ async function reserveProjects(reservation) {
   }
 }
 
-async function importAddressStates() {
+const importAddressStates = async () => {
   // - Read a dump of address => Balance
   let index = 1;
-  let addresses = fs.readFileSync("./addresses.txt", "utf8");
-  addresses = addresses.split("\n");
+  const addresses = fs
+    .readFileSync("./addresses.txt", "utf8")
+    .split("\n")
+    .map(address => address.toLowerCase());
 
-  for (let address of addresses) {
-    console.log(`Processing address ${index++}/${addresses.length}`);
-    if (!address) continue;
+  for (const address of addresses) {
+    log.info(`Processing address ${index++}/${addresses.length}`);
+    if (!address) {
+      log.warn("Empty address");
+      continue;
+    }
 
-    address = address.toLowerCase();
-
-    const balance = await eth.getContract("MANAToken").getBalance(address);
+    const balance = await AddressService.lockedMANABalanceOf(address);
 
     if (await AddressState.findByAddress(address)) {
-      console.log(`Updating the balance of address state with ${balance}`);
+      log.info(`[${address}] Updating balance(${balance})`);
       await AddressState.update({ balance }, { address });
     } else {
-      console.log(`Inserting address ${address} with the balance ${balance}`);
+      log.info(`[${address}] Inserting balance(${balance})`);
       await AddressState.insert({ address, balance });
     }
   }
-}
+};
 
 db
   .connect()
