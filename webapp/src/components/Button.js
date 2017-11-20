@@ -1,22 +1,22 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
-import "./Button.css";
+import './Button.css'
 
 const propTypes = Object.freeze({
   className: PropTypes.string,
-  type: PropTypes.oneOf(["primary", "secondary", "default"]),
-  size: PropTypes.oneOf(["small", "medium", "big"]),
+  type: PropTypes.oneOf(['primary', 'secondary', 'default']),
+  size: PropTypes.oneOf(['small', 'medium', 'big']),
   isSubmit: PropTypes.bool,
   children: PropTypes.node
-});
+})
 
 const defaultProps = Object.freeze({
-  className: "",
-  type: "primary",
+  className: '',
+  type: 'primary',
   isSubmit: false
-});
+})
 
 export function ButtonLink({ to, className, type, size, children, ...props }) {
   return (
@@ -27,18 +27,18 @@ export function ButtonLink({ to, className, type, size, children, ...props }) {
     >
       {children}
     </Link>
-  );
+  )
 }
 
 ButtonLink.propTypes = {
   ...propTypes,
   to: PropTypes.string.isRequired
-};
-ButtonLink.defaultProps = defaultProps;
+}
+ButtonLink.defaultProps = defaultProps
 
 export default function Button(props) {
-  const { className, type, size, isSubmit, children, ...rest } = props;
-  const buttonType = isSubmit ? "submit" : "button";
+  const { className, type, size, isSubmit, children, ...rest } = props
+  const buttonType = isSubmit ? 'submit' : 'button'
 
   return (
     <button
@@ -48,19 +48,19 @@ export default function Button(props) {
     >
       {children}
     </button>
-  );
+  )
 }
 
-Button.propTypes = propTypes;
-Button.defaultProps = defaultProps;
+Button.propTypes = propTypes
+Button.defaultProps = defaultProps
 
 // -------------------------------------------------------------------------
 // Utils
 
 function buildClassName(baseClassName, type, size) {
-  let className = `${baseClassName} Button btn btn-${type}`;
+  let className = `${baseClassName} Button btn btn-${type}`
   if (size) {
-    className = `${className} btn-${size}`;
+    className = `${className} btn-${size}`
   }
-  return className;
+  return className
 }

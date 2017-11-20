@@ -1,40 +1,40 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
-import { selectors } from "../reducers";
-import { fetchOngoingAuctions } from "../actions";
-import { stateData } from "../lib/propTypes";
+import { selectors } from '../reducers'
+import { fetchOngoingAuctions } from '../actions'
+import { stateData } from '../lib/propTypes'
 
-import ShowMenu from "../components/ShowMenu";
-import Menu from "../components/Menu";
+import ShowMenu from '../components/ShowMenu'
+import Menu from '../components/Menu'
 
 class MenuContainer extends React.Component {
   static propTypes = {
     addressState: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array),
     fetchOngoingAuctions: PropTypes.func
-  };
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       menuVisible: false
-    };
+    }
   }
 
   changeMenuVisibility(menuVisible) {
-    this.setState({ menuVisible });
+    this.setState({ menuVisible })
 
     if (menuVisible) {
       // Wait a bit for the Menu animation to end
-      setTimeout(() => this.props.fetchOngoingAuctions(), 500);
+      setTimeout(() => this.props.fetchOngoingAuctions(), 500)
     }
   }
 
   render() {
-    const { menuVisible } = this.state;
-    const { addressState, ongoingAuctions } = this.props;
+    const { menuVisible } = this.state
+    const { addressState, ongoingAuctions } = this.props
 
     return [
       <ShowMenu key="1" onShow={() => this.changeMenuVisibility(true)} />,
@@ -45,7 +45,7 @@ class MenuContainer extends React.Component {
         ongoingAuctions={ongoingAuctions}
         onHide={() => this.changeMenuVisibility(false)}
       />
-    ];
+    ]
   }
 }
 
@@ -55,4 +55,4 @@ export default connect(
     ongoingAuctions: selectors.getOngoingAuctions(state)
   }),
   { fetchOngoingAuctions }
-)(MenuContainer);
+)(MenuContainer)

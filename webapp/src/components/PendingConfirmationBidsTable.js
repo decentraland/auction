@@ -1,37 +1,37 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
-import { distanceInWordsToNow } from "../lib/dateUtils";
-import { preventDefault, buildCoordinate } from "../lib/util";
-import shortenAddress from "../lib/shortenAddress";
-import pendingBidsUtils from "../lib/pendingBidsUtils";
-import { stateData } from "../lib/propTypes";
+import { distanceInWordsToNow } from '../lib/dateUtils'
+import { preventDefault, buildCoordinate } from '../lib/util'
+import shortenAddress from '../lib/shortenAddress'
+import pendingBidsUtils from '../lib/pendingBidsUtils'
+import { stateData } from '../lib/propTypes'
 
-import locations from "../locations";
+import locations from '../locations'
 
-import Button from "./Button";
+import Button from './Button'
 
-import "./PendingConfirmationBidsTable.css";
+import './PendingConfirmationBidsTable.css'
 
 export default class PendingConfirmationBidsTable extends React.Component {
   static propTypes = {
     pendingConfirmationBids: stateData(PropTypes.array).isRequired,
     onConfirmBids: PropTypes.func.isRequired,
     onDeleteBid: PropTypes.func.isRequired
-  };
+  }
 
   getTotalMana() {
-    const { pendingConfirmationBids } = this.props;
+    const { pendingConfirmationBids } = this.props
 
-    return pendingBidsUtils.getTotalManaBidded(pendingConfirmationBids.data);
+    return pendingBidsUtils.getTotalManaBidded(pendingConfirmationBids.data)
   }
 
   render() {
-    const { pendingConfirmationBids, onConfirmBids, onDeleteBid } = this.props;
+    const { pendingConfirmationBids, onConfirmBids, onDeleteBid } = this.props
 
     if (pendingConfirmationBids.data.length === 0) {
-      return null;
+      return null
     }
 
     return (
@@ -59,7 +59,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
             <UnconfirmedBidsTableRow
               key={index}
               bid={bid}
-              className={index % 2 === 0 ? "gray" : ""}
+              className={index % 2 === 0 ? 'gray' : ''}
               onDelete={onDeleteBid}
             />
           ))}
@@ -87,20 +87,20 @@ export default class PendingConfirmationBidsTable extends React.Component {
           </form>
         </div>
       </div>
-    );
+    )
   }
 }
 
 function UnconfirmedBidsTableRow({ bid, className, onDelete }) {
-  const land = buildCoordinate(bid.x, bid.y);
+  const land = buildCoordinate(bid.x, bid.y)
 
   const currentBid = isAvailable(bid.currentBid)
     ? `${bid.currentBid} MANA`
-    : "N/A";
+    : 'N/A'
 
   const timeLeft = distanceInWordsToNow(bid.endsAt, {
-    endedText: "Not started yet"
-  });
+    endedText: 'Not started yet'
+  })
 
   return (
     <div className={`table-row ${className}`}>
@@ -115,9 +115,9 @@ function UnconfirmedBidsTableRow({ bid, className, onDelete }) {
         x
       </div>
     </div>
-  );
+  )
 }
 
 function isAvailable(bidValue) {
-  return bidValue !== "N/A" && parseFloat(bidValue) > 0;
+  return bidValue !== 'N/A' && parseFloat(bidValue) > 0
 }

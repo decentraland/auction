@@ -1,26 +1,26 @@
-import { buildCoordinate } from "./util";
+import { buildCoordinate } from './util'
 
 export function getBidParcels(addressState) {
-  const { bidGroups } = addressState;
-  const bidParcels = {};
+  const { bidGroups } = addressState
+  const bidParcels = {}
 
   for (const bidGroup of bidGroups) {
     for (const bid of bidGroup.bids) {
-      const coordinate = buildCoordinate(bid.x, bid.y);
-      bidParcels[coordinate] = bid;
+      const coordinate = buildCoordinate(bid.x, bid.y)
+      bidParcels[coordinate] = bid
     }
   }
-  return bidParcels;
+  return bidParcels
 }
 
 export function getBidCoordinates(addressState) {
-  const bidParcels = getBidParcels(addressState);
-  return Object.keys(bidParcels);
+  const bidParcels = getBidParcels(addressState)
+  return Object.keys(bidParcels)
 }
 
 export function hasBidInParcel(addressState, parcel) {
-  const parcelCoordinate = buildCoordinate(parcel.x, parcel.y);
-  const bidParcels = getBidParcels(addressState);
+  const parcelCoordinate = buildCoordinate(parcel.x, parcel.y)
+  const bidParcels = getBidParcels(addressState)
 
-  return !!bidParcels[parcelCoordinate];
+  return !!bidParcels[parcelCoordinate]
 }

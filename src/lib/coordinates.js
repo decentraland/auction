@@ -9,11 +9,11 @@ const coordinates = {
    * @return {array} The splitted result. From "1, 2" to [1, 2]
    */
   toArray(coordinate) {
-    this.checkIsValid(coordinate);
+    this.checkIsValid(coordinate)
     return coordinate
       .toString()
-      .split(",")
-      .map(coord => coord.trim());
+      .split(',')
+      .map(coord => coord.trim())
   },
 
   /**
@@ -22,7 +22,7 @@ const coordinates = {
    */
   checkIsValid(coordinate) {
     if (!this.isValid(coordinate)) {
-      throw new Error(`The coordinate "${coordinate}" are not valid`);
+      throw new Error(`The coordinate "${coordinate}" are not valid`)
     }
   },
 
@@ -31,9 +31,9 @@ const coordinates = {
    * @param  {string|array} coordinates
    */
   isValid(coordinate) {
-    const match = coordinate.toString().match(/^-?(\d+)\s*,\s*-?(\d+)$/);
-    return !!match;
+    const match = coordinate.toString().match(/^-?(\d+)\s*,\s*-?(\d+)$/)
+    return !!match
   }
-};
+}
 
-export default coordinates;
+export default coordinates

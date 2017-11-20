@@ -1,50 +1,50 @@
-import http from "http";
-import express from "express";
-import bodyParser from "body-parser";
-import path from "path";
+import http from 'http'
+import express from 'express'
+import bodyParser from 'body-parser'
+import path from 'path'
 
-import { server, env } from "decentraland-commons";
-import db from "./lib/db";
+import { server, env } from 'decentraland-commons'
+import db from './lib/db'
 
 import {
   AddressState,
   ParcelState,
   Project,
   OutbidNotification
-} from "./lib/models";
+} from './lib/models'
 
 import {
   BidService,
   BidReceiptService,
   OutbidNotificationService
-} from "./lib/services";
+} from './lib/services'
 
-env.load();
+env.load()
 
-const SERVER_PORT = env.get("SERVER_PORT", 5000);
+const SERVER_PORT = env.get('SERVER_PORT', 5000)
 
-const app = express();
-const httpServer = http.Server(app);
+const app = express()
+const httpServer = http.Server(app)
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 if (env.isProduction()) {
   const webappPath = env.get(
-    "WEBAPP_PATH",
-    path.join(__dirname, "..", "webapp/build")
-  );
+    'WEBAPP_PATH',
+    path.join(__dirname, '..', 'webapp/build')
+  )
 
-  app.use("/", express.static(webappPath, { extensions: ["html"] }));
+  app.use('/', express.static(webappPath, { extensions: ['html'] }))
 } else {
   app.use(function(req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Request-Method", "*");
-    res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Request-Method', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
-    next();
-  });
+    next()
+  })
 }
 
 /**
@@ -53,13 +53,13 @@ if (env.isProduction()) {
  * @return {object}         - Address state object (with it's last bid, if any)
  */
 app.get(
-  "/api/addressState/simple/:address",
+  '/api/addressState/simple/:address',
   server.handleRequest(getSimpleAddressState)
-);
+)
 
 export function getSimpleAddressState(req) {
-  const address = server.extractFromReq(req, "address");
-  return AddressState.findByAddress(address.toLowerCase());
+  const address = server.extractFromReq(req, 'address')
+  return AddressState.findByAddress(address.toLowerCase())
 }
 
 /**
@@ -68,13 +68,13 @@ export function getSimpleAddressState(req) {
  * @return {object}         - Address state object with each placed bid
  */
 app.get(
-  "/api/addressState/full/:address",
+  '/api/addressState/full/:address',
   server.handleRequest(getFullAddressState)
-);
+)
 
 export function getFullAddressState(req) {
-  const address = server.extractFromReq(req, "address");
-  return AddressState.findByAddressWithBidGroups(address.toLowerCase());
+  const address = server.extractFromReq(req, 'address')
+  return AddressState.findByAddressWithBidGroups(address.toLowerCase())
 }
 
 /**
@@ -82,11 +82,11 @@ export function getFullAddressState(req) {
  * @param  {string} id - ParcelState id
  * @return {object}    - ParcelState object
  */
-app.get("/api/parcelState/:id", server.handleRequest(getParcelState));
+app.get('/api/parcelState/:id', server.handleRequest(getParcelState))
 
 export function getParcelState(req) {
-  const id = server.extractFromReq(req, "id");
-  return ParcelState.findByIdWithBidGroups(id);
+  const id = server.extractFromReq(req, 'id')
+  return ParcelState.findByIdWithBidGroups(id)
 }
 
 /**
@@ -94,11 +94,11 @@ export function getParcelState(req) {
  * @param ${array} coordinates - array of parcel state coordinates. If you need a single ParcelState, use "/api/parcelState/:id" or an array of a single element
  * @return {array}             - array of ParcelState objects
  */
-app.post("/api/parcelState/group", server.handleRequest(getParcelStateGroup));
+app.post('/api/parcelState/group', server.handleRequest(getParcelStateGroup))
 
 export function getParcelStateGroup(req) {
-  const coordinates = server.extractFromReq(req, "coordinates");
-  return ParcelState.findInCoordinates(coordinates);
+  const coordinates = server.extractFromReq(req, 'coordinates')
+  return ParcelState.findInCoordinates(coordinates)
 }
 
 /**
@@ -108,14 +108,14 @@ export function getParcelStateGroup(req) {
  * @return {array}            - array of ParcelState objects
  */
 app.get(
-  "/api/parcelState/range/:mincoords/:maxcoords",
+  '/api/parcelState/range/:mincoords/:maxcoords',
   server.handleRequest(getParcelStateRange)
-);
+)
 
 export function getParcelStateRange(req) {
-  const mincoords = server.extractFromReq(req, "mincoords");
-  const maxcoords = server.extractFromReq(req, "maxcoords");
-  return ParcelState.inRange(mincoords, maxcoords);
+  const mincoords = server.extractFromReq(req, 'mincoords')
+  const maxcoords = server.extractFromReq(req, 'maxcoords')
+  return ParcelState.inRange(mincoords, maxcoords)
 }
 
 /**
@@ -123,41 +123,41 @@ export function getParcelStateRange(req) {
  * @param  {object} bidgroup - BidGroup attributes
  * @return {boolean}         - Wether the operation was successfull or not
  */
-app.post("/api/bidgroup", server.handleRequest(postBidGroup));
+app.post('/api/bidgroup', server.handleRequest(postBidGroup))
 
 export async function postBidGroup(req) {
-  const newBidGroup = server.extractFromReq(req, "bidGroup");
-  newBidGroup.receivedAt = new Date();
+  const newBidGroup = server.extractFromReq(req, 'bidGroup')
+  newBidGroup.receivedAt = new Date()
 
   const {
     bidGroup,
     parcelStates,
     error
-  } = await new BidService().processBidGroup(newBidGroup);
+  } = await new BidService().processBidGroup(newBidGroup)
 
-  const bidParcels = parcelStates ? parcelStates.filter(ps => !ps.error) : [];
+  const bidParcels = parcelStates ? parcelStates.filter(ps => !ps.error) : []
 
   if (error || bidParcels.length === 0) {
     throw new Error(`
       An error occurred trying to bid.
-      ${JSON.stringify(parcelStates)} ${error || ""}
-    `);
+      ${JSON.stringify(parcelStates)} ${error || ''}
+    `)
   }
 
-  await new BidReceiptService().sign(bidGroup);
-  new OutbidNotificationService().notificateOutbids(bidParcels); // async
+  await new BidReceiptService().sign(bidGroup)
+  new OutbidNotificationService().notificateOutbids(bidParcels) // async
 
-  return true;
+  return true
 }
 
 /**
  * Get all projects
  * @return {array} - Project list
  */
-app.get("/api/projects", server.handleRequest(getProjects));
+app.get('/api/projects', server.handleRequest(getProjects))
 
 export function getProjects(req) {
-  return Project.find();
+  return Project.find()
 }
 
 /**
@@ -167,22 +167,22 @@ export function getProjects(req) {
  * @return {boolean}      - Wether the operation was successfull or not
  */
 app.post(
-  "/api/outbidNotification",
+  '/api/outbidNotification',
   server.handleRequest(postOutbidNotification)
-);
+)
 
 export async function postOutbidNotification(req) {
-  const email = server.extractFromReq(req, "email");
-  const parcelStateId = server.extractFromReq(req, "parcelStateId");
+  const email = server.extractFromReq(req, 'email')
+  const parcelStateId = server.extractFromReq(req, 'parcelStateId')
 
   if (!await OutbidNotification.findActiveByParcelId(parcelStateId)) {
     await OutbidNotification.insert({
       email,
       parcelStateId
-    });
+    })
   }
 
-  return true;
+  return true
 }
 
 /**
@@ -193,8 +193,8 @@ if (require.main === module) {
     .connect()
     .then(() => {
       httpServer.listen(SERVER_PORT, () =>
-        console.log("Server running on port", SERVER_PORT)
-      );
+        console.log('Server running on port', SERVER_PORT)
+      )
     })
-    .catch(console.error);
+    .catch(console.error)
 }

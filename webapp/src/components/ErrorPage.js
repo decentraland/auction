@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react'
+import PropTypes from 'prop-types'
 
-import Navbar from "./Navbar";
-import "./ErrorPage.css";
+import Navbar from './Navbar'
+import './ErrorPage.css'
 
 export default function ErrorPage({ children }) {
   return (
@@ -12,9 +12,9 @@ export default function ErrorPage({ children }) {
         <div>{children}</div>
       </div>
     </div>
-  );
+  )
 }
 
 ErrorPage.propTypes = {
   children: PropTypes.node.isRequired
-};
+}

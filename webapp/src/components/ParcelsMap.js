@@ -1,20 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import PropTypes from "prop-types";
-import L from "leaflet";
+import React from 'react'
+import ReactDOM from 'react-dom'
+import PropTypes from 'prop-types'
+import L from 'leaflet'
 
-import { buildCoordinate } from "../lib/util";
-import * as parcelUtils from "../lib/parcelUtils";
-import LeafletMapCoordinates from "../lib/LeafletMapCoordinates";
+import { buildCoordinate } from '../lib/util'
+import * as parcelUtils from '../lib/parcelUtils'
+import LeafletMapCoordinates from '../lib/LeafletMapCoordinates'
 
-import ParcelPopup from "./ParcelPopup";
+import ParcelPopup from './ParcelPopup'
 
-import "./ParcelsMap.css";
+import './ParcelsMap.css'
 
-const MAP_ID = "map";
+const MAP_ID = 'map'
 
 L.Icon.Default.imagePath =
-  "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+  'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
 
 export default class ParcelsMap extends React.Component {
   static propTypes = {
@@ -30,56 +30,56 @@ export default class ParcelsMap extends React.Component {
     onMoveEnd: PropTypes.func,
     onZoomEnd: PropTypes.func,
     onParcelBid: PropTypes.func
-  };
+  }
 
   static defaultProps = {
     bounds: [[], []],
     onMoveEnd: () => {},
     onZoomEnd: () => {},
     onParcelBid: () => {}
-  };
+  }
 
   componentWillMount() {
-    this.panInProgress = false;
-    this.map = null;
-    this.mapCoordinates = new LeafletMapCoordinates(this.props.zoom);
+    this.panInProgress = false
+    this.map = null
+    this.mapCoordinates = new LeafletMapCoordinates(this.props.zoom)
     setTimeout(() => {
-      this.props.onMoveEnd(this.getCurrentPositionAndBounds());
+      this.props.onMoveEnd(this.getCurrentPositionAndBounds())
     })
   }
 
   componentWillUnmount() {
-    this.removeMap();
+    this.removeMap()
   }
 
   componentWillReceiveProps(nextProps) {
     const shouldUpdateCenter =
       !this.panInProgress &&
-      (this.props.x !== nextProps.x || this.props.y !== nextProps.y);
+      (this.props.x !== nextProps.x || this.props.y !== nextProps.y)
 
-    const shouldRedraw = this.map && !nextProps.getParcelStates().loading;
+    const shouldRedraw = this.map && !nextProps.getParcelStates().loading
 
     if (shouldUpdateCenter) {
-      const newCenter = this.getCenter(nextProps.x, nextProps.y);
-      this.map.setView(newCenter);
+      const newCenter = this.getCenter(nextProps.x, nextProps.y)
+      this.map.setView(newCenter)
     }
 
     if (shouldRedraw) {
-      this.redrawMap();
-      this.panInProgress = false;
+      this.redrawMap()
+      this.panInProgress = false
     }
 
     if (nextProps.zoom != this.props.zoom) {
-      this.mapCoordinates = new LeafletMapCoordinates(nextProps.zoom);
+      this.mapCoordinates = new LeafletMapCoordinates(nextProps.zoom)
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.props.tileSize !== nextProps.tileSize;
+    return this.props.tileSize !== nextProps.tileSize
   }
 
   createLeafletElement(container) {
-    const { x, y, minZoom, maxZoom, bounds, zoom } = this.props;
+    const { x, y, minZoom, maxZoom, bounds, zoom } = this.props
 
     this.map = new L.Map(MAP_ID, {
       minZoom,
@@ -89,81 +89,81 @@ export default class ParcelsMap extends React.Component {
       layers: [this.getGridLayer()],
       fadeAnimation: false,
       zoomAnimation: false
-    });
+    })
 
-    this.map.zoomControl.setPosition("topright");
-    this.map.setMaxBounds(this.mapCoordinates.toLatLngBounds(bounds));
+    this.map.zoomControl.setPosition('topright')
+    this.map.setMaxBounds(this.mapCoordinates.toLatLngBounds(bounds))
 
-    this.map.on("movestart", this.onMapMoveStart);
-    this.map.on("click", this.onMapClick);
-    this.map.on("moveend", this.onMapMoveEnd);
-    this.map.on("zoomend", this.onZoomEnd);
+    this.map.on('movestart', this.onMapMoveStart)
+    this.map.on('click', this.onMapClick)
+    this.map.on('moveend', this.onMapMoveEnd)
+    this.map.on('zoomend', this.onZoomEnd)
 
-    return this.map;
+    return this.map
   }
 
   redrawMap() {
     this.map.eachLayer(layer => {
       if (layer.redraw) {
-        layer.redraw();
+        layer.redraw()
       }
-    });
+    })
   }
 
   onMapMoveStart = event => {
-    this.panInProgress = true;
-  };
+    this.panInProgress = true
+  }
 
   onMapClick = event => {
-    const parcelStates = this.props.getParcelStates();
+    const parcelStates = this.props.getParcelStates()
 
     if (!parcelStates.loading) {
-      this.addPopup(event.latlng);
+      this.addPopup(event.latlng)
     }
-  };
+  }
 
   getCurrentPositionAndBounds() {
-    const bounds = { min: {}, max: {} };
-    const latlng = this.map.getCenter();
-    const position = this.mapCoordinates.latLngToCartesian(latlng);
-    const mapBounds = this.map.getBounds();
+    const bounds = { min: {}, max: {} }
+    const latlng = this.map.getCenter()
+    const position = this.mapCoordinates.latLngToCartesian(latlng)
+    const mapBounds = this.map.getBounds()
 
-    const sw = this.mapCoordinates.latLngToCartesian(mapBounds.getSouthWest());
-    const ne = this.mapCoordinates.latLngToCartesian(mapBounds.getNorthEast());
+    const sw = this.mapCoordinates.latLngToCartesian(mapBounds.getSouthWest())
+    const ne = this.mapCoordinates.latLngToCartesian(mapBounds.getNorthEast())
 
     bounds.min = {
       x: sw.x,
       y: ne.y
-    };
+    }
 
     bounds.max = {
       x: ne.x,
       y: sw.y
-    };
+    }
 
-    return { position, bounds };
+    return { position, bounds }
   }
 
   onMapMoveEnd = event => {
-    this.props.onMoveEnd(this.getCurrentPositionAndBounds());
-  };
+    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+  }
 
   onZoomEnd = event => {
-    this.props.onZoomEnd(this.map.getZoom());
-    this.props.onMoveEnd(this.getCurrentPositionAndBounds());
-  };
+    this.props.onZoomEnd(this.map.getZoom())
+    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+  }
 
   addPopup(latlng) {
-    const { x, y } = this.mapCoordinates.latLngToCartesian(latlng);
-    const parcel = this.getParcelData(x, y);
-    const addressState = this.props.getAddressState();
+    const { x, y } = this.mapCoordinates.latLngToCartesian(latlng)
+    const parcel = this.getParcelData(x, y)
+    const addressState = this.props.getAddressState()
 
-    if (!parcel) return; // TODO: we could fetch on-demand here
+    if (!parcel) return // TODO: we could fetch on-demand here
 
     const leafletPopup = L.popup({
-      className: "parcel-popup",
-      direction: "top"
-    });
+      className: 'parcel-popup',
+      direction: 'top'
+    })
 
     const popup = renderToDOM(
       <ParcelPopup
@@ -172,96 +172,93 @@ export default class ParcelsMap extends React.Component {
         parcel={parcel}
         addressState={addressState}
         onBid={parcel => {
-          this.onParcelBid(parcel);
-          leafletPopup.remove();
+          this.onParcelBid(parcel)
+          leafletPopup.remove()
         }}
       />
-    );
+    )
 
     leafletPopup
       .setLatLng(latlng)
       .setContent(popup)
-      .addTo(this.map);
+      .addTo(this.map)
   }
 
   onParcelBid(parcel, leafletPopup) {
-    this.props.onParcelBid(parcel);
+    this.props.onParcelBid(parcel)
   }
 
   getGridLayer() {
-    const { tileSize } = this.props;
-    const tiles = new L.GridLayer({ tileSize });
+    const { tileSize } = this.props
+    const tiles = new L.GridLayer({ tileSize })
 
-    tiles.createTile = coords => this.createTile(coords, tileSize);
+    tiles.createTile = coords => this.createTile(coords, tileSize)
 
-    return tiles;
+    return tiles
   }
 
   getCenter(x, y) {
     return isNaN(x)
       ? new L.LatLng(0, 0)
-      : this.mapCoordinates.cartesianToLatLng({ x, y });
+      : this.mapCoordinates.cartesianToLatLng({ x, y })
   }
 
   bindMap(container) {
     if (container) {
-      this.removeMap();
-      this.createLeafletElement(container);
+      this.removeMap()
+      this.createLeafletElement(container)
     }
   }
 
   removeMap() {
     if (this.map) {
-      this.map.off();
-      this.map.remove();
-      this.map = null;
+      this.map.off()
+      this.map.remove()
+      this.map = null
     }
   }
 
   createTile(coords, size) {
-    const { x, y } = this.mapCoordinates.coordsToCartesian(coords);
-    const color = this.getParcelColor(x, y);
+    const { x, y } = this.mapCoordinates.coordsToCartesian(coords)
+    const color = this.getParcelColor(x, y)
 
     return renderToDOM(
       <Tile x={x} y={y} width={size} height={size} color={color} />
-    );
+    )
   }
 
   // TODO: This could be a className to avoid having to add more props to the style="" attribute
   getParcelColor = (x, y) => {
-    const addressState = this.props.getAddressState();
-    const parcel = this.getParcelData(x, y);
+    const addressState = this.props.getAddressState()
+    const parcel = this.getParcelData(x, y)
 
-    return parcelUtils.getColor(parcel, addressState);
-  };
+    return parcelUtils.getColor(parcel, addressState)
+  }
 
   getParcelData = (x, y) => {
-    const parcelStates = this.props.getParcelStates();
-    let parcel = parcelStates[buildCoordinate(x, y)];
+    const parcelStates = this.props.getParcelStates()
+    let parcel = parcelStates[buildCoordinate(x, y)]
 
     if (parcelStates.error && !parcel) {
-      parcel = { error: true };
+      parcel = { error: true }
     }
 
-    return parcel;
-  };
+    return parcel
+  }
 
   render() {
-    return <div id={MAP_ID} ref={this.bindMap.bind(this)} />;
+    return <div id={MAP_ID} ref={this.bindMap.bind(this)} />
   }
 }
 
 function Tile({ x, y, width, height, color }) {
-  const style = { width, height, backgroundColor: color };
+  const style = { width, height, backgroundColor: color }
 
-  return (
-    <div className="leaflet-tile" style={style}>
-    </div>
-  );
+  return <div className="leaflet-tile" style={style} />
 }
 
 function renderToDOM(Component) {
-  const div = L.DomUtil.create("div");
-  ReactDOM.render(Component, div);
-  return div;
+  const div = L.DomUtil.create('div')
+  ReactDOM.render(Component, div)
+  return div
 }

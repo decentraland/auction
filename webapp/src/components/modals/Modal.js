@@ -1,13 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react'
+import PropTypes from 'prop-types'
 
-import "./Modal.css";
+import './Modal.css'
 
 export default function Modal(props) {
-  const { className, title, visible, body, footer, children, onClose } = props;
+  const { className, title, visible, body, footer, children, onClose } = props
 
-  const containerClassName = `${className} ${visible ? "modal-open" : ""}`;
-  const modalClassName = `modal fade ${visible ? "in" : ""}`;
+  const containerClassName = `${className} ${visible ? 'modal-open' : ''}`
+  const modalClassName = `modal fade ${visible ? 'in' : ''}`
 
   return (
     <div className={containerClassName}>
@@ -28,7 +28,7 @@ export default function Modal(props) {
       </div>
       {visible && <div className="modal-backdrop fade in" />}
     </div>
-  );
+  )
 }
 
 Modal.propTypes = {
@@ -39,12 +39,12 @@ Modal.propTypes = {
   footer: PropTypes.node,
   children: PropTypes.node,
   onClose: PropTypes.func.isRequired
-};
+}
 
 Modal.defaultProps = {
-  className: "",
+  className: '',
   visible: false
-};
+}
 
 export function ModalCloseButton({ onClose, children }) {
   return (
@@ -56,17 +56,17 @@ export function ModalCloseButton({ onClose, children }) {
     >
       {children}
     </button>
-  );
+  )
 }
 
 export function ModalTitle({ title }) {
-  return <h4 className="modal-title">{title}</h4>;
+  return <h4 className="modal-title">{title}</h4>
 }
 
 export function ModalBody({ body }) {
-  return <div className="modal-body">{body}</div>;
+  return <div className="modal-body">{body}</div>
 }
 
 export function ModalFooter({ footer }) {
-  return <div className="modal-footer">{footer}</div>;
+  return <div className="modal-footer">{footer}</div>
 }

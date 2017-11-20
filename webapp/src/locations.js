@@ -1,10 +1,10 @@
 export default {
-  root: "/",
+  root: '/',
 
-  parcel: "/:x/:y",
+  parcel: '/:x/:y',
   parcelDetail: (x, y) => `/${x}/${y}`,
 
-  error: "/error",
-  walletError: "/walletError",
-  addressError: "/addressError"
-};
+  error: '/error',
+  walletError: '/walletError',
+  addressError: '/addressError'
+}

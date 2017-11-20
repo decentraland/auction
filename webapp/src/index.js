@@ -1,13 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import { Provider } from "react-redux";
-import { ConnectedRouter } from "react-router-redux";
+import { Provider } from 'react-redux'
+import { ConnectedRouter } from 'react-router-redux'
 
-import Routes from "./Routes";
-import { store, history } from "./store";
+import Routes from './Routes'
+import { store, history } from './store'
 
-import "./index.css";
+import './index.css'
 
 ReactDOM.render(
   <Provider store={store}>
@@ -15,5 +15,5 @@ ReactDOM.render(
       <Routes />
     </ConnectedRouter>
   </Provider>,
-  document.getElementById("app")
-);
+  document.getElementById('app')
+)

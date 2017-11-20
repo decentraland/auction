@@ -1,9 +1,9 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-import locations from "../locations";
+import locations from '../locations'
 
-import ErrorPage from "./ErrorPage";
+import ErrorPage from './ErrorPage'
 
 export default function WalletErrorPage() {
   return (
@@ -27,5 +27,5 @@ export default function WalletErrorPage() {
         <Link to={locations.root}>here</Link>.
       </p>
     </ErrorPage>
-  );
+  )
 }

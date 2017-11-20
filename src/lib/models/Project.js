@@ -1,31 +1,31 @@
-import { Model } from "decentraland-commons";
-import uuid from "uuid";
+import { Model } from 'decentraland-commons'
+import uuid from 'uuid'
 
 class Project extends Model {
-  static tableName = "projects";
+  static tableName = 'projects'
   static columnNames = [
-    "id",
-    "name",
-    "desc",
-    "link",
-    "public",
-    "parcels",
-    "priority",
-    "disabled"
-  ];
+    'id',
+    'name',
+    'desc',
+    'link',
+    'public',
+    'parcels',
+    'priority',
+    'disabled'
+  ]
 
   static count(name) {
-    return this.db.query(`SELECT count(*) as amount FROM projects`);
+    return this.db.query('SELECT count(*) as amount FROM projects')
   }
 
   static findByName(name) {
-    return this.findOne({ name });
+    return this.findOne({ name })
   }
 
   static insert(project) {
-    project.id = uuid.v4();
-    return super.insert(project);
+    project.id = uuid.v4()
+    return super.insert(project)
   }
 }
 
-export default Project;
+export default Project

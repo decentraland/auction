@@ -1,13 +1,11 @@
-import { Model } from "decentraland-commons";
+import { Model } from 'decentraland-commons'
 
 class LockedBalanceEvent extends Model {
-  static tableName = "locked_balance_events";
-  static columnNames = ["id", "address", "txId", "mana", "confirmedAt"];
+  static tableName = 'locked_balance_events'
+  static columnNames = ['id', 'address', 'txId', 'mana', 'confirmedAt']
 
   static countEvents() {
-    return this.db.query(
-      `SELECT COUNT(*) AS amount FROM locked_balance_events`
-    );
+    return this.db.query('SELECT COUNT(*) AS amount FROM locked_balance_events')
   }
 
   static getMonthlyLockedBalanceByAddress(address) {
@@ -19,14 +17,14 @@ class LockedBalanceEvent extends Model {
      GROUP BY month
     `,
       [address]
-    );
+    )
   }
 
   static getLockedAddresses() {
     return this.db
-      .query(`SELECT DISTINCT(address) FROM locked_balance_events`)
-      .then(rows => rows.map(row => row.address));
+      .query('SELECT DISTINCT(address) FROM locked_balance_events')
+      .then(rows => rows.map(row => row.address))
   }
 }
 
-export default LockedBalanceEvent;
+export default LockedBalanceEvent

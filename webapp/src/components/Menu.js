@@ -1,18 +1,18 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
-import { distanceInWordsToNow } from "../lib/dateUtils";
-import { buildCoordinate } from "../lib/util";
-import shortenAddress from "../lib/shortenAddress";
-import { stateData } from "../lib/propTypes";
+import { distanceInWordsToNow } from '../lib/dateUtils'
+import { buildCoordinate } from '../lib/util'
+import shortenAddress from '../lib/shortenAddress'
+import { stateData } from '../lib/propTypes'
 
-import locations from "../locations";
+import locations from '../locations'
 
-import Loading from "./Loading";
-import Icon from "./Icon";
+import Loading from './Loading'
+import Icon from './Icon'
 
-import "./Menu.css";
+import './Menu.css'
 
 export default class Menu extends React.Component {
   static propTypes = {
@@ -20,19 +20,19 @@ export default class Menu extends React.Component {
     addressState: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array).isRequired,
     onHide: PropTypes.func.isRequired
-  };
+  }
 
   static defaultProps = {
     visible: false
-  };
+  }
 
   getClassName() {
-    const visibleClass = this.props.visible ? "in" : "";
-    return `Menu ${visibleClass}`;
+    const visibleClass = this.props.visible ? 'in' : ''
+    return `Menu ${visibleClass}`
   }
 
   render() {
-    const { addressState, onHide, ongoingAuctions } = this.props;
+    const { addressState, onHide, ongoingAuctions } = this.props
 
     return (
       <div className={this.getClassName()}>
@@ -49,7 +49,7 @@ export default class Menu extends React.Component {
 
         <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
       </div>
-    );
+    )
   }
 }
 
@@ -68,7 +68,7 @@ function Balance({ addressState, ongoingAuctions, onHide }) {
         <div className="mana-value">{addressState.data.balance} MANA</div>
       )}
     </div>
-  );
+  )
 }
 
 function OngoingAuctions({ ongoingAuctions, onHide }) {
@@ -86,7 +86,7 @@ function OngoingAuctions({ ongoingAuctions, onHide }) {
         <AuctionTable auctions={ongoingAuctions.data} onHide={onHide} />
       )}
     </div>
-  );
+  )
 }
 
 function AuctionTable({ auctions, onHide }) {
@@ -106,11 +106,11 @@ function AuctionTable({ auctions, onHide }) {
             key={index}
             auction={auction}
             onLandClick={onHide}
-            className={index % 2 === 0 ? "gray" : ""}
+            className={index % 2 === 0 ? 'gray' : ''}
           />
         ))}
       </div>
-    );
+    )
   } else {
     return (
       <div className="table-row-empty">
@@ -118,14 +118,14 @@ function AuctionTable({ auctions, onHide }) {
         <br />
         Click on any parcel you like to bid on it!
       </div>
-    );
+    )
   }
 }
 
 function AuctionTableRow({ auction, className, onLandClick }) {
-  const land = buildCoordinate(auction.x, auction.y);
-  const statusClass = auction.status.toLowerCase();
-  const timeLeft = distanceInWordsToNow(auction.endsAt);
+  const land = buildCoordinate(auction.x, auction.y)
+  const statusClass = auction.status.toLowerCase()
+  const timeLeft = distanceInWordsToNow(auction.endsAt)
 
   return (
     <div className={`table-row ${className}`}>
@@ -142,14 +142,14 @@ function AuctionTableRow({ auction, className, onLandClick }) {
       <div className="col-time-left">{timeLeft}</div>
       <div className="col-address">{shortenAddress(auction.address)}</div>
     </div>
-  );
+  )
 }
 
 AuctionTableRow.propTypes = {
   auction: PropTypes.object,
   className: PropTypes.string
-};
+}
 
 AuctionTableRow.defaultProps = {
-  className: ""
-};
+  className: ''
+}

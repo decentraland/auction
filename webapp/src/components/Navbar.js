@@ -1,9 +1,9 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-import Icon from "./Icon";
+import Icon from './Icon'
 
-import "./Navbar.css";
+import './Navbar.css'
 
 export default function Navbar() {
   return (
@@ -28,5 +28,5 @@ export default function Navbar() {
         </ul>
       </div>
     </div>
-  );
+  )
 }

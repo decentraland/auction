@@ -1,4 +1,4 @@
-import types from "./types";
+import types from './types'
 
 const INITIAL_STATE = {
   web3Connected: false,
@@ -14,63 +14,63 @@ const INITIAL_STATE = {
 
   modal: {
     open: false,
-    name: "",
+    name: '',
     data: null
   }
-};
+}
 
 export const selectors = {
   getWeb3Connected(state) {
-    return state.web3Connected;
+    return state.web3Connected
   },
   getAddressState(state) {
-    return state.addressState;
+    return state.addressState
   },
   getAddressStateData(state) {
-    return state.addressState.data;
+    return state.addressState.data
   },
   getProjects(state) {
-    return state.projects;
+    return state.projects
   },
   getProjectsData(state) {
-    return state.projects.data;
+    return state.projects.data
   },
   getParcelStates(state) {
-    return state.parcelStates;
+    return state.parcelStates
   },
   getPendingConfirmationBids(state) {
-    return state.pendingConfirmationBids;
+    return state.pendingConfirmationBids
   },
   getOngoingAuctions(state) {
-    return state.ongoingAuctions;
+    return state.ongoingAuctions
   },
   getModal(state) {
-    return state.modal;
+    return state.modal
   }
-};
+}
 
 function web3Connected(state = INITIAL_STATE.web3Connected, action) {
   switch (action.type) {
     case types.connectWeb3.success:
-      return true;
+      return true
     case types.connectWeb3.failed:
-      return false;
+      return false
     default:
-      return state;
+      return state
   }
 }
 
 function addressState(state = INITIAL_STATE.addressState, action) {
   switch (action.type) {
     case types.addressStateLoading:
-      return { ...state, loading: action.loading };
+      return { ...state, loading: action.loading }
     case types.fetchAddressState.request:
-      return { loading: true };
+      return { loading: true }
     case types.fetchAddressState.success:
-      action.addressState.balance = parseFloat(action.addressState.balance, 10);
-      return { loading: false, data: action.addressState };
+      action.addressState.balance = parseFloat(action.addressState.balance, 10)
+      return { loading: false, data: action.addressState }
     case types.fetchAddressState.failed:
-      return { loading: false, error: action.error };
+      return { loading: false, error: action.error }
     case types.appendUnconfirmedBid:
       if (state.data) {
         return {
@@ -79,9 +79,9 @@ function addressState(state = INITIAL_STATE.addressState, action) {
             ...state.data,
             balance: state.data.balance - action.bid.yourBid
           }
-        };
+        }
       } else {
-        return state;
+        return state
       }
     case types.deleteUnconfirmedBid:
       if (state.data) {
@@ -91,31 +91,31 @@ function addressState(state = INITIAL_STATE.addressState, action) {
             ...state.data,
             balance: state.data.balance + action.bid.yourBid
           }
-        };
+        }
       } else {
-        return state;
+        return state
       }
     default:
-      return state;
+      return state
   }
 }
 
 function projects(state = INITIAL_STATE.projects, action) {
   switch (action.type) {
     case types.fetchProjects.request:
-      return { loading: true };
+      return { loading: true }
     case types.fetchProjects.success:
-      return { loading: false, data: action.projects };
+      return { loading: false, data: action.projects }
     case types.fetchProjects.failed:
-      return { ...state, loading: false, error: action.error };
+      return { ...state, loading: false, error: action.error }
     default:
-      return state;
+      return state
   }
 }
 function parcelStates(state = INITIAL_STATE.parcelStates, action) {
   switch (action.type) {
     case types.fetchParcels.request:
-      return { ...state, loading: true, error: null };
+      return { ...state, loading: true, error: null }
     case types.fetchParcels.success:
       return action.parcelStates.reduce(
         (total, parcel) => ({
@@ -123,11 +123,11 @@ function parcelStates(state = INITIAL_STATE.parcelStates, action) {
           [`${parcel.x},${parcel.y}`]: parcel
         }),
         { ...state, loading: false, error: null }
-      );
+      )
     case types.fetchParcels.failed:
-      return { ...state, loading: false, error: action.error };
+      return { ...state, loading: false, error: action.error }
     default:
-      return state;
+      return state
   }
 }
 
@@ -136,33 +136,33 @@ function pendingConfirmationBids(
   action
 ) {
   const filterActionBid = () =>
-    state.data.filter(bid => bid.x !== action.bid.x || bid.y !== action.bid.y);
+    state.data.filter(bid => bid.x !== action.bid.x || bid.y !== action.bid.y)
 
   // TODO: LocalStorage?
   switch (action.type) {
     case types.appendUnconfirmedBid:
-      return { data: [...filterActionBid(), action.bid] };
+      return { data: [...filterActionBid(), action.bid] }
     case types.deleteUnconfirmedBid:
-      return { data: filterActionBid() };
+      return { data: filterActionBid() }
     case types.confirmBids.success:
-      return INITIAL_STATE.pendingConfirmationBids;
+      return INITIAL_STATE.pendingConfirmationBids
     case types.confirmBids.failed:
-      return { ...state, error: action.error };
+      return { ...state, error: action.error }
     default:
-      return state;
+      return state
   }
 }
 
 function ongoingAuctions(state = INITIAL_STATE.ongoingAuctions, action) {
   switch (action.type) {
     case types.fetchOngoingAuctions.request:
-      return { loading: true };
+      return { loading: true }
     case types.fetchOngoingAuctions.success:
-      return { loading: false, data: action.ongoingAuctions };
+      return { loading: false, data: action.ongoingAuctions }
     case types.fetchOngoingAuctions.failed:
-      return { ...state, loading: false, error: action.error };
+      return { ...state, loading: false, error: action.error }
     default:
-      return state;
+      return state
   }
 }
 
@@ -173,11 +173,11 @@ function modal(state = INITIAL_STATE.modal, action) {
         open: true,
         name: action.name,
         data: action.data
-      };
+      }
     case types.modal.close:
-      return INITIAL_STATE.modal;
+      return INITIAL_STATE.modal
     default:
-      return state;
+      return state
   }
 }
 
@@ -189,4 +189,4 @@ export default {
   pendingConfirmationBids,
   ongoingAuctions,
   modal
-};
+}

@@ -1,12 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
-import { selectors } from "../../reducers";
-import { appendUnconfirmedBid } from "../../actions";
-import { stateData } from "../../lib/propTypes";
+import { selectors } from '../../reducers'
+import { appendUnconfirmedBid } from '../../actions'
+import { stateData } from '../../lib/propTypes'
 
-import { BidParcelModal } from "../../components/modals";
+import { BidParcelModal } from '../../components/modals'
 
 class BidParcelModalContainer extends React.Component {
   static propTypes = {
@@ -15,11 +15,11 @@ class BidParcelModalContainer extends React.Component {
     appendUnconfirmedBid: PropTypes.func.isRequired
     // Here we should extend ...ModelContainer.propTypes but webpack is broken and doesn't understand the import
     // Try it yourself: import ModalContainer from "./ModalContainer"
-  };
+  }
 
   onBid = value => {
-    const { data, appendUnconfirmedBid, addressState, onClose } = this.props;
-    const parcel = data;
+    const { data, appendUnconfirmedBid, addressState, onClose } = this.props
+    const parcel = data
 
     appendUnconfirmedBid({
       address: addressState.data.address,
@@ -28,18 +28,13 @@ class BidParcelModalContainer extends React.Component {
       currentBid: parcel.amount,
       yourBid: value,
       endsAt: parcel.endsAt
-    });
+    })
 
-    onClose();
-  };
+    onClose()
+  }
 
   render() {
-    const {
-      data,
-      addressState,
-      pendingConfirmationBids,
-      ...props
-    } = this.props;
+    const { data, addressState, pendingConfirmationBids, ...props } = this.props
 
     return (
       <BidParcelModal
@@ -49,7 +44,7 @@ class BidParcelModalContainer extends React.Component {
         onBid={this.onBid}
         {...props}
       />
-    );
+    )
   }
 }
 
@@ -59,4 +54,4 @@ export default connect(
     pendingConfirmationBids: selectors.getPendingConfirmationBids(state)
   }),
   { appendUnconfirmedBid }
-)(BidParcelModalContainer);
+)(BidParcelModalContainer)

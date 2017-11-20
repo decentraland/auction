@@ -1,11 +1,11 @@
 #!/usr/bin/env babel-node
 
-import { env } from "decentraland-commons";
-import db from "../src/lib/db";
+import { env } from 'decentraland-commons'
+import db from '../src/lib/db'
 
-env.load();
+env.load()
 
 db
   .connect()
   .catch(console.error)
-  .then(() => process.exit());
+  .then(() => process.exit())

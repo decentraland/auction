@@ -6,7 +6,7 @@
   "scripts": {
     "docs": "npx jsdoc -c conf.json -r src/**/*.js",
     "lint": "npx eslint .",
-    "fix": "npx eslint -f .",
+    "lint:fix": "npx eslint --fix .",
     "test": "npx mocha -r babel-register -r specs/spec_utils.js specs/setup.js specs/*.spec.js",
     "watch:test": "npx mocha -r babel-register -r specs/spec_utils.js specs/setup.js specs/*.spec.js --watch",
     "build": "npm run lint && npm run test",
@@ -48,6 +48,7 @@
     "eslint": "^4.8.0",
     "eslint-config-prettier": "^2.6.0",
     "eslint-plugin-prettier": "^2.3.1",
+    "eslint-plugin-react": "^7.5.1",
     "jsdoc": "^3.5.5",
     "mocha": "^4.0.1",
     "nodemon": "^1.12.1",

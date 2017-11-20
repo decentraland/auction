@@ -1,16 +1,16 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react'
+import PropTypes from 'prop-types'
 
-import { preventDefault } from "../../lib/util";
-import { ONE_LAND_IN_MANA } from "../../lib/land";
-import { stateData } from "../../lib/propTypes";
-import pendingBidsUtils from "../../lib/pendingBidsUtils";
+import { preventDefault } from '../../lib/util'
+import { ONE_LAND_IN_MANA } from '../../lib/land'
+import { stateData } from '../../lib/propTypes'
+import pendingBidsUtils from '../../lib/pendingBidsUtils'
 
-import Modal from "./Modal";
-import Button from "../Button";
-import Loading from "../Loading";
+import Modal from './Modal'
+import Button from '../Button'
+import Loading from '../Loading'
 
-import "./BidParcelModal.css";
+import './BidParcelModal.css'
 
 export default class BidParcelModal extends React.Component {
   static propTypes = {
@@ -19,60 +19,60 @@ export default class BidParcelModal extends React.Component {
     addressState: stateData(PropTypes.object).isRequired,
     pendingConfirmationBids: stateData(PropTypes.array).isRequired,
     onBid: PropTypes.func.isRequired
-  };
+  }
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       bidValue: null
-    };
+    }
 
-    let { pendingConfirmationBids } = props;
+    let { pendingConfirmationBids } = props
 
     // Cache for later use
     this.pendingManaBalance = pendingBidsUtils.getTotalManaBidded(
       pendingConfirmationBids.data
-    );
+    )
   }
 
   onBid = event => {
-    const { bidValue } = this.state;
-    const { onBid } = this.props;
+    const { bidValue } = this.state
+    const { onBid } = this.props
 
     if (this.isValidBid(bidValue)) {
-      onBid(bidValue);
+      onBid(bidValue)
     }
-  };
+  }
 
   onBidValueChange = event => {
-    const bidValue = parseFloat(event.currentTarget.value, 10);
-    this.setState({ bidValue: bidValue || ONE_LAND_IN_MANA });
-  };
+    const bidValue = parseFloat(event.currentTarget.value, 10)
+    this.setState({ bidValue: bidValue || ONE_LAND_IN_MANA })
+  }
 
   isValidBid(bidValue) {
     // We don't use `getCurrentBidValue` here because if the parcel doesn't have a bid yet,
     // we want to be able to bid ONE_LAND_IN_MANA
-    const parcelAmount = this.props.parcel.amount || 0;
-    const manaBalance = this.getManaBalance();
+    const parcelAmount = this.props.parcel.amount || 0
+    const manaBalance = this.getManaBalance()
 
     return (
       bidValue >= ONE_LAND_IN_MANA &&
       bidValue > parcelAmount &&
       bidValue <= manaBalance
-    );
+    )
   }
 
   getManaBalance() {
-    const { addressState } = this.props;
+    const { addressState } = this.props
 
     if (!addressState.loading) {
-      return addressState.data.balance;
+      return addressState.data.balance
     }
   }
 
   renderBidForm() {
-    const { onClose } = this.props;
-    const manaBalance = this.getManaBalance();
+    const { onClose } = this.props
+    const manaBalance = this.getManaBalance()
 
     return manaBalance >= ONE_LAND_IN_MANA ? (
       <BidForm
@@ -84,16 +84,16 @@ export default class BidParcelModal extends React.Component {
       />
     ) : (
       <p className="text">You don&#39;t have enough balance to bid.</p>
-    );
+    )
   }
 
   getCurrentBidValue() {
-    const { parcel } = this.props;
-    return parcel.amount || ONE_LAND_IN_MANA;
+    const { parcel } = this.props
+    return parcel.amount || ONE_LAND_IN_MANA
   }
 
   render() {
-    const { parcel, addressState, onClose, ...props } = this.props;
+    const { parcel, addressState, onClose, ...props } = this.props
 
     return (
       <Modal className="BidParcelModal" onClose={onClose} {...props}>
@@ -105,13 +105,13 @@ export default class BidParcelModal extends React.Component {
             <br />
             {this.pendingManaBalance
               ? `You have ${this.pendingManaBalance} MANA pending.`
-              : ""}
+              : ''}
           </p>
 
           {addressState.loading ? <Loading /> : this.renderBidForm()}
         </div>
       </Modal>
-    );
+    )
   }
 }
 
@@ -122,7 +122,7 @@ function BidForm({
   onBidValueChange,
   onClose
 }) {
-  const minimum = currentBidValue || ONE_LAND_IN_MANA;
+  const minimum = currentBidValue || ONE_LAND_IN_MANA
   return (
     <form action="POST" onSubmit={onBid}>
       <div className="manaInput">
@@ -150,5 +150,5 @@ function BidForm({
         </Button>
       </div>
     </form>
-  );
+  )
 }

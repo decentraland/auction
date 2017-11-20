@@ -1,4 +1,4 @@
-import types from "./types";
+import types from './types'
 
 // -------------------------------------------------------------------------
 // Web3
@@ -7,7 +7,7 @@ export function connectWeb3(address) {
   return {
     type: types.connectWeb3.request,
     address
-  };
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -16,7 +16,7 @@ export function connectWeb3(address) {
 export function fetchProjects() {
   return {
     type: types.fetchProjects.request
-  };
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -29,7 +29,7 @@ export function parcelRangeChange(minX, minY, maxX, maxY) {
     minY,
     maxX,
     maxY
-  };
+  }
 }
 
 export function clickParcel(x, y) {
@@ -37,7 +37,7 @@ export function clickParcel(x, y) {
     type: types.clickParcel,
     x,
     y
-  };
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -47,27 +47,27 @@ export function appendUnconfirmedBid(bid) {
   return {
     type: types.appendUnconfirmedBid,
     bid
-  };
+  }
 }
 
 export function deleteUnconfirmedBid(bid) {
   return {
     type: types.deleteUnconfirmedBid,
     bid
-  };
+  }
 }
 
 export function fetchOngoingAuctions() {
   return {
     type: types.fetchOngoingAuctions.request
-  };
+  }
 }
 
 export function confirmBids(bids) {
   return {
     type: types.confirmBids.request,
     bids
-  };
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -78,13 +78,13 @@ export function openModal(name, data) {
     type: types.modal.open,
     name,
     data
-  };
+  }
 }
 
 export function closeModal() {
   return {
     type: types.modal.close
-  };
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -94,5 +94,5 @@ export function changeLocation(url) {
   return {
     type: types.changeLocation,
     url
-  };
+  }
 }

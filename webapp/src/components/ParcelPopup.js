@@ -1,19 +1,19 @@
-import React from "react";
+import React from 'react'
 
-import shortenAddress from "../lib/shortenAddress";
-import * as dateUtils from "../lib/dateUtils";
-import * as parcelUtils from "../lib/parcelUtils";
+import shortenAddress from '../lib/shortenAddress'
+import * as dateUtils from '../lib/dateUtils'
+import * as parcelUtils from '../lib/parcelUtils'
 
-import Button from "./Button";
-import CurrentBidStatus from "./CurrentBidStatus";
+import Button from './Button'
+import CurrentBidStatus from './CurrentBidStatus'
 
 export default function ParcelPopup({ x, y, parcel, addressState, onBid }) {
-  const canBid = !parcelUtils.isTaken(parcel) && !parcelUtils.hasEnded(parcel);
+  const canBid = !parcelUtils.isTaken(parcel) && !parcelUtils.hasEnded(parcel)
 
-  let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: "" });
+  let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: '' })
 
   if (!dateUtils.isBeforeToday(parcel.endsAt)) {
-    endsAt = `Ends in ${endsAt}`;
+    endsAt = `Ends in ${endsAt}`
   }
 
   return (
@@ -34,5 +34,5 @@ export default function ParcelPopup({ x, y, parcel, addressState, onBid }) {
         {canBid && <Button onClick={event => onBid(parcel)}>Place bid</Button>}
       </div>
     </div>
-  );
+  )
 }
