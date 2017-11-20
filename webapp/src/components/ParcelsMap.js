@@ -268,6 +268,7 @@ function ParcelPopup({ parcel, addressState, onBid }) {
 function CurrentBidStatus({ addressState, parcel }) {
   const isOwner = addressState.address === parcel.address;
   const hasBid = addressStateUtils.hasBidInParcel(addressState, parcel);
+  const hasEnded = parcelUtils.hasEnded(parcel);
   const isTaken = parcelUtils.isTaken(parcel);
 
   const status = parcelUtils.getBidStatus(parcel, addressState.address);
@@ -276,7 +277,9 @@ function CurrentBidStatus({ addressState, parcel }) {
 
   if (isTaken) text.push("The parcel is taken by a road or project");
   if (isOwner) text.push("that's you");
-  if (hasBid) text.push(`you're ${status.toLowerCase()}`);
+  if (hasBid) {
+    text.push(`${hasEnded ? "you" : "you're"} ${status.toLowerCase()}`);
+  }
 
   return (
     <small className="current-bid-status">
