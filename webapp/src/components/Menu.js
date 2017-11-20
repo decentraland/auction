@@ -116,7 +116,7 @@ function AuctionTable({ auctions, onHide }) {
       <div className="table-row-empty">
         You have no ongoing auctions yet.
         <br />
-        You can click on any parcel you like to bid on it!
+        Click on any parcel you like to bid on it!
       </div>
     );
   }
