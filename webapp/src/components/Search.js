@@ -121,10 +121,8 @@ export default class Search extends React.Component {
   onSelect = (value, item) => {
     if (item.id) {
       // Get the project center
-      value = item.center || '0,0'
+      value = item.lookup || '0,0'
     }
-
-    console.log('SELECTED ', value, '\n')
 
     this.props.onSelect(value)
     this.setState({ value: '' })

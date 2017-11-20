@@ -80,7 +80,8 @@ export default {
       "link" TEXT,
       "public" BOOLEAN NOT NULL DEFAULT true,
       "parcels" DECIMAL,
-      "priority" int,
+      "priority" INT,
+      "lookup" STRING,
       "disabled" BOOLEAN NOT NULL DEFAULT false`,
       { sequenceName: null }
     )

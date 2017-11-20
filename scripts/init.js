@@ -15,6 +15,7 @@ import { AddressService, ParcelStateService } from '../src/lib/services'
 
 const log = new Log('init')
 const parcelStateService = new ParcelStateService()
+const parcelsDescription = getPracelsDescriptions()
 
 env.load()
 
@@ -31,8 +32,10 @@ async function initializeDatabase() {
 }
 
 async function upsertRoadsProject() {
-  if (!await Project.findByName('Roads')) {
-    log.info('Inserting Roads project')
+  const { lookup } = parcelsDescription
+
+  if (!await Project.findByName('Genesis Plaza')) {
+    log.info('Inserting Genesis Plaza project')
 
     await Project.insert({
       name: 'Genesis Plaza',
@@ -41,8 +44,14 @@ async function upsertRoadsProject() {
       public: false,
       parcels: 0,
       priority: 0,
-      disabled: false
+      disabled: false,
+      lookup: lookup['Genesis Plaza']
     })
+  }
+
+  if (!await Project.findByName('Roads')) {
+    log.info('Inserting Roads project')
+
     await Project.insert({
       name: 'Roads',
       desc: 'Decentraland roads connecting districts',
@@ -50,20 +59,32 @@ async function upsertRoadsProject() {
       public: false,
       parcels: 0,
       priority: 0,
-      disabled: false
+      disabled: false,
+      lookup: lookup['Roads']
     })
   }
 }
 
 async function upsertProjects() {
+  log.info('Upserting projects')
+
   const query = await Project.count()
   if (query.amount > 0) {
     return
   }
-  return execSync('psql $CONNECTION_STRING -f ./projects.sql')
+  execSync('psql $CONNECTION_STRING -f ./projects.sql')
+
+  const { lookup } = parcelsDescription
+  const projects = await Project.find()
+
+  for (const project of projects) {
+    await Project.update({ id: project.id }, { lookup: lookup[project.name] })
+  }
 }
 
 async function upsertDistrictEntries() {
+  log.info('Upserting district entries')
+
   const query = await DistrictEntry.countSubmissions()
   if (query.amount > 0) {
     return
@@ -72,6 +93,8 @@ async function upsertDistrictEntries() {
 }
 
 async function upsertLockedBalanceEvents() {
+  log.info('Upserting locked balance events')
+
   const query = await LockedBalanceEvent.countEvents()
   if (query.amount > 0) {
     return
@@ -80,8 +103,7 @@ async function upsertLockedBalanceEvents() {
 }
 
 async function initParcels() {
-  const parcels = fs.readFileSync('./parcelsDescription.json', 'utf8')
-  const { x, y, reserved, roads } = JSON.parse(parcels)
+  const { x, y, reserved, roads } = parcelsDescription
 
   log.info(
     `Inserting a matrix from coords (${x.min} ${y.min}) to (${x.max} ${y.max}). This might take a while.`
@@ -135,6 +157,11 @@ const importAddressStates = async () => {
       await AddressState.insert({ address, balance })
     }
   }
+}
+
+function getPracelsDescriptions() {
+  let parcelsDescription = fs.readFileSync('./parcelsDescription.json', 'utf8')
+  return JSON.parse(parcelsDescription)
 }
 
 db
