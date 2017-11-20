@@ -18,7 +18,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "prettier/prettier": ["error", {"singleQuote": true, "semi": false}],
+    "prettier/prettier": ["error", {"printWidth": 80, "singleQuote": true, "semi": false}],
     "no-console": 0,
     "quotes": ["error", "single"],
     "no-extra-semi": ["error"],
