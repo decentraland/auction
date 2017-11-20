@@ -158,6 +158,8 @@ export default class ParcelsMap extends React.Component {
 
     const popup = renderToDOM(
       <ParcelPopup
+        x={x}
+        y={y}
         parcel={parcel}
         addressState={addressState}
         onBid={parcel => {
@@ -225,9 +227,14 @@ export default class ParcelsMap extends React.Component {
   };
 
   getParcelData = (x, y) => {
-    // TODO: What if the parcel does not exist.
     const parcelStates = this.props.getParcelStates();
-    return parcelStates[buildCoordinate(x, y)];
+    let parcel = parcelStates[buildCoordinate(x, y)];
+
+    if (parcelStates.error && !parcel) {
+      parcel = { error: true };
+    }
+
+    return parcel;
   };
 
   render() {
@@ -235,7 +242,7 @@ export default class ParcelsMap extends React.Component {
   }
 }
 
-function ParcelPopup({ parcel, addressState, onBid }) {
+function ParcelPopup({ x, y, parcel, addressState, onBid }) {
   const canBid = !parcelUtils.isTaken(parcel) && !parcelUtils.hasEnded(parcel);
 
   let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: "" });
@@ -247,7 +254,7 @@ function ParcelPopup({ parcel, addressState, onBid }) {
   return (
     <div>
       <div className="coordinates">
-        {parcel.x},{parcel.y}
+        {x},{y}
       </div>
       <div className="text">
         {shortenAddress(parcel.address)}
@@ -267,6 +274,7 @@ function ParcelPopup({ parcel, addressState, onBid }) {
 
 function CurrentBidStatus({ addressState, parcel }) {
   const isOwner = addressState.address === parcel.address;
+  const isError = parcel.error;
   const hasBid = addressStateUtils.hasBidInParcel(addressState, parcel);
   const hasEnded = parcelUtils.hasEnded(parcel);
   const isTaken = parcelUtils.isTaken(parcel);
@@ -275,6 +283,7 @@ function CurrentBidStatus({ addressState, parcel }) {
 
   const text = [];
 
+  if (isError) text.push("We couldn't fetch the parcel, please try again");
   if (isTaken) text.push("The parcel is taken by a road or project");
   if (isOwner) text.push("that's you");
   if (hasBid) {

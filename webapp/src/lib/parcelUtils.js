@@ -37,7 +37,7 @@ export const COLORS = {
 };
 
 export function getColor(parcel, addressState) {
-  if (!parcel) return COLORS.Loading;
+  if (!parcel || parcel.error) return COLORS.Loading;
   if (isTaken(parcel)) return COLORS.Taken;
   if (!parcel.amount) return COLORS.Default;
 

@@ -115,14 +115,14 @@ function projects(state = INITIAL_STATE.projects, action) {
 function parcelStates(state = INITIAL_STATE.parcelStates, action) {
   switch (action.type) {
     case types.fetchParcels.request:
-      return { ...state, loading: true };
+      return { ...state, loading: true, error: null };
     case types.fetchParcels.success:
       return action.parcelStates.reduce(
         (total, parcel) => ({
           ...total,
           [`${parcel.x},${parcel.y}`]: parcel
         }),
-        { ...state, loading: false }
+        { ...state, loading: false, error: null }
       );
     case types.fetchParcels.failed:
       return { ...state, loading: false, error: action.error };
