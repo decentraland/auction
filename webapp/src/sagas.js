@@ -19,8 +19,8 @@ function* rootSaga() {
 
   yield takeLatest(types.changeLocation, handleLocationChange)
 
-  yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange)
-  yield takeEvery(types.fetchParcels.request, handleParcelFetchRequest)
+  yield takeLatest(types.parcelRangeChanged, handleParcelRangeChange)
+  yield takeLatest(types.fetchParcels.request, handleParcelFetchRequest)
 
   yield takeLatest(types.connectWeb3.success, handleAddressFetchRequest)
   yield takeEvery(types.fetchManaBalance.request, handleAddressFetchRequest)

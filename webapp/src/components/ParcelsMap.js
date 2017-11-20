@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import L from 'leaflet'
+import debounce from 'lodash.debounce'
 
 import { buildCoordinate } from '../lib/util'
 import * as parcelUtils from '../lib/parcelUtils'
@@ -13,8 +14,7 @@ import './ParcelsMap.css'
 
 const MAP_ID = 'map'
 
-L.Icon.Default.imagePath =
-  'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/images/'
+L.Icon.Default.imagePath = 'https://cdnjs..com/ajax/libs/leaflet/1.0.3/images/'
 
 export default class ParcelsMap extends React.Component {
   static propTypes = {
@@ -44,7 +44,10 @@ export default class ParcelsMap extends React.Component {
     this.map = null
     this.mapCoordinates = new LeafletMapCoordinates(this.props.zoom)
 
-    setTimeout(() => this.onMapMoveEnd(), 10)
+    this.redrawMap = debounce(this.redrawMap, 50)
+    this.onMapMoveEnd = debounce(this.onMapMoveEnd, 250)
+
+    this.onMapMoveEnd()
   }
 
   componentWillUnmount() {
@@ -60,12 +63,11 @@ export default class ParcelsMap extends React.Component {
 
     if (shouldUpdateCenter) {
       const newCenter = this.getCenter(nextProps.x, nextProps.y)
-      this.map.setView(newCenter)
+      this.setView(newCenter)
     }
 
     if (shouldRedraw) {
       this.redrawMap()
-      this.panInProgress = false
     }
   }
 
@@ -73,7 +75,7 @@ export default class ParcelsMap extends React.Component {
     return this.props.tileSize !== nextProps.tileSize
   }
 
-  createLeafletElement(container) {
+  createMap(container) {
     const { x, y, minZoom, maxZoom, bounds, zoom } = this.props
 
     this.map = new L.Map(MAP_ID, {
@@ -89,20 +91,37 @@ export default class ParcelsMap extends React.Component {
     this.map.zoomControl.setPosition('topright')
     this.map.setMaxBounds(this.mapCoordinates.toLatLngBounds(bounds))
 
-    this.map.on('movestart', this.onMapMoveStart)
-    this.map.on('click', this.onMapClick)
-    this.map.on('moveend', this.onMapMoveEnd)
-    this.map.on('zoomend', this.onZoomEnd)
+    this.attachMapEvents()
 
     return this.map
   }
 
-  redrawMap() {
+  attachMapEvents() {
+    this.map.on('movestart', this.onMapMoveStart)
+    this.map.on('click', this.onMapClick)
+    this.map.on('moveend', this.onMapMoveEnd)
+    this.map.on('zoomend', this.onZoomEnd)
+  }
+
+  setView(center) {
+    this.map.off('movestart moveend')
+    this.map.on('moveend', () => {
+      this.attachMapEvents()
+
+      this.onMapMoveStart()
+      setTimeout(() => this.onMapMoveEnd())
+    })
+    this.map.setView(center)
+  }
+
+  redrawMap = () => {
     this.map.eachLayer(layer => {
       if (layer.redraw) {
         layer.redraw()
       }
     })
+
+    this.panInProgress = false
   }
 
   onMapMoveStart = event => {
@@ -115,6 +134,15 @@ export default class ParcelsMap extends React.Component {
     if (!parcelStates.loading) {
       this.addPopup(event.latlng)
     }
+  }
+
+  onMapMoveEnd = event => {
+    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+  }
+
+  onZoomEnd = event => {
+    this.props.onZoomEnd(this.map.getZoom())
+    this.onMapMoveEnd()
   }
 
   getCurrentPositionAndBounds() {
@@ -139,21 +167,12 @@ export default class ParcelsMap extends React.Component {
     return { position, bounds }
   }
 
-  onMapMoveEnd = event => {
-    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
-  }
-
-  onZoomEnd = event => {
-    this.props.onZoomEnd(this.map.getZoom())
-    this.onMapMoveEnd()
-  }
-
   addPopup(latlng) {
     const { x, y } = this.mapCoordinates.latLngToCartesian(latlng)
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
 
-    if (!parcel) return // TODO: we could fetch on-demand here
+    if (!parcel) return // TODO: could we fetch on-demand here?
 
     const leafletPopup = L.popup({
       className: 'parcel-popup',
@@ -201,7 +220,7 @@ export default class ParcelsMap extends React.Component {
   bindMap(container) {
     if (container) {
       this.removeMap()
-      this.createLeafletElement(container)
+      this.createMap(container)
     }
   }
 
@@ -218,8 +237,7 @@ export default class ParcelsMap extends React.Component {
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
 
-    const div = L.DomUtil.create('div')
-
+    const div = document.createElement('div')
     const className = parcelUtils.getClassName(parcel, addressState)
 
     if (!className) {
