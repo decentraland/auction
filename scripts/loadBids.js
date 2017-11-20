@@ -5,7 +5,6 @@ import { eth, env, Log } from 'decentraland-commons'
 import db from '../src/lib/db'
 import {
   BuyTransaction,
-  DistrictEntry,
   LockedBalanceEvent,
   ParcelState,
   ReturnTransaction
@@ -192,9 +191,10 @@ const loadParcelsForAddress = async (contract, address, batchSize) => {
       throw new Error(`(proc) [${address}] Empty or invalid address`)
     }
     log.info(`(proc) [${address}] Processing bids for address...`)
+    let sendParcels
 
     while (true) {
-      const sendParcels = await findParcelsToBuy(address, batchSize)
+      sendParcels = await findParcelsToBuy(address, batchSize)
 
       // no more parcels to send
       if (sendParcels.length === 0) {
@@ -296,12 +296,12 @@ const returnAllMANA = async contract => {
       )
 
       // adjust MANA balances to bonuses
-      const beforeNovBalance = calculateTotalForMonths(
+      const beforeNovBalance = AddressService.calculateTotalForMonths(
         monthlyLandBalances,
         monthlyLockedBalances,
         [9, 10]
       )
-      const afterNovBalance = calculateTotalForMonths(
+      const afterNovBalance = AddressService.calculateTotalForMonths(
         monthlyLandBalances,
         monthlyLockedBalances,
         [11, 12, 1]

@@ -45,6 +45,14 @@ export default class AddressService {
       totalLockedToDistricts
     )
   }
+
+  static fillByMonth(...args) {
+    return fillByMonth(...args)
+  }
+
+  static calculateTotalForMonths(...args) {
+    return calculateTotalForMonths(...args)
+  }
 }
 
 function fillByMonth(items) {
