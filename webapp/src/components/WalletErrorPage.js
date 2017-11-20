@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import locations from "../locations";
+
 import ErrorPage from "./ErrorPage";
 
-export default function WalletErrorPage(children) {
+export default function WalletErrorPage() {
   return (
     <ErrorPage>
       <h2>Wallet error</h2>
@@ -20,6 +22,11 @@ export default function WalletErrorPage(children) {
         <Link to="https://github.com/ethereum/mist" target="_blank">
           Mist
         </Link>.
+      </p>
+      <br />
+      <p>
+        Once you&#39;re done you can try again&nbsp;
+        <Link to={locations.root}>here</Link>.
       </p>
     </ErrorPage>
   );

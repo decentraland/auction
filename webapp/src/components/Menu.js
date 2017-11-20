@@ -45,26 +45,38 @@ export default class Menu extends React.Component {
           </div>
         </header>
 
-        <div className="your-balance">
-          <h2>Your Balance</h2>
-          {addressState.loading ? (
-            <Loading />
-          ) : (
-            <div className="mana-value">{addressState.data.balance} MANA</div>
-          )}
-        </div>
-
-        <div className="ongoing-auctions">
-          <h3>Ongoing auctions</h3>
-          {ongoingAuctions.loading ? (
-            <Loading />
-          ) : (
-            <AuctionTable auctions={ongoingAuctions.data} onHide={onHide} />
-          )}
-        </div>
+        {!addressState.error ? (
+          <UserData
+            addressState={addressState}
+            ongoingAuctions={ongoingAuctions}
+            onHide={onHide}
+          />
+        ) : null}
       </div>
     );
   }
+}
+
+function UserData({ addressState, ongoingAuctions, onHide }) {
+  return [
+    <div key="1" className="your-balance">
+      <h2>Your Balance</h2>
+      {addressState.loading ? (
+        <Loading />
+      ) : (
+        <div className="mana-value">{addressState.data.balance} MANA</div>
+      )}
+    </div>,
+
+    <div key="2" className="ongoing-auctions">
+      <h3>Ongoing auctions</h3>
+      {ongoingAuctions.loading ? (
+        <Loading />
+      ) : (
+        <AuctionTable auctions={ongoingAuctions.data} onHide={onHide} />
+      )}
+    </div>
+  ];
 }
 
 function AuctionTable({ auctions, onHide }) {

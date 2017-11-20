@@ -38,9 +38,6 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.request, handleConfirmBidsRequest);
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest);
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading);
-
-  // Start
-  yield call(connectWeb3);
 }
 
 // -------------------------------------------------------------------------
@@ -49,11 +46,11 @@ function* rootSaga() {
 function* connectWeb3(action = {}) {
   try {
     let retries = 0;
-    let connected = eth.connect(action.address);
+    let connected = yield call(() => eth.reconnect(action.address));
 
     while (!connected && retries <= 3) {
       yield delay(1500);
-      connected = eth.connect(action.address);
+      connected = yield call(() => eth.connect(action.address));
       retries += 1;
     }
 
@@ -93,6 +90,12 @@ function* handleAddressFetchRequest(action) {
     const addressState = yield call(() =>
       api.fetchFullAddressState(eth.getAddress())
     );
+
+    if (!addressState) {
+      throw new Error(
+        "We couldn't retrieve any account information for your current address."
+      );
+    }
 
     yield put({ type: types.fetchAddressState.success, addressState });
   } catch (error) {

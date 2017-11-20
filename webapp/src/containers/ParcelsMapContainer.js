@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { withRouter } from "react-router";
 import { connect } from "react-redux";
 
 import { selectors } from "../reducers";
@@ -15,8 +16,8 @@ import Loading from "../components/Loading";
 class ParcelsMapContainer extends React.Component {
   static propTypes = {
     center: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number
+      x: PropTypes.string,
+      y: PropTypes.string
     }),
     parcelStates: stateData(PropTypes.object).isRequired,
     addressState: stateData(PropTypes.object).isRequired,
@@ -27,8 +28,8 @@ class ParcelsMapContainer extends React.Component {
 
   static defaultProps = {
     center: {
-      x: 0,
-      y: 0
+      x: "0",
+      y: "0"
     }
   };
 
@@ -47,7 +48,15 @@ class ParcelsMapContainer extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchCoordinateVicinity(this.props.center);
+    this.fetchCoordinateVicinity(this.getCenter());
+  }
+
+  getCenter() {
+    const { x, y } = this.props.center;
+    return {
+      x: parseInt(x, 10) || 0,
+      y: parseInt(y, 10) || 0
+    };
   }
 
   onMoveEnd = ({ position, bounds }) => {
@@ -106,7 +115,7 @@ class ParcelsMapContainer extends React.Component {
   render() {
     const { zoom } = this.state;
     const { parcelStates, addressState } = this.props;
-    const { x, y } = this.props.center;
+    const { x, y } = this.getCenter();
 
     return isEmptyObject(parcelStates) || !addressState.data ? (
       <Loading />
@@ -129,10 +138,13 @@ class ParcelsMapContainer extends React.Component {
   }
 }
 
-export default connect(
-  state => ({
-    parcelStates: selectors.getParcelStates(state),
-    addressState: selectors.getAddressState(state)
-  }),
-  { parcelRangeChange, openModal, changeLocation }
-)(ParcelsMapContainer);
+export default withRouter(
+  connect(
+    (state, ownProps) => ({
+      parcelStates: selectors.getParcelStates(state),
+      addressState: selectors.getAddressState(state),
+      center: ownProps.match.params // from withRouter
+    }),
+    { parcelRangeChange, openModal, changeLocation }
+  )(ParcelsMapContainer)
+);
