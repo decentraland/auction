@@ -47,10 +47,6 @@ class ParcelsMapContainer extends React.Component {
     };
   }
 
-  componentWillMount() {
-    this.fetchCoordinateVicinity(this.getCenter());
-  }
-
   getCenter() {
     const { x, y } = this.props.center;
     return {
@@ -79,10 +75,6 @@ class ParcelsMapContainer extends React.Component {
   onParcelBid = parcel => {
     this.props.openModal("BidParcelModal", parcel);
   };
-
-  fetchCoordinateVicinity({ x, y }) {
-    this.fetchParcelRange(x - 3, y - 3, x + 3, y + 3);
-  }
 
   fetchParcelRange(minX, minY, maxX, maxY) {
     const bounds = parcelUtils.getBounds();

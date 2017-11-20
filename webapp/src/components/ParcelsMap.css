@@ -4,6 +4,12 @@
   position: relative;
 }
 
+.leaflet-popup .btn {
+  margin-top: 16px;
+  padding: 8px 15px;
+  font-size: 14px;
+}
+
 .leaflet-tile {
   border: 1px solid #FFF;
   transform: translateZ(0);
