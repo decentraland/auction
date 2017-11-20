@@ -14,7 +14,7 @@ import './ParcelsMap.css'
 const MAP_ID = 'map'
 
 L.Icon.Default.imagePath =
-  'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+  'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/images/'
 
 export default class ParcelsMap extends React.Component {
   static propTypes = {
@@ -43,9 +43,8 @@ export default class ParcelsMap extends React.Component {
     this.panInProgress = false
     this.map = null
     this.mapCoordinates = new LeafletMapCoordinates(this.props.zoom)
-    setTimeout(() => {
-      this.props.onMoveEnd(this.getCurrentPositionAndBounds())
-    })
+
+    setTimeout(() => this.onMapMoveEnd(), 10)
   }
 
   componentWillUnmount() {
@@ -67,10 +66,6 @@ export default class ParcelsMap extends React.Component {
     if (shouldRedraw) {
       this.redrawMap()
       this.panInProgress = false
-    }
-
-    if (nextProps.zoom != this.props.zoom) {
-      this.mapCoordinates = new LeafletMapCoordinates(nextProps.zoom)
     }
   }
 
@@ -150,7 +145,7 @@ export default class ParcelsMap extends React.Component {
 
   onZoomEnd = event => {
     this.props.onZoomEnd(this.map.getZoom())
-    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+    this.onMapMoveEnd()
   }
 
   addPopup(latlng) {
@@ -253,7 +248,6 @@ export default class ParcelsMap extends React.Component {
 
 function Tile({ x, y, width, height, color }) {
   const style = { width, height, backgroundColor: color }
-
   return <div className="leaflet-tile" style={style} />
 }
 
