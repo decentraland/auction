@@ -8,6 +8,7 @@ import { AddressState, ParcelState, DistrictEntry, Project, LockedBalanceEvent }
 import { AddressService, ParcelStateService } from "../src/lib/services";
 
 const log = new Log("[init]");
+const parcelStateService = new ParcelStateService();
 
 env.load();
 
@@ -79,10 +80,10 @@ async function initParcels() {
   log.info(
     `Inserting a matrix from coords (${x.min} ${y.min}) to (${x.max} ${y.max}). This might take a while.`
   );
-  await new ParcelStateService().insertMatrix(x.min, y.min, x.max, y.max);
+  await parcelStateService.insertMatrix(x.min, y.min, x.max, y.max);
 
   await reserveProjects(reserved);
-  await reserveProjects(roads);
+  await reserveProjects({ Roads: roads });
 }
 
 async function reserveProjects(reservation) {
