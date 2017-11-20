@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import sinon from 'sinon'
 
 import { OutbidNotificationService } from '../src/lib/services'
 
@@ -7,13 +6,13 @@ const noop = () => undefined
 
 describe('OutbidNotificationService', function() {
   let notificationService
-  let SMTPClient
+  // let SMTPClient
   let OutbidNotification
   let ParcelState
   let Job
 
   beforeEach(() => {
-    SMTPClient = { setTemplate: noop, sendEmail: noop }
+    // SMTPClient = { setTemplate: noop, sendEmail: noop }
 
     OutbidNotification = {
       findActiveByParcelId: noop,

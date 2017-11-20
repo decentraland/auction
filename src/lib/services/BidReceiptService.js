@@ -64,11 +64,11 @@ export default class BidReceiptService {
 
     if (!required.every(prop => bidGroup[prop])) {
       throw new Error(
-        'Can\'t sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedAt properties'
+        '"Can\'t sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedAt properties"'
       )
     }
     if (typeof bidGroup.message !== 'string') {
-      throw new Error('Can\'t sign an invalid bid group. Invalid message.')
+      throw new Error('"Can\'t sign an invalid bid group. Invalid message."')
     }
   }
 }

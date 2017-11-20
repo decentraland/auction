@@ -193,7 +193,9 @@ const loadParcelsForAddress = async (contract, address, batchSize) => {
     log.info(`(proc) [${address}] Processing bids for address...`)
     let sendParcels
 
+    /* eslint-disable no-constant-condition */
     while (true) {
+      /* eslint-enable no-constant-condition */
       sendParcels = await findParcelsToBuy(address, batchSize)
 
       // no more parcels to send
@@ -287,7 +289,11 @@ const returnAllMANA = async contract => {
       }
 
       // get locked MANA including discounts
-      const totalLockedMANA = await AddressService.lockedMANABalanceOf(address)
+      const {
+        totalLockedMANA,
+        monthlyLandBalances,
+        monthlyLockedBalances
+      } = await AddressService.lockedMANABalanceOf(address)
       log.info(`(return) [${address}] locked(${totalLockedMANA})`)
 
       // get burned MANA by all buy transactions
@@ -315,8 +321,8 @@ const returnAllMANA = async contract => {
 
       // total MANA reserved
       const manaReserved =
-        Math.floor(beforeNovBalance * BEFORE_NOVEMBER_DISCOUNT) +
-        Math.floor(afterNovBalance * AFTER_NOVEMBER_DISCOUNT) +
+        Math.floor(beforeNovBalance * AddressService.BEFORE_NOVEMBER_DISCOUNT) +
+        Math.floor(afterNovBalance * AddressService.AFTER_NOVEMBER_DISCOUNT) +
         totalLandBalance
       log.info(
         `(return) [${address}] before(${beforeNovBalance}) + after(${afterNovBalance}) + land(${totalLandBalance}) = reserved(${manaReserved})`
@@ -375,7 +381,7 @@ async function main() {
     log.info(`Using LANDTerraformSale contract at address ${contract.address}`)
 
     // setup watch for mined txs
-    const eventFilter = setupBlockWatch('latest')
+    setupBlockWatch('latest')
 
     // commands
     if (argv.verifybuys === true) {

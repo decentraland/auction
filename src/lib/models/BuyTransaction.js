@@ -21,7 +21,7 @@ class BuyTransaction extends Model {
   static findProcessedParcels(address) {
     return this.db
       .query(
-        'SELECT UNNEST("parcelStatesIds") AS id FROM buy_transactions WHERE status IN (\'completed\', \'pending\') AND address = $1',
+        '"SELECT UNNEST("parcelStatesIds") AS id FROM buy_transactions WHERE status IN (\'completed\', \'pending\') AND address = $1"',
         [address]
       )
       .then(rows => rows.map(row => row.id))
@@ -30,7 +30,7 @@ class BuyTransaction extends Model {
   static totalBurnedMANAByAddress(address) {
     return this.db
       .query(
-        'SELECT "totalCost" FROM buy_transactions WHERE status IN (\'completed\', \'pending\') AND address = $1',
+        '"SELECT "totalCost" FROM buy_transactions WHERE status IN (\'completed\', \'pending\') AND address = $1"',
         [address]
       )
       .then(rows =>

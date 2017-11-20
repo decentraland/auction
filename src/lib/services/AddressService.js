@@ -10,40 +10,48 @@ export default class AddressService {
     this.LockedBalanceEvent = LockedBalanceEvent
   }
 
+  static LAND_MANA_COST = LAND_MANA_COST
+  static BEFORE_NOVEMBER_DISCOUNT = BEFORE_NOVEMBER_DISCOUNT
+  static AFTER_NOVEMBER_DISCOUNT = AFTER_NOVEMBER_DISCOUNT
+
   static async lockedMANABalanceOf(address) {
     // get MANA locked to districts
-    const monthlyLockedBalancesToDistricts = await this.DistrictEntry
+    const monthlyLandBalances = await this.DistrictEntry
       .getMonthlyLockedBalanceByAddress(address, LAND_MANA_COST)
       .then(balances => fillByMonth(balances))
 
     // get total MANA locked to terraform
-    const monthlyLockedBalancesTotal = await this.LockedBalanceEvent
+    const monthlyLockedBalances = await this.LockedBalanceEvent
       .getMonthlyLockedBalanceByAddress(address)
       .then(balances => fillByMonth(balances))
 
     // adjust MANA balances to bonuses
     const beforeNovBalanceToAuction = calculateTotalForMonths(
-      monthlyLockedBalancesToDistricts,
-      monthlyLockedBalancesTotal,
+      monthlyLandBalances,
+      monthlyLockedBalances,
       [9, 10]
     )
     const afterNovBalanceToAuction = calculateTotalForMonths(
-      monthlyLockedBalancesToDistricts,
-      monthlyLockedBalancesTotal,
+      monthlyLandBalances,
+      monthlyLockedBalances,
       [11, 12, 1]
     )
 
     // total MANA locked in districts
-    const totalLockedToDistricts = Object.values(
-      monthlyLockedBalancesToDistricts
-    ).reduce((total, value) => total + value, 0)
+    const totalLockedToDistricts = Object.values(monthlyLandBalances).reduce(
+      (total, value) => total + value,
+      0
+    )
 
     // total MANA locked
-    return (
-      Math.floor(beforeNovBalanceToAuction * BEFORE_NOVEMBER_DISCOUNT) +
-      Math.floor(afterNovBalanceToAuction * AFTER_NOVEMBER_DISCOUNT) +
-      totalLockedToDistricts
-    )
+    return {
+      monthlyLockedBalances,
+      monthlyLandBalances,
+      totalLockedMANA:
+        Math.floor(beforeNovBalanceToAuction * BEFORE_NOVEMBER_DISCOUNT) +
+        Math.floor(afterNovBalanceToAuction * AFTER_NOVEMBER_DISCOUNT) +
+        totalLockedToDistricts
+    }
   }
 
   static fillByMonth(...args) {

@@ -1,7 +1,6 @@
 import { expect } from 'chai'
-import { eth, utils } from 'decentraland-commons'
+import { utils } from 'decentraland-commons'
 
-import db from '../src/lib/db'
 import { LockedBalanceEvent } from '../src/lib/models'
 
 describe('LockedBalanceEvent', () => {

@@ -38,8 +38,9 @@ describe('BidReceiptService', function() {
       await sign({ id: 22, message: {}, receivedAt: new Date() })
 
       const missingProps =
-        "Can't sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedAt properties"
-      const invalidMessage = "Can't sign an invalid bid group. Invalid message"
+        '"Can\'t sign an invalid bid group. Missing properties, the bid group has to have at least an id, message an receivedAt properties"'
+      const invalidMessage =
+        '"Can\'t sign an invalid bid group. Invalid message."'
 
       expect(errorMessages.length).to.equal(4)
       expect(errorMessages).to.deep.equal([

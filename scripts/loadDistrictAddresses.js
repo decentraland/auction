@@ -1,7 +1,7 @@
 #!/usr/bin/env babel-node
 
 import fs from 'fs'
-import { eth, env, Log } from 'decentraland-commons'
+import { env, Log } from 'decentraland-commons'
 import db from '../src/lib/db'
 import { ParcelState, Project } from '../src/lib/models'
 

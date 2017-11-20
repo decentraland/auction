@@ -60,7 +60,7 @@ describe('AddressState', function() {
       expect(result.bidGroup).to.equalRow(bidGroup)
     })
 
-    it("should attach null if the latestBidGroupId doesn't exist", async function() {
+    it('"should attach null if the latestBidGroupId doesn\'t exist"', async function() {
       await AddressState.insert(addressState)
 
       const result = await AddressState.findByAddressWithLastBidGroup(
