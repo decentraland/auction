@@ -1,6 +1,8 @@
 # latest official node image
 FROM node:latest
 
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install postgresql-client -y
 RUN npm install -g babel-cli
 
 # use cached layer for node modules

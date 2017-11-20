@@ -11,6 +11,10 @@ class DistrictEntry extends Model {
     "action"
   ];
 
+  static countSubmissions() {
+    return this.db.query(`SELECT count(*) as amount FROM district_entries`);
+  }
+
   static getSubmissions(address) {
     return this.db.query(
       `

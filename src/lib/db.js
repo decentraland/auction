@@ -103,6 +103,26 @@ export default {
     );
 
     await this.createTable(
+      "district_entries",
+      `"id" int NOT NULL DEFAULT nextval('district_entries_id_seq'),
+      "address" varchar(42) NOT NULL,
+      "project_id" varchar(36) NOT NULL,
+      "lands" int NOT NULL,
+      "userTimestamp" varchar(20) NOT NULL,
+      "action" varchar(16) NOT NULL,
+      "message" BYTEA DEFAULT NULL,
+      "signature" BYTEA DEFAULT NULL`
+    );
+
+    await this.createTable('locked_balance_events', `
+      "id" int NOT NULL DEFAULT nextval('locked_balance_events_id_seq'),
+      "address" varchar(42) NOT NULL,
+      "txId" TEXT NOT NULL UNIQUE,
+      "mana" DECIMAL NOT NULL,
+      "confirmedAt" timestamp NOT NULL
+    `)
+
+    await this.createTable(
       "buy_transactions",
       `"id" int NOT NULL DEFAULT nextval('buy_transactions_id_seq'),
       "txId" text NOT NULL UNIQUE,

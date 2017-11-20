@@ -4,6 +4,12 @@ class LockedBalanceEvent extends Model {
   static tableName = "locked_balance_events";
   static columnNames = ["id", "address", "txId", "mana", "confirmedAt"];
 
+  static countEvents() {
+    return this.db.query(
+      `SELECT COUNT(*) AS amount FROM locked_balance_events`
+    );
+  }
+
   static getMonthlyLockedBalanceByAddress(address) {
     return this.db.query(
       `

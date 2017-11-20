@@ -20,6 +20,8 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
     environment:
       REACT_APP_API_HOST: https://api.auction.decentraland.today
+      REACT_APP_TERRAFORM_CONTRACT_ADDRESS: 0xcca95e580bbbd04851ebfb85f77fd46c9b91f11c
+      REACT_APP_MANA_CONTRACT_ADDRESS: 0x0F5D2fB29fb7d3CFeE444a200298f468908cC942
       LETSENCRYPT_HOST: auction.decentraland.today
       PORT: 80
     networks:
