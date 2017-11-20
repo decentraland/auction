@@ -8,7 +8,7 @@ const INITIAL_STATE = {
   projects: { loading: true },
 
   parcelStates: { loading: true }, // doest NOT use a `data` property
-  pendingConfirmationBids: [],
+  pendingConfirmationBids: { data: [] },
 
   ongoingAuctions: { loading: true },
 
@@ -43,9 +43,6 @@ export const selectors = {
   },
   getOngoingAuctions(state) {
     return state.ongoingAuctions;
-  },
-  getOngoingAuctionsData(state) {
-    return state.ongoingAuctions.data;
   },
   getModal(state) {
     return state.modal;
@@ -139,16 +136,18 @@ function pendingConfirmationBids(
   action
 ) {
   const filterActionBid = () =>
-    state.filter(bid => bid.x !== action.bid.x || bid.y !== action.bid.y);
+    state.data.filter(bid => bid.x !== action.bid.x || bid.y !== action.bid.y);
 
   // TODO: LocalStorage?
   switch (action.type) {
     case types.appendUnconfirmedBid:
-      return [...filterActionBid(), action.bid];
+      return { data: [...filterActionBid(), action.bid] };
     case types.deleteUnconfirmedBid:
-      return filterActionBid();
+      return { data: filterActionBid() };
     case types.confirmBids.success:
       return INITIAL_STATE.pendingConfirmationBids;
+    case types.confirmBids.failed:
+      return { ...state, error: action.error };
     default:
       return state;
   }

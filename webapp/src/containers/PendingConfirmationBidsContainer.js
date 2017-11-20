@@ -4,17 +4,15 @@ import { connect } from "react-redux";
 
 import { selectors } from "../reducers";
 import { confirmBids, deleteUnconfirmedBid } from "../actions";
+import { stateData } from "../lib/propTypes";
+
 import PendingConfirmationBidsTable from "../components/PendingConfirmationBidsTable";
 
 class PendingConfirmationBidsContainer extends React.Component {
   static propTypes = {
-    pendingConfirmationBids: PropTypes.array,
+    pendingConfirmationBids: stateData(PropTypes.array),
     deleteUnconfirmedBid: PropTypes.func,
     confirmBids: PropTypes.func
-  };
-
-  static defaultProps = {
-    pendingConfirmationBids: []
   };
 
   deleteBid = bid => {
@@ -30,7 +28,7 @@ class PendingConfirmationBidsContainer extends React.Component {
   confirmBids = event => {
     const { pendingConfirmationBids, confirmBids } = this.props;
 
-    const bids = pendingConfirmationBids.map(bid => ({
+    const bids = pendingConfirmationBids.data.map(bid => ({
       x: bid.x,
       y: bid.y,
       bidGroupId: bid.bidGroupId,

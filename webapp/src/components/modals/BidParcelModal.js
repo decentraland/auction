@@ -17,7 +17,7 @@ export default class BidParcelModal extends React.Component {
     ...Modal.propTypes,
     parcel: PropTypes.object.isRequired,
     addressState: stateData(PropTypes.object).isRequired,
-    pendingConfirmationBids: PropTypes.array.isRequired,
+    pendingConfirmationBids: stateData(PropTypes.array).isRequired,
     onBid: PropTypes.func.isRequired
   };
 
@@ -31,7 +31,7 @@ export default class BidParcelModal extends React.Component {
 
     // Cache for later use
     this.pendingManaBalance = pendingBidsUtils.getTotalManaBidded(
-      pendingConfirmationBids
+      pendingConfirmationBids.data
     );
   }
 

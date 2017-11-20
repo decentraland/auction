@@ -11,12 +11,14 @@ import { BidParcelModal } from "../../components/modals";
 class BidParcelModalContainer extends React.Component {
   static propTypes = {
     addressState: stateData(PropTypes.object).isRequired,
-    pendingConfirmationBids: PropTypes.array.isRequired,
+    pendingConfirmationBids: stateData(PropTypes.array).isRequired,
     appendUnconfirmedBid: PropTypes.func.isRequired
+    // Here we should extend ...ModelContainer.propTypes but webpack is broken and doesn't understand the import
+    // Try it yourself: import ModalContainer from "./ModalContainer"
   };
 
   onBid = value => {
-    const { appendUnconfirmedBid, addressState, data, onClose } = this.props;
+    const { data, appendUnconfirmedBid, addressState, onClose } = this.props;
     const parcel = data;
 
     appendUnconfirmedBid({
@@ -32,12 +34,18 @@ class BidParcelModalContainer extends React.Component {
   };
 
   render() {
-    const { data, addressState, ...props } = this.props;
+    const {
+      data,
+      addressState,
+      pendingConfirmationBids,
+      ...props
+    } = this.props;
 
     return (
       <BidParcelModal
         parcel={data}
         addressState={addressState}
+        pendingConfirmationBids={pendingConfirmationBids}
         onBid={this.onBid}
         {...props}
       />

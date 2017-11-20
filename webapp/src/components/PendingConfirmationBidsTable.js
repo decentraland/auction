@@ -6,6 +6,7 @@ import { distanceInWordsToNow } from "../lib/dateUtils";
 import { preventDefault, buildCoordinate } from "../lib/util";
 import shortenAddress from "../lib/shortenAddress";
 import pendingBidsUtils from "../lib/pendingBidsUtils";
+import { stateData } from "../lib/propTypes";
 
 import locations from "../locations";
 
@@ -15,27 +16,34 @@ import "./PendingConfirmationBidsTable.css";
 
 export default class PendingConfirmationBidsTable extends React.Component {
   static propTypes = {
-    pendingConfirmationBids: PropTypes.array.isRequired,
+    pendingConfirmationBids: stateData(PropTypes.array).isRequired,
     onConfirmBids: PropTypes.func.isRequired,
     onDeleteBid: PropTypes.func.isRequired
   };
 
   getTotalMana() {
-    return pendingBidsUtils.getTotalManaBidded(
-      this.props.pendingConfirmationBids
-    );
+    const { pendingConfirmationBids } = this.props;
+
+    return pendingBidsUtils.getTotalManaBidded(pendingConfirmationBids.data);
   }
 
   render() {
     const { pendingConfirmationBids, onConfirmBids, onDeleteBid } = this.props;
 
-    if (pendingConfirmationBids.length === 0) {
+    if (pendingConfirmationBids.data.length === 0) {
       return null;
     }
 
     return (
       <div className="PendingConfirmationBidsTable">
         <h3>Pending Confirmation</h3>
+
+        {pendingConfirmationBids.error && (
+          <div className="text-danger">
+            We are having troubles confirming your bid. Please try again in a
+            few minutes
+          </div>
+        )}
 
         <div className="table">
           <div className="table-row table-header">
@@ -47,7 +55,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
             <div className="col-actions">ACTIONS</div>
           </div>
 
-          {pendingConfirmationBids.map((bid, index) => (
+          {pendingConfirmationBids.data.map((bid, index) => (
             <UnconfirmedBidsTableRow
               key={index}
               bid={bid}
