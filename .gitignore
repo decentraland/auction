@@ -1,4 +1,6 @@
 .DS_Store
+data
+postgres_data
 out
 /package-lock.json
 /node_modules/

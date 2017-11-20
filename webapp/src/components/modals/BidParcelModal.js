@@ -122,17 +122,19 @@ function BidForm({
   onBidValueChange,
   onClose
 }) {
+  const minimum = currentBidValue || ONE_LAND_IN_MANA;
   return (
     <form action="POST" onSubmit={onBid}>
       <div className="manaInput">
-        <span className="text">{ONE_LAND_IN_MANA}</span>
+        <span className="text">{minimum}</span>
         <input
           type="number"
           required="required"
           placeholder="Mana to bid"
           className="manaToBid"
           autoFocus={true}
-          min={ONE_LAND_IN_MANA}
+          min={minimum}
+          defaultValue={minimum}
           max={manaBalance}
           onChange={onBidValueChange}
         />
