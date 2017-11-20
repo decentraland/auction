@@ -9,6 +9,7 @@
     "test": "react-scripts test --env=jsdom",
     "prebuild": "npm run test",
     "build": "react-scripts build",
+    "remotebuild": "NODE_PATH=/tmp/auction/webapp/node_modules react-scripts build",
     "eject": "react-scripts eject"
   },
   "dependencies": {
