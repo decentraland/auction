@@ -8,13 +8,13 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-{{ checksum "webapp/package.json" }}
           - v1-dependencies-
       - run: cd webapp && npm install
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ checksum "webapp/package.json" }}
       - run: cd webapp && npm run remotebuild
       - save_cache:
           paths:

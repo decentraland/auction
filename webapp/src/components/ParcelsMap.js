@@ -69,7 +69,7 @@ export default class ParcelsMap extends React.Component {
       this.panInProgress = false
     }
 
-    if (nextProps.zoom != this.props.zoom) {
+    if (nextProps.zoom !== this.props.zoom) {
       this.mapCoordinates = new LeafletMapCoordinates(nextProps.zoom)
     }
   }
