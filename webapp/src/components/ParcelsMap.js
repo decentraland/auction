@@ -215,19 +215,22 @@ export default class ParcelsMap extends React.Component {
 
   createTile(coords, size) {
     const { x, y } = this.mapCoordinates.coordsToCartesian(coords)
-    const color = this.getParcelColor(x, y)
-
-    return renderToDOM(
-      <Tile x={x} y={y} width={size} height={size} color={color} />
-    )
-  }
-
-  // TODO: This could be a className to avoid having to add more props to the style="" attribute
-  getParcelColor = (x, y) => {
-    const addressState = this.props.getAddressState()
     const parcel = this.getParcelData(x, y)
+    const addressState = this.props.getAddressState()
 
-    return parcelUtils.getColor(parcel, addressState)
+    const div = L.DomUtil.create('div')
+
+    const className = parcelUtils.getClassName(parcel, addressState)
+
+    if (!className) {
+      div.style = {
+        backgroundColor: parcelUtils.getColorByAmount(parcel.amount)
+      }
+    }
+
+    div.className = `tile ${className}`
+
+    return div
   }
 
   getParcelData = (x, y) => {
@@ -244,11 +247,6 @@ export default class ParcelsMap extends React.Component {
   render() {
     return <div id={MAP_ID} ref={this.bindMap.bind(this)} />
   }
-}
-
-function Tile({ x, y, width, height, color }) {
-  const style = { width, height, backgroundColor: color }
-  return <div className="leaflet-tile" style={style} />
 }
 
 function renderToDOM(Component) {

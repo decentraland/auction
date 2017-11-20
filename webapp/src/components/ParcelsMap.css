@@ -11,17 +11,27 @@
 }
 
 .leaflet-tile {
-  border: 1px solid #FFF;
-  transform: translateZ(0);
+  border: 2px solid #FFF;
+}
+
+.tile {
   visibility: visible;
 }
 
-.leaflet-coordinates {
-  font-size: 15px;
-  top: 37%;
-  left: 33%;
-  position: relative;
-}
+.won     { background-color: #30D7A9; }
+.winning { background-color: #30D7A9; }
+.lost    { background-color: #AE4DE8; }
+.outbid  { background-color: #AE4DE8; }
+.taken   { background-color: #3E396B; }
+.default { background-color: #EAEAEA; }
+.loading { background-color: #D0D0D0; }
+
+/* .leaflet-coordinates {
+//   font-size: 15px;
+//   top: 37%;
+//   left: 33%;
+//   position: relative;
+}*/
 
 .leaflet-popup {
   z-index: 800;

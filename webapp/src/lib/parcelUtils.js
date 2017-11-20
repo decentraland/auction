@@ -36,39 +36,51 @@ export const COLORS = {
   Loading: '#D0D0D0'
 }
 
-export function getColor(parcel, addressState) {
-  if (!parcel || parcel.error) return COLORS.Loading
-  if (isTaken(parcel)) return COLORS.Taken
-  if (!parcel.amount) return COLORS.Default
+export const CLASS_NAMES = {
+  Won: 'won',
+  Winning: 'winning',
+  Lost: 'lost',
+  Outbid: 'outbid',
+  Taken: 'taken',
+  Default: 'default',
+  Loading: 'loading'
+}
 
-  let color = ''
+export function getClassName(parcel, addressState) {
+  if (!parcel || parcel.error) return CLASS_NAMES.Loading
+  if (isTaken(parcel)) return CLASS_NAMES.Taken
+  if (!parcel.amount) return CLASS_NAMES.Default
+
+  let className = ''
 
   if (addressStateUtils.hasBidInParcel(addressState, parcel)) {
     const status = getBidStatus(parcel, addressState.address)
-    color = COLORS[status] || COLORS.Default
+    className = CLASS_NAMES[status] || CLASS_NAMES.Default
   } else if (hasEnded(parcel)) {
-    color = COLORS.Taken
-  } else {
-    // toHsv() => { h: 0, s: 1, v: 1, a: 1 }
-    const minHSV = tinycolor2(COLORS.LittleValue).toHsv()
-    const maxHSV = tinycolor2(COLORS.BigValue).toHsv()
-
-    const h = calulateColorValue(parcel, minHSV.h, maxHSV.h)
-    const s = calulateColorValue(parcel, minHSV.s, maxHSV.s)
-
-    color = tinycolor2({ h, s, v: 1, a: 1 }).toHexString()
+    className = CLASS_NAMES.Taken
   }
 
-  return color
+  return className
+}
+
+export function getColorByAmount(amount) {
+  // toHsv() => { h: 0, s: 1, v: 1, a: 1 }
+  const minHSV = tinycolor2(COLORS.LittleValue).toHsv()
+  const maxHSV = tinycolor2(COLORS.BigValue).toHsv()
+
+  const h = calculateColorValue(amount, minHSV.h, maxHSV.h)
+  const s = calculateColorValue(amount, minHSV.s, maxHSV.s)
+
+  return tinycolor2({ h, s, v: 1, a: 1 }).toHexString()
 }
 
 export function isTaken(parcel) {
   return !!parcel.projectId
 }
 
-function calulateColorValue(parcel, minValue, maxValue) {
-  const priceRate = parcel.amount - ONE_LAND_IN_MANA
-  return (maxValue - minValue) * parcel.amount / (priceRate + minValue)
+function calculateColorValue(amount, minValue, maxValue) {
+  const priceRate = amount - ONE_LAND_IN_MANA
+  return (maxValue - minValue) * amount / (priceRate + minValue)
 }
 
 export function generateMatrix(minX, minY, maxX, maxY) {
