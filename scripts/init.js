@@ -13,7 +13,7 @@ import {
 } from '../src/lib/models'
 import { AddressService, ParcelStateService } from '../src/lib/services'
 
-const log = new Log('[init]')
+const log = new Log('init')
 const parcelStateService = new ParcelStateService()
 
 env.load()

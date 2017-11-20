@@ -11,7 +11,7 @@ import {
 } from '../src/lib/models'
 import AddressService from '../src/lib/services/AddressService'
 
-const log = new Log('[LoadBids]')
+const log = new Log('LoadBids')
 
 env.load()
 

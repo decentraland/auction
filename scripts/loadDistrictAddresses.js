@@ -5,7 +5,7 @@ import { env, Log } from 'decentraland-commons'
 import db from '../src/lib/db'
 import { ParcelState, Project } from '../src/lib/models'
 
-const log = new Log('[LoadDistrictAddresses]')
+const log = new Log('LoadDistrictAddresses')
 
 env.load()
 
