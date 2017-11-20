@@ -1,91 +1,15 @@
 # Auction
 
-## BidGroup
+# How to run
 
-```
-{
-    bids: [
-        { x, y, amount }
-    ],
-    timestamp,
-    address,
-    id,
-    
-    message,
-    signature
-}
-```
+Start the docker containers
 
-Bid: (BidGroup + bidindex)
+    npm run docker:dev:build
+    npm run docker:dev:run
 
-## Bid (denormalization of bidgroup)
+Setup the database (first time)
 
-```
-{
-    x
-    y
-    bidgroup
-    bidindex
-    address
-    timpestamp
-    amount
-}
-```
-
-## BidReceipt
-
-```
-{
-    "id": bid id
-    "timeReceived": number
-    "message": "string" // received message from user
-    
-    "serverSignature": decentraland's signature
-    "serverMessage": id+timereceived+messageHash objet, serialized, and signed above
-}
-```
-
-## AddressState
-
-```
-{
-    address: string (primary key)
-    balance: string (bignumber)
-    latestBidGroupId: string (id to bid)
-}
-```
-
-
-## ParcelState
-
-```
-{
-    id: string (hash of `x||','||y`)
-    x: number
-    y: number
-    amount: string (bignumber)
-    address: string (address of current winner)
-    endsAt: timestamp
-    bidgroup: string (bidgroup id)
-    bidIndex
-}
-```
-
-
-## Projects
-
-```
-{
-    id: string (uuid4)
-    name: string, 
-    desc: string, 
-    link: string, 
-    public: boolean,
-    parcels: number,
-    priority: number,
-    disabled: boolean
-}
-```
+    npm run docker:initdb
 
 # Process
 
@@ -162,30 +86,6 @@ Validation of each bid
 - Submit BidGroup
 
 - Get all BidReceipts
-
-# How to run
-
-### Necessary data
-
-1. **Create the environment**: You need to generate two `.env` files, one for the server and one for the `webapp`. Both have a companion `.env.example` file which shows which values are needed.
-2. **Create the schema**: After you've created the `auction` database on Postgres, you can run `/scripts/createSchema.js` which will upsert all tables.
-2. **Export address states**: Go to the terraform project and run the script `tools/exportAddresses.js`. That will generate a `addresses.txt` which should be pasted into this repos `/scripts` folder. You can find an example file named `addresses.example.txt` there to check if the your result looks similar.
-3. **Create a parcel description**: Go to the `/scripts` folder and copy the `parcelsDescription.example.json` file into a new file named `parcelsDescription.json`. You should edit each property according to the needs of the auction.
-4. **Import projects**: Once again in the terraform project, we need to export the `projects` table. Once we did this, we need to import it into the auction database. The schema is the same. 
-5. **Have a node running**: To be able to complete the next step, you need to have a geth node running. This is because the script you will be running checks the blockchain for the balance of each address.
-6. **Run init.js**: Once all of the above files are ready, you can run `/scripts/init.js`. The scripts will use the files to setup the database data, like `address_states` and `parcel_states`. 
-
-### Actually running the project
-
-If you're in development you need to have two processes running:
-
-`/webapp/npm run start` for the front end
-<br />
-`babel-node src/server.js` for the server
-
-If you're having problems connecting the two, check your environment!
-
-For a production environment, the server should be enough.
 
 ### Closing notes
 

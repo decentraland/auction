@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import { eth } from 'decentraland-commons'
 
-import db from '../src/lib/db'
 import { BuyTransaction } from '../src/lib/models'
 
 /* Returns TRUE if the first specified array contains all elements

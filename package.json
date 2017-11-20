@@ -12,6 +12,7 @@
     "build": "npm run lint && npm run test",
     "start": "babel-node src/server.js",
     "dev": "nodemon --exec npm run start",
+    "docker:init": "docker exec auction_api_1 /bin/bash -c \"cd scripts; babel-node init.js\"",
     "docker:dev:build": "docker-compose -f docker-compose.yml -f docker-compose.development.yml build",
     "docker:dev:run": "docker-compose -f docker-compose.yml -f docker-compose.development.yml up",
     "docker:prod:build": "docker-compose -f docker-compose.yml -f docker-compose.production.yml build",
