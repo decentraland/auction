@@ -33,10 +33,12 @@ class SearchContainer extends React.Component {
   }
 
   render() {
+    const { projects } = this.props;
+
     return (
       <Search
         coordinates={this.getCoordinates()}
-        projects={this.props.projects}
+        projects={projects}
         onSelect={this.onSelect}
       />
     );

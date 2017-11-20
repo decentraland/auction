@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { selectors } from "../reducers";
 import locations from "../locations";
 import { parcelRangeChange, openModal, changeLocation } from "../actions";
-import { isEmptyObject } from "../lib/util";
 import * as parcelUtils from "../lib/parcelUtils";
 import { stateData } from "../lib/propTypes";
 
@@ -15,13 +14,14 @@ import Loading from "../components/Loading";
 
 class ParcelsMapContainer extends React.Component {
   static propTypes = {
+    parcelStates: stateData(PropTypes.object).isRequired,
+    addressState: stateData(PropTypes.object).isRequired,
+    parcelRangeChange: PropTypes.func.isRequired,
+    requiredDataReady: PropTypes.bool,
     center: PropTypes.shape({
       x: PropTypes.string,
       y: PropTypes.string
     }),
-    parcelStates: stateData(PropTypes.object).isRequired,
-    addressState: stateData(PropTypes.object).isRequired,
-    parcelRangeChange: PropTypes.func.isRequired,
     openModal: PropTypes.func.isRequired,
     changeLocation: PropTypes.func.isRequired
   };
@@ -114,12 +114,10 @@ class ParcelsMapContainer extends React.Component {
 
   render() {
     const { zoom } = this.state;
-    const { parcelStates, addressState } = this.props;
+    const { requiredDataReady } = this.props;
     const { x, y } = this.getCenter();
 
-    return isEmptyObject(parcelStates) || !addressState.data ? (
-      <Loading />
-    ) : (
+    return requiredDataReady ? (
       <ParcelsMap
         x={x}
         y={y}
@@ -134,6 +132,8 @@ class ParcelsMapContainer extends React.Component {
         onZoomEnd={this.onZoomEnd}
         onParcelBid={this.onParcelBid}
       />
+    ) : (
+      <Loading />
     );
   }
 }
@@ -143,6 +143,7 @@ export default withRouter(
     (state, ownProps) => ({
       parcelStates: selectors.getParcelStates(state),
       addressState: selectors.getAddressState(state),
+      requiredDataReady: ownProps.requiredDataReady,
       center: ownProps.match.params // from withRouter
     }),
     { parcelRangeChange, openModal, changeLocation }

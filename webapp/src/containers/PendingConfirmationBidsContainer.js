@@ -29,6 +29,7 @@ class PendingConfirmationBidsContainer extends React.Component {
 
   confirmBids = event => {
     const { pendingConfirmationBids, confirmBids } = this.props;
+
     const bids = pendingConfirmationBids.map(bid => ({
       x: bid.x,
       y: bid.y,

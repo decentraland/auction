@@ -45,38 +45,48 @@ export default class Menu extends React.Component {
           </div>
         </header>
 
-        {!addressState.error ? (
-          <UserData
-            addressState={addressState}
-            ongoingAuctions={ongoingAuctions}
-            onHide={onHide}
-          />
-        ) : null}
+        <Balance addressState={addressState} />
+
+        <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
       </div>
     );
   }
 }
 
-function UserData({ addressState, ongoingAuctions, onHide }) {
-  return [
-    <div key="1" className="your-balance">
+function Balance({ addressState, ongoingAuctions, onHide }) {
+  return (
+    <div className="your-balance">
       <h2>Your Balance</h2>
       {addressState.loading ? (
         <Loading />
+      ) : addressState.error ? (
+        <div className="mana-value text-danger">
+          Couldn&#39;t fetch your current balance. Try refreshing the page and
+          trying again.
+        </div>
       ) : (
         <div className="mana-value">{addressState.data.balance} MANA</div>
       )}
-    </div>,
+    </div>
+  );
+}
 
-    <div key="2" className="ongoing-auctions">
+function OngoingAuctions({ ongoingAuctions, onHide }) {
+  return (
+    <div className="ongoing-auctions">
       <h3>Ongoing auctions</h3>
       {ongoingAuctions.loading ? (
         <Loading />
+      ) : ongoingAuctions.error ? (
+        <div className="table-row-empty text-danger">
+          We are having troubles fetching your auctions. Please try again in a
+          few minutes.
+        </div>
       ) : (
         <AuctionTable auctions={ongoingAuctions.data} onHide={onHide} />
       )}
     </div>
-  ];
+  );
 }
 
 function AuctionTable({ auctions, onHide }) {

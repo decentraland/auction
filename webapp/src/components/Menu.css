@@ -123,11 +123,19 @@
 
 .ongoing-auctions .col-status {
   font-size: 14px;
-  font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
+  font-weight: 700;
 }
 
 @media (max-width: 620px) {
   .Menu {
     width: 100%;
   }
+}
+
+/* -----------------------------------------------------------------------
+ Errors */
+
+.mana-value .text-danger,
+.ongoing-auctions .text-danger {
+  color: #A94442
 }

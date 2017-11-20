@@ -224,7 +224,6 @@ function* handleConfirmBidsRequest(action) {
     yield put({ type: types.confirmBids.success });
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch });
   } catch (error) {
-    // TODO: Manage API errors
     yield put({ type: types.confirmBids.failed, error: error.message });
   }
 }
