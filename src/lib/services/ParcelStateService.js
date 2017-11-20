@@ -5,15 +5,14 @@ class ParcelStateService {
     this.ParcelState = ParcelState;
   }
 
-  insertMatrix(minX, minY, maxX, maxY) {
-    const inserts = [];
+  async insertMatrix(minX, minY, maxX, maxY) {
     for (let x = minX; x <= maxX; x++) {
+      const inserts = [];
       for (let y = minY; y <= maxY; y++) {
-        const insert = this.ParcelState.insert({ x, y }).catch(() => {});
-        inserts.push(insert);
+        inserts.push(this.ParcelState.insert({ x, y }))
       }
+      await Promise.all(inserts);
     }
-    return Promise.all(inserts);
   }
 }
 
