@@ -14,6 +14,7 @@ env.load();
 async function initializeDatabase() {
   await upsertRoadsProject();
   await upsertDistrictEntries();
+  await upsertProjects();
   await upsertLockedBalanceEvents();
   await importAddressStates();
   await initParcels();
@@ -27,6 +28,15 @@ async function upsertRoadsProject() {
     log.info("Inserting Roads project");
 
     await Project.insert({
+      name: "Genesis Plaza",
+      desc: "Decentraland Genesis Plaza",
+      link: "",
+      public: false,
+      parcels: 0,
+      priority: 0,
+      disabled: false
+    });
+    await Project.insert({
       name: "Roads",
       desc: "Decentraland roads connecting districts",
       link: "",
@@ -36,6 +46,14 @@ async function upsertRoadsProject() {
       disabled: false
     });
   }
+}
+
+async function upsertProjects() {
+  const query = await Project.count()
+  if (query.amount > 0) {
+    return;
+  }
+  return execSync(`psql $CONNECTION_STRING -f ./projects.sql`);
 }
 
 async function upsertDistrictEntries() {

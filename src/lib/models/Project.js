@@ -14,6 +14,10 @@ class Project extends Model {
     "disabled"
   ];
 
+  static count(name) {
+    return this.db.query(`SELECT count(*) as amount FROM projects`);
+  }
+
   static findByName(name) {
     return this.findOne({ name });
   }
