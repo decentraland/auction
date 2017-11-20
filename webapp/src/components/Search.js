@@ -65,9 +65,9 @@ export default class Search extends React.Component {
   }
 
   renderItem = (item, isHighlighted) => {
-    const className = `autocomplete-item ${isHighlighted
-      ? 'autocomplete-highlight'
-      : ''}`
+    const className = `autocomplete-item ${
+      isHighlighted ? 'autocomplete-highlight' : ''
+    }`
 
     return (
       <div key={item.name} className={className} name={item.name}>

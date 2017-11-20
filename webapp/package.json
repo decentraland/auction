@@ -6,7 +6,7 @@
     "start": "react-scripts start",
     "pretest": "npm run lint",
     "lint": "npx eslint src/",
-    "test": "react-scripts test --env=jsdom",
+    "test": "CI=true react-scripts test --env=jsdom",
     "prebuild": "npm run test",
     "build": "react-scripts build",
     "remotebuild": "NODE_PATH=/tmp/auction/webapp/node_modules react-scripts build",
@@ -40,6 +40,7 @@
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.4.0",
     "prettier": "^1.7.4",
+    "webpack": "^3.1.0",
     "webpack-dotenv-plugin": "^2.0.2"
   }
 }
