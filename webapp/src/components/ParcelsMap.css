@@ -21,13 +21,13 @@
   visibility: visible;
 }
 
-.won     { background-color: #30D7A9; }
-.winning { background-color: #30D7A9; }
-.lost    { background-color: #AE4DE8; }
-.outbid  { background-color: #AE4DE8; }
-.taken   { background-color: #3E396B; }
-.default { background-color: #EAEAEA; }
-.loading { background-color: #D0D0D0; }
+.tile.won     { background-color: #30D7A9; }
+.tile.winning { background-color: #30D7A9; }
+.tile.lost    { background-color: #AE4DE8; }
+.tile.outbid  { background-color: #AE4DE8; }
+.tile.taken   { background-color: #3E396B; }
+.tile.default { background-color: #EAEAEA; }
+.tile.loading { background-color: #D0D0D0; }
 
 .leaflet-popup {
   z-index: 800;
