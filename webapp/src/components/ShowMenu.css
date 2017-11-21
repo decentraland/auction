@@ -1,5 +1,5 @@
 .ShowMenu {
-  padding: 16px;
+  padding: 10px;
   box-shadow: 0 2px 6px 0 rgba(0,0,0,0.05);
   border-radius: 8px;
   background: #FFFFFF;
@@ -9,5 +9,18 @@
   display: inline-block;
 }
 
+.ShowMenu.loading {
+  top: 2px;
+  padding: 9px 9px 8px;
+}
+
 .ShowMenu .Icon-hamburger {
+}
+
+.ShowMenu .Loading {
+  margin: 0;
+  font-size: 2px;
+  display: inline-block;
+  width: 9em;
+  height: 9em;
 }

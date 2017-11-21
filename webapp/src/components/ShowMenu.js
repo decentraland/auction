@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import Icon from './Icon'
+import Loading from './Loading'
 
 import './ShowMenu.css'
 
@@ -11,7 +12,8 @@ export default class ShowMenu extends React.Component {
 
     return (
       <div className="ShowMenu" onClick={() => onShow()}>
-        <Icon name="hamburger" />
+        {/*<Icon name="hamburger" />*/}
+        {/*<Loading />*/}
       </div>
     )
   }
