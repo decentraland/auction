@@ -25,6 +25,7 @@ export default {
       "signature" BYTEA DEFAULT NULL,
       "receivedAt" timestamp NOT NULL`
     )
+    await this.createIndex('bid_groups', 'bid_group_address_idx', ['address'])
 
     // BidGroup denormalization, bid + index
     await this.createTable(
@@ -38,6 +39,10 @@ export default {
       "amount" text NOT NULL,
       "receivedAt" timestamp NOT NULL`
     )
+    await this.createIndex('bids', 'bid_index_group_idx', [
+      '"bidIndex"',
+      '"bidGroupId"'
+    ])
 
     await this.createTable(
       'bid_receipts',
@@ -55,9 +60,11 @@ export default {
       "balance" text NOT NULL,
       "latestBidGroupId" int`
     )
+    await this.createIndex('address_states', 'address_state_address_idx', [
+      'address'
+    ])
 
     // id => string (hash of `x,y`)
-    // TODO: x and y need an index. See ParcelState#findInCoordinates
     await this.createTable(
       'parcel_states',
       `"id" text NOT NULL,
@@ -71,6 +78,10 @@ export default {
       "projectId" TEXT`,
       { sequenceName: null }
     )
+    await this.createIndex('parcel_states', 'parcel_states_x_y_idx', ['x', 'y'])
+    await this.createIndex('parcel_states', 'parcel_states_address_idx', [
+      'address'
+    ])
 
     await this.createTable(
       'projects',
@@ -117,13 +128,11 @@ export default {
 
     await this.createTable(
       'locked_balance_events',
-      `
-      "id" int NOT NULL DEFAULT nextval('locked_balance_events_id_seq'),
+      `"id" int NOT NULL DEFAULT nextval('locked_balance_events_id_seq'),
       "address" varchar(42) NOT NULL,
       "txId" TEXT NOT NULL UNIQUE,
       "mana" DECIMAL NOT NULL,
-      "confirmedAt" timestamp NOT NULL
-    `
+      "confirmedAt" timestamp NOT NULL`
     )
 
     await this.createTable(
@@ -148,6 +157,11 @@ export default {
       "amount" text NOT NULL,
       "status" text NOT NULL,
       "receipt" json`
+    )
+    await this.createIndex(
+      'return_transactions',
+      'return_transactions_status_idx',
+      ['status']
     )
   }
 }
