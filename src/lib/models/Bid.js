@@ -12,8 +12,8 @@ class Bid extends Model {
     'amount'
   ]
 
-  static findInBidGroup(bidGroupId, index) {
-    return this.findOne({ bidGroupId, index })
+  static findInBidGroup(bidGroupId, bidIndex) {
+    return this.findOne({ bidGroupId, bidIndex })
   }
 }
 
