@@ -15,7 +15,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "webapp/package.json" }}
-            - run: cd webapp && REACT_APP_API_URL=https://api.auction.decentraland.today npm run remotebuild
+            - run: cd webapp && source .env && npm run remotebuild
       - save_cache:
           paths:
             - webapp/build
