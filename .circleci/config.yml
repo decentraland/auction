@@ -15,7 +15,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "webapp/package.json" }}
-      - run: cd webapp && source '.env' && npm run remotebuild
+      - run: cd webapp && npm run remotebuild
       - save_cache:
           paths:
             - webapp/build
