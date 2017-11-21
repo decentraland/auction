@@ -44,10 +44,9 @@ export default class ParcelsMap extends React.Component {
     this.map = null
     this.mapCoordinates = new LeafletMapCoordinates(this.props.zoom)
 
-    this.redrawMap = debounce(this.redrawMap, 50)
-    this.onMapMoveEnd = debounce(this.onMapMoveEnd, 250)
+    this.debounceMapMethodsByTileSize(this.props.tileSize)
 
-    this.onMapMoveEnd()
+    setTimeout(() => this.onMapMoveEnd())
   }
 
   componentWillUnmount() {
@@ -61,18 +60,29 @@ export default class ParcelsMap extends React.Component {
 
     const shouldRedraw = this.map && !nextProps.getParcelStates().loading
 
+    const shouldDebounce = this.props.tileSize !== nextProps.tileSize
+
     if (shouldUpdateCenter) {
       const newCenter = this.getCenter(nextProps.x, nextProps.y)
       this.setView(newCenter)
     }
 
     if (shouldRedraw) {
-      this.redrawMap()
+      this.debouncedRedrawMap()
+    }
+
+    if (shouldDebounce) {
+      this.debounceMapMethodsByTileSize(nextProps.tileSize)
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return this.props.tileSize !== nextProps.tileSize
+  }
+
+  debounceMapMethodsByTileSize(tileSize) {
+    this.debouncedRedrawMap = debounce(this.redrawMap, 32000 / tileSize)
+    this.debouncedOnMapMoveEnd = debounce(this.onMapMoveEnd, 64000 / tileSize)
   }
 
   createMap(container) {
@@ -99,7 +109,7 @@ export default class ParcelsMap extends React.Component {
   attachMapEvents() {
     this.map.on('movestart', this.onMapMoveStart)
     this.map.on('click', this.onMapClick)
-    this.map.on('moveend', this.onMapMoveEnd)
+    this.map.on('moveend', this.debouncedOnMapMoveEnd)
     this.map.on('zoomend', this.onZoomEnd)
   }
 
@@ -109,7 +119,7 @@ export default class ParcelsMap extends React.Component {
       this.attachMapEvents()
 
       this.onMapMoveStart()
-      setTimeout(() => this.onMapMoveEnd())
+      this.debouncedOnMapMoveEnd()
     })
     this.map.setView(center)
   }
@@ -142,7 +152,7 @@ export default class ParcelsMap extends React.Component {
 
   onZoomEnd = event => {
     this.props.onZoomEnd(this.map.getZoom())
-    this.onMapMoveEnd()
+    this.debouncedOnMapMoveEnd()
   }
 
   getCurrentPositionAndBounds() {
@@ -247,6 +257,10 @@ export default class ParcelsMap extends React.Component {
     }
 
     div.className = `tile ${className}`
+
+    if (x % 5 === 0 && y % 5 === 0) {
+      div.innerHTML = buildCoordinate(x, y)
+    }
 
     return div
   }
