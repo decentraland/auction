@@ -4,10 +4,14 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { ConnectedRouter } from 'react-router-redux'
 
+import { env } from 'decentraland-commons'
+
 import Routes from './Routes'
 import { store, history } from './store'
 
 import './index.css'
+
+env.load()
 
 ReactDOM.render(
   <Provider store={store}>
