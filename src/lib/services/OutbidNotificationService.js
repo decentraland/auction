@@ -1,19 +1,20 @@
 import { env, SMTP } from 'decentraland-commons'
 import { OutbidNotification, Job, ParcelState } from '../models'
 
-const TEMPLATE_NAME = 'outbid'
+const SINGLE_TEMPLATE_NAME = 'outbid-single'
+const SIMPLE_TEMPLATE_NAME = 'outbid-multi'
 
 class OutbidNotificationService {
   constructor(SMTPClient) {
     this.OutbidNotification = OutbidNotification
     this.ParcelState = ParcelState
     this.Job = Job
-    this.smpt = null
+    this.smtp = null
 
-    this.setSMPTClient(SMTPClient)
+    this.setSMTPClient(SMTPClient)
   }
 
-  setSMPTClient(SMTPClient = SMTP) {
+  setSMTPClient(SMTPClient = SMTP) {
     const emailSender = env.get('MAIL_SENDER')
     const transportOptions = {
       hostname: env.get('MAIL_HOSTNAME'),
@@ -22,15 +23,24 @@ class OutbidNotificationService {
       password: env.get('MAIL_PASS')
     }
 
-    this.smpt = new SMTPClient(transportOptions)
+    this.smtp = new SMTPClient(transportOptions)
 
-    this.smpt.setTemplate(TEMPLATE_NAME, opts => ({
+    // load templates
+    this.smtp.setTemplate(SINGLE_TEMPLATE_NAME, opts => ({
       from: `The Decentraland Team <${emailSender}>`,
       to: opts.email,
-      subject: 'The Pacel has been outbid!',
+      subject: 'The Parcel has been outbid!',
       text: `The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.
-          Visit auction.decentrlaand.org/parcels/${opts.x},${opts.y} to place a new bid!`,
-      html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.</p><p>Visit auction.decentrlaand.org/parcels/${opts.x},${opts.y} to place a new bid!</p>`
+          Visit auction.decentraland.org/parcels/${opts.x},${opts.y} to place a new bid!`,
+      html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.</p><p>Visit auction.decentraland.org/parcels/${opts.x},${opts.y} to place a new bid!</p>`
+    }))
+
+    this.smtp.setTemplate(SIMPLE_TEMPLATE_NAME, opts => ({
+      from: `The Decentraland Team <${emailSender}>`,
+      to: opts.email,
+      subject: opts.subject,
+      text: opts.text,
+      html: opts.html
     }))
 
     return this
@@ -62,16 +72,56 @@ class OutbidNotificationService {
           data: { parcelStateId, email }
         },
         async () => {
-          await this.sendMail(email, parcelState)
+          await this.sendMail(email, SINGLE_TEMPLATE_NAME, parcelState)
           await this.OutbidNotification.deactivate(id)
         }
       )
     }
   }
 
-  async sendMail(email, parcelState) {
-    return await this.smtp.sendMail({ email }, TEMPLATE_NAME, {
-      ...parcelState,
+  buildSummary() {
+    let text = ''
+    let html = ''
+
+    for (const parcel of parcelStates) {
+      text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.`
+      text += `Visit auction.decentraland.org/parcels/${parcel.x},${parcel.y} to place a new bid!`
+    }
+
+    return {text, html}
+  }
+
+  async sendAllSummaryMails() {
+    const emails = await this.OutbidNotification.findSubscribedEmails()
+    for (const email of emails) {
+      await this.sendSummaryMail(email)
+    }
+  }
+
+  async sendSummaryMail(email) {
+    // get active notifications for user
+    const parcelIds = await this.OutbidNotification.findActiveByEmail(email)
+      .then(rows => rows.map(row => row.parcelStateId))
+    if (parcelIds.length === 0) {
+      return
+    }
+
+    // find updated parcels
+    const parcelStates = await this.OutbidNotification.findByUpdatedSince(parcelIds, '')
+    if (parcelStates.length === 0) {
+      return
+    }
+
+    // send mail
+    const subject = 'Summary of your Decentraland auction'
+    return this.sendMail(email, SIMPLE_TEMPLATE_NAME, {
+      ...this.buildSummary(parcelStates), subject
+    })
+  }
+
+  sendMail(email, template, opts) {
+    return this.smtp.sendMail({ email }, SIMPLE_TEMPLATE_NAME, {
+      ...opts, 
       email
     })
   }
