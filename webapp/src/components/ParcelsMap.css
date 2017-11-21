@@ -11,7 +11,10 @@
 }
 
 .leaflet-tile {
+  padding-top: 4px;
+  padding-left: 4px;
   border: 2px solid #FFF;
+  color: #666;
 }
 
 .tile {
@@ -25,13 +28,6 @@
 .taken   { background-color: #3E396B; }
 .default { background-color: #EAEAEA; }
 .loading { background-color: #D0D0D0; }
-
-/* .leaflet-coordinates {
-//   font-size: 15px;
-//   top: 37%;
-//   left: 33%;
-//   position: relative;
-}*/
 
 .leaflet-popup {
   z-index: 800;
