@@ -24,7 +24,7 @@ export default class BidParcelModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      bidValue: null
+      bidValue: ONE_LAND_IN_MANA
     }
 
     let { pendingConfirmationBids } = props
@@ -122,19 +122,18 @@ function BidForm({
   onBidValueChange,
   onClose
 }) {
-  const minimum = currentBidValue || ONE_LAND_IN_MANA
   return (
     <form action="POST" onSubmit={onBid}>
       <div className="manaInput">
-        <span className="text">{minimum}</span>
+        <span className="text">{ONE_LAND_IN_MANA}</span>
         <input
           type="number"
           required="required"
           placeholder="Mana to bid"
           className="manaToBid"
           autoFocus={true}
-          min={minimum}
-          defaultValue={minimum}
+          min={ONE_LAND_IN_MANA}
+          value={currentBidValue}
           max={manaBalance}
           onChange={onBidValueChange}
         />

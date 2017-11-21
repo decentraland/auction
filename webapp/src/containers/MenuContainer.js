@@ -35,11 +35,12 @@ class MenuContainer extends React.Component {
   render() {
     const { parcelStates, addressState, ongoingAuctions } = this.props
     const { menuVisible } = this.state
+    const isLoading = parcelStates.loading || addressState.loading
 
     return [
       <ShowMenu
         key="1"
-        isLoading={parcelStates.loading || addressState.loading}
+        isLoading={isLoading}
         onShow={() => this.changeMenuVisibility(true)}
       />,
       <Menu
