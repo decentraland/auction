@@ -33,11 +33,15 @@ class MenuContainer extends React.Component {
   }
 
   render() {
+    const { parcelStates, addressState, ongoingAuctions } = this.props
     const { menuVisible } = this.state
-    const { addressState, ongoingAuctions } = this.props
 
     return [
-      <ShowMenu key="1" onShow={() => this.changeMenuVisibility(true)} />,
+      <ShowMenu
+        key="1"
+        isLoading={parcelStates.loading || addressState.loading}
+        onShow={() => this.changeMenuVisibility(true)}
+      />,
       <Menu
         key="2"
         addressState={addressState}
@@ -51,6 +55,7 @@ class MenuContainer extends React.Component {
 
 export default connect(
   state => ({
+    parcelStates: selectors.getParcelStates(state),
     addressState: selectors.getAddressState(state),
     ongoingAuctions: selectors.getOngoingAuctions(state)
   }),
