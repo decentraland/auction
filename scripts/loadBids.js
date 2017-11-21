@@ -165,7 +165,7 @@ const buildBuyTxData = (address, parcels) => {
 const findParcelsToBuy = async (address, batchSize) => {
   try {
     // get parcels for address
-    const parcels = await ParcelState.findParcelsByAddress(address)
+    const parcels = await ParcelState.findByAddress(address)
 
     // get already done parcels for address
     const doneParcels = await BuyTransaction.findProcessedParcels(address)

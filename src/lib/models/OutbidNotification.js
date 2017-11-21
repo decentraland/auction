@@ -4,15 +4,27 @@ class OutbidNotification extends Model {
   static tableName = 'outbid_notifications'
   static columnNames = ['parcelStateId', 'email', 'active']
 
-  static async findActiveByParcelStateId(parcelStateId) {
-    return await this.find({
+  static findSubscribedEmails() {
+    return this.db.query('SELECT DISTINCT(email) FROM outbid_notifications')
+      .then(rows => rows.map(row => row.email))
+  }
+
+  static findActiveByEmail(email) {
+    return this.find({
+      email,
+      active: true
+    })
+  }
+
+  static findActiveByParcelStateId(parcelStateId) {
+    return this.find({
       parcelStateId,
       active: true
     })
   }
 
-  static async deactivate(id) {
-    return await this.update({ active: false }, { id })
+  static deactivate(id) {
+    return this.update({ active: false }, { id })
   }
 }
 

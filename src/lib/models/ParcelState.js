@@ -61,10 +61,17 @@ class ParcelState extends Model {
     return this.db.query(`SELECT DISTINCT(address) FROM ${this.tableName}`)
   }
 
-  static findParcelsByAddress(address) {
+  static findByAddress(address) {
     return this.db.query(`SELECT * FROM ${this.tableName} WHERE address = $1`, [
       address
     ])
+  }
+
+  static findByUpdatedSince(ids, since) {
+    return this.db.query(
+      `SELECT x, y, address, amount FROM parcel_states WHERE id IN ($1) AND updatedAt > $2`, 
+      [ids, since]
+    )
   }
 
   static async inRange(min, max) {
