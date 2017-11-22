@@ -14,7 +14,7 @@ export default class AddressService {
   static BEFORE_NOVEMBER_DISCOUNT = BEFORE_NOVEMBER_DISCOUNT
   static AFTER_NOVEMBER_DISCOUNT = AFTER_NOVEMBER_DISCOUNT
 
-  static async lockedMANABalanceOf(address) {
+  async lockedMANABalanceOf(address) {
     // get MANA locked to districts
     const monthlyLandBalances = await this.DistrictEntry
       .getMonthlyLockedBalanceByAddress(address, LAND_MANA_COST)

@@ -8,6 +8,8 @@ const toUnixtime = strDate => {
 }
 
 describe('AddressService', () => {
+  let addressService
+
   const addresses = ['0xdead', '0xbeef']
   const [address1, address2] = addresses
 
@@ -76,6 +78,7 @@ describe('AddressService', () => {
   ]
 
   beforeEach(async () => {
+    addressService = new AddressService()
     await Promise.all(lockedToDistricts.map(row => DistrictEntry.insert(row)))
     await Promise.all(
       lockedToTerraform.map(row => LockedBalanceEvent.insert(row))
@@ -84,11 +87,11 @@ describe('AddressService', () => {
 
   describe('.lockedMANABalanceOf', () => {
     it('should calculate balances with proper discounts', async () => {
-      const balance1 = await AddressService.lockedMANABalanceOf(address1)
-      expect(balance1).to.be.equal(24950)
+      const lockedMANA1 = await addressService.lockedMANABalanceOf(address1)
+      expect(lockedMANA1.totalLockedMANA).to.be.equal(24950)
 
-      const balance2 = await AddressService.lockedMANABalanceOf(address2)
-      expect(balance2).to.be.equal(52200)
+      const lockedMANA2 = await addressService.lockedMANABalanceOf(address2)
+      expect(lockedMANA2.totalLockedMANA).to.be.equal(52200)
     })
   })
 
