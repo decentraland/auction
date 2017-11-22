@@ -69,7 +69,7 @@ class ParcelState extends Model {
 
   static findByUpdatedSince(ids, since) {
     return this.db.query(
-      `SELECT x, y, address, amount FROM parcel_states WHERE id IN ($1) AND updatedAt > $2`, 
+      `SELECT x, y, address, amount FROM parcel_states WHERE id = ANY ($1) AND "updatedAt" > $2`, 
       [ids, since]
     )
   }
