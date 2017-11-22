@@ -1,5 +1,7 @@
 import L from 'leaflet'
 
+let cache = {}
+
 export default class LeafletMapCoordinates {
   constructor(zoom) {
     this.zoom = zoom
@@ -21,6 +23,13 @@ export default class LeafletMapCoordinates {
 
     const lat = -y / offset * mapSize
     const lng = x / offset * mapSize
+
+    cache[`${x},${y}`] = {
+      lat,
+      lng
+    }
+
+    console.log(cache)
 
     return new L.LatLng(lat, lng)
   }

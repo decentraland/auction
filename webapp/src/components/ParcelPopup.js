@@ -8,7 +8,8 @@ import Button from './Button'
 import CurrentBidStatus from './CurrentBidStatus'
 
 export default function ParcelPopup({ x, y, parcel, addressState, projects, onBid }) {
-  const canBid = !parcelUtils.isTaken(parcel) && !parcelUtils.hasEnded(parcel)
+  const unBiddeable =
+    parcel.error || parcelUtils.isTaken(parcel) || parcelUtils.hasEnded(parcel)
 
   let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: '' })
 
@@ -31,7 +32,9 @@ export default function ParcelPopup({ x, y, parcel, addressState, projects, onBi
       <div className="text">{endsAt}</div>
 
       <div className="text-center">
-        {canBid && <Button onClick={event => onBid(parcel)}>Place bid</Button>}
+        {!unBiddeable && (
+          <Button onClick={event => onBid(parcel)}>Place bid</Button>
+        )}
       </div>
     </div>
   )

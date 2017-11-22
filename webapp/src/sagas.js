@@ -17,15 +17,15 @@ import api from './lib/api'
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3)
 
-  yield takeLatest(types.changeLocation, handleLocationChange)
+  yield takeEvery(types.changeLocation, handleLocationChange)
 
-  yield takeLatest(types.parcelRangeChanged, handleParcelRangeChange)
+  yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange)
   yield takeLatest(types.fetchParcels.request, handleParcelFetchRequest)
 
   yield takeLatest(types.connectWeb3.success, handleAddressFetchRequest)
-  yield takeEvery(types.fetchManaBalance.request, handleAddressFetchRequest)
+  yield takeLatest(types.fetchManaBalance.request, handleAddressFetchRequest)
 
-  yield takeEvery(types.fetchAddressState.request, handleAddressFetchRequest)
+  yield takeLatest(types.fetchAddressState.request, handleAddressFetchRequest)
 
   yield takeEvery(types.fetchProjects.request, handleProjectsFetchRequest)
 

@@ -7,6 +7,7 @@ import debounce from 'lodash.debounce'
 import { buildCoordinate } from '../lib/util'
 import * as parcelUtils from '../lib/parcelUtils'
 import LeafletMapCoordinates from '../lib/LeafletMapCoordinates'
+import createVirtualGrid from '../lib/createVirtualGrid'
 
 import ParcelPopup from './ParcelPopup'
 
@@ -87,14 +88,17 @@ export default class ParcelsMap extends React.Component {
   }
 
   createMap(container) {
-    const { x, y, minZoom, maxZoom, bounds, zoom } = this.props
+    const { x, y, tileSize, minZoom, maxZoom, bounds, zoom } = this.props
 
     this.map = new L.Map(MAP_ID, {
       minZoom,
       maxZoom,
       zoom,
       center: this.getCenter(x, y),
-      layers: [this.getGridLayer()],
+      layers: [
+        // this.getGridLayer()
+        createVirtualGrid({ cellSize: tileSize })
+      ],
       fadeAnimation: false,
       zoomAnimation: false
     })
@@ -115,17 +119,19 @@ export default class ParcelsMap extends React.Component {
   }
 
   setView(center) {
-    this.map.off('movestart moveend')
-    this.map.on('moveend', () => {
-      this.attachMapEvents()
+    console.log("SET VIEW", center)
+    // this.map.off('movestart click moveend zoomend')
+    // this.map.on('moveend', () => {
+    //   this.attachMapEvents()
 
-      this.onMapMoveStart()
-      this.debouncedOnMapMoveEnd()
-    })
+    //   this.onMapMoveStart()
+    //   this.debouncedOnMapMoveEnd()
+    // })
     this.map.setView(center)
   }
 
   redrawMap = () => {
+    console.log('REDRAW')
     this.map.eachLayer(layer => {
       if (layer.redraw) {
         layer.redraw()
@@ -217,7 +223,11 @@ export default class ParcelsMap extends React.Component {
 
   getGridLayer() {
     const { tileSize } = this.props
-    const tiles = new L.GridLayer({ tileSize })
+    const tiles = new L.GridLayer({
+      tileSize,
+      updateInterval: 650,
+      keepBuffer: 1
+    })
 
     tiles.createTile = coords => this.createTile(coords, tileSize)
 
@@ -232,6 +242,7 @@ export default class ParcelsMap extends React.Component {
 
   bindMap(container) {
     if (container) {
+      console.log('bindMap')
       this.removeMap()
       this.createMap(container)
     }
@@ -280,6 +291,7 @@ export default class ParcelsMap extends React.Component {
   }
 
   render() {
+    console.log('MAP RENDER')
     return <div id={MAP_ID} ref={this.bindMap.bind(this)} />
   }
 }
