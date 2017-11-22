@@ -2,7 +2,7 @@ import { Model } from 'decentraland-commons'
 
 class OutbidNotification extends Model {
   static tableName = 'outbid_notifications'
-  static columnNames = ['parcelStateId', 'email', 'active']
+  static columnNames = ['parcelStateId', 'email', 'active', 'updatedAt']
 
   static findSubscribedEmails() {
     return this.db.query('SELECT DISTINCT(email) FROM outbid_notifications')

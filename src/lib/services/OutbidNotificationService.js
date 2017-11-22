@@ -14,6 +14,10 @@ class OutbidNotificationService {
     this.setSMTPClient(SMTPClient)
   }
 
+  static hoursAgoToDate(hours) {
+    return new Date(new Date().getTime() - hours * 3600 * 1000)
+  }
+
   setSMTPClient(SMTPClient = SMTP) {
     const emailSender = env.get('MAIL_SENDER')
     const transportOptions = {
@@ -79,15 +83,18 @@ class OutbidNotificationService {
     }
   }
 
-  buildSummary() {
-    let text = ''
-    let html = ''
+  buildSummary(parcelStates) {
+    let text = 'This is the summary of parcel outbids from the last notification:\n\n'
+    let html = '<p>This is the summary of parcel outbids from the last notification:</p>'
 
     for (const parcel of parcelStates) {
-      text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.`
-      text += `Visit auction.decentraland.org/parcels/${parcel.x},${parcel.y} to place a new bid!`
-    }
+      text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.\n`
+      text += `Visit https://auction.decentraland.org/parcels/${parcel.x},${parcel.y} to place a new bid!\n\n`
 
+      html += `<p>The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.</p>`
+      html += `<p>Visit https://auction.decentraland.org/parcels/${parcel.x},${parcel.y} to place a new bid!</p>`
+    }
+    console.log(text)
     return {text, html}
   }
 
@@ -98,25 +105,37 @@ class OutbidNotificationService {
     }
   }
 
-  async sendSummaryMail(email) {
+  async sendSummaryMail(email, hoursAgo) {
     // get active notifications for user
     const parcelIds = await this.OutbidNotification.findActiveByEmail(email)
       .then(rows => rows.map(row => row.parcelStateId))
     if (parcelIds.length === 0) {
-      return
+      return false
     }
 
     // find updated parcels
-    const parcelStates = await this.OutbidNotification.findByUpdatedSince(parcelIds, '')
+    const parcelStates = await this.ParcelState.findByUpdatedSince(
+      parcelIds, OutbidNotificationService.hoursAgoToDate(hoursAgo)
+    )
     if (parcelStates.length === 0) {
-      return
+      return false
     }
 
     // send mail
-    const subject = 'Summary of your Decentraland auction'
-    return this.sendMail(email, SIMPLE_TEMPLATE_NAME, {
-      ...this.buildSummary(parcelStates), subject
-    })
+    const subject = 'Summary of the Decentraland auction'
+    await this.Job.perform(
+      {
+        type: 'outbid_notification_multi',
+        referenceId: 0,
+        data: { parcelStates, email }
+      },
+      async () => {
+        await this.sendMail(email, SIMPLE_TEMPLATE_NAME, {
+          ...this.buildSummary(parcelStates), subject
+        })
+      }
+    )
+    return true
   }
 
   sendMail(email, template, opts) {
