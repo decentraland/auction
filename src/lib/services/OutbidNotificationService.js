@@ -94,7 +94,7 @@ class OutbidNotificationService {
       html += `<p>The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.</p>`
       html += `<p>Visit https://auction.decentraland.org/parcels/${parcel.x},${parcel.y} to place a new bid!</p>`
     }
-    console.log(text)
+
     return {text, html}
   }
 
@@ -123,6 +123,7 @@ class OutbidNotificationService {
 
     // send mail
     const subject = 'Summary of the Decentraland auction'
+    const summary = this.buildSummary(parcelStates)
     await this.Job.perform(
       {
         type: 'outbid_notification_multi',
@@ -131,11 +132,15 @@ class OutbidNotificationService {
       },
       async () => {
         await this.sendMail(email, SIMPLE_TEMPLATE_NAME, {
-          ...this.buildSummary(parcelStates), subject
+          ...summary, subject
         })
       }
     )
-    return true
+    return {
+      parcelIds,
+      parcelStates,
+      summary
+    }
   }
 
   sendMail(email, template, opts) {
