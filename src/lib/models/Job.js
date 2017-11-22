@@ -24,17 +24,17 @@ class Job extends Model {
   }
 
   static async perform(jobDescription, doWork) {
-    let job = await this.Job.insert({
+    let job = await this.insert({
       ...jobDescription,
       state: 'pending'
     })
 
     try {
       await doWork()
-      await this.Job.update({ state: 'complete' }, { id: job.id })
+      await this.update({ state: 'complete' }, { id: job.id })
     } catch (error) {
       job.data = Object.assign({ error: error.message }, job.data)
-      await this.Job.update({ state: 'error', data: job.data }, { id: job.id })
+      await this.update({ state: 'error', data: job.data }, { id: job.id })
 
       throw error
     }
