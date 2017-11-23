@@ -1,4 +1,5 @@
 import { env, SMTP } from 'decentraland-commons'
+
 import { OutbidNotification, Job, ParcelState } from '../models'
 
 const SINGLE_TEMPLATE_NAME = 'outbid-single'
@@ -127,7 +128,7 @@ class OutbidNotificationService {
     await this.Job.perform(
       {
         type: 'outbid_notification_multi',
-        referenceId: 0,
+        referenceId: email,
         data: { parcelStates, email }
       },
       async () => {
