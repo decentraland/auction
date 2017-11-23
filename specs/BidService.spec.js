@@ -254,7 +254,7 @@ describe('BidService', function() {
             id: '0,0',
             address,
             amount: 110,
-            bidGroup: id,
+            bidGroupId: id,
             bidIndex: 0,
             endsAt: new Date(TIMESTAMP + 129600000)
           }

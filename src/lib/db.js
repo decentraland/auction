@@ -109,9 +109,14 @@ export default {
       'jobs',
       `"id" int NOT NULL DEFAULT nextval('jobs_id_seq'),
       "type" text NOT NULL,
-      "referenceId" int NOT NULL,
+      "referenceId" text NOT NULL,
       "state" text,
       "data" json`
+    )
+    await this.createIndex(
+      'jobs',
+      'jobs_reference_id',
+      ['"referenceId"']
     )
 
     await this.createTable(

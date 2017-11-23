@@ -15,8 +15,7 @@ import {
 
 import {
   BidService,
-  BidReceiptService,
-  OutbidNotificationService
+  BidReceiptService
 } from './lib/services'
 
 env.load()
@@ -145,7 +144,6 @@ export async function postBidGroup(req) {
   }
 
   await new BidReceiptService().sign(bidGroup)
-  new OutbidNotificationService().notificateOutbids(bidParcels) // async
 
   return true
 }

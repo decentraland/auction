@@ -174,7 +174,7 @@ describe('ParcelState', function() {
     })
   })
 
-  describe('.findParcelsByAddress', function() {
+  describe('.findByAddress', function() {
     it('should return array of parcels for address', async function() {
       const address1 = '0xbeebeea'
       const address2 = '0xbeebeeb'
@@ -209,7 +209,7 @@ describe('ParcelState', function() {
         projectId: null
       })
 
-      const result = await ParcelState.findParcelsByAddress(address1)
+      const result = await ParcelState.findByAddress(address1)
       expect(result.length).to.be.equal(2)
       expect(result.every(row => row.address === address1)).to.be.equal(true)
     })

@@ -147,7 +147,9 @@ const importAddressStates = async () => {
       continue
     }
 
-    const balance = await AddressService.lockedMANABalanceOf(address)
+    const addressService = new AddressService()
+    const lockedMANA = await addressService.lockedMANABalanceOf(address)
+    const balance = lockedMANA.totalLockedMANA
 
     if (await AddressState.findByAddress(address)) {
       log.info(`[${address}] Updating balance(${balance})`)
