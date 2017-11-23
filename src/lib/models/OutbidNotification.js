@@ -5,7 +5,7 @@ class OutbidNotification extends Model {
   static columnNames = ['parcelStateId', 'email', 'active', 'updatedAt']
 
   static findSubscribedEmails() {
-    return this.db.query('SELECT DISTINCT(email) FROM outbid_notifications')
+    return this.db.query('SELECT DISTINCT(email) FROM outbid_notifications WHERE active=true')
       .then(rows => rows.map(row => row.email))
   }
 

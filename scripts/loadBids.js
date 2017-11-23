@@ -404,7 +404,7 @@ async function main() {
       process.exit(0)
     }
   } catch (err) {
-    log.info(err)
+    log.error(err)
   }
 }
 
