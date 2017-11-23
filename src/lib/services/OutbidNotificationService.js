@@ -85,8 +85,10 @@ class OutbidNotificationService {
   }
 
   buildSummary(parcelStates) {
-    let text = 'This is the summary of parcel outbids from the last notification:\n\n'
-    let html = '<p>This is the summary of parcel outbids from the last notification:</p>'
+    let text =
+      'This is the summary of parcel outbids from the last notification:\n\n'
+    let html =
+      '<p>This is the summary of parcel outbids from the last notification:</p>'
 
     for (const parcel of parcelStates) {
       text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.\n`
@@ -96,7 +98,7 @@ class OutbidNotificationService {
       html += `<p>Visit https://auction.decentraland.org/parcels/${parcel.x},${parcel.y} to place a new bid!</p>`
     }
 
-    return {text, html}
+    return { text, html }
   }
 
   async sendAllSummaryMails(hoursAgo) {
@@ -116,7 +118,7 @@ class OutbidNotificationService {
 
   async sendSummaryMail(email, hoursAgo) {
     // check if is time to send
-    const isTimeToSend = (date) => (new Date() - date) / 1000 > hoursAgo * 3600
+    const isTimeToSend = date => (new Date() - date) / 1000 > hoursAgo * 3600
 
     const lastJob = await Job.findLastByReferenceId(email)
     if (!isTimeToSend(lastJob.createdAt)) {
@@ -124,7 +126,8 @@ class OutbidNotificationService {
     }
 
     // get active notifications for user
-    const parcelIds = await this.OutbidNotification.findActiveByEmail(email)
+    const parcelIds = await this.OutbidNotification
+      .findActiveByEmail(email)
       .then(rows => rows.map(row => row.parcelStateId))
     if (parcelIds.length === 0) {
       throw new Error(`No active notifications found for user ${email}`)
@@ -132,7 +135,8 @@ class OutbidNotificationService {
 
     // find updated parcels
     const parcelStates = await this.ParcelState.findByUpdatedSince(
-      parcelIds, OutbidNotificationService.hoursAgoToDate(hoursAgo)
+      parcelIds,
+      OutbidNotificationService.hoursAgoToDate(hoursAgo)
     )
     if (parcelStates.length === 0) {
       throw new Error(`No updated parcels found for user ${email}`)
@@ -149,7 +153,8 @@ class OutbidNotificationService {
       },
       async () => {
         await this.sendMail(email, SIMPLE_TEMPLATE_NAME, {
-          ...summary, subject
+          ...summary,
+          subject
         })
       }
     )
@@ -163,7 +168,7 @@ class OutbidNotificationService {
 
   sendMail(email, template, opts) {
     return this.smtp.sendMail({ email }, SIMPLE_TEMPLATE_NAME, {
-      ...opts, 
+      ...opts,
       email
     })
   }

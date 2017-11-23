@@ -13,10 +13,7 @@ import {
   OutbidNotification
 } from './lib/models'
 
-import {
-  BidService,
-  BidReceiptService
-} from './lib/services'
+import { BidService, BidReceiptService } from './lib/services'
 
 env.load()
 

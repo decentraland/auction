@@ -19,7 +19,7 @@ class Job extends Model {
   }
 
   static findLastByReferenceId(referenceId) {
-    return this.findOne({referenceId}, {id: 'DESC'})
+    return this.findOne({ referenceId }, { id: 'DESC' })
   }
 
   static async insert(job) {

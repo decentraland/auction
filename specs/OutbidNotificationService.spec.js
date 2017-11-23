@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { Job, OutbidNotification, ParcelState } from '../src/lib/models'
+import { OutbidNotification, ParcelState } from '../src/lib/models'
 import { OutbidNotificationService } from '../src/lib/services'
 
 describe('OutbidNotificationService', function() {
@@ -8,9 +8,9 @@ describe('OutbidNotificationService', function() {
   const email = 'abarmat@gmail.com'
 
   beforeEach(() => {
-    const SMTPClient = { 
-      setTemplate: () => undefined, 
-      sendMail: (email, template, opts) => console.log(email) 
+    const SMTPClient = {
+      setTemplate: () => undefined,
+      sendMail: (email, template, opts) => console.log(email)
     }
 
     notificationService = new OutbidNotificationService()
@@ -29,7 +29,7 @@ describe('OutbidNotificationService', function() {
 
   describe('summary email', () => {
     it('send summary email with only updated parcels', async () => {
-      const parcels = [[1,1], [1,2]]
+      const parcels = [[1, 1], [1, 2]]
       const lastUpdatedHours = 8
       const updatedDate = OutbidNotificationService.hoursAgoToDate(4)
       const expiredDate = OutbidNotificationService.hoursAgoToDate(12)
@@ -82,16 +82,21 @@ describe('OutbidNotificationService', function() {
 
       // insert notifications
       await Promise.all(
-        parcels.map(coords => OutbidNotification.insert({
-          email, 
-          parcelStateId: ParcelState.hashId(...coords)
-        }))
+        parcels.map(coords =>
+          OutbidNotification.insert({
+            email,
+            parcelStateId: ParcelState.hashId(...coords)
+          })
+        )
       )
 
       // send email
-      const results = await notificationService.sendSummaryMail(email, lastUpdatedHours)
+      const results = await notificationService.sendSummaryMail(
+        email,
+        lastUpdatedHours
+      )
 
-      // text is good 
+      // text is good
       expect(results.summary.text).to.be.equal(
         'This is the summary of parcel outbids from the last notification:\n\nThe parcel 1,1 now belongs to 0xdead for 1000.\nVisit https://auction.decentraland.org/parcels/1,1 to place a new bid!\n\nThe parcel 1,2 now belongs to 0xbeef for 2000.\nVisit https://auction.decentraland.org/parcels/1,2 to place a new bid!\n\n'
       )

@@ -19,20 +19,18 @@ class BuyTransaction extends Model {
   }
 
   static findProcessedParcels(address) {
-    return this.db
-      .query(
-        'SELECT UNNEST("parcelStatesIds") AS id FROM buy_transactions WHERE status IN (\'completed\', \'pending\') AND address = $1',
-        [address]
-      )
-      .then(rows => rows.map(row => row.id))
+    const query =
+      // eslint-disable-next-line
+      "SELECT UNNEST(\"parcelStatesIds\") AS id FROM buy_transactions WHERE status IN ('completed', 'pending') AND address = $1"
+    return this.db.query(query, [address]).then(rows => rows.map(row => row.id))
   }
 
   static totalBurnedMANAByAddress(address) {
+    const query =
+      // eslint-disable-next-line
+      "SELECT \"totalCost\" FROM buy_transactions WHERE status IN ('completed', 'pending') AND address = $1"
     return this.db
-      .query(
-        'SELECT "totalCost" FROM buy_transactions WHERE status IN (\'completed\', \'pending\') AND address = $1',
-        [address]
-      )
+      .query(query, [address])
       .then(rows =>
         rows
           .map(row => eth.utils.toBigNumber(row.totalCost))

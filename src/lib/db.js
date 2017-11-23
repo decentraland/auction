@@ -113,11 +113,7 @@ export default {
       "state" text,
       "data" json`
     )
-    await this.createIndex(
-      'jobs',
-      'jobs_reference_id',
-      ['"referenceId"']
-    )
+    await this.createIndex('jobs', 'jobs_reference_id', ['"referenceId"'])
 
     await this.createTable(
       'district_entries',

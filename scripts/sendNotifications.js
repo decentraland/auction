@@ -1,10 +1,10 @@
 #!/usr/bin/env babel-node
 
 import minimist from 'minimist'
-import { eth, env, Log } from 'decentraland-commons'
+import { env, Log } from 'decentraland-commons'
 
 import db from '../src/lib/db'
-import { OutbidNotificationService } from '../src/lib/services';
+import { OutbidNotificationService } from '../src/lib/services'
 
 const log = new Log('SendNotifications')
 
