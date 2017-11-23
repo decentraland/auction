@@ -99,13 +99,13 @@ class OutbidNotificationService {
     return {text, html}
   }
 
-  async sendAllSummaryMails() {
+  async sendAllSummaryMails(hoursAgo) {
     const results = {}
     const emails = await this.OutbidNotification.findSubscribedEmails()
 
     for (const email of emails) {
       try {
-        results[email] = await this.sendSummaryMail(email)
+        results[email] = await this.sendSummaryMail(email, hoursAgo)
       } catch (err) {
         results[email] = err
       }
@@ -115,6 +115,14 @@ class OutbidNotificationService {
   }
 
   async sendSummaryMail(email, hoursAgo) {
+    // check if is time to send
+    const isTimeToSend = (date) => (new Date() - date) / 1000 > hoursAgo * 3600
+
+    const lastJob = await Job.findLastByReferenceId(email)
+    if (!isTimeToSend(lastJob.createdAt)) {
+      throw new Error(`Last notification sent less than ${hoursAgo} hours ago`)
+    }
+
     // get active notifications for user
     const parcelIds = await this.OutbidNotification.findActiveByEmail(email)
       .then(rows => rows.map(row => row.parcelStateId))

@@ -18,6 +18,10 @@ class Job extends Model {
     return Object.assign({}, attributes, { data })
   }
 
+  static findLastByReferenceId(referenceId) {
+    return this.findOne({referenceId}, {id: 'DESC'})
+  }
+
   static async insert(job) {
     let inserted = await super.insert(this.serialize(job))
     return this.deserialize(inserted)
