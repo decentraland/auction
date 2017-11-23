@@ -15,8 +15,14 @@ async function main() {
     await db.connect()
 
     // send all
+    log.info('Sending auction summary emails...')
     const service = new OutbidNotificationService()
-    await service.sendAllSummaryMails()  
+    const results = await service.sendAllSummaryMails()
+
+    const values = Object.values(results)
+    const totalEmails = values.length
+    const totalSent = values.filter(e => typeof(e) !== 'string').length
+    log.info(`Sent ${totalSent} out of ${totalEmails} emails processed`)
   } catch (err) {
     log.error(err)
   } finally {

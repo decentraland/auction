@@ -100,10 +100,18 @@ class OutbidNotificationService {
   }
 
   async sendAllSummaryMails() {
+    const results = {}
     const emails = await this.OutbidNotification.findSubscribedEmails()
+
     for (const email of emails) {
-      await this.sendSummaryMail(email)
+      try {
+        results[email] = await this.sendSummaryMail(email)
+      } catch (err) {
+        results[email] = err
+      }
     }
+
+    return results
   }
 
   async sendSummaryMail(email, hoursAgo) {
@@ -111,7 +119,7 @@ class OutbidNotificationService {
     const parcelIds = await this.OutbidNotification.findActiveByEmail(email)
       .then(rows => rows.map(row => row.parcelStateId))
     if (parcelIds.length === 0) {
-      return false
+      throw new Error(`No active notifications found for user ${email}`)
     }
 
     // find updated parcels
@@ -119,7 +127,7 @@ class OutbidNotificationService {
       parcelIds, OutbidNotificationService.hoursAgoToDate(hoursAgo)
     )
     if (parcelStates.length === 0) {
-      return false
+      throw new Error(`No updated parcels found for user ${email}`)
     }
 
     // send mail
@@ -137,6 +145,7 @@ class OutbidNotificationService {
         })
       }
     )
+
     return {
       parcelIds,
       parcelStates,
