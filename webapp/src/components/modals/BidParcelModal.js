@@ -49,6 +49,19 @@ export default class BidParcelModal extends React.Component {
     this.setState({ bidValue: bidValue || this.getMinimumBidValue() })
   }
 
+  onBidValueReset = event => {
+    const maxBid = this.getManaBalance()
+    const minBid = this.getMinimumBidValue()
+    let value = this.state.bidValue
+
+    if (value < minBid) {
+      value = minBid
+    } else if (value > maxBid) {
+      value = maxBid
+    }
+    this.setState({ bidValue: value })
+  }
+
   isValidBid(bidValue) {
     // We don't use `getCurrentBidValue` here because if the parcel doesn't have a bid yet,
     // we want to be able to bid ONE_LAND_IN_MANA
@@ -81,6 +94,7 @@ export default class BidParcelModal extends React.Component {
         manaBalance={manaBalance}
         onBid={preventDefault(this.onBid)}
         onBidValueChange={this.onBidValueChange}
+        onBidValueReset={this.onBidValueReset}
         onClose={onClose}
       />
     ) : (
@@ -122,6 +136,7 @@ function BidForm({
   manaBalance,
   onBid,
   onBidValueChange,
+  onBidValueReset,
   onClose
 }) {
   return (
@@ -138,6 +153,8 @@ function BidForm({
           value={currentBidValue}
           max={manaBalance}
           onChange={onBidValueChange}
+          onFocus={(e) => e.target.select()}
+          onBlur={onBidValueReset}
         />
         <span className="text">{manaBalance}</span>
       </div>
