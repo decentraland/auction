@@ -55,5 +55,10 @@ export default {
     close: 'Close Modal'
   },
 
+  menu: {
+    open: '[Open] Menu',
+    close: '[Close] Menu'
+  },
+
   changeLocation: 'Change location URL'
 }

@@ -96,3 +96,19 @@ export function changeLocation(url) {
     url
   }
 }
+
+// -------------------------------------------------------------------------
+// Menu
+
+export function openMenu() {
+  return {
+    type: types.menu.open
+  }
+}
+
+export function closeMenu() {
+  return {
+    type: types.menu.close
+  }
+}
+
