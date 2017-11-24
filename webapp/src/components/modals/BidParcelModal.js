@@ -101,7 +101,7 @@ export default class BidParcelModal extends React.Component {
           <p className="text">
             You are bidding on the LAND {parcel.x},{parcel.y}.
             <br />
-            The minimun bid is {this.getCurrentBidValue()} MANA.
+            The minimum bid is {this.getCurrentBidValue()} MANA.
             <br />
             {this.pendingManaBalance
               ? `You have ${this.pendingManaBalance} MANA pending.`
