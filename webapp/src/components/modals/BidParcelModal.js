@@ -83,7 +83,12 @@ export default class BidParcelModal extends React.Component {
         onClose={onClose}
       />
     ) : (
-      <p className="text">You don&#39;t have enough balance to bid.</p>
+      <div>
+        <p className="text">You don&#39;t have enough balance to bid.</p>
+        <Button type="default" className="btn btn-primary" onClick={onClose}>
+          Close
+        </Button>
+      </div>
     )
   }
 
