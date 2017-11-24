@@ -24,7 +24,7 @@ export default class BidParcelModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      bidValue: ONE_LAND_IN_MANA
+      bidValue: this.getMinimumBidValue()
     }
 
     let { pendingConfirmationBids } = props
@@ -46,7 +46,7 @@ export default class BidParcelModal extends React.Component {
 
   onBidValueChange = event => {
     const bidValue = parseFloat(event.currentTarget.value, 10)
-    this.setState({ bidValue: bidValue || ONE_LAND_IN_MANA })
+    this.setState({ bidValue: bidValue || this.getMinimumBidValue() })
   }
 
   isValidBid(bidValue) {
@@ -76,7 +76,8 @@ export default class BidParcelModal extends React.Component {
 
     return manaBalance >= ONE_LAND_IN_MANA ? (
       <BidForm
-        currentBidValue={this.getCurrentBidValue()}
+        currentBidValue={this.state.bidValue}
+        minBidValue={this.getMinimumBidValue()}
         manaBalance={manaBalance}
         onBid={preventDefault(this.onBid)}
         onBidValueChange={this.onBidValueChange}
@@ -87,7 +88,7 @@ export default class BidParcelModal extends React.Component {
     )
   }
 
-  getCurrentBidValue() {
+  getMinimumBidValue() {
     const { parcel } = this.props
     return parcel.amount || ONE_LAND_IN_MANA
   }
@@ -101,7 +102,7 @@ export default class BidParcelModal extends React.Component {
           <p className="text">
             You are bidding on the LAND {parcel.x},{parcel.y}.
             <br />
-            The minimum bid is {this.getCurrentBidValue()} MANA.
+            The minimum bid is {this.getMinimumBidValue()} MANA.
             <br />
             {this.pendingManaBalance
               ? `You have ${this.pendingManaBalance} MANA pending.`
@@ -117,6 +118,7 @@ export default class BidParcelModal extends React.Component {
 
 function BidForm({
   currentBidValue,
+  minBidValue,
   manaBalance,
   onBid,
   onBidValueChange,
@@ -125,14 +127,14 @@ function BidForm({
   return (
     <form action="POST" onSubmit={onBid}>
       <div className="manaInput">
-        <span className="text">{ONE_LAND_IN_MANA}</span>
+        <span className="text">{minBidValue}</span>
         <input
           type="number"
           required="required"
           placeholder="Mana to bid"
           className="manaToBid"
           autoFocus={true}
-          min={ONE_LAND_IN_MANA}
+          min={minBidValue}
           value={currentBidValue}
           max={manaBalance}
           onChange={onBidValueChange}
