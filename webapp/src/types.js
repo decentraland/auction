@@ -35,6 +35,7 @@ export default {
     failed: '[Failed] Failed to fetch projects'
   },
 
+  intentUnconfirmedBid: 'Intent to append new unconfirmed bid',
   appendUnconfirmedBid: 'Append new unconfirmed bid',
   deleteUnconfirmedBid: 'Remove unconfirmed bid',
 

@@ -29,6 +29,8 @@ function* rootSaga() {
 
   yield takeEvery(types.fetchProjects.request, handleProjectsFetchRequest)
 
+  yield takeEvery(types.intentUnconfirmedBid, handleIntentUnconfirmedBid)
+
   yield takeEvery(
     types.fetchOngoingAuctions.request,
     handleOngoingAuctionsFetchRequest
@@ -239,6 +241,18 @@ Time: ${new Date().getTime()}`
 function getBidGroupsNonce(bidGroups) {
   const nonces = bidGroups.map(bidGroup => bidGroup.nonce).sort() // DESC
   return nonces.length > 0 ? nonces.pop() + 1 : 0
+}
+
+function* handleIntentUnconfirmedBid(action) {
+  const pendingConfirmationBids = yield select(selectors.getPendingConfirmationBids)
+
+  const exists = pendingConfirmationBids.data.filter(
+    bid => bid.x === action.bid.x && bid.y === action.bid.y
+  ).length > 0
+
+  if (!exists) {
+    yield put({ type: types.appendUnconfirmedBid, bid: action.bid })
+  }
 }
 
 export default rootSaga

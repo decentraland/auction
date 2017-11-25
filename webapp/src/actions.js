@@ -43,6 +43,13 @@ export function clickParcel(x, y) {
 // -------------------------------------------------------------------------
 // Bids
 
+export function intentUnconfirmedBid(bid) {
+  return {
+    type: types.intentUnconfirmedBid,
+    bid
+  }
+}
+
 export function appendUnconfirmedBid(bid) {
   return {
     type: types.appendUnconfirmedBid,
