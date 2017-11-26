@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../../reducers'
-import { intentUnconfirmedBid } from '../../actions'
+import { intentUnconfirmedBid, appendUnconfirmedBid, closeMenu } from '../../actions'
 import { stateData } from '../../lib/propTypes'
 
 import { BidParcelModal } from '../../components/modals'
@@ -12,13 +12,15 @@ class BidParcelModalContainer extends React.Component {
   static propTypes = {
     addressState: stateData(PropTypes.object).isRequired,
     pendingConfirmationBids: stateData(PropTypes.array).isRequired,
-    intentUnconfirmedBid: PropTypes.func.isRequired
+    intentUnconfirmedBid: PropTypes.func.isRequired,
+    appendUnconfirmedBid: PropTypes.func.isRequired,
+    closeMenu: PropTypes.func.isRequired
     // Here we should extend ...ModelContainer.propTypes but webpack is broken and doesn't understand the import
     // Try it yourself: import ModalContainer from "./ModalContainer"
   }
 
   onBid = value => {
-    const { data, intentUnconfirmedBid, addressState, onClose } = this.props
+    const { data, appendUnconfirmedBid, intentUnconfirmedBid, addressState, onClose } = this.props
     const parcel = data
 
     intentUnconfirmedBid({
@@ -29,7 +31,7 @@ class BidParcelModalContainer extends React.Component {
       yourBid: value,
       endsAt: parcel.endsAt
     })
-
+    closeMenu()
     onClose()
   }
 
@@ -53,5 +55,5 @@ export default connect(
     addressState: selectors.getAddressState(state),
     pendingConfirmationBids: selectors.getPendingConfirmationBids(state)
   }),
-  { intentUnconfirmedBid }
+  { intentUnconfirmedBid, appendUnconfirmedBid, closeMenu }
 )(BidParcelModalContainer)

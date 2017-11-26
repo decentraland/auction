@@ -16,6 +16,10 @@ const INITIAL_STATE = {
     open: false,
     name: '',
     data: null
+  },
+
+  menu: {
+    open: false
   }
 }
 
@@ -46,6 +50,9 @@ export const selectors = {
   },
   getModal(state) {
     return state.modal
+  },
+  getMenu(state) {
+    return state.menu
   }
 }
 
@@ -181,6 +188,19 @@ function modal(state = INITIAL_STATE.modal, action) {
   }
 }
 
+function menu(state = INITIAL_STATE.menu, action) {
+  switch (action.type) {
+    case types.menu.open:
+      return {
+        open: true
+      }
+    case types.menu.close:
+      return INITIAL_STATE.menu
+    default:
+      return state
+  }
+}
+
 export default {
   web3Connected,
   addressState,
@@ -188,5 +208,6 @@ export default {
   parcelStates,
   pendingConfirmationBids,
   ongoingAuctions,
-  modal
+  modal,
+  menu
 }

@@ -93,6 +93,14 @@ export function generateMatrix(minX, minY, maxX, maxY) {
   return matrix
 }
 
+export function projectForParcel(parcel, projects) {
+  for (const project of projects.data) {
+    if (project.id === parcel.projectId) {
+      return project
+    }
+  }
+}
+
 export function getBounds() {
   return {
     minX: -160,
