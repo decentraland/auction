@@ -16,7 +16,7 @@ class ParcelsMapContainer extends React.Component {
   static propTypes = {
     parcelStates: stateData(PropTypes.object).isRequired,
     addressState: stateData(PropTypes.object).isRequired,
-    projects: stateData(PropTypes.object).isRequired,
+    projects: stateData(PropTypes.array).isRequired,
     parcelRangeChange: PropTypes.func.isRequired,
     requiredDataReady: PropTypes.bool,
     center: PropTypes.shape({
