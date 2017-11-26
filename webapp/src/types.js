@@ -57,7 +57,14 @@ export default {
 
   changeLocation: 'Change location URL',
 
-  email: {
-    register: 'Register email'
+  registerEmail: {
+    request: '[Request] Register email',
+    success: '[Success] Email registered',
+    failed: '[Failed] Failed to register email'
+  },
+  deregisterEmail: {
+    request: '[Request] Deregister email',
+    success: '[Request] Email deregistered',
+    failed: '[Failed] Failed to deregister email'
   }
 }

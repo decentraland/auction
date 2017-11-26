@@ -3,21 +3,24 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { registerEmail } from '../actions'
+import { registerEmail, deregisterEmail } from '../actions'
 import { stateData } from '../lib/propTypes'
 
-import Button from '../components/Button'
+import SetupNotification from '../components/SetupNotification'
 
 class SetupNotificationContainer extends React.Component {
   static propTypes = {
     ongoingAuctions: stateData(PropTypes.array),
-    registerEmail: PropTypes.func.isRequired
+    email: PropTypes.object.isRequired,
+    registerEmail: PropTypes.func.isRequired,
+    deregisterEmail: PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props)
+    console.log(this.props.email)
     this.state = {
-      email: window.localStorage ? window.localStorage.getItem('email') : ''
+      email: this.props.email.data || ''
     }
   }
 
@@ -25,30 +28,32 @@ class SetupNotificationContainer extends React.Component {
     this.setState({ email: e.target.value })
   }
 
-  onClick() {
+  onRegister() {
     this.props.registerEmail(this.state.email)
+  }
+
+  onDeregister() {
+    this.props.deregisterEmail()
+    this.setState({ email: '' })
   }
 
   render() {
     return (
-      <div className="SetupNotification">
-        <input
-          type="email"
-          value={this.state.email}
-          required="required"
-          placeholder="Enter your email to be notified if something happens"
-          className="email"
-          onChange={this.onChange.bind(this)}
-        />
-        <Button onClick={this.onClick.bind(this)}>&rsaquo;</Button>
-      </div>
+      <SetupNotification
+        email={this.state.email}
+        currentEmail={this.props.email.data}
+        onChange={this.onChange.bind(this)}
+        onRegister={this.onRegister.bind(this)}
+        onDeregister={this.onDeregister.bind(this)}
+      />
     )
   }
 }
 
 export default connect(
   state => ({
-    ongoingAuctions: selectors.getOngoingAuctions(state)
+    ongoingAuctions: selectors.getOngoingAuctions(state),
+    email: selectors.getEmail(state)
   }),
-  { registerEmail }
+  { registerEmail, deregisterEmail }
 )(SetupNotificationContainer)

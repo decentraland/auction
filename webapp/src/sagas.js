@@ -39,7 +39,8 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
 
-  yield takeLatest(types.email.register, handleEmailRegister)
+  yield takeLatest(types.registerEmail.request, handleEmailRegister)
+  yield takeLatest(types.deregisterEmail.request, handleEmailDeregister)
 }
 
 // -------------------------------------------------------------------------
@@ -248,14 +249,32 @@ function getBidGroupsNonce(bidGroups) {
 
 function* handleEmailRegister(action) {
   const email = action.data
-
-  if (window.localStorage) {
-    window.localStorage.setItem('email', email)
-  }
-
   const ongoingAuctions = yield select(selectors.getOngoingAuctions)
   const parcelStateIds = ongoingAuctions.data.map(bid => `${bid.x},${bid.y}`)
-  yield call(() => api.postOutbidNotification(email, parcelStateIds))
+
+  try {
+    yield call(() => api.postOutbidNotification(email, parcelStateIds))
+    if (window.localStorage) {
+      window.localStorage.setItem('email', email)
+    }
+    yield put({ type: types.registerEmail.success, data: email })
+  } catch (error) {
+    yield put({ type: types.registerEmail.failed, error: error.message })
+  }
+}
+
+function* handleEmailDeregister(action) {
+  const email = yield select(selectors.getEmail)
+
+  try {
+    yield call(() => api.deleteOutbidNotification(email.data))
+    if (window.localStorage) {
+      window.localStorage.removeItem('email')
+    }
+    yield put({ type: types.deregisterEmail.success })
+  } catch (error) {
+    yield put({ type: types.deregisterEmail.failed, error: error.message })
+  }
 }
 
 export default rootSaga

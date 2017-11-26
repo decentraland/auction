@@ -18,7 +18,9 @@ const INITIAL_STATE = {
     data: null
   },
 
-  email: { data: null }
+  email: {
+    data: window.localStorage ? window.localStorage.getItem('email') : ''
+  }
 }
 
 export const selectors = {
@@ -188,13 +190,13 @@ function modal(state = INITIAL_STATE.modal, action) {
 
 function email(state = INITIAL_STATE.email, action) {
   switch (action.type) {
-    case types.email.register:
+    case types.registerEmail.success:
       return {
         data: action.data
       }
-    case types.email.deregister:
+    case types.deregisterEmail.success:
       return {
-        data: null
+        data: ''
       }
     default:
       return state

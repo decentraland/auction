@@ -102,13 +102,13 @@ export function changeLocation(url) {
 
 export function registerEmail(email) {
   return {
-    type: types.email.register,
+    type: types.registerEmail.request,
     data: email
   }
 }
 
 export function deregisterEmail() {
   return {
-    type: types.email.deregister
+    type: types.deregisterEmail.request
   }
 }

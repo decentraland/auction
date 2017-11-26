@@ -37,6 +37,10 @@ class API {
     })
   }
 
+  deleteOutbidNotification(email) {
+    return this.request('delete', '/outbidNotification', { email })
+  }
+
   request(method, path, params) {
     let options = {
       method,
