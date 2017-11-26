@@ -27,6 +27,7 @@ export default class ParcelsMap extends React.Component {
     tileSize: PropTypes.number.isRequired,
     getAddressState: PropTypes.func.isRequired,
     getParcelStates: PropTypes.func.isRequired,
+    getProjects: PropTypes.func.isRequired,
     onMoveEnd: PropTypes.func,
     onZoomEnd: PropTypes.func,
     onParcelBid: PropTypes.func
@@ -181,6 +182,7 @@ export default class ParcelsMap extends React.Component {
     const { x, y } = this.mapCoordinates.latLngToCartesian(latlng)
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
+    const projects = this.props.getProjects()
 
     if (!parcel) return // TODO: could we fetch on-demand here?
 
@@ -195,6 +197,7 @@ export default class ParcelsMap extends React.Component {
         y={y}
         parcel={parcel}
         addressState={addressState}
+        projects={projects}
         onBid={parcel => {
           this.onParcelBid(parcel)
           leafletPopup.remove()
