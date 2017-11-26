@@ -55,5 +55,9 @@ export default {
     close: 'Close Modal'
   },
 
-  changeLocation: 'Change location URL'
+  changeLocation: 'Change location URL',
+
+  email: {
+    register: 'Register email'
+  }
 }

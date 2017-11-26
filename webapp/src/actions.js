@@ -96,3 +96,19 @@ export function changeLocation(url) {
     url
   }
 }
+
+// -------------------------------------------------------------------------
+// Email
+
+export function registerEmail(email) {
+  return {
+    type: types.email.register,
+    data: email
+  }
+}
+
+export function deregisterEmail() {
+  return {
+    type: types.email.deregister
+  }
+}

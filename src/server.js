@@ -167,17 +167,28 @@ app.post(
 )
 
 export async function postOutbidNotification(req) {
-  const email = server.extractFromReq(req, 'email')
-  const parcelStateId = server.extractFromReq(req, 'parcelStateId')
+  try {
+    const email = server.extractFromReq(req, 'email')
+    const parcelStateIds = server
+      .extractFromReq(req, 'parcelStateIds')
+      .split(';')
 
-  if (!await OutbidNotification.findActiveByParcelId(parcelStateId)) {
-    await OutbidNotification.insert({
-      email,
-      parcelStateId
-    })
+    for (const parcelStateId of parcelStateIds) {
+      const notification = await OutbidNotification.findActiveByParcelStateId(
+        parcelStateId
+      )
+      if (!notification) {
+        await OutbidNotification.insert({
+          email,
+          parcelStateId
+        })
+      }
+    }
+    return true
+  } catch (err) {
+    console.log(err)
+    return false
   }
-
-  return true
 }
 
 /**

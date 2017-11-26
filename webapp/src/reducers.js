@@ -16,7 +16,9 @@ const INITIAL_STATE = {
     open: false,
     name: '',
     data: null
-  }
+  },
+
+  email: { data: null }
 }
 
 export const selectors = {
@@ -46,6 +48,9 @@ export const selectors = {
   },
   getModal(state) {
     return state.modal
+  },
+  getEmail(state) {
+    return state.email
   }
 }
 
@@ -181,6 +186,21 @@ function modal(state = INITIAL_STATE.modal, action) {
   }
 }
 
+function email(state = INITIAL_STATE.email, action) {
+  switch (action.type) {
+    case types.email.register:
+      return {
+        data: action.data
+      }
+    case types.email.deregister:
+      return {
+        data: null
+      }
+    default:
+      return state
+  }
+}
+
 export default {
   web3Connected,
   addressState,
@@ -188,5 +208,6 @@ export default {
   parcelStates,
   pendingConfirmationBids,
   ongoingAuctions,
-  modal
+  modal,
+  email
 }

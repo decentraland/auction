@@ -30,6 +30,13 @@ class API {
     return this.request('get', '/projects', {})
   }
 
+  postOutbidNotification(email, parcelStateIds) {
+    return this.request('post', '/outbidNotification', {
+      email,
+      parcelStateIds: parcelStateIds.join(';')
+    })
+  }
+
   request(method, path, params) {
     let options = {
       method,

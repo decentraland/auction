@@ -38,6 +38,8 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.request, handleConfirmBidsRequest)
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
+
+  yield takeLatest(types.email.register, handleEmailRegister)
 }
 
 // -------------------------------------------------------------------------
@@ -239,6 +241,21 @@ Time: ${new Date().getTime()}`
 function getBidGroupsNonce(bidGroups) {
   const nonces = bidGroups.map(bidGroup => bidGroup.nonce).sort() // DESC
   return nonces.length > 0 ? nonces.pop() + 1 : 0
+}
+
+// -------------------------------------------------------------------------
+// Email
+
+function* handleEmailRegister(action) {
+  const email = action.data
+
+  if (window.localStorage) {
+    window.localStorage.setItem('email', email)
+  }
+
+  const ongoingAuctions = yield select(selectors.getOngoingAuctions)
+  const parcelStateIds = ongoingAuctions.data.map(bid => `${bid.x},${bid.y}`)
+  yield call(() => api.postOutbidNotification(email, parcelStateIds))
 }
 
 export default rootSaga
