@@ -9,7 +9,7 @@ if (!L.VirtualGrid) {
     include: L.Mixin.Events,
     options: {
       cellSize: 64,
-      delayFactor: 2.5,
+      delayFactor: 0.5,
       style: {
         stroke: true,
         color: '#3ac1f0',

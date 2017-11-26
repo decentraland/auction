@@ -32,7 +32,7 @@ export default function ParcelPopup({ x, y, parcel, addressState, projects, onBi
       <div className="text">{endsAt}</div>
 
       <div className="text-center">
-        {!unBiddeable && (
+        {!unBiddable && (
           <Button onClick={event => onBid(parcel)}>Place bid</Button>
         )}
       </div>
