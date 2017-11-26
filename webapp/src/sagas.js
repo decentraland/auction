@@ -37,6 +37,7 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.request, handleAddresStateStartLoading)
   yield takeLatest(types.confirmBids.request, handleConfirmBidsRequest)
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest)
+  yield takeLatest(types.confirmBids.success, handleEmailRegisterBids)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
 
   yield takeLatest(types.registerEmail.request, handleEmailRegister)
@@ -222,7 +223,7 @@ function* handleConfirmBidsRequest(action) {
 
     const parcelsToFetch = bids.map(bid => buildCoordinate(bid.x, bid.y))
 
-    yield put({ type: types.confirmBids.success })
+    yield put({ type: types.confirmBids.success, bids: bids })
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch })
   } catch (error) {
     yield put({ type: types.confirmBids.failed, error: error.message })
@@ -274,6 +275,15 @@ function* handleEmailDeregister(action) {
     yield put({ type: types.deregisterEmail.success })
   } catch (error) {
     yield put({ type: types.deregisterEmail.failed, error: error.message })
+  }
+}
+
+function* handleEmailRegisterBids(action) {
+  const email = yield select(selectors.getEmail)
+  const parcelStateIds = action.bids.map(bid => `${bid.x},${bid.y}`)
+
+  if (email.data) {
+    yield call(() => api.postOutbidNotification(email.data, parcelStateIds))
   }
 }
 
