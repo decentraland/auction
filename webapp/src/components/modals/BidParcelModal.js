@@ -46,7 +46,7 @@ export default class BidParcelModal extends React.Component {
 
   onBidValueChange = event => {
     const bidValue = parseFloat(event.currentTarget.value, 10)
-    this.setState({ bidValue: bidValue || this.getMinimumBidValue() })
+    this.setState({ bidValue: bidValue || '' })
   }
 
   onBidValueReset = event => {
@@ -109,7 +109,7 @@ export default class BidParcelModal extends React.Component {
 
   getMinimumBidValue() {
     const { parcel } = this.props
-    return (parcel.amount) ? parcel.amount + 1 : ONE_LAND_IN_MANA
+    return parcel.amount ? parcel.amount + 1 : ONE_LAND_IN_MANA
   }
 
   render() {
@@ -158,7 +158,7 @@ function BidForm({
           value={currentBidValue}
           max={manaBalance}
           onChange={onBidValueChange}
-          onFocus={(e) => e.target.select()}
+          onFocus={e => e.target.select()}
           onBlur={onBidValueReset}
         />
         <span className="text">{manaBalance}</span>
