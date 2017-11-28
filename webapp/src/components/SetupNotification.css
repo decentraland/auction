@@ -1,0 +1,28 @@
+.SetupNotification {
+  background-color: #f3f3f3;
+  padding: 24px 0;
+  border-top: 1px solid #ddd;
+}
+
+.EmailRegistered {
+  text-align: center;
+}
+
+.EmailRegistered .Email {  
+  margin-right: 8px;
+  padding: 12px;
+  width: 60%;
+}
+
+.EmailRegistered .Submit {
+  font-size: 14px;
+  padding: 12px 24px;
+}
+
+.EmailRegistered p {
+  font-size: 16px;
+}
+
+.EmailRegistered .Unsubscribe {
+  font-size: 14px;
+}

@@ -22,7 +22,9 @@ export default class SetupNotification extends React.Component {
             <p>
               You are subscribed with <b>{currentEmail}</b>
             </p>
-            <Button onClick={onDeregister}>X</Button>
+            <Button className="Unsubscribe" onClick={onDeregister}>
+              Unsubscribe
+            </Button>
           </div>
         )}
         {!currentEmail && (
@@ -32,11 +34,15 @@ export default class SetupNotification extends React.Component {
                 type="email"
                 value={email}
                 required="required"
-                placeholder="Enter your email to be notified if something happens"
-                className="email"
+                placeholder="Enter your email to be notified about the auction"
+                className="Email"
                 onChange={onChange}
               />
-              <input type="submit" value="&rsaquo;" />
+              <input
+                className="Submit btn btn-primary Button"
+                type="submit"
+                value="Subscribe"
+              />
             </div>
           </form>
         )}
