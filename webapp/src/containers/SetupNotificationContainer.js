@@ -34,8 +34,10 @@ class SetupNotificationContainer extends React.Component {
   }
 
   onDeregister() {
-    this.props.deregisterEmail()
-    this.setState({ email: '' })
+    if (window.confirm('Are you sure to unsubscribe?')) {
+      this.props.deregisterEmail()
+      this.setState({ email: '' })
+    }
   }
 
   render() {

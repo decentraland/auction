@@ -1,8 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import Button from './Button'
-
 import './SetupNotification.css'
 
 export default class SetupNotification extends React.Component {
