@@ -26,17 +26,19 @@ export default class SetupNotification extends React.Component {
           </div>
         )}
         {!currentEmail && (
-          <div className="EmailRegistered">
-            <input
-              type="email"
-              value={email}
-              required="required"
-              placeholder="Enter your email to be notified if something happens"
-              className="email"
-              onChange={onChange}
-            />
-            <Button onClick={onRegister}>&rsaquo;</Button>
-          </div>
+          <form action="POST" onSubmit={onRegister}>
+            <div className="EmailRegistered">
+              <input
+                type="email"
+                value={email}
+                required="required"
+                placeholder="Enter your email to be notified if something happens"
+                className="email"
+                onChange={onChange}
+              />
+              <input type="submit" value="&rsaquo;" />
+            </div>
+          </form>
         )}
       </div>
     )

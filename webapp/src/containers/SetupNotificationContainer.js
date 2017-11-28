@@ -28,8 +28,9 @@ class SetupNotificationContainer extends React.Component {
     this.setState({ email: e.target.value })
   }
 
-  onRegister() {
+  onRegister(e) {
     this.props.registerEmail(this.state.email)
+    e.preventDefault()
   }
 
   onDeregister() {
