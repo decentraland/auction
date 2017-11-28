@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { fetchOngoingAuctions } from '../actions'
+import { fetchOngoingAuctions, openMenu, closeMenu } from '../actions'
 import { stateData } from '../lib/propTypes'
 
 import ShowMenu from '../components/ShowMenu'
@@ -13,18 +13,16 @@ class MenuContainer extends React.Component {
   static propTypes = {
     addressState: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array),
-    fetchOngoingAuctions: PropTypes.func
-  }
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      menuVisible: false
-    }
+    fetchOngoingAuctions: PropTypes.func,
+    menu: PropTypes.shape({
+      open: PropTypes.boolean
+    }),
+    openMenu: PropTypes.func.isRequired,
+    closeMenu: PropTypes.func.isRequired
   }
 
   changeMenuVisibility(menuVisible) {
-    this.setState({ menuVisible })
+    (menuVisible) ? this.props.openMenu() : this.props.closeMenu()
 
     if (menuVisible) {
       // Wait a bit for the Menu animation to end
@@ -33,8 +31,7 @@ class MenuContainer extends React.Component {
   }
 
   render() {
-    const { parcelStates, addressState, ongoingAuctions } = this.props
-    const { menuVisible } = this.state
+    const { parcelStates, addressState, ongoingAuctions, menu } = this.props
     const isLoading = parcelStates.loading || addressState.loading
 
     return [
@@ -46,7 +43,7 @@ class MenuContainer extends React.Component {
       <Menu
         key="2"
         addressState={addressState}
-        visible={menuVisible}
+        visible={menu.open}
         ongoingAuctions={ongoingAuctions}
         onHide={() => this.changeMenuVisibility(false)}
       />
@@ -58,7 +55,8 @@ export default connect(
   state => ({
     parcelStates: selectors.getParcelStates(state),
     addressState: selectors.getAddressState(state),
-    ongoingAuctions: selectors.getOngoingAuctions(state)
+    ongoingAuctions: selectors.getOngoingAuctions(state),
+    menu: selectors.getMenu(state)
   }),
-  { fetchOngoingAuctions }
+  { fetchOngoingAuctions, openMenu, closeMenu }
 )(MenuContainer)

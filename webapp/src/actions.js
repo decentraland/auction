@@ -43,6 +43,13 @@ export function clickParcel(x, y) {
 // -------------------------------------------------------------------------
 // Bids
 
+export function intentUnconfirmedBid(bid) {
+  return {
+    type: types.intentUnconfirmedBid,
+    bid
+  }
+}
+
 export function appendUnconfirmedBid(bid) {
   return {
     type: types.appendUnconfirmedBid,
@@ -110,5 +117,19 @@ export function registerEmail(email) {
 export function deregisterEmail() {
   return {
     type: types.deregisterEmail.request
+  }
+}
+
+// Menu
+
+export function openMenu() {
+  return {
+    type: types.menu.open
+  }
+}
+
+export function closeMenu() {
+  return {
+    type: types.menu.close
   }
 }

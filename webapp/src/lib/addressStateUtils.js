@@ -1,7 +1,7 @@
 import { buildCoordinate } from './util'
 
 export function getBidParcels(addressState) {
-  const { bidGroups } = addressState
+  const bidGroups = addressState.bidGroups || []
   const bidParcels = {}
 
   for (const bidGroup of bidGroups) {

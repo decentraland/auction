@@ -68,9 +68,17 @@ app.get(
   server.handleRequest(getFullAddressState)
 )
 
-export function getFullAddressState(req) {
-  const address = server.extractFromReq(req, 'address')
-  return AddressState.findByAddressWithBidGroups(address.toLowerCase())
+export async function getFullAddressState(req) {
+  let address = server.extractFromReq(req, 'address')
+  address = address.toLowerCase()
+
+  let addressState = await AddressState.findByAddressWithBidGroups(address)
+
+  if (env.isDevelopment() && !addressState) {
+    addressState = await AddressState.insert({ address, balance: '10000' })
+  }
+
+  return addressState
 }
 
 /**
