@@ -8,6 +8,7 @@ import db from './lib/db'
 
 import {
   AddressState,
+  BidGroup,
   ParcelState,
   Project,
   OutbidNotification
@@ -123,9 +124,22 @@ export function getParcelStateRange(req) {
 }
 
 /**
+ * Get all BidGroup objects
+ * @return {array}             - array of BidGroup objects
+ */
+app.get('/api/bidgroup', server.handleRequest(getBidGroup))
+
+export async function getBidGroup(req) {
+  const offset = parseInt(req.query['offset'])
+  const limit = parseInt(req.query['limit'])
+
+  return await BidGroup.findAll({ offset, limit })
+}
+
+/**
  * Submit a BidGroup
  * @param  {object} bidgroup - BidGroup attributes
- * @return {boolean}         - Wether the operation was successfull or not
+ * @return {boolean}         - Whether the operation was successfull or not
  */
 app.post('/api/bidgroup', server.handleRequest(postBidGroup))
 

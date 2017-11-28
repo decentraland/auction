@@ -68,6 +68,14 @@ class BidGroup extends Model {
 
     return inserted
   }
+
+  static findAll(options = {}) {
+    const offset = options.offset ? options.offset : 0
+    const limit = options.limit ? options.limit : 'NULL'
+    return this.db.query(
+      `SELECT * FROM bid_groups OFFSET ${offset} LIMIT ${limit}`
+    )
+  }
 }
 
 export default BidGroup
