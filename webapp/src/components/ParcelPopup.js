@@ -10,7 +10,7 @@ import CurrentBidStatus from './CurrentBidStatus'
 export default function ParcelPopup(props) {
   const { x, y, parcel, addressState, projects, onBid } = props
 
-  const unBiddeable =
+  const unBiddable =
     parcel.error || parcelUtils.isTaken(parcel) || parcelUtils.hasEnded(parcel)
 
   let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: '' })
