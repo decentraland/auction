@@ -11,6 +11,7 @@ import locations from '../locations'
 
 import Loading from './Loading'
 import Icon from './Icon'
+import SetupNotificationContainer from '../containers/SetupNotificationContainer'
 
 import './Menu.css'
 
@@ -46,7 +47,7 @@ export default class Menu extends React.Component {
         </header>
 
         <Balance addressState={addressState} />
-
+        <SetupNotificationContainer />
         <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
       </div>
     )

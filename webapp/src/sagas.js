@@ -39,7 +39,11 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.request, handleAddresStateStartLoading)
   yield takeLatest(types.confirmBids.request, handleConfirmBidsRequest)
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest)
+  yield takeLatest(types.confirmBids.success, handleEmailRegisterBids)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
+
+  yield takeLatest(types.registerEmail.request, handleEmailRegister)
+  yield takeLatest(types.deregisterEmail.request, handleEmailDeregister)
 }
 
 // -------------------------------------------------------------------------
@@ -221,7 +225,7 @@ function* handleConfirmBidsRequest(action) {
 
     const parcelsToFetch = bids.map(bid => buildCoordinate(bid.x, bid.y))
 
-    yield put({ type: types.confirmBids.success })
+    yield put({ type: types.confirmBids.success, bids: bids })
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch })
   } catch (error) {
     yield put({ type: types.confirmBids.failed, error: error.message })
@@ -241,6 +245,50 @@ Time: ${new Date().getTime()}`
 function getBidGroupsNonce(bidGroups) {
   const nonces = bidGroups.map(bidGroup => bidGroup.nonce).sort() // DESC
   return nonces.length > 0 ? nonces.pop() + 1 : 0
+}
+
+// -------------------------------------------------------------------------
+// Email
+
+function* handleEmailRegister(action) {
+  const email = action.data
+  const ongoingAuctions = yield select(selectors.getOngoingAuctions)
+  const parcelStateIds = ongoingAuctions.data.map(bid => `${bid.x},${bid.y}`)
+
+  try {
+    if (parcelStateIds.length > 0) {
+      yield call(() => api.postOutbidNotification(email, parcelStateIds))
+    }
+    if (window.localStorage) {
+      window.localStorage.setItem('email', email)
+    }
+    yield put({ type: types.registerEmail.success, data: email })
+  } catch (error) {
+    yield put({ type: types.registerEmail.failed, error: error.message })
+  }
+}
+
+function* handleEmailDeregister(action) {
+  const email = yield select(selectors.getEmail)
+
+  try {
+    yield call(() => api.deleteOutbidNotification(email.data))
+    if (window.localStorage) {
+      window.localStorage.removeItem('email')
+    }
+    yield put({ type: types.deregisterEmail.success })
+  } catch (error) {
+    yield put({ type: types.deregisterEmail.failed, error: error.message })
+  }
+}
+
+function* handleEmailRegisterBids(action) {
+  const email = yield select(selectors.getEmail)
+  const parcelStateIds = action.bids.map(bid => `${bid.x},${bid.y}`)
+
+  if (email.data) {
+    yield call(() => api.postOutbidNotification(email.data, parcelStateIds))
+  }
 }
 
 function* handleIntentUnconfirmedBid(action) {

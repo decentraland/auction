@@ -36,7 +36,7 @@ if (env.isProduction()) {
   app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Access-Control-Request-Method', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST')
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, DELETE')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
     next()
@@ -176,15 +176,36 @@ app.post(
 
 export async function postOutbidNotification(req) {
   const email = server.extractFromReq(req, 'email')
-  const parcelStateId = server.extractFromReq(req, 'parcelStateId')
+  const parcelStateIds = server.extractFromReq(req, 'parcelStateIds').split(';')
 
-  if (!await OutbidNotification.findActiveByParcelId(parcelStateId)) {
-    await OutbidNotification.insert({
-      email,
+  for (const parcelStateId of parcelStateIds) {
+    const notification = await OutbidNotification.findActiveByParcelStateId(
       parcelStateId
-    })
+    )
+    if (!notification) {
+      await OutbidNotification.insert({
+        email,
+        parcelStateId
+      })
+    }
   }
+  return true
+}
 
+/**
+ * Unregister an email to all notifications
+ * @param  {string} email - Email to register to the notification service
+ * @return {boolean}      - Wether the operation was successfull or not
+ */
+
+app.delete(
+  '/api/outbidNotification',
+  server.handleRequest(deleteOutbidNotification)
+)
+
+export async function deleteOutbidNotification(req) {
+  const email = server.extractFromReq(req, 'email')
+  await OutbidNotification.delete({ email })
   return true
 }
 

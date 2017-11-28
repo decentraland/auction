@@ -105,6 +105,21 @@ export function changeLocation(url) {
 }
 
 // -------------------------------------------------------------------------
+// Email
+
+export function registerEmail(email) {
+  return {
+    type: types.registerEmail.request,
+    data: email
+  }
+}
+
+export function deregisterEmail() {
+  return {
+    type: types.deregisterEmail.request
+  }
+}
+
 // Menu
 
 export function openMenu() {
@@ -118,4 +133,3 @@ export function closeMenu() {
     type: types.menu.close
   }
 }
-

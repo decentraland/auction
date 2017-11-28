@@ -18,6 +18,10 @@ const INITIAL_STATE = {
     data: null
   },
 
+  email: {
+    data: window.localStorage ? window.localStorage.getItem('email') : ''
+  },
+
   menu: {
     open: false
   }
@@ -50,6 +54,9 @@ export const selectors = {
   },
   getModal(state) {
     return state.modal
+  },
+  getEmail(state) {
+    return state.email
   },
   getMenu(state) {
     return state.menu
@@ -188,6 +195,21 @@ function modal(state = INITIAL_STATE.modal, action) {
   }
 }
 
+function email(state = INITIAL_STATE.email, action) {
+  switch (action.type) {
+    case types.registerEmail.success:
+      return {
+        data: action.data
+      }
+    case types.deregisterEmail.success:
+      return {
+        data: ''
+      }
+    default:
+      return state
+  }
+}
+
 function menu(state = INITIAL_STATE.menu, action) {
   switch (action.type) {
     case types.menu.open:
@@ -209,5 +231,6 @@ export default {
   pendingConfirmationBids,
   ongoingAuctions,
   modal,
+  email,
   menu
 }

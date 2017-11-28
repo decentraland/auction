@@ -56,6 +56,17 @@ export default {
     close: 'Close Modal'
   },
 
+  registerEmail: {
+    request: '[Request] Register email',
+    success: '[Success] Email registered',
+    failed: '[Failed] Failed to register email'
+  },
+  deregisterEmail: {
+    request: '[Request] Deregister email',
+    success: '[Request] Email deregistered',
+    failed: '[Failed] Failed to deregister email'
+  },
+
   menu: {
     open: '[Open] Menu',
     close: '[Close] Menu'
