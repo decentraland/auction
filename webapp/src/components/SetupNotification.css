@@ -1,7 +1,8 @@
 .SetupNotification {
-  background-color: #f3f3f3;
+  background-color: #f9f9f9;
   padding: 24px 0;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 .EmailRegistered {

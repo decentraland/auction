@@ -47,9 +47,8 @@ export default class Menu extends React.Component {
         </header>
 
         <Balance addressState={addressState} />
-
-        <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
         <SetupNotificationContainer />
+        <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
       </div>
     )
   }
