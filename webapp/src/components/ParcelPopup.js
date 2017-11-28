@@ -7,7 +7,9 @@ import * as parcelUtils from '../lib/parcelUtils'
 import Button from './Button'
 import CurrentBidStatus from './CurrentBidStatus'
 
-export default function ParcelPopup({ x, y, parcel, addressState, projects, onBid }) {
+export default function ParcelPopup(props) {
+  const { x, y, parcel, addressState, projects, onBid } = props
+
   const unBiddeable =
     parcel.error || parcelUtils.isTaken(parcel) || parcelUtils.hasEnded(parcel)
 
@@ -24,7 +26,11 @@ export default function ParcelPopup({ x, y, parcel, addressState, projects, onBi
       </div>
       <div className="text">
         {shortenAddress(parcel.address)}
-        <CurrentBidStatus addressState={addressState} parcel={parcel} projects={projects} />
+        <CurrentBidStatus
+          addressState={addressState}
+          parcel={parcel}
+          projects={projects}
+        />
       </div>
       <div className="text mana">
         {parcel.amount && `${parcel.amount} MANA`}
