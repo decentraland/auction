@@ -205,6 +205,8 @@ function email(state = INITIAL_STATE.email, action) {
       return {
         data: ''
       }
+    default:
+      return state
   }
 }
 
