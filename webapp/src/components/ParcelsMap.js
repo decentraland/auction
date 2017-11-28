@@ -123,15 +123,11 @@ export default class ParcelsMap extends React.Component {
 
   setView(center) {
     this.map.setView(center)
+    this.redrawMap()
   }
 
   redrawMap = () => {
-    this.map.eachLayer(layer => {
-      if (layer.renderCells) {
-        layer.renderCells(this.map.getBounds())
-      }
-    })
-
+    this.parcelGrid.renderCells(this.map.getBounds())
     this.panInProgress = false
   }
 
