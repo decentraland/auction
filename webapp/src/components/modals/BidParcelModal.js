@@ -24,7 +24,7 @@ export default class BidParcelModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      bidValue: ONE_LAND_IN_MANA
+      bidValue: this.getMinimumBidValue()
     }
 
     let { pendingConfirmationBids } = props
@@ -46,7 +46,20 @@ export default class BidParcelModal extends React.Component {
 
   onBidValueChange = event => {
     const bidValue = parseFloat(event.currentTarget.value, 10)
-    this.setState({ bidValue: bidValue || ONE_LAND_IN_MANA })
+    this.setState({ bidValue: bidValue || this.getMinimumBidValue() })
+  }
+
+  onBidValueReset = event => {
+    const maxBid = this.getManaBalance()
+    const minBid = this.getMinimumBidValue()
+    let value = this.state.bidValue
+
+    if (value < minBid) {
+      value = minBid
+    } else if (value > maxBid) {
+      value = maxBid
+    }
+    this.setState({ bidValue: value })
   }
 
   isValidBid(bidValue) {
@@ -76,20 +89,27 @@ export default class BidParcelModal extends React.Component {
 
     return manaBalance >= ONE_LAND_IN_MANA ? (
       <BidForm
-        currentBidValue={this.getCurrentBidValue()}
+        currentBidValue={this.state.bidValue}
+        minBidValue={this.getMinimumBidValue()}
         manaBalance={manaBalance}
         onBid={preventDefault(this.onBid)}
         onBidValueChange={this.onBidValueChange}
+        onBidValueReset={this.onBidValueReset}
         onClose={onClose}
       />
     ) : (
-      <p className="text">You don&#39;t have enough balance to bid.</p>
+      <div>
+        <p className="text">You don&#39;t have enough balance to bid.</p>
+        <Button type="default" className="btn btn-primary" onClick={onClose}>
+          Close
+        </Button>
+      </div>
     )
   }
 
-  getCurrentBidValue() {
+  getMinimumBidValue() {
     const { parcel } = this.props
-    return parcel.amount || ONE_LAND_IN_MANA
+    return (parcel.amount) ? parcel.amount + 1 : ONE_LAND_IN_MANA
   }
 
   render() {
@@ -101,7 +121,7 @@ export default class BidParcelModal extends React.Component {
           <p className="text">
             You are bidding on the LAND {parcel.x},{parcel.y}.
             <br />
-            The minimun bid is {this.getCurrentBidValue()} MANA.
+            The minimum bid is {this.getMinimumBidValue()} MANA.
             <br />
             {this.pendingManaBalance
               ? `You have ${this.pendingManaBalance} MANA pending.`
@@ -117,25 +137,29 @@ export default class BidParcelModal extends React.Component {
 
 function BidForm({
   currentBidValue,
+  minBidValue,
   manaBalance,
   onBid,
   onBidValueChange,
+  onBidValueReset,
   onClose
 }) {
   return (
     <form action="POST" onSubmit={onBid}>
       <div className="manaInput">
-        <span className="text">{ONE_LAND_IN_MANA}</span>
+        <span className="text">{minBidValue}</span>
         <input
           type="number"
           required="required"
           placeholder="Mana to bid"
           className="manaToBid"
           autoFocus={true}
-          min={ONE_LAND_IN_MANA}
+          min={minBidValue}
           value={currentBidValue}
           max={manaBalance}
           onChange={onBidValueChange}
+          onFocus={(e) => e.target.select()}
+          onBlur={onBidValueReset}
         />
         <span className="text">{manaBalance}</span>
       </div>

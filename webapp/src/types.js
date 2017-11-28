@@ -35,6 +35,7 @@ export default {
     failed: '[Failed] Failed to fetch projects'
   },
 
+  intentUnconfirmedBid: 'Intent to append new unconfirmed bid',
   appendUnconfirmedBid: 'Append new unconfirmed bid',
   deleteUnconfirmedBid: 'Remove unconfirmed bid',
 
@@ -55,8 +56,6 @@ export default {
     close: 'Close Modal'
   },
 
-  changeLocation: 'Change location URL',
-
   registerEmail: {
     request: '[Request] Register email',
     success: '[Success] Email registered',
@@ -66,5 +65,12 @@ export default {
     request: '[Request] Deregister email',
     success: '[Request] Email deregistered',
     failed: '[Failed] Failed to deregister email'
-  }
+  },
+
+  menu: {
+    open: '[Open] Menu',
+    close: '[Close] Menu'
+  },
+
+  changeLocation: 'Change location URL'
 }

@@ -3,7 +3,7 @@ import React from 'react'
 import * as addressStateUtils from '../lib/addressStateUtils'
 import * as parcelUtils from '../lib/parcelUtils'
 
-export default function CurrentBidStatus({ addressState, parcel }) {
+export default function CurrentBidStatus({ addressState, parcel, projects }) {
   const isOwner = addressState.address === parcel.address
   const isError = parcel.error
   const hasBid = addressStateUtils.hasBidInParcel(addressState, parcel)
@@ -15,7 +15,14 @@ export default function CurrentBidStatus({ addressState, parcel }) {
   const text = []
 
   if (isError) text.push("We couldn't fetch the parcel, please try again")
-  if (isTaken) text.push('The parcel is taken by a road or project')
+  if (isTaken) {
+    const project = parcelUtils.projectForParcel(parcel, projects)
+    if (project) {
+      text.push(`The parcel is taken by project "${project.name}"`)
+    } else {
+      text.push('The parcel is taken by a road or project')
+    }
+  }
   if (isOwner) text.push("that's you")
   if (hasBid) {
     text.push(`${hasEnded ? 'you' : "you're"} ${status.toLowerCase()}`)

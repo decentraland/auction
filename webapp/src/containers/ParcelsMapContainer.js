@@ -16,6 +16,7 @@ class ParcelsMapContainer extends React.Component {
   static propTypes = {
     parcelStates: stateData(PropTypes.object).isRequired,
     addressState: stateData(PropTypes.object).isRequired,
+    projects: stateData(PropTypes.array).isRequired,
     parcelRangeChange: PropTypes.func.isRequired,
     requiredDataReady: PropTypes.bool,
     center: PropTypes.shape({
@@ -95,6 +96,10 @@ class ParcelsMapContainer extends React.Component {
     return this.props.parcelStates
   }
 
+  getProjects = () => {
+    return this.props.projects
+  }
+
   getTileSize() {
     const zoomDifference = this.baseZoom - this.state.zoom
     return this.baseTileSize / Math.pow(2, zoomDifference)
@@ -120,6 +125,7 @@ class ParcelsMapContainer extends React.Component {
         tileSize={this.getTileSize()}
         getAddressState={this.getAddressState}
         getParcelStates={this.getParcelStates}
+        getProjects={this.getProjects}
         onMoveEnd={this.onMoveEnd}
         onZoomEnd={this.onZoomEnd}
         onParcelBid={this.onParcelBid}
@@ -135,6 +141,7 @@ export default withRouter(
     (state, ownProps) => ({
       parcelStates: selectors.getParcelStates(state),
       addressState: selectors.getAddressState(state),
+      projects: selectors.getProjects(state),
       requiredDataReady: ownProps.requiredDataReady,
       center: ownProps.match.params // from withRouter
     }),

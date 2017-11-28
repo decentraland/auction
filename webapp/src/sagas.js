@@ -29,6 +29,8 @@ function* rootSaga() {
 
   yield takeEvery(types.fetchProjects.request, handleProjectsFetchRequest)
 
+  yield takeEvery(types.intentUnconfirmedBid, handleIntentUnconfirmedBid)
+
   yield takeEvery(
     types.fetchOngoingAuctions.request,
     handleOngoingAuctionsFetchRequest
@@ -284,6 +286,18 @@ function* handleEmailRegisterBids(action) {
 
   if (email.data) {
     yield call(() => api.postOutbidNotification(email.data, parcelStateIds))
+  }
+}
+
+function* handleIntentUnconfirmedBid(action) {
+  const pendingConfirmationBids = yield select(selectors.getPendingConfirmationBids)
+
+  const exists = pendingConfirmationBids.data.filter(
+    bid => bid.x === action.bid.x && bid.y === action.bid.y
+  ).length > 0
+
+  if (!exists) {
+    yield put({ type: types.appendUnconfirmedBid, bid: action.bid })
   }
 }
 
