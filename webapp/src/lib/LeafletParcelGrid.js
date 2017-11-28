@@ -4,7 +4,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   include: L.Mixin.Events,
   options: {
     cellSize: 64,
-    delayFactor: 0.1,
+    delayFactor: 0.05,
     smoothFactor: 2,
     style: {
       weight: 2,
@@ -136,7 +136,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   },
 
   shouldShowCoordinates(x, y) {
-    return true || (x % 5 === 0 && y % 5 === 0)
+    return x % 10 === 0 && y % 10 === 0
   },
 
   getCellPoint(row, col) {
@@ -175,7 +175,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
       }
     }
 
-    cells.sort((a, b) => a.distance - b.distance)
+    cells.sort((a, b) => b.distance - a.distance)
 
     return cells
   },
