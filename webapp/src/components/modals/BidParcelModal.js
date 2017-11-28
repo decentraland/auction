@@ -12,6 +12,8 @@ import Loading from '../Loading'
 
 import './BidParcelModal.css'
 
+const BID_INCREMENT_PERCENTAGE = 1.1
+
 export default class BidParcelModal extends React.Component {
   static propTypes = {
     ...Modal.propTypes,
@@ -109,7 +111,9 @@ export default class BidParcelModal extends React.Component {
 
   getMinimumBidValue() {
     const { parcel } = this.props
-    return parcel.amount ? parcel.amount + 1 : ONE_LAND_IN_MANA
+    return parcel.amount
+      ? parcel.amount * BID_INCREMENT_PERCENTAGE
+      : ONE_LAND_IN_MANA
   }
 
   render() {
