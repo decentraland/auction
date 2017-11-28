@@ -86,33 +86,46 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   },
 
   loadCell(cell, renderDelay) {
-    const { className, style, coordinates } = this.options.getTileAttributes(
+    const { className, dataset, style } = this.options.getTileAttributes(
       cell.center
     )
 
     if (this.loadedCells[cell.id] !== className) {
-      const rectStyles = Object.assign({ className }, this.options.style, style)
+      const attributes = Object.assign({ className }, this.options.style, style)
+      const { x, y } = dataset
 
       setTimeout(
-        () => this.addLayer(L.rectangle(cell.bounds, rectStyles)),
+        () => this.addRectangleLayer(cell, attributes, dataset),
         renderDelay
       )
 
-      if (coordinates) {
-        this.loadCellCoordinates(cell, coordinates)
+      if (this.shouldShowCoordinates(x, y)) {
+        this.loadCellCoordinates(cell, x, y)
       }
 
       this.loadedCells[cell.id] = className
     }
   },
 
-  loadCellCoordinates(cell, coordinates) {
+  addRectangleLayer(cell, attributes, dataset) {
+    const rect = L.rectangle(cell.bounds, attributes)
+    this.addLayer(rect)
+
+    const element = rect.getElement()
+    if (element) {
+      // Important! this will be used to determine the x,y position later on
+      // Check ParcelsMap#addPopup
+      Object.assign(element.dataset, dataset)
+    }
+  },
+
+  loadCellCoordinates(cell, x, y) {
     if (!this.loadedCoordinates[cell.id]) {
       const marker = L.marker(cell.bounds.getNorthWest(), {
         icon: new L.DivIcon({
           className: `coordinates coordinates-zoom-${this.map.getZoom()}`,
           iconSize: new L.Point(0, 0),
-          html: coordinates
+          html: `${x},${y}`
         })
       })
 
@@ -120,6 +133,10 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
 
       this.loadedCoordinates[cell.id] = true
     }
+  },
+
+  shouldShowCoordinates(x, y) {
+    return true || (x % 5 === 0 && y % 5 === 0)
   },
 
   getCellPoint(row, col) {

@@ -106,7 +106,7 @@ class ParcelsMapContainer extends React.Component {
   }
 
   getBoundsOffset() {
-    return 3 * (this.baseZoom - this.state.zoom)
+    return this.baseZoom - this.state.zoom
   }
 
   render() {

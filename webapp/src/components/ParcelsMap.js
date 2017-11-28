@@ -123,13 +123,6 @@ export default class ParcelsMap extends React.Component {
   }
 
   setView(center) {
-    // this.map.off('movestart click moveend zoomend')
-    // this.map.on('moveend', () => {
-    //   this.attachMapEvents()
-
-    //   this.onMapMoveStart()
-    //   this.debouncedOnMapMoveEnd()
-    // })
     this.map.setView(center)
   }
 
@@ -153,7 +146,7 @@ export default class ParcelsMap extends React.Component {
     const parcelStates = this.props.getParcelStates()
 
     if (!parcelStates.loading) {
-      this.addPopup(event.latlng)
+      this.addPopup(event)
     }
   }
 
@@ -188,13 +181,15 @@ export default class ParcelsMap extends React.Component {
     return { position, bounds }
   }
 
-  addPopup(latlng) {
-    const { x, y } = this.mapCoordinates.latLngToCartesian(latlng)
+  addPopup(event) {
+    const target = event.originalEvent.target
+    const { x, y } = target.dataset
     const parcel = this.getParcelData(x, y)
-    const addressState = this.props.getAddressState()
-    const projects = this.props.getProjects()
 
     if (!parcel) return // TODO: could we fetch on-demand here?
+
+    const addressState = this.props.getAddressState()
+    const projects = this.props.getProjects()
 
     const leafletPopup = L.popup({
       className: 'parcel-popup',
@@ -216,7 +211,7 @@ export default class ParcelsMap extends React.Component {
     )
 
     leafletPopup
-      .setLatLng(latlng)
+      .setLatLng(event.latlng)
       .setContent(popup)
       .addTo(this.map)
   }
@@ -252,24 +247,18 @@ export default class ParcelsMap extends React.Component {
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
 
-    let className = parcelUtils.getClassName(parcel, addressState)
+    const className = parcelUtils.getClassName(parcel, addressState)
+    const dataset = { x, y }
 
-    let color = null
+    let style = null
     if (!className) {
-      color = parcelUtils.getColorByAmount(parcel.amount)
-    }
-
-    let coordinates = null
-    if (x % 10 === 0 && y % 10 === 0) {
-      coordinates = buildCoordinate(x, y)
+      style = { color: parcelUtils.getColorByAmount(parcel.amount) }
     }
 
     return {
       className,
-      style: {
-        color
-      },
-      coordinates
+      dataset,
+      style
     }
   }
 
