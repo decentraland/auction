@@ -48,7 +48,7 @@ export default class ParcelsMap extends React.Component {
 
     this.debounceMapMethodsByTileSize(this.props.tileSize)
 
-    setTimeout(() => this.onMapMoveEnd())
+    setTimeout(() => this.onMoveEnd())
   }
 
   componentWillUnmount() {
@@ -85,7 +85,7 @@ export default class ParcelsMap extends React.Component {
   debounceMapMethodsByTileSize(tileSize) {
     const delay = 32000
     this.debouncedRedrawMap = debounce(this.redrawMap, delay / tileSize)
-    this.debouncedOnMapMoveEnd = debounce(this.onMapMoveEnd, delay / tileSize)
+    this.debouncedOnMoveEnd = debounce(this.onMoveEnd, delay / tileSize)
   }
 
   createMap(container) {
@@ -103,7 +103,6 @@ export default class ParcelsMap extends React.Component {
       center: this.getCenter(x, y),
       layers: [this.parcelGrid],
       renderer: L.svg(),
-      fadeAnimation: false,
       zoomAnimation: false
     })
 
@@ -118,7 +117,7 @@ export default class ParcelsMap extends React.Component {
   attachMapEvents() {
     this.map.on('movestart', this.onMapMoveStart)
     this.map.on('click', this.onMapClick)
-    this.map.on('moveend', this.debouncedOnMapMoveEnd)
+    this.map.on('moveend', this.onMapMoveEnd)
     this.map.on('zoomend', this.onZoomEnd)
   }
 
@@ -128,9 +127,7 @@ export default class ParcelsMap extends React.Component {
 
   redrawMap = () => {
     this.map.eachLayer(layer => {
-      if (layer.redraw) {
-        layer.redraw()
-      } else if (layer.renderCells) {
+      if (layer.renderCells) {
         layer.renderCells(this.map.getBounds())
       }
     })
@@ -151,12 +148,18 @@ export default class ParcelsMap extends React.Component {
   }
 
   onMapMoveEnd = event => {
-    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+    if (this.panInProgress) {
+      this.debouncedOnMoveEnd()
+    }
   }
 
   onZoomEnd = event => {
     this.props.onZoomEnd(this.map.getZoom())
-    this.debouncedOnMapMoveEnd()
+    this.debouncedOnMoveEnd()
+  }
+
+  onMoveEnd() {
+    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
   }
 
   getCurrentPositionAndBounds() {
