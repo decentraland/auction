@@ -20,10 +20,6 @@ export function getBidStatus(parcel, ownerAddress) {
   return status
 }
 
-export function hasEnded(parcel) {
-  return parcel.endsAt && Date.now() >= parcel.endsAt.getTime()
-}
-
 export const COLORS = {
   Won: '#30D7A9',
   Winning: '#30D7A9',
@@ -76,6 +72,10 @@ export function getColorByAmount(amount) {
 
 export function isTaken(parcel) {
   return !!parcel.projectId
+}
+
+export function hasEnded(parcel) {
+  return parcel.endsAt && Date.now() >= parcel.endsAt.getTime()
 }
 
 function calculateColorValue(amount, minValue, maxValue) {

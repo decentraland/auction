@@ -57,8 +57,6 @@ class ParcelsMapContainer extends React.Component {
   }
 
   onMoveEnd = ({ position, bounds }) => {
-    this.props.changeLocation(locations.parcelDetail(position.x, position.y))
-
     const offset = this.getBoundsOffset()
 
     this.fetchParcelRange(
@@ -67,6 +65,8 @@ class ParcelsMapContainer extends React.Component {
       bounds.max.x - offset,
       bounds.max.y - offset
     )
+
+    this.props.changeLocation(locations.parcelDetail(position.x, position.y))
   }
 
   onZoomEnd = zoom => {
@@ -106,7 +106,7 @@ class ParcelsMapContainer extends React.Component {
   }
 
   getBoundsOffset() {
-    return 3 * (this.baseZoom - this.state.zoom)
+    return this.baseZoom - this.state.zoom
   }
 
   render() {
@@ -118,7 +118,7 @@ class ParcelsMapContainer extends React.Component {
       <ParcelsMap
         x={x}
         y={y}
-        minZoom={this.baseZoom - 1}
+        minZoom={this.baseZoom - 2}
         maxZoom={this.baseZoom + 1}
         zoom={zoom}
         bounds={this.bounds}

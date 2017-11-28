@@ -55,7 +55,7 @@ class API {
       }
     }
 
-    console.log(`[API] ${method} ${path}`, options)
+    // console.log(`[API] ${method} ${path}`, options)
 
     return httpClient
       .request(options)
@@ -78,7 +78,7 @@ class API {
           Object.assign(error, err)
         }
 
-        console.warn(`[WARN] ${error.message}`)
+        console.warn(`[WARN] ${error.message || ''}`, error)
 
         throw error
       })

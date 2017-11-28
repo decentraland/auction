@@ -7,6 +7,7 @@ import debounce from 'lodash.debounce'
 import { buildCoordinate } from '../lib/util'
 import * as parcelUtils from '../lib/parcelUtils'
 import LeafletMapCoordinates from '../lib/LeafletMapCoordinates'
+import LeafletParcelGrid from '../lib/LeafletParcelGrid'
 
 import ParcelPopup from './ParcelPopup'
 
@@ -47,7 +48,7 @@ export default class ParcelsMap extends React.Component {
 
     this.debounceMapMethodsByTileSize(this.props.tileSize)
 
-    setTimeout(() => this.onMapMoveEnd())
+    setTimeout(() => this.onMoveEnd())
   }
 
   componentWillUnmount() {
@@ -82,20 +83,26 @@ export default class ParcelsMap extends React.Component {
   }
 
   debounceMapMethodsByTileSize(tileSize) {
-    this.debouncedRedrawMap = debounce(this.redrawMap, 32000 / tileSize)
-    this.debouncedOnMapMoveEnd = debounce(this.onMapMoveEnd, 64000 / tileSize)
+    const delay = 32000
+    this.debouncedRedrawMap = debounce(this.redrawMap, delay / tileSize)
+    this.debouncedOnMoveEnd = debounce(this.onMoveEnd, delay / tileSize)
   }
 
   createMap(container) {
-    const { x, y, minZoom, maxZoom, bounds, zoom } = this.props
+    const { x, y, tileSize, minZoom, maxZoom, bounds, zoom } = this.props
+
+    this.parcelGrid = new LeafletParcelGrid({
+      getTileAttributes: this.getTileAttributes,
+      cellSize: tileSize
+    })
 
     this.map = new L.Map(MAP_ID, {
       minZoom,
       maxZoom,
       zoom,
       center: this.getCenter(x, y),
-      layers: [this.getGridLayer()],
-      fadeAnimation: false,
+      layers: [this.parcelGrid],
+      renderer: L.svg(),
       zoomAnimation: false
     })
 
@@ -110,25 +117,18 @@ export default class ParcelsMap extends React.Component {
   attachMapEvents() {
     this.map.on('movestart', this.onMapMoveStart)
     this.map.on('click', this.onMapClick)
-    this.map.on('moveend', this.debouncedOnMapMoveEnd)
+    this.map.on('moveend', this.onMapMoveEnd)
     this.map.on('zoomend', this.onZoomEnd)
   }
 
   setView(center) {
-    this.map.off('movestart moveend')
-    this.map.on('moveend', () => {
-      this.attachMapEvents()
-
-      this.onMapMoveStart()
-      this.debouncedOnMapMoveEnd()
-    })
     this.map.setView(center)
   }
 
   redrawMap = () => {
     this.map.eachLayer(layer => {
-      if (layer.redraw) {
-        layer.redraw()
+      if (layer.renderCells) {
+        layer.renderCells(this.map.getBounds())
       }
     })
 
@@ -143,17 +143,23 @@ export default class ParcelsMap extends React.Component {
     const parcelStates = this.props.getParcelStates()
 
     if (!parcelStates.loading) {
-      this.addPopup(event.latlng)
+      this.addPopup(event)
     }
   }
 
   onMapMoveEnd = event => {
-    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+    if (this.panInProgress) {
+      this.debouncedOnMoveEnd()
+    }
   }
 
   onZoomEnd = event => {
     this.props.onZoomEnd(this.map.getZoom())
-    this.debouncedOnMapMoveEnd()
+    this.debouncedOnMoveEnd()
+  }
+
+  onMoveEnd() {
+    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
   }
 
   getCurrentPositionAndBounds() {
@@ -178,13 +184,15 @@ export default class ParcelsMap extends React.Component {
     return { position, bounds }
   }
 
-  addPopup(latlng) {
-    const { x, y } = this.mapCoordinates.latLngToCartesian(latlng)
+  addPopup(event) {
+    const target = event.originalEvent.target
+    const { x, y } = target.dataset
     const parcel = this.getParcelData(x, y)
-    const addressState = this.props.getAddressState()
-    const projects = this.props.getProjects()
 
     if (!parcel) return // TODO: could we fetch on-demand here?
+
+    const addressState = this.props.getAddressState()
+    const projects = this.props.getProjects()
 
     const leafletPopup = L.popup({
       className: 'parcel-popup',
@@ -206,22 +214,13 @@ export default class ParcelsMap extends React.Component {
     )
 
     leafletPopup
-      .setLatLng(latlng)
+      .setLatLng(event.latlng)
       .setContent(popup)
       .addTo(this.map)
   }
 
   onParcelBid(parcel, leafletPopup) {
     this.props.onParcelBid(parcel)
-  }
-
-  getGridLayer() {
-    const { tileSize } = this.props
-    const tiles = new L.GridLayer({ tileSize })
-
-    tiles.createTile = coords => this.createTile(coords, tileSize)
-
-    return tiles
   }
 
   getCenter(x, y) {
@@ -245,27 +244,25 @@ export default class ParcelsMap extends React.Component {
     }
   }
 
-  createTile(coords, size) {
-    const { x, y } = this.mapCoordinates.coordsToCartesian(coords)
+  // Called by the Parcel Grid on each tile render
+  getTileAttributes = coords => {
+    const { x, y } = this.mapCoordinates.latLngToCartesian(coords)
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
 
-    const div = document.createElement('div')
     const className = parcelUtils.getClassName(parcel, addressState)
+    const dataset = { x, y }
 
+    let style = null
     if (!className) {
-      div.style = {
-        backgroundColor: parcelUtils.getColorByAmount(parcel.amount)
-      }
+      style = { color: parcelUtils.getColorByAmount(parcel.amount) }
     }
 
-    div.className = `tile ${className}`
-
-    if (x % 5 === 0 && y % 5 === 0) {
-      div.innerHTML = buildCoordinate(x, y)
+    return {
+      className,
+      dataset,
+      style
     }
-
-    return div
   }
 
   getParcelData = (x, y) => {

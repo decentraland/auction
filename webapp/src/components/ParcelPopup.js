@@ -7,8 +7,11 @@ import * as parcelUtils from '../lib/parcelUtils'
 import Button from './Button'
 import CurrentBidStatus from './CurrentBidStatus'
 
-export default function ParcelPopup({ x, y, parcel, addressState, projects, onBid }) {
-  const canBid = !parcelUtils.isTaken(parcel) && !parcelUtils.hasEnded(parcel)
+export default function ParcelPopup(props) {
+  const { x, y, parcel, addressState, projects, onBid } = props
+
+  const unBiddable =
+    parcel.error || parcelUtils.isTaken(parcel) || parcelUtils.hasEnded(parcel)
 
   let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: '' })
 
@@ -23,7 +26,11 @@ export default function ParcelPopup({ x, y, parcel, addressState, projects, onBi
       </div>
       <div className="text">
         {shortenAddress(parcel.address)}
-        <CurrentBidStatus addressState={addressState} parcel={parcel} projects={projects} />
+        <CurrentBidStatus
+          addressState={addressState}
+          parcel={parcel}
+          projects={projects}
+        />
       </div>
       <div className="text mana">
         {parcel.amount && `${parcel.amount} MANA`}
@@ -31,7 +38,9 @@ export default function ParcelPopup({ x, y, parcel, addressState, projects, onBi
       <div className="text">{endsAt}</div>
 
       <div className="text-center">
-        {canBid && <Button onClick={event => onBid(parcel)}>Place bid</Button>}
+        {!unBiddable && (
+          <Button onClick={event => onBid(parcel)}>Place bid</Button>
+        )}
       </div>
     </div>
   )

@@ -4,8 +4,8 @@ import * as addressStateUtils from '../lib/addressStateUtils'
 import * as parcelUtils from '../lib/parcelUtils'
 
 export default function CurrentBidStatus({ addressState, parcel, projects }) {
-  const isOwner = addressState.address === parcel.address
   const isError = parcel.error
+  const isOwner = addressState.address === parcel.address
   const hasBid = addressStateUtils.hasBidInParcel(addressState, parcel)
   const hasEnded = parcelUtils.hasEnded(parcel)
   const isTaken = parcelUtils.isTaken(parcel)
