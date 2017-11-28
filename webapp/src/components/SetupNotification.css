@@ -30,8 +30,12 @@
 }
 
 .EmailRegistered .Unsubscribe {
-  float: left;
-  font-size: 12px;
+  color: #d9534f;
+  cursor: pointer;
+  float: right;
+  font-size: 13px;
+  font-weight: bold;
+  margin-right: 24px;
   margin-top: 3px;
   padding: 8px 12px;
 }
