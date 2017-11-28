@@ -67,7 +67,7 @@ class API {
           Object.assign(error, err)
         }
 
-        console.warn(`[WARN] ${error.message}`)
+        console.warn(`[WARN] ${error.message || ''}`, error)
 
         throw error
       })

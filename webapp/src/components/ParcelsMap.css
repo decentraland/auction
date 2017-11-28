@@ -4,33 +4,37 @@
   position: relative;
 }
 
+#map path { stroke: #FFF; }
+
+#map .won     { fill: #30D7A9; }
+#map .winning { fill: #30D7A9; }
+#map .lost    { fill: #AE4DE8; }
+#map .outbid  { fill: #AE4DE8; }
+#map .taken   { fill: #3E396B; }
+#map .default { fill: #EAEAEA; }
+#map .loading { fill: #D0D0D0; }
+
+#map .coordinates {
+  margin-top: 1px !important;
+  margin-left: 1px !important;
+}
+
+#map .coordinates-zoom-11 { font-size: 1.3em; }
+#map .coordinates-zoom-10 { font-size: 1.1em; }
+#map .coordinates-zoom-9 { font-size: 0.8em; }
+#map .coordinates-zoom-8 { font-size: 0.5em; }
+
+/* -----------------------------------------------------------------------
+  Popup */
+
+.leaflet-popup {
+  z-index: 800;
+}
+
 .leaflet-popup .btn {
   margin-top: 16px;
   padding: 8px 15px;
   font-size: 14px;
-}
-
-.leaflet-tile {
-  padding-top: 4px;
-  padding-left: 4px;
-  border: 2px solid #FFF;
-  color: #666;
-}
-
-.tile {
-  visibility: visible;
-}
-
-.tile.won     { background-color: #30D7A9; }
-.tile.winning { background-color: #30D7A9; }
-.tile.lost    { background-color: #AE4DE8; }
-.tile.outbid  { background-color: #AE4DE8; }
-.tile.taken   { background-color: #3E396B; }
-.tile.default { background-color: #EAEAEA; }
-.tile.loading { background-color: #D0D0D0; }
-
-.leaflet-popup {
-  z-index: 800;
 }
 
 .leaflet-popup .current-bid-status:first-letter {

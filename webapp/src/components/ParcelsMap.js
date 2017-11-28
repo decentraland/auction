@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce'
 import { buildCoordinate } from '../lib/util'
 import * as parcelUtils from '../lib/parcelUtils'
 import LeafletMapCoordinates from '../lib/LeafletMapCoordinates'
-import createVirtualGrid from '../lib/createVirtualGrid'
+import LeafletParcelGrid from '../lib/LeafletParcelGrid'
 
 import ParcelPopup from './ParcelPopup'
 
@@ -83,22 +83,26 @@ export default class ParcelsMap extends React.Component {
   }
 
   debounceMapMethodsByTileSize(tileSize) {
-    this.debouncedRedrawMap = debounce(this.redrawMap, 32000 / tileSize)
-    this.debouncedOnMapMoveEnd = debounce(this.onMapMoveEnd, 64000 / tileSize)
+    const delay = 32000
+    this.debouncedRedrawMap = debounce(this.redrawMap, delay / tileSize)
+    this.debouncedOnMapMoveEnd = debounce(this.onMapMoveEnd, delay / tileSize)
   }
 
   createMap(container) {
     const { x, y, tileSize, minZoom, maxZoom, bounds, zoom } = this.props
+
+    this.parcelGrid = new LeafletParcelGrid({
+      getTileAttributes: this.getTileAttributes,
+      cellSize: tileSize
+    })
 
     this.map = new L.Map(MAP_ID, {
       minZoom,
       maxZoom,
       zoom,
       center: this.getCenter(x, y),
-      layers: [
-        // this.getGridLayer()
-        createVirtualGrid({ cellSize: tileSize })
-      ],
+      layers: [this.parcelGrid],
+      renderer: L.svg(),
       fadeAnimation: false,
       zoomAnimation: false
     })
@@ -119,7 +123,6 @@ export default class ParcelsMap extends React.Component {
   }
 
   setView(center) {
-    console.log("SET VIEW", center)
     // this.map.off('movestart click moveend zoomend')
     // this.map.on('moveend', () => {
     //   this.attachMapEvents()
@@ -131,10 +134,11 @@ export default class ParcelsMap extends React.Component {
   }
 
   redrawMap = () => {
-    console.log('REDRAW')
     this.map.eachLayer(layer => {
       if (layer.redraw) {
         layer.redraw()
+      } else if (layer.renderCells) {
+        layer.renderCells(this.map.getBounds())
       }
     })
 
@@ -221,19 +225,6 @@ export default class ParcelsMap extends React.Component {
     this.props.onParcelBid(parcel)
   }
 
-  getGridLayer() {
-    const { tileSize } = this.props
-    const tiles = new L.GridLayer({
-      tileSize,
-      updateInterval: 650,
-      keepBuffer: 1
-    })
-
-    tiles.createTile = coords => this.createTile(coords, tileSize)
-
-    return tiles
-  }
-
   getCenter(x, y) {
     return isNaN(x)
       ? new L.LatLng(0, 0)
@@ -242,7 +233,6 @@ export default class ParcelsMap extends React.Component {
 
   bindMap(container) {
     if (container) {
-      console.log('bindMap')
       this.removeMap()
       this.createMap(container)
     }
@@ -256,27 +246,31 @@ export default class ParcelsMap extends React.Component {
     }
   }
 
-  createTile(coords, size) {
-    const { x, y } = this.mapCoordinates.coordsToCartesian(coords)
+  // Called by the Parcel Grid on each tile render
+  getTileAttributes = coords => {
+    const { x, y } = this.mapCoordinates.latLngToCartesian(coords)
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
 
-    const div = document.createElement('div')
-    const className = parcelUtils.getClassName(parcel, addressState)
+    let className = parcelUtils.getClassName(parcel, addressState)
 
+    let color = null
     if (!className) {
-      div.style = {
-        backgroundColor: parcelUtils.getColorByAmount(parcel.amount)
-      }
+      color = parcelUtils.getColorByAmount(parcel.amount)
     }
 
-    div.className = `tile ${className}`
-
-    if (x % 5 === 0 && y % 5 === 0) {
-      div.innerHTML = buildCoordinate(x, y)
+    let coordinates = null
+    if (x % 10 === 0 && y % 10 === 0) {
+      coordinates = buildCoordinate(x, y)
     }
 
-    return div
+    return {
+      className,
+      style: {
+        color
+      },
+      coordinates
+    }
   }
 
   getParcelData = (x, y) => {
@@ -291,7 +285,6 @@ export default class ParcelsMap extends React.Component {
   }
 
   render() {
-    console.log('MAP RENDER')
     return <div id={MAP_ID} ref={this.bindMap.bind(this)} />
   }
 }

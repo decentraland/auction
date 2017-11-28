@@ -29,8 +29,6 @@ export default class LeafletMapCoordinates {
       lng
     }
 
-    console.log(cache)
-
     return new L.LatLng(lat, lng)
   }
 
