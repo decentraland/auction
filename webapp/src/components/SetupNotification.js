@@ -22,7 +22,11 @@ export default class SetupNotification extends React.Component {
             <p>
               You are subscribed with <b>{currentEmail}</b>
             </p>
-            <Button className="Unsubscribe" onClick={onDeregister}>
+            <Button
+              className="Unsubscribe"
+              onClick={onDeregister}
+              type="danger"
+            >
               Unsubscribe
             </Button>
           </div>
