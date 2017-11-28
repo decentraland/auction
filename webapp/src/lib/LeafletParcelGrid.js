@@ -175,8 +175,6 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
       }
     }
 
-    cells.sort((a, b) => b.distance - a.distance)
-
     return cells
   },
 
