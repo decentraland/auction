@@ -1,6 +1,6 @@
 {
   "name": "auction",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Participate in the Decentraland's Auction",
   "main": "src/server.js",
   "scripts": {
