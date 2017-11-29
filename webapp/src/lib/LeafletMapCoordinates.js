@@ -1,9 +1,9 @@
 import L from 'leaflet'
 
 export default class LeafletMapCoordinates {
-  constructor(zoom) {
-    this.zoom = zoom
-    this.offset = Math.pow(2, this.zoom)
+  constructor(baseZoom) {
+    this.zoom = baseZoom
+    this.offset = Math.pow(2, baseZoom)
   }
 
   toLatLngBounds(bounds) {

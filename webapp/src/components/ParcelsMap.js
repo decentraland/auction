@@ -24,6 +24,7 @@ export default class ParcelsMap extends React.Component {
     bounds: PropTypes.arrayOf(PropTypes.array),
     minZoom: PropTypes.number.isRequired,
     maxZoom: PropTypes.number.isRequired,
+    baseZoom: PropTypes.number.isRequired,
     zoom: PropTypes.number.isRequired,
     tileSize: PropTypes.number.isRequired,
     getAddressState: PropTypes.func.isRequired,
@@ -44,7 +45,7 @@ export default class ParcelsMap extends React.Component {
   componentWillMount() {
     this.panInProgress = false
     this.map = null
-    this.mapCoordinates = new LeafletMapCoordinates(this.props.zoom)
+    this.mapCoordinates = new LeafletMapCoordinates(this.props.baseZoom)
 
     this.debounceMapMethodsByTileSize(this.props.tileSize)
 

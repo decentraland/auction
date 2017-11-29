@@ -44,7 +44,7 @@ class ParcelsMapContainer extends React.Component {
     this.baseTileSize = 128
 
     this.state = {
-      zoom: this.baseZoom
+      zoom: this.baseZoom - 2
     }
   }
 
@@ -120,6 +120,7 @@ class ParcelsMapContainer extends React.Component {
         y={y}
         minZoom={this.baseZoom - 2}
         maxZoom={this.baseZoom + 1}
+        baseZoom={this.baseZoom}
         zoom={zoom}
         bounds={this.bounds}
         tileSize={this.getTileSize()}
