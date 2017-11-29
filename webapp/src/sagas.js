@@ -26,6 +26,7 @@ function* rootSaga() {
   yield takeLatest(types.fetchManaBalance.request, handleAddressFetchRequest)
 
   yield takeLatest(types.fetchAddressState.request, handleAddressFetchRequest)
+  yield takeLatest(types.fetchAddressState.reload, handleAddressFetchReload)
 
   yield takeEvery(types.fetchProjects.request, handleProjectsFetchRequest)
 
@@ -85,24 +86,7 @@ function* handleLocationChange(action) {
 
 function* handleAddressFetchRequest(action) {
   try {
-    const web3Connected = yield select(selectors.getWeb3Connected)
-
-    if (!web3Connected) {
-      throw new Error(
-        'Tried to get the MANA balance without connecting to ethereum first'
-      )
-    }
-
-    const addressState = yield call(() =>
-      api.fetchFullAddressState(eth.getAddress())
-    )
-
-    if (!addressState) {
-      throw new Error(
-        "We couldn't retrieve any account information for your current address."
-      )
-    }
-
+    const addressState = yield fetchAddressState()
     yield put({ type: types.fetchAddressState.success, addressState })
   } catch (error) {
     yield put(replace(locations.addressError))
@@ -111,6 +95,37 @@ function* handleAddressFetchRequest(action) {
       error: error.message
     })
   }
+}
+
+function* handleAddressFetchReload(action) {
+  try {
+    const addressState = yield fetchAddressState()
+    yield put({ type: types.fetchAddressState.success, addressState })
+  } catch (error) {
+    // Let it slip
+  }
+}
+
+function* fetchAddressState() {
+  const web3Connected = yield select(selectors.getWeb3Connected)
+
+  if (!web3Connected) {
+    throw new Error(
+      'Tried to get the MANA balance without connecting to ethereum first'
+    )
+  }
+
+  const addressState = yield call(() =>
+    api.fetchFullAddressState(eth.getAddress())
+  )
+
+  if (!addressState) {
+    throw new Error(
+      "We couldn't retrieve any account information for your current address."
+    )
+  }
+
+  return addressState
 }
 
 function* handleAddresStateStartLoading(action) {
@@ -229,6 +244,9 @@ function* handleConfirmBidsRequest(action) {
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch })
   } catch (error) {
     yield put({ type: types.confirmBids.failed, error: error.message })
+
+    // Re-fetch the address state to avoid outdated confirmation errors
+    yield put({ type: types.fetchAddressState.reload })
   }
 }
 

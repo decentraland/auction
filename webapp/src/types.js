@@ -26,7 +26,8 @@ export default {
   fetchAddressState: {
     request: '[Request] Fetch address state requested',
     success: '[Success] Address state fetched',
-    failed: '[Failed] Failed fetching address state'
+    failed: '[Failed] Failed fetching address state',
+    reload: '[Reload] Reload address state'
   },
 
   fetchProjects: {

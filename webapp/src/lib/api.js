@@ -61,7 +61,7 @@ class API {
       .request(options)
       .then(({ data, error }) => {
         if (data && !data.ok) {
-          return Promise.reject({ message: error })
+          return Promise.reject({ message: error || data.error })
         }
 
         return data.data // One for axios data, another for the servers data

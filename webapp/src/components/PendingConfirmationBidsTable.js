@@ -41,7 +41,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
         {pendingConfirmationBids.error && (
           <div className="text-danger">
             We are having troubles confirming your bid. Please try again in a
-            few minutes
+            few moments
           </div>
         )}
 
