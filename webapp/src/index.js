@@ -10,6 +10,7 @@ import Routes from './Routes'
 import { store, history } from './store'
 
 import './index.css'
+import './rollbar'
 
 env.load()
 
