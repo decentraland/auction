@@ -112,7 +112,7 @@ export default class BidParcelModal extends React.Component {
   getMinimumBidValue() {
     const { parcel } = this.props
     return parcel.amount
-      ? parcel.amount * BID_INCREMENT_PERCENTAGE
+      ? Math.round(parcel.amount * BID_INCREMENT_PERCENTAGE)
       : ONE_LAND_IN_MANA
   }
 
