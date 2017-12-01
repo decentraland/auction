@@ -289,11 +289,9 @@ const returnAllMANA = async contract => {
       }
 
       // get locked MANA including discounts
-      const {
-        totalLockedMANA,
-        monthlyLandBalances,
-        monthlyLockedBalances
-      } = await AddressService.lockedMANABalanceOf(address)
+      const { totalLockedMANA } = await AddressService.lockedMANABalanceOf(
+        address
+      )
       log.info(`(return) [${address}] locked(${totalLockedMANA})`)
 
       // get burned MANA by all buy transactions
@@ -301,32 +299,8 @@ const returnAllMANA = async contract => {
         address
       )
 
-      // adjust MANA balances to bonuses
-      const beforeNovBalance = AddressService.calculateTotalForMonths(
-        monthlyLandBalances,
-        monthlyLockedBalances,
-        [9, 10]
-      )
-      const afterNovBalance = AddressService.calculateTotalForMonths(
-        monthlyLandBalances,
-        monthlyLockedBalances,
-        [11, 12, 1]
-      )
-
-      // total MANA locked in districts
-      const totalLandBalance = Object.values(monthlyLandBalances).reduce(
-        (total, value) => total + value,
-        0
-      )
-
       // total MANA reserved
-      const manaReserved =
-        Math.floor(beforeNovBalance * AddressService.BEFORE_NOVEMBER_DISCOUNT) +
-        Math.floor(afterNovBalance * AddressService.AFTER_NOVEMBER_DISCOUNT) +
-        totalLandBalance
-      log.info(
-        `(return) [${address}] before(${beforeNovBalance}) + after(${afterNovBalance}) + land(${totalLandBalance}) = reserved(${manaReserved})`
-      )
+      log.info(`(return) [${address}] reserved(${totalLockedMANA})`)
 
       // calculate remaining MANA to return
       const remainingMANA = eth.web3
