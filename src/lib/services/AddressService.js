@@ -1,8 +1,10 @@
 import { DistrictEntry, LockedBalanceEvent } from '../models'
 
 const LAND_MANA_COST = 1000
+
 const BEFORE_NOVEMBER_DISCOUNT = 1.15
-const AFTER_NOVEMBER_DISCOUNT = 1.1
+const DURING_NOVEMBER_DISCOUNT = 1.1
+const AFTER_NOVEMBER_DISCOUNT = 1.0
 
 export default class AddressService {
   constructor() {
@@ -11,7 +13,9 @@ export default class AddressService {
   }
 
   static LAND_MANA_COST = LAND_MANA_COST
+
   static BEFORE_NOVEMBER_DISCOUNT = BEFORE_NOVEMBER_DISCOUNT
+  static DURING_NOVEMBER_DISCOUNT = DURING_NOVEMBER_DISCOUNT
   static AFTER_NOVEMBER_DISCOUNT = AFTER_NOVEMBER_DISCOUNT
 
   async lockedMANABalanceOf(address) {
@@ -31,10 +35,15 @@ export default class AddressService {
       monthlyLockedBalances,
       [9, 10]
     )
+    const duringNovBalanceToAuction = calculateTotalForMonths(
+      monthlyLandBalances,
+      monthlyLockedBalances,
+      [11]
+    )
     const afterNovBalanceToAuction = calculateTotalForMonths(
       monthlyLandBalances,
       monthlyLockedBalances,
-      [11, 12, 1]
+      [12, 1, 2]
     )
 
     // total MANA locked in districts
@@ -49,6 +58,7 @@ export default class AddressService {
       monthlyLandBalances,
       totalLockedMANA:
         Math.floor(beforeNovBalanceToAuction * BEFORE_NOVEMBER_DISCOUNT) +
+        Math.floor(duringNovBalanceToAuction * DURING_NOVEMBER_DISCOUNT) +
         Math.floor(afterNovBalanceToAuction * AFTER_NOVEMBER_DISCOUNT) +
         totalLockedToDistricts
     }
