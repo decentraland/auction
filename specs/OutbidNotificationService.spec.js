@@ -2,6 +2,7 @@ import { expect } from 'chai'
 
 import { OutbidNotification, ParcelState } from '../src/lib/models'
 import { OutbidNotificationService } from '../src/lib/services'
+import db from '../src/lib/db'
 
 describe('OutbidNotificationService', function() {
   let notificationService
@@ -106,11 +107,9 @@ describe('OutbidNotificationService', function() {
     })
   })
 
-  after(async () => {
-    await Promise.all([
-      OutbidNotification.delete({ email: email }),
-      ParcelState.delete({ address: '0xdead' }),
-      ParcelState.delete({ address: '0xbeef' })
-    ])
-  })
+  afterEach(() =>
+    Promise.all(
+      ['jobs', 'outbid_notifications', 'parcel_states'].map(db.truncate.bind(db))
+    )
+  )
 })
