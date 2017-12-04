@@ -234,11 +234,11 @@ function* handleConfirmBidsRequest(action) {
 
 function buildBidsSignPayload(bids) {
   const payloadBids = bids
-    .map(bid => `- (${buildCoordinate(bid.x, bid.y)}) for ${bid.amount} MANA`)
-    .join('\n')
+    .map(bid => `\t- (${buildCoordinate(bid.x, bid.y)}) for ${bid.amount} MANA`)
+    .join('\t\n')
 
   return `Bids (${bids.length}):
-  ${payloadBids}
+${payloadBids}
 Time: ${new Date().getTime()}`
 }
 

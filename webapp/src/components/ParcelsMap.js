@@ -45,6 +45,7 @@ export default class ParcelsMap extends React.Component {
   componentWillMount() {
     this.panInProgress = false
     this.map = null
+    this.parcelGrid = null
     this.mapCoordinates = new LeafletMapCoordinates(this.props.baseZoom)
 
     this.debounceMapMethodsByTileSize(this.props.tileSize)
@@ -128,7 +129,9 @@ export default class ParcelsMap extends React.Component {
   }
 
   redrawMap = () => {
-    this.parcelGrid.renderCells(this.map.getBounds())
+    if (this.map) {
+      this.parcelGrid.renderCells(this.map.getBounds())
+    }
     this.panInProgress = false
   }
 

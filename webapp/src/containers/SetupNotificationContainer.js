@@ -18,7 +18,6 @@ class SetupNotificationContainer extends React.Component {
 
   constructor(props) {
     super(props)
-    console.log(this.props.email)
     this.state = {
       email: this.props.email.data || ''
     }
