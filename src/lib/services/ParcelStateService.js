@@ -6,14 +6,25 @@ class ParcelStateService {
   }
 
   async insertMatrix(minX, minY, maxX, maxY) {
-    for (let x = minX; x <= maxX; x++) {
-      const inserts = []
-      for (let y = minY; y <= maxY; y++) {
-        inserts.push(this.ParcelState.insert({ x, y }))
-      }
-      await Promise.all(inserts)
+    const skipDuplicates = error => {
+      if (!isDuplicatedError(error)) throw new Error(error)
     }
+
+    const inserts = []
+
+    for (let x = minX; x <= maxX; x++) {
+      for (let y = minY; y <= maxY; y++) {
+        inserts.push(this.ParcelState.insert({ x, y }).catch(skipDuplicates))
+      }
+    }
+
+    await Promise.all(inserts)
   }
+}
+
+function isDuplicatedError(error) {
+  const duplicateErrorRegexp = /duplicate key value violates unique constraint ".+_pkey"/
+  return error.search(duplicateErrorRegexp) !== -1
 }
 
 export default ParcelStateService
