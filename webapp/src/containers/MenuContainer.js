@@ -22,11 +22,13 @@ class MenuContainer extends React.Component {
   }
 
   changeMenuVisibility(menuVisible) {
-    menuVisible ? this.props.openMenu() : this.props.closeMenu()
-
     if (menuVisible) {
+      this.props.openMenu()
+
       // Wait a bit for the Menu animation to end
       setTimeout(() => this.props.fetchOngoingAuctions(), 500)
+    } else {
+      this.props.closeMenu()
     }
   }
 
