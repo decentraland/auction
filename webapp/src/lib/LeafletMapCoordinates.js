@@ -29,8 +29,8 @@ export default class LeafletMapCoordinates {
     const mapSize = this.getMapSize()
     const offset = this.getOffset()
 
-    const x = Math.floor(lng * offset / mapSize)
-    const y = Math.floor(-lat * offset / mapSize)
+    const x = Math.round(lng * offset / mapSize)
+    const y = Math.round(-lat * offset / mapSize)
 
     return { x, y }
   }
