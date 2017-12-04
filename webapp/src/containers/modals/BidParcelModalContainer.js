@@ -19,7 +19,13 @@ class BidParcelModalContainer extends React.Component {
   }
 
   onBid = value => {
-    const { data, intentUnconfirmedBid, addressState, onClose } = this.props
+    const {
+      data,
+      intentUnconfirmedBid,
+      addressState,
+      onClose,
+      closeMenu
+    } = this.props
     const parcel = data
 
     intentUnconfirmedBid({
