@@ -121,7 +121,7 @@ class OutbidNotificationService {
     const isTimeToSend = date => (new Date() - date) / 1000 > hoursAgo * 3600
 
     const lastJob = await Job.findLastByReferenceId(email)
-    if (!isTimeToSend(lastJob.createdAt)) {
+    if (lastJob && !isTimeToSend(lastJob.createdAt)) {
       throw new Error(`Last notification sent less than ${hoursAgo} hours ago`)
     }
 
