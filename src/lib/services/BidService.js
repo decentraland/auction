@@ -15,6 +15,8 @@ const ERROR_CODES = {
 }
 
 export default class BidService {
+  static ERROR_CODES = ERROR_CODES
+
   constructor() {
     this.BidGroup = BidGroup
     this.AddressState = AddressState
@@ -168,7 +170,7 @@ export default class BidService {
           code: ERROR_CODES.insufficientIncrement,
           bidAmount: bid.amount,
           parcelAmount: parcelState.amount,
-          minimumAmount: this.getParcelIncrement(parcelState)
+          minimumAmount: this.getParcelIncrement(parcelState).toString()
         }
       }
     }
