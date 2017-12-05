@@ -27,6 +27,65 @@ export default class PendingConfirmationBidsTable extends React.Component {
     return pendingBidsUtils.getTotalManaBidded(pendingConfirmationBids.data)
   }
 
+  getErrorMessage() {
+    const { error } = this.props.pendingConfirmationBids
+
+    let message = null
+
+    switch (error.code) {
+      case 'INCOMPLETE_DATA':
+        message =
+          'Your Bid seems to be invalid, please try again refreshing your browser.'
+        break
+      case 'EXISTING_ID':
+        message =
+          'This bid was already registered in the server, try refreshing your browser to see it.'
+        break
+      case 'INVALID_NONCE':
+      case 'INVALID_TIMESTAMP':
+        message =
+          "The bid couldn't be confirmed. This is probably due to timing, please try again in a few moments."
+        break
+      case 'PARCEL_ERRORS':
+        message = Object.keys(error.parcels)
+          .map(parcelId =>
+            this.getParcelErrorMessage(parcelId, error.parcels[parcelId])
+          )
+          .join('\n')
+        break
+      default:
+        message =
+          'We are having troubles confirming your bid. Please try again in a few moments'
+    }
+
+    return message
+  }
+
+  getParcelErrorMessage(parcelId, error) {
+    let message = null
+
+    switch (error.code) {
+      case 'OUT_OF_BOUNDS':
+        message = `Invalid coordinates for ${parcelId}, it's outside the map bounds`
+        break
+      case 'INSUFFICIENT_BALANCE':
+        message = `Your balance it's not enough to bid on ${parcelId}`
+        break
+      case 'AUCTION_ENDED':
+        message = `Auction on ${parcelId} ended at ${new Date(
+          error.endsAt
+        ).toLocaleDateString()}`
+        break
+      case 'INSUFFICIENT_INCREMENT':
+        message = `The bid of ${error.bidAmount}MANA on ${parcelId} is not enought. The minimum is ${error.minimumAmount}MANA`
+        break
+      default:
+        message = ''
+    }
+
+    return message
+  }
+
   render() {
     const { pendingConfirmationBids, onConfirmBids, onDeleteBid } = this.props
 
@@ -39,10 +98,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
         <h3>Pending Confirmation</h3>
 
         {pendingConfirmationBids.error && (
-          <div className="text-danger">
-            We are having troubles confirming your bid. Please try again in a
-            few moments
-          </div>
+          <div className="text-danger">{this.getErrorMessage()}</div>
         )}
 
         <div className="table">

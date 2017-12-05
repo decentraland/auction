@@ -192,10 +192,12 @@ describe('BidService', function() {
   describe('processBidGroup', () => {
     it('returns an object with "error" if validation of group fails', async () => {
       const id = 1
+
       sinon
         .stub(BidGroup, 'findOne')
         .withArgs(id)
         .returns({ id })
+
       expect(await bidService.processBidGroup({ id })).to.deep.equal({
         error: `Id ${id} already exists in database`
       })

@@ -59,12 +59,16 @@ class API {
 
     return httpClient
       .request(options)
-      .then(({ data, error }) => {
+      .then(response => {
+        const data = response.data
+        const result = data.data // One for axios data, another for the servers data
+
         if (data && !data.ok) {
-          return Promise.reject({ message: error || data.error })
+          const errorMessage = response.error || data.error
+          return Promise.reject({ message: errorMessage, data: result })
         }
 
-        return data.data // One for axios data, another for the servers data
+        return result
       })
       .catch(err => {
         let error

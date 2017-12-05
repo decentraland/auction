@@ -4,6 +4,6 @@ export function stateData(data) {
   return PropTypes.shape({
     data,
     loading: PropTypes.bool,
-    error: PropTypes.string
+    error: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
   })
 }

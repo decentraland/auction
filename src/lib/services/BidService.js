@@ -1,14 +1,17 @@
-import { eth } from 'decentraland-commons'
+import { eth, utils } from 'decentraland-commons'
 import { BidGroup, AddressState, ParcelState } from '../models'
 
 const HOURS_IN_MILLIS = 60 * 60 * 1000
-
-const bnCache = {}
-const getBn = number => {
-  if (!bnCache[number]) {
-    bnCache[number] = new eth.utils.toBigNumber(number)
-  }
-  return bnCache[number]
+const ERROR_CODES = {
+  incompleteData: 'INCOMPLETE_DATA',
+  existingId: 'EXISTING_ID',
+  invalidNonce: 'INVALID_NONCE',
+  invalidTimestamp: 'INVALID_TIMESTAMP',
+  parcelErrors: 'PARCEL_ERRORS',
+  outOfBounds: 'OUT_OF_BOUNDS',
+  insufficientBalance: 'INSUFFICIENT_BALANCE',
+  auctionEnded: 'AUCTION_ENDED',
+  insufficientIncrement: 'INSUFFICIENT_INCREMENT'
 }
 
 export default class BidService {
@@ -28,20 +31,22 @@ export default class BidService {
     this.gracePeriod = 36 * HOURS_IN_MILLIS
   }
 
-  async processBidGroup(bidGroup) {
-    const bidGroupError = await this.getBidGroupValidationError(bidGroup)
-    if (bidGroupError) {
-      return { error: bidGroupError }
-    }
+  async processBidGroup(bidGroupData) {
+    const bidGroupError = await this.getBidGroupValidationError(bidGroupData)
+    if (bidGroupError) return { error: bidGroupError } // Break early
 
-    bidGroup = await this.BidGroup.insert(bidGroup)
+    const bidGroup = await this.BidGroup.insert(bidGroupData)
 
     const addressState = await this.AddressState.findByAddress(bidGroup.address)
     const parcelMap = await this.ParcelState.findInCoordinates(
       bidGroup.bids.map(bid => [bid.x, bid.y])
     )
 
-    const parcelStates = []
+    const parcelStates = {
+      success: {},
+      error: {}
+    }
+
     for (let index in bidGroup.bids) {
       const bid = bidGroup.bids[index]
       const parcelId = this.ParcelState.hashId(bid.x, bid.y)
@@ -55,9 +60,11 @@ export default class BidService {
       )
 
       if (newParceState.error) {
-        parcelStates.push(newParceState)
-        continue
+        parcelStates.error[parcelId] = newParceState.error
+        continue // don't update address state
       }
+
+      parcelStates.success[parcelId] = newParceState
 
       addressState.balance = this.calculateNewBalance(
         addressState,
@@ -65,86 +72,129 @@ export default class BidService {
         bidGroup,
         bid
       ).toString()
-
-      await this.ParcelState.update(newParceState, { id: parcelState.id })
-
-      parcelStates.push(newParceState)
     }
 
-    addressState.latestBidGroupId = bidGroup.id
-    await this.AddressState.update(addressState, { id: addressState.id })
+    const result = { bidGroup: null, error: null }
 
-    return { bidGroup, parcelStates }
-  }
+    if (utils.isEmptyObject(parcelStates.error)) {
+      for (const id in parcelStates.success) {
+        await this.ParcelState.update(parcelStates.success[id], { id })
+      }
 
-  async checkValidBidGroup(bidGroup) {
-    const validationError = await this.getBidGroupValidationError(bidGroup)
-    if (validationError) {
-      throw new Error(validationError)
+      addressState.latestBidGroupId = bidGroup.id
+      await this.AddressState.update(addressState, { id: addressState.id })
+
+      result.bidGroup = bidGroup
+    } else {
+      result.error = {
+        code: ERROR_CODES.parcelErrors,
+        parcels: parcelStates.error
+      }
     }
+
+    return result
   }
 
   async getBidGroupValidationError(bidGroup) {
+    let validationError = null
+
     if (this.BidGroup.isIncomplete(bidGroup)) {
-      return 'The BidGroup seems to be invalid, it should have defined all the columns to be inserted.'
-    }
-    if (await this.BidGroup.findOne(bidGroup.id)) {
-      return `Id ${bidGroup.id} already exists in database`
+      validationError = {
+        code: ERROR_CODES.incompleteData
+      }
+    } else if (await this.BidGroup.findOne(bidGroup.id)) {
+      validationError = {
+        code: ERROR_CODES.existingId,
+        id: bidGroup.id
+      }
+    } else {
+      const latestBid = await this.BidGroup.getLatestByAddress(bidGroup.address)
+
+      if (latestBid) {
+        const expectedNonce = latestBid.nonce + 1
+
+        if (expectedNonce !== bidGroup.nonce) {
+          validationError = {
+            code: ERROR_CODES.invalidNonce,
+            address: bidGroup.address,
+            latestNonce: latestBid.nonce,
+            receivedNonce: bidGroup.nonce
+          }
+        } else if (latestBid.receivedAt > bidGroup.receivedAt) {
+          validationError = {
+            code: ERROR_CODES.invalidTimestamp,
+            id: bidGroup.id,
+            latestReceivedAt: latestBid.receivedAt.getTime(),
+            receivedAt: bidGroup.receivedAt.getTime()
+          }
+        }
+      }
     }
 
-    const latestBid = await this.BidGroup.getLatestByAddress(bidGroup.address)
-
-    if (latestBid) {
-      const expectedNonce = latestBid.nonce + 1
-      if (expectedNonce !== bidGroup.nonce) {
-        return `Invalid nonce for ${bidGroup.address}: stored ${latestBid.nonce}, received ${bidGroup.nonce}`
-      }
-      if (latestBid.receivedAt > bidGroup.receivedAt) {
-        return `Invalid timestamp for BidGroup received ${bidGroup.id}: latest was ${latestBid.receivedAt.getTime()}, received ${bidGroup.receivedAt.getTime()}`
-      }
-    }
-    return null
+    return validationError
   }
 
-  getBidValidationError(fullAddressState, parcelState, bidGroup, index) {
-    const bid = bidGroup.bids[index]
+  getBidValidationError(addresState, parcelState, bidGroup, bid) {
+    let validationError = null
 
     const x = getBn(bid.x)
     const y = getBn(bid.y)
 
-    if (x.lessThan(this.minimumX) || x.greaterThan(this.maximumX)) {
-      return `Invalid X coordinate for bid ${index} of bidGroup ${bidGroup.id}: ${bid.x} is not between ${this.minimumX.toString()} and ${this.maximumX.toString()}`
-    }
-    if (y.lessThan(this.minimumY) || y.greaterThan(this.maximumY)) {
-      return `Invalid Y coordinate for bid ${index} of bidGroup ${bidGroup.id}: ${bid.y} is not between ${this.minimumY.toString()} and ${this.maximumY.toString()}`
+    if (this.isOutOfBounds(x, y)) {
+      validationError = {
+        code: ERROR_CODES.outOfBounds,
+        bidGroup,
+        bid
+      }
+    } else {
+      let newBalance = this.calculateNewBalance(
+        addresState,
+        parcelState,
+        bidGroup,
+        bid
+      )
+
+      if (newBalance.lessThan(getBn(0))) {
+        validationError = {
+          code: ERROR_CODES.insufficientBalance
+        }
+      } else if (this.hasCorrectEndDate(parcelState, bidGroup)) {
+        validationError = {
+          code: ERROR_CODES.auctionEnded,
+          endsAt: parcelState.endsAt.getTime()
+        }
+      } else if (this.isSufficientIncrement(parcelState, bid)) {
+        validationError = {
+          code: ERROR_CODES.insufficientIncrement,
+          bidAmount: bid.amount,
+          parcelAmount: parcelState.amount,
+          minimumAmount: this.getParcelIncrement(parcelState)
+        }
+      }
     }
 
-    let newBalance = this.calculateNewBalance(
-      fullAddressState,
-      parcelState,
-      bidGroup,
-      bid
+    return validationError
+  }
+
+  isOutOfBounds(x, y) {
+    return (
+      x.lessThan(this.minimumX) ||
+      x.greaterThan(this.maximumX) ||
+      y.lessThan(this.minimumY) ||
+      y.greaterThan(this.maximumY)
     )
+  }
 
-    if (newBalance.lessThan(getBn(0))) {
-      return 'Insufficient balance to participate in the bid'
-    }
-    if (parcelState) {
-      if (parcelState.endsAt && parcelState.endsAt < bidGroup.receivedAt) {
-        return `Auction ended at ${parcelState.endsAt.getTime()}`
-      }
-
-      if (this.isSufficientIncrement(parcelState, bid)) {
-        return `Insufficient increment from ${parcelState.amount} to ${bid.amount}`
-      }
-    }
-    return null
+  hasCorrectEndDate(parcelState, bidGroup) {
+    return parcelState.endsAt && parcelState.endsAt < bidGroup.receivedAt
   }
 
   isSufficientIncrement(parcelState, bid) {
-    return getBn(bid.amount).lessThan(
-      this.increment.mul(getBn(parcelState.amount))
-    )
+    return getBn(bid.amount).lessThan(this.getParcelIncrement(parcelState))
+  }
+
+  getParcelIncrement(parcelState) {
+    return this.increment.mul(getBn(parcelState.amount))
   }
 
   calculateNewBalance(addressState, parcelState, bidGroup, bid) {
@@ -156,18 +206,17 @@ export default class BidService {
       .plus(getBn(parcelState.amount))
   }
 
-  getNewParcelState(fullAddressState, parcelState, bidGroup, index) {
+  getNewParcelState(addresState, parcelState, bidGroup, index) {
+    const bid = bidGroup.bids[index]
+
     const error = this.getBidValidationError(
-      fullAddressState,
+      addresState,
       parcelState,
       bidGroup,
-      index
+      bid
     )
-    if (error) {
-      return { error }
-    }
+    if (error) return { error }
 
-    const bid = bidGroup.bids[index]
     return {
       id: parcelState.id,
       amount: bid.amount,
@@ -188,4 +237,12 @@ export default class BidService {
 
     return new Date(time)
   }
+}
+
+const bnCache = {}
+function getBn(number) {
+  if (!bnCache[number]) {
+    bnCache[number] = new eth.utils.toBigNumber(number)
+  }
+  return bnCache[number]
 }

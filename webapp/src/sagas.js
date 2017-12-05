@@ -24,9 +24,7 @@ function* rootSaga() {
 
   yield takeLatest(types.connectWeb3.success, handleAddressFetchRequest)
   yield takeLatest(types.fetchManaBalance.request, handleAddressFetchRequest)
-
   yield takeLatest(types.fetchAddressState.request, handleAddressFetchRequest)
-  yield takeLatest(types.fetchAddressState.reload, handleAddressFetchReload)
 
   yield takeEvery(types.fetchProjects.request, handleProjectsFetchRequest)
 
@@ -39,8 +37,11 @@ function* rootSaga() {
 
   yield takeLatest(types.confirmBids.request, handleAddresStateStartLoading)
   yield takeLatest(types.confirmBids.request, handleConfirmBidsRequest)
+
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest)
   yield takeLatest(types.confirmBids.success, handleEmailRegisterBids)
+
+  yield takeLatest(types.confirmBids.failed, handleAddressFetchReload)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
 
   yield takeLatest(types.registerEmail.request, handleEmailRegister)
@@ -230,30 +231,34 @@ function* handleOngoingAuctionsFetchRequest(action) {
 }
 
 function* handleConfirmBidsRequest(action) {
-  const addressState = yield select(selectors.getAddressState)
-  const { address, bidGroups } = addressState.data
+  const { address, bidGroups } = yield select(selectors.getAddressStateData)
   const bids = action.bids
+  const parcels = bids.map(bid => buildCoordinate(bid.x, bid.y))
 
   try {
     const payload = buildBidsSignPayload(bids)
     const message = eth.utils.toHex(payload)
     const signature = yield call(() => eth.remoteSign(message, address))
-    const nonce = getBidGroupsNonce(bidGroups)
 
-    const bidGroup = { address, bids, message, signature, nonce }
+    const bidGroup = {
+      address,
+      bids,
+      message,
+      signature,
+      nonce: getBidGroupsNonce(bidGroups)
+    }
     yield call(() => api.postBidGroup(bidGroup))
 
-    const parcelsToFetch = bids.map(bid => buildCoordinate(bid.x, bid.y))
-
-    yield put({ type: types.confirmBids.success, bids: bids })
-    yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch })
+    yield put({ type: types.confirmBids.success, bids })
   } catch (error) {
     console.warn(error)
-    yield put({ type: types.confirmBids.failed, error: error.message })
-
-    // Re-fetch the address state to avoid outdated confirmation errors
-    yield put({ type: types.fetchAddressState.reload })
+    yield put({
+      type: types.confirmBids.failed,
+      error: error.data || error.message
+    })
   }
+
+  yield put({ type: types.fetchParcels.request, parcels })
 }
 
 function buildBidsSignPayload(bids) {
@@ -271,7 +276,8 @@ function getBidGroupsNonce(bidGroups) {
     return 0
   }
 
-  const nonces = bidGroups.map(bidGroup => bidGroup.nonce).sort() // DESC
+  const nonces = bidGroups.map(bidGroup => bidGroup.nonce).sort((a, b) => a - b) // DESC
+
   return nonces.pop() + 1
 }
 
