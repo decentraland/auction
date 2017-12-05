@@ -10,15 +10,15 @@ class ParcelStateService {
       if (!isDuplicatedError(error)) throw new Error(error)
     }
 
-    const inserts = []
-
     for (let x = minX; x <= maxX; x++) {
+      const inserts = []
+
       for (let y = minY; y <= maxY; y++) {
         inserts.push(this.ParcelState.insert({ x, y }).catch(skipDuplicates))
       }
-    }
 
-    await Promise.all(inserts)
+      await Promise.all(inserts)
+    }
   }
 }
 
