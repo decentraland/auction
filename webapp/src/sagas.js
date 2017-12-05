@@ -100,9 +100,11 @@ function* handleAddressFetchRequest(action) {
 function* handleAddressFetchReload(action) {
   try {
     const addressState = yield fetchAddressState()
+    Object.assign({ bidGroups: [], latestBidGroupId: null }, addressState)
     yield put({ type: types.fetchAddressState.success, addressState })
   } catch (error) {
-    // Let it slip
+    // Let it slide
+    console.warn(error)
   }
 }
 
@@ -145,6 +147,7 @@ function* handleProjectsFetchRequest(action) {
 
     yield put({ type: types.fetchProjects.success, projects })
   } catch (error) {
+    console.warn(error)
     yield put({ type: types.fetchProjects.failed, error: error.message })
   }
 }
@@ -164,6 +167,7 @@ function* handleParcelFetchRequest(action) {
 
     yield put({ type: types.fetchParcels.success, parcelStates })
   } catch (error) {
+    console.warn(error)
     yield put({ type: types.fetchParcels.failed, error: error.message })
   }
 }
@@ -217,6 +221,7 @@ function* handleOngoingAuctionsFetchRequest(action) {
 
     yield put({ type: types.fetchOngoingAuctions.success, ongoingAuctions })
   } catch (error) {
+    console.warn(error)
     yield put({
       type: types.fetchOngoingAuctions.failed,
       error: error.message
@@ -243,6 +248,7 @@ function* handleConfirmBidsRequest(action) {
     yield put({ type: types.confirmBids.success, bids: bids })
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch })
   } catch (error) {
+    console.warn(error)
     yield put({ type: types.confirmBids.failed, error: error.message })
 
     // Re-fetch the address state to avoid outdated confirmation errors
@@ -261,8 +267,12 @@ Time: ${new Date().getTime()}`
 }
 
 function getBidGroupsNonce(bidGroups) {
+  if (!bidGroups || bidGroups.length <= 0) {
+    return 0
+  }
+
   const nonces = bidGroups.map(bidGroup => bidGroup.nonce).sort() // DESC
-  return nonces.length > 0 ? nonces.pop() + 1 : 0
+  return nonces.pop() + 1
 }
 
 // -------------------------------------------------------------------------
@@ -282,6 +292,7 @@ function* handleEmailRegister(action) {
     }
     yield put({ type: types.registerEmail.success, data: email })
   } catch (error) {
+    console.warn(error)
     yield put({ type: types.registerEmail.failed, error: error.message })
   }
 }
@@ -296,6 +307,7 @@ function* handleEmailDeregister(action) {
     }
     yield put({ type: types.deregisterEmail.success })
   } catch (error) {
+    console.warn(error)
     yield put({ type: types.deregisterEmail.failed, error: error.message })
   }
 }
