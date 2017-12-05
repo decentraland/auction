@@ -50,7 +50,7 @@ class BidGroup extends Model {
   }
 
   static async getLatestByAddress(address) {
-    return await this.findOne({ address }, { receivedAt: 'DESC' })
+    return await this.findOne({ address }, { nonce: 'DESC' })
   }
 
   static async insert(bidGroup) {
