@@ -12,7 +12,7 @@ const getBn = number => {
 }
 
 const daysFromNowToDate = days => {
-  return new Date().getTime() + 24 * 60 * 60 * 1000 * days
+  return new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * days)
 }
 
 export default class BidService {
