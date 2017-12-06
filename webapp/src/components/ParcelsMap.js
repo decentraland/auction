@@ -12,6 +12,7 @@ import LeafletParcelGrid from '../lib/LeafletParcelGrid'
 import ParcelPopup from './ParcelPopup'
 
 import './ParcelsMap.css'
+import './ParcelsColors.css'
 
 const MAP_ID = 'map'
 
@@ -95,7 +96,9 @@ export default class ParcelsMap extends React.Component {
 
     this.parcelGrid = new LeafletParcelGrid({
       getTileAttributes: this.getTileAttributes,
-      cellSize: tileSize
+      onTileClick: this.onTileClick,
+      addPopup: this.addPopup,
+      tileSize: tileSize
     })
 
     this.map = new L.Map(MAP_ID, {
@@ -118,7 +121,6 @@ export default class ParcelsMap extends React.Component {
 
   attachMapEvents() {
     this.map.on('movestart', this.onMapMoveStart)
-    this.map.on('click', this.onMapClick)
     this.map.on('moveend', this.onMapMoveEnd)
     this.map.on('zoomend', this.onZoomEnd)
   }
@@ -130,21 +132,13 @@ export default class ParcelsMap extends React.Component {
 
   redrawMap = () => {
     if (this.map) {
-      this.parcelGrid.renderCells(this.map.getBounds())
+      this.parcelGrid.renderTiles(this.map.getBounds())
     }
     this.panInProgress = false
   }
 
   onMapMoveStart = event => {
     this.panInProgress = true
-  }
-
-  onMapClick = event => {
-    const parcelStates = this.props.getParcelStates()
-
-    if (!parcelStates.loading) {
-      this.addPopup(event)
-    }
   }
 
   onMapMoveEnd = event => {
@@ -158,7 +152,7 @@ export default class ParcelsMap extends React.Component {
     this.debouncedOnMoveEnd()
   }
 
-  onMoveEnd() {
+  onMoveEnd = () => {
     this.props.onMoveEnd(this.getCurrentPositionAndBounds())
   }
 
@@ -184,42 +178,7 @@ export default class ParcelsMap extends React.Component {
     return { position, bounds }
   }
 
-  addPopup(event) {
-    const target = event.originalEvent.target
-    const { x, y } = target.dataset
-    const parcel = this.getParcelData(x, y)
-
-    if (!parcel) return // TODO: could we fetch on-demand here?
-
-    const addressState = this.props.getAddressState()
-    const projects = this.props.getProjects()
-
-    const leafletPopup = L.popup({
-      className: 'parcel-popup',
-      direction: 'top'
-    })
-
-    const popup = renderToDOM(
-      <ParcelPopup
-        x={x}
-        y={y}
-        parcel={parcel}
-        addressState={addressState}
-        projects={projects}
-        onBid={parcel => {
-          this.onParcelBid(parcel)
-          leafletPopup.remove()
-        }}
-      />
-    )
-
-    leafletPopup
-      .setLatLng(event.latlng)
-      .setContent(popup)
-      .addTo(this.map)
-  }
-
-  onParcelBid(parcel, leafletPopup) {
+  onParcelBid(parcel) {
     this.props.onParcelBid(parcel)
   }
 
@@ -263,6 +222,50 @@ export default class ParcelsMap extends React.Component {
       dataset,
       style
     }
+  }
+
+  // Called by the Parcel Grid on each tile click
+  onTileClick = (x, y) => {
+    const parcel = this.getParcelData(x, y)
+
+    const unBiddable =
+      !parcel ||
+      parcel.error ||
+      parcelUtils.isReserved(parcel) ||
+      parcelUtils.hasEnded(parcel)
+
+    if (unBiddable) return
+
+    this.onParcelBid(parcel)
+  }
+
+  // Called by the Parcel Grid on each tile hover
+  addPopup = (x, y, latlng) => {
+    const parcel = this.getParcelData(x, y)
+
+    if (!parcel) return
+
+    const addressState = this.props.getAddressState()
+    const projects = this.props.getProjects()
+
+    const leafletPopup = L.popup({ direction: 'top' })
+
+    const popup = renderToDOM(
+      <ParcelPopup
+        x={x}
+        y={y}
+        parcel={parcel}
+        addressState={addressState}
+        projects={projects}
+      />
+    )
+
+    leafletPopup
+      .setLatLng(latlng)
+      .setContent(popup)
+      .addTo(this.map)
+
+    return leafletPopup
   }
 
   getParcelData = (x, y) => {

@@ -1,17 +1,17 @@
 import React from 'react'
 
-import shortenAddress from '../lib/shortenAddress'
+import { shortenAddress } from '../lib/util'
 import * as dateUtils from '../lib/dateUtils'
 import * as parcelUtils from '../lib/parcelUtils'
 
-import Button from './Button'
 import CurrentBidStatus from './CurrentBidStatus'
 
-export default function ParcelPopup(props) {
-  const { x, y, parcel, addressState, projects, onBid } = props
+import './ParcelPopup.css'
 
-  const unBiddable =
-    parcel.error || parcelUtils.isTaken(parcel) || parcelUtils.hasEnded(parcel)
+export default function ParcelPopup(props) {
+  const { x, y, parcel, addressState, projects } = props
+
+  const className = parcelUtils.getClassName(parcel, addressState)
 
   let endsAt = dateUtils.distanceInWordsToNow(parcel.endsAt, { endedText: '' })
 
@@ -20,27 +20,30 @@ export default function ParcelPopup(props) {
   }
 
   return (
-    <div>
-      <div className="coordinates">
-        {x},{y}
-      </div>
-      <div className="text">
-        {shortenAddress(parcel.address)}
+    <div className="parcel-popup">
+      {className && (
+        <div className={`header ${className}`}>
+          {parcelUtils.getBidStatus(parcel, addressState.address, className)}
+        </div>
+      )}
+      <div className="body">
+        <div className="coordinates">
+          {x},{y}
+        </div>
+
+        {parcel.address && (
+          <div className="secondary">{shortenAddress(parcel.address)} </div>
+        )}
+
         <CurrentBidStatus
           addressState={addressState}
           parcel={parcel}
           projects={projects}
         />
-      </div>
-      <div className="text mana">
-        {parcel.amount && `${parcel.amount} MANA`}
-      </div>
-      <div className="text">{endsAt}</div>
 
-      <div className="text-center">
-        {!unBiddable && (
-          <Button onClick={event => onBid(parcel)}>Place bid</Button>
-        )}
+        {parcel.amount && <div className="text mana">{parcel.amount} MANA</div>}
+
+        {endsAt && <div className="text">{endsAt}</div>}
       </div>
     </div>
   )

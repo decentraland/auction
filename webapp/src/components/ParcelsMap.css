@@ -6,14 +6,6 @@
 
 #map path { stroke: #FFF; }
 
-#map .won     { fill: #30D7A9; }
-#map .winning { fill: #30D7A9; }
-#map .lost    { fill: #AE4DE8; }
-#map .outbid  { fill: #AE4DE8; }
-#map .taken   { fill: #3E396B; }
-#map .default { fill: #EAEAEA; }
-#map .loading { fill: #D0D0D0; }
-
 #map .coordinates {
   margin-top: 1px !important;
   margin-left: 1px !important;
@@ -23,65 +15,3 @@
 #map .coordinates-zoom-10 { font-size: 1.1em; }
 #map .coordinates-zoom-9 { font-size: 0.8em; }
 #map .coordinates-zoom-8 { font-size: 0.5em; }
-
-/* -----------------------------------------------------------------------
-  Popup */
-
-.leaflet-popup {
-  z-index: 800;
-}
-
-.leaflet-popup .btn {
-  margin-top: 16px;
-  padding: 8px 15px;
-  font-size: 14px;
-}
-
-.leaflet-popup .current-bid-status:first-letter {
-  text-transform: capitalize;
-}
-
-.leaflet-popup a.leaflet-popup-close-button {
-  top: 10px;
-  right: 10px;
-}
-
-.leaflet-popup .leaflet-popup-content-wrapper {
-  border-radius: 5px;
-  border: 1px solid #4A90E2;
-}
-
-.leaflet-popup .leaflet-popup-content {
-  padding: 15px;
-  font-size: 16px;
-  box-shadow: none;
-}
-
-.leaflet-popup .leaflet-popup-tip-container {
-  display: none;
-}
-
-.leaflet-popup .text {
-  color: #7B7B7B;
-}
-.leaflet-popup .text small {
-  font-size: 70%;
-  font-style: italic;
-  display: block;
-  text-align: center;
-}
-
-.leaflet-popup .coordinates {
-  margin-bottom: 10px;
-  font-size: 26px;
-  text-align: center;
-  font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
-}
-
-.leaflet-popup .text, .leaflet-popup .mana, .leaflet-popup .coordinates {
-  margin-bottom: 8px;
-}
-
-.leaflet-popup .btn {
-  margin-top: 10px;
-}
