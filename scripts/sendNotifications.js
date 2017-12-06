@@ -35,7 +35,8 @@ async function main() {
     const values = Object.values(results)
     const totalEmails = values.length
     const totalSent = values.filter(e => !e.hasOwnProperty('message')).length
-    log.info(`Sent ${totalSent} out of ${totalEmails} emails processed`)
+    log.info(`Sent ${totalSent} out of ${totalEmails} total emails`)
+    log.debug(results)
   } catch (err) {
     log.error(err)
   } finally {
