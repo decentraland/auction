@@ -2,7 +2,7 @@ import { delay } from 'redux-saga'
 import { call, takeLatest, select, takeEvery, put } from 'redux-saga/effects'
 import { push, replace } from 'react-router-redux'
 
-import { eth } from 'decentraland-commons'
+import { eth, env } from 'decentraland-commons'
 
 import locations from './locations'
 import types from './types'
@@ -262,11 +262,14 @@ function* handleConfirmBidsRequest(action) {
 }
 
 function buildBidsSignPayload(bids) {
+  const header = env.isDevelopment() ? 'MOCK AUCTION' : ''
+
   const payloadBids = bids
     .map(bid => `\t- (${buildCoordinate(bid.x, bid.y)}) for ${bid.amount} MANA`)
     .join('\t\n')
 
-  return `Bids (${bids.length}):
+  return `${header}
+Bids (${bids.length}):
 ${payloadBids}
 Time: ${new Date().getTime()}`
 }

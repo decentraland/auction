@@ -1,4 +1,4 @@
-import { eth, utils } from 'decentraland-commons'
+import { env, eth, utils } from 'decentraland-commons'
 import { BidGroup, AddressState, ParcelState } from '../models'
 
 const HOURS_IN_MILLIS = 60 * 60 * 1000
@@ -12,6 +12,10 @@ const ERROR_CODES = {
   insufficientBalance: 'INSUFFICIENT_BALANCE',
   auctionEnded: 'AUCTION_ENDED',
   insufficientIncrement: 'INSUFFICIENT_INCREMENT'
+}
+
+const daysFromNowToDate = days => {
+  return new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * days)
 }
 
 export default class BidService {
@@ -230,7 +234,7 @@ export default class BidService {
   }
 
   extendBid(endsAt, receivedAt) {
-    endsAt = endsAt || new Date()
+    endsAt = endsAt || daysFromNowToDate(env.get('MIN_GRACE_PERIOD_DAYS', 14))
     receivedAt = receivedAt || new Date()
 
     const endsTime = endsAt.getTime()
