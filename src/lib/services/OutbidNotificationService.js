@@ -21,6 +21,10 @@ class OutbidNotificationService {
 
   setSMTPClient(SMTPClient = SMTP) {
     const emailSender = env.get('MAIL_SENDER')
+    if (!emailSender) {
+      throw new Error('Missing env var MAIL_SENDER')
+    }
+
     const transportOptions = {
       hostname: env.get('MAIL_HOSTNAME'),
       port: env.get('MAIL_PORT'),
