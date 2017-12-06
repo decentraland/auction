@@ -1,4 +1,4 @@
-import { eth } from 'decentraland-commons'
+import { env, eth } from 'decentraland-commons'
 import { BidGroup, AddressState, ParcelState } from '../models'
 
 const HOURS_IN_MILLIS = 60 * 60 * 1000
@@ -9,6 +9,10 @@ const getBn = number => {
     bnCache[number] = new eth.utils.toBigNumber(number)
   }
   return bnCache[number]
+}
+
+const daysFromNowToDate = days => {
+  return new Date().getTime() + 24 * 60 * 60 * 1000 * days
 }
 
 export default class BidService {
@@ -179,7 +183,7 @@ export default class BidService {
   }
 
   extendBid(endsAt, receivedAt) {
-    endsAt = endsAt || new Date()
+    endsAt = endsAt || daysFromNowToDate(env.get('MIN_GRACE_PERIOD_DAYS', 14))
     receivedAt = receivedAt || new Date()
 
     const endsTime = endsAt.getTime()
