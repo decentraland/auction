@@ -2,20 +2,29 @@
   height: 100%;
 }
 
-.ErrorPage .error-message {
+.ErrorPage .error-body {
   height: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+  color: #3E396B;
 }
 
-.ErrorPage .error-message h2 {
+.ErrorPage .error-body h2 {
   margin-top: 0;
-  margin-bottom: 35px;
-  font-size: 2em;
+  margin-bottom: 40px;
+  font-size: 28px;
+  font-family: "Source Sans Pro Light", Helvetica, sans-serif;
+}
+
+.ErrorPage .error-message {
+  height: 80%;
+  width: 100%;
+  max-width: 485px;
+  margin: auto;
 }
 
 .ErrorPage .error-message p {
-  font-size: 1.3em;
+  font-size: 16px;
 }

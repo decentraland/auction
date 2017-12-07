@@ -8,7 +8,7 @@ export default function ErrorPage({ children }) {
   return (
     <div className="ErrorPage">
       <Navbar />
-      <div className="error-message">
+      <div className="error-body">
         <div>{children}</div>
       </div>
     </div>
