@@ -20,7 +20,7 @@ class OutbidNotificationService {
   }
 
   static toParcelLink(opts) {
-    return `https://auction.decentraland.today/${opts.x}/${opts.y}`
+    return `https://auction.decentraland.org/${opts.x}/${opts.y}`
   }
 
   setSMTPClient(SMTPClient = SMTP) {
