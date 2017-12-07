@@ -14,10 +14,6 @@ import './rollbar'
 
 env.load()
 
-if (env.isDevelopment()) {
-  window.Rollbar.configure({ enabled: false })
-}
-
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
