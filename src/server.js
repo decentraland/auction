@@ -5,6 +5,7 @@ import path from 'path'
 
 import { server, env } from 'decentraland-commons'
 import db from './lib/db'
+import coordinatesUtils from './lib/coordinates'
 
 import {
   AddressState,
@@ -103,7 +104,28 @@ app.post('/api/parcelState/group', server.handleRequest(getParcelStateGroup))
 
 export function getParcelStateGroup(req) {
   const coordinates = server.extractFromReq(req, 'coordinates')
-  return ParcelState.findInCoordinates(coordinates)
+
+  // Point scan
+  if (coordinates.length <= env.get('PARCEL_RANGE_THRESHOLD', 100)) {
+    return ParcelState.findInCoordinates(coordinates)
+  }
+
+  // Range scan
+  const allCoords = coordinates
+    .map(coord => coordinatesUtils.toArray(coord))
+    .map(e => [parseInt(e[0]), parseInt(e[1])])
+  const xCoords = allCoords.map(e => e[0])
+  const yCoords = allCoords.map(e => e[1])
+
+  const mincoords = [
+    Math.min.apply(null, xCoords),
+    Math.min.apply(null, yCoords)
+  ]
+  const maxcoords = [
+    Math.max.apply(null, xCoords),
+    Math.max.apply(null, yCoords)
+  ]
+  return ParcelState.inRange(mincoords, maxcoords)
 }
 
 /**
