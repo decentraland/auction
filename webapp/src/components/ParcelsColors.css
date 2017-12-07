@@ -1,0 +1,18 @@
+
+#map path.won      { fill: #4A90E2; }
+#map path.winning  { fill: #30D7A9; }
+#map path.lost     { fill: #3C225F; }
+#map path.outbid   { fill: #EF303B; }
+#map path.taken    { fill: #4F3A4B; }
+#map path.reserved { fill: #FFFFFF; }
+#map path.default  { fill: #EAEAEA; }
+#map path.loading  { fill: #AAAAAA; }
+
+#map .header.won      { background-color: #4A90E2; }
+#map .header.winning  { background-color: #30D7A9; }
+#map .header.lost     { background-color: #3C225F; }
+#map .header.outbid   { background-color: #EF303B; }
+#map .header.taken    { background-color: #4F3A4B; }
+#map .header.reserved { background-color: #FFFFFF; }
+#map .header.default  { display: none; }
+#map .header.loading  { display: none; }

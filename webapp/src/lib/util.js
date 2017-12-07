@@ -14,3 +14,9 @@ export function preventDefault(fn) {
     fn.call(this, event)
   }
 }
+
+export function shortenAddress(address) {
+  if (address) {
+    return address.slice(0, 6) + '...' + address.slice(42 - 5)
+  }
+}

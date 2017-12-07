@@ -4,32 +4,34 @@ import { ONE_LAND_IN_MANA } from './land'
 import { buildCoordinate } from './util'
 import * as addressStateUtils from './addressStateUtils'
 
-export function getBidStatus(parcel, ownerAddress) {
-  if (!parcel || !parcel.endsAt) return ''
+export function getBidStatus(parcel, ownerAddress, debug) {
+  if (!parcel) return ''
+  if (isReserved(parcel)) return 'Reserved'
+  if (!parcel.amount) return ''
 
+  const byAddress = parcel.address === ownerAddress
   let status = ''
 
-  const ended = hasEnded(parcel)
-  const byAddress = parcel.address === ownerAddress
-
-  if (ended) {
+  if (hasEnded(parcel)) {
     status = byAddress ? 'Won' : 'Lost'
   } else {
     status = byAddress ? 'Winning' : 'Outbid'
   }
+
   return status
 }
 
 export const COLORS = {
-  Won: '#30D7A9',
+  Won: '#4A90E2',
   Winning: '#30D7A9',
-  Lost: '#AE4DE8',
-  Outbid: '#AE4DE8',
-  Taken: '#3E396B',
-  LittleValue: '#EAFF28',
-  BigValue: '#FF1111',
+  Lost: '#3C225F',
+  Outbid: '#EF303B',
+  Taken: '#4F3A4B',
+  Reserved: '#FFF',
+  LittleValue: '#FFF189',
+  BigValue: '#EF303B',
   Default: '#EAEAEA',
-  Loading: '#D0D0D0'
+  Loading: '#AAAAAA'
 }
 
 export const CLASS_NAMES = {
@@ -38,13 +40,14 @@ export const CLASS_NAMES = {
   Lost: 'lost',
   Outbid: 'outbid',
   Taken: 'taken',
+  Reserved: 'reserved',
   Default: 'default',
   Loading: 'loading'
 }
 
 export function getClassName(parcel, addressState) {
   if (!parcel || parcel.error) return CLASS_NAMES.Loading
-  if (isTaken(parcel)) return CLASS_NAMES.Taken
+  if (isReserved(parcel)) return CLASS_NAMES.Reserved
   if (!parcel.amount) return CLASS_NAMES.Default
 
   let className = ''
@@ -70,7 +73,7 @@ export function getColorByAmount(amount) {
   return tinycolor2({ h, s, v: 1, a: 1 }).toHexString()
 }
 
-export function isTaken(parcel) {
+export function isReserved(parcel) {
   return !!parcel.projectId
 }
 

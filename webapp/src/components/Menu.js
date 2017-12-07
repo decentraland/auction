@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
 import { distanceInWordsToNow } from '../lib/dateUtils'
-import { buildCoordinate } from '../lib/util'
-import shortenAddress from '../lib/shortenAddress'
+import { buildCoordinate, shortenAddress } from '../lib/util'
 import { stateData } from '../lib/propTypes'
 
 import locations from '../locations'

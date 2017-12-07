@@ -1,17 +1,21 @@
 import L from 'leaflet'
+import debounce from 'lodash.debounce'
 
 const LeafletParcelGrid = L.FeatureGroup.extend({
   include: L.Mixin.Events,
   options: {
-    cellSize: 64,
+    getTileAttributes: () => {},
+    onTileClick: () => {},
+    addPopup: () => {},
+    tileSize: 64,
     delayFactor: 0.05,
     smoothFactor: 2,
     style: {
-      weight: 2,
+      weight: 1,
       opacity: 1,
 
       fill: true,
-      fillOpacity: 0.85,
+      fillOpacity: 0.9,
 
       clickable: true
     }
@@ -25,7 +29,9 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   onAdd(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map)
     this.map = map
-    this.cells = []
+    this.tiles = []
+    this.popup = null
+    this.debouncedOnMouseOver = debounce(this.onMouseOver, 215)
     this.setupGrid(map.getBounds())
 
     map.on('moveend', this.moveHandler, this)
@@ -42,16 +48,16 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   },
 
   clearLayer() {
-    this.cells = []
+    this.tiles = []
   },
 
   moveHandler(event) {
-    this.renderCells(event.target.getBounds())
+    this.renderTiles(event.target.getBounds())
   },
 
   zoomHandler(event) {
     this.clearLayers()
-    this.renderCells(event.target.getBounds())
+    this.renderTiles(event.target.getBounds())
   },
 
   resizeHandler() {
@@ -60,68 +66,72 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
 
   setupGrid(bounds) {
     this.origin = this.map.project(bounds.getNorthWest())
-    this.cellSize = this.options.cellSize
+    this.tileSize = this.options.tileSize
 
     this.setupSize()
 
-    this.loadedCells = {}
+    this.loadedTiles = {}
     this.loadedCoordinates = {}
 
     this.clearLayers()
-    this.renderCells(bounds)
+    this.renderTiles(bounds)
   },
 
   setupSize() {
-    this.rows = Math.ceil(this.map.getSize().x / this.cellSize)
-    this.cols = Math.ceil(this.map.getSize().y / this.cellSize)
+    this.rows = Math.ceil(this.map.getSize().x / this.tileSize)
+    this.cols = Math.ceil(this.map.getSize().y / this.tileSize)
   },
 
-  renderCells(bounds) {
-    const cells = this.getCellsInBounds(bounds)
-    this.fire('newcells', cells)
+  renderTiles(bounds) {
+    const tiles = this.getCellsInBounds(bounds)
+    this.fire('newtiles', tiles)
 
-    for (let index = cells.length - 1; index >= 0; index--) {
-      this.loadCell(cells[index], this.options.delayFactor * index)
+    for (let index = tiles.length - 1; index >= 0; index--) {
+      this.loadCell(tiles[index], this.options.delayFactor * index)
     }
   },
 
-  loadCell(cell, renderDelay) {
+  loadCell(tile, renderDelay) {
     const { className, dataset, style } = this.options.getTileAttributes(
-      cell.center
+      tile.center
     )
 
-    if (this.loadedCells[cell.id] !== className) {
+    if (this.loadedTiles[tile.id] !== className) {
       const attributes = Object.assign({ className }, this.options.style, style)
       const { x, y } = dataset
 
       setTimeout(
-        () => this.addRectangleLayer(cell, attributes, dataset),
+        () => this.addRectangleLayer(tile, attributes, x, y),
         renderDelay
       )
 
       if (this.shouldShowCoordinates(x, y)) {
-        this.loadCellCoordinates(cell, x, y)
+        this.loadCellCoordinates(x, y, tile)
       }
 
-      this.loadedCells[cell.id] = className
+      this.loadedTiles[tile.id] = className
     }
   },
 
-  addRectangleLayer(cell, attributes, dataset) {
-    const rect = L.rectangle(cell.bounds, attributes)
+  addRectangleLayer(tile, attributes, x, y) {
+    const rect = L.rectangle(tile.bounds, attributes)
     this.addLayer(rect)
 
-    const element = rect.getElement()
-    if (element) {
-      // Important! this will be used to determine the x,y position later on
-      // Check ParcelsMap#addPopup
-      Object.assign(element.dataset, dataset)
+    if (rect.getElement()) {
+      rect
+        .on('click', () => this.options.onTileClick(x, y))
+        .on('mouseover', () => this.debouncedOnMouseOver(x, y, tile.center))
     }
   },
 
-  loadCellCoordinates(cell, x, y) {
-    if (!this.loadedCoordinates[cell.id]) {
-      const marker = L.marker(cell.bounds.getNorthWest(), {
+  onMouseOver(x, y, center) {
+    if (this.popup) this.popup.remove()
+    this.popup = this.options.addPopup(x, y, center)
+  },
+
+  loadCellCoordinates(x, y, tile) {
+    if (!this.loadedCoordinates[tile.id]) {
+      const marker = L.marker(tile.bounds.getNorthWest(), {
         icon: new L.DivIcon({
           className: `coordinates coordinates-zoom-${this.map.getZoom()}`,
           iconSize: new L.Point(0, 0),
@@ -131,7 +141,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
 
       setTimeout(() => this.addLayer(marker))
 
-      this.loadedCoordinates[cell.id] = true
+      this.loadedCoordinates[tile.id] = true
     }
   },
 
@@ -140,8 +150,8 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   },
 
   getCellPoint(row, col) {
-    const x = this.origin.x + row * this.cellSize
-    const y = this.origin.y + col * this.cellSize
+    const x = this.origin.x + row * this.tileSize
+    const y = this.origin.y + col * this.tileSize
     return new L.Point(x, y)
   },
 
@@ -157,25 +167,25 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
     const offset = this.getBoundsOffset(bounds)
     const mainCenter = bounds.getCenter()
 
-    const cells = []
+    const tiles = []
 
     for (let i = 0; i <= this.rows; i++) {
       for (let j = 0; j <= this.cols; j++) {
         const row = i - offset.rows
         const col = j - offset.cols
-        const cellBounds = this.getCellExtent(row, col)
-        const cellCenter = cellBounds.getCenter()
+        const tileBounds = this.getCellExtent(row, col)
+        const tileCenter = tileBounds.getCenter()
 
-        cells.push({
+        tiles.push({
           id: row + ':' + col,
-          bounds: cellBounds,
-          center: cellCenter,
-          distance: cellCenter.distanceTo(mainCenter)
+          bounds: tileBounds,
+          center: tileCenter,
+          distance: tileCenter.distanceTo(mainCenter)
         })
       }
     }
 
-    return cells
+    return tiles
   },
 
   getBoundsOffset(bounds) {
@@ -184,8 +194,8 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
     const offsetY = this.origin.y - offset.y
 
     return {
-      rows: Math.round(offsetX / this.cellSize),
-      cols: Math.round(offsetY / this.cellSize)
+      rows: Math.round(offsetX / this.tileSize),
+      cols: Math.round(offsetY / this.tileSize)
     }
   }
 })
