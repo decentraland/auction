@@ -111,11 +111,14 @@ export function getParcelStateGroup(req) {
   }
 
   // Range scan
-  const allCoords = coordinates
-    .map(coord => coordinatesUtils.toArray(coord))
-    .map(e => [parseInt(e[0]), parseInt(e[1])])
-  const xCoords = allCoords.map(e => e[0])
-  const yCoords = allCoords.map(e => e[1])
+  const xCoords = []
+  const yCoords = []
+
+  coordinates.forEach(coord => {
+    const [x, y] = coordinatesUtils.toArray(coord)
+    xCoords.push(parseInt(x, 10))
+    yCoords.push(parseInt(y, 10))
+  })
 
   const mincoords = [
     Math.min.apply(null, xCoords),
@@ -125,7 +128,18 @@ export function getParcelStateGroup(req) {
     Math.max.apply(null, xCoords),
     Math.max.apply(null, yCoords)
   ]
-  return ParcelState.inRange(mincoords, maxcoords)
+
+  const isInQuery = parcel => {
+    for (const coord of coordinates) {
+      if (coord === parcel.id) {
+        return true
+      }
+    }
+    return false
+  }
+  return ParcelState.inRange(mincoords, maxcoords).then(parcels => {
+    return parcels.filter(parcel => isInQuery(parcel))
+  })
 }
 
 /**
