@@ -129,16 +129,8 @@ export function getParcelStateGroup(req) {
     Math.max.apply(null, yCoords)
   ]
 
-  const isInQuery = parcel => {
-    for (const coord of coordinates) {
-      if (coord === parcel.id) {
-        return true
-      }
-    }
-    return false
-  }
   return ParcelState.inRange(mincoords, maxcoords).then(parcels => {
-    return parcels.filter(parcel => isInQuery(parcel))
+    return parcels.filter(parcel => coordinates.includes(parcel.id))
   })
 }
 
