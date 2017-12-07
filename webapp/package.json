@@ -15,7 +15,7 @@
   "dependencies": {
     "axios": "^0.17.0",
     "date-fns": "^1.29.0",
-    "decentraland-commons": "https://github.com/decentraland/commons#release",
+    "decentraland-commons": "git+https://github.com/decentraland/commons.git#release",
     "history": "^4.7.2",
     "leaflet": "^1.2.0",
     "lodash.debounce": "^4.0.8",
@@ -36,7 +36,7 @@
   "devDependencies": {
     "babel-eslint": "^8.0.1",
     "babel-polyfill": "^6.26.0",
-    "eslint": "^4.2.0",
+    "eslint": "^4.12.1",
     "eslint-config-prettier": "^2.6.0",
     "eslint-plugin-prettier": "^2.3.1",
     "eslint-plugin-react": "^7.4.0",
