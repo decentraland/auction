@@ -78,5 +78,7 @@ export default {
     down: '[Shift] Key down (pressed)',
   },
 
+  fastBid: '[FastBid] Requested fast bid',
+
   changeLocation: 'Change location URL'
 }

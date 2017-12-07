@@ -8,6 +8,7 @@ import { createLogger } from 'redux-logger'
 
 import reducers from './reducers'
 import rootSaga from './sagas'
+import types from './types'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
@@ -29,6 +30,20 @@ const store = createStore(
 )
 
 sagasMiddleware.run(rootSaga)
+
+const SHIFT = 'Shift'
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === SHIFT) {
+    store.dispatch({ type: types.shift.down })
+  }
+})
+
+window.addEventListener('keyup', (event) => {
+  if (event.key === SHIFT) {
+    store.dispatch({ type: types.shift.up })
+  }
+})
 
 export function dispatch(action) {
   if (typeof action === 'string') {

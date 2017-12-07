@@ -11,7 +11,7 @@ import ShiftNotification from './ShiftNotification'
 
 import './HomePage.css'
 
-export default function HomePage({ requiredDataReady }) {
+export default function HomePage({ requiredDataReady, shiftNeverPressed }) {
   return (
     <div className="HomePage">
       {requiredDataReady && (
@@ -23,7 +23,7 @@ export default function HomePage({ requiredDataReady }) {
       )}
       <ParcelsMapContainer requiredDataReady={requiredDataReady} />
       <ModalContainer />
-      <ShiftNotification />
+      { shiftNeverPressed && <ShiftNotification /> }
     </div>
   )
 }

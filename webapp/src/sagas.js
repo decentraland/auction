@@ -32,6 +32,8 @@ function* rootSaga() {
 
   yield takeEvery(types.intentUnconfirmedBid, handleIntentUnconfirmedBid)
 
+  yield takeEvery(types.fastBid, handleFastBid)
+
   yield takeEvery(
     types.fetchOngoingAuctions.request,
     handleOngoingAuctionsFetchRequest
@@ -337,6 +339,36 @@ function* handleIntentUnconfirmedBid(action) {
   if (!exists) {
     yield put({ type: types.appendUnconfirmedBid, bid: action.bid })
   }
+}
+
+const BID_INCREASE = 1.1
+
+function* handleFastBid(action) {
+  const parcel = action.parcel
+  if (parcel.projectId) {
+    // TODO: Show message, can't bid on project
+    return
+  }
+  const { x, y } = parcel
+  const amount = parcel.amount ? Math.ceil(parcel.amount * BID_INCREASE) : 1000
+  const addressState = yield select(
+    selectors.getAddressState
+  )
+  if (addressState.loading || !addressState.data.balance) {
+    // TODO: Balance not loaded?
+    return
+  }
+  if (amount > addressState.data.balance) {
+    // TODO: Not enough balance
+  }
+  yield put({ type: types.appendUnconfirmedBid, bid: {
+    x,
+    y,
+    address: addressState.data.address,
+    currentBid: parcel.amount,
+    yourBid: amount,
+    endsAt: parcel.endsAt
+  }})
 }
 
 export default rootSaga

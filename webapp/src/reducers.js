@@ -23,6 +23,7 @@ const INITIAL_STATE = {
   },
 
   shift: {
+    never: true,
     pressed: false
   },
 
@@ -234,10 +235,12 @@ function shift(state = INITIAL_STATE.shift, action) {
   switch (action.type) {
     case types.shift.up:
       return {
+        never: false,
         pressed: false
       }
     case types.shift.down:
       return {
+        never: false,
         pressed: true
       }
     default:

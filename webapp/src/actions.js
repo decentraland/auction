@@ -40,6 +40,13 @@ export function clickParcel(x, y) {
   }
 }
 
+export function fastBid(parcel) {
+  return {
+    type: types.fastBid,
+    parcel
+  }
+}
+
 // -------------------------------------------------------------------------
 // Bids
 

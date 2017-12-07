@@ -13,7 +13,8 @@ class HomePageContainer extends React.Component {
   static propTypes = {
     connectWeb3: PropTypes.func,
     parcelStates: stateData(PropTypes.object).isRequired,
-    addressState: stateData(PropTypes.object).isRequired
+    addressState: stateData(PropTypes.object).isRequired,
+    shiftNeverPressed: PropTypes.bool.isRequired
   }
 
   componentWillMount() {
@@ -21,17 +22,21 @@ class HomePageContainer extends React.Component {
   }
 
   render() {
-    const { parcelStates, addressState } = this.props
+    const { shiftNeverPressed, parcelStates, addressState } = this.props
     const requiredDataReady = !isEmptyObject(parcelStates) && addressState.data
 
-    return <HomePage requiredDataReady={!!requiredDataReady} />
+    return <HomePage
+      requiredDataReady={!!requiredDataReady}
+      shiftNeverPressed={shiftNeverPressed}
+    />
   }
 }
 
 export default connect(
   state => ({
     parcelStates: selectors.getParcelStates(state),
-    addressState: selectors.getAddressState(state)
+    addressState: selectors.getAddressState(state),
+    shiftNeverPressed: selectors.getShift(state).never
   }),
   { connectWeb3 }
 )(HomePageContainer)

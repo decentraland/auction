@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
 import locations from '../locations'
-import { parcelRangeChange, openModal, changeLocation } from '../actions'
+import { parcelRangeChange, openModal, changeLocation, fastBid } from '../actions'
 import * as parcelUtils from '../lib/parcelUtils'
 import { stateData } from '../lib/propTypes'
 
@@ -130,6 +130,8 @@ class ParcelsMapContainer extends React.Component {
         onMoveEnd={this.onMoveEnd}
         onZoomEnd={this.onZoomEnd}
         onParcelBid={this.onParcelBid}
+        shiftPressed={this.props.shiftPressed}
+        fastBid={this.props.fastBid}
       />
     ) : (
       <Loading />
@@ -144,8 +146,9 @@ export default withRouter(
       addressState: selectors.getAddressState(state),
       projects: selectors.getProjects(state),
       requiredDataReady: ownProps.requiredDataReady,
+      shiftPressed: selectors.getShift(state).pressed,
       center: ownProps.match.params // from withRouter
     }),
-    { parcelRangeChange, openModal, changeLocation }
+    { parcelRangeChange, openModal, changeLocation, fastBid }
   )(ParcelsMapContainer)
 )
