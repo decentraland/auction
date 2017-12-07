@@ -2,6 +2,7 @@ import http from 'http'
 import express from 'express'
 import bodyParser from 'body-parser'
 import path from 'path'
+import git from 'git-rev-sync'
 
 import { server, env } from 'decentraland-commons'
 import db from './lib/db'
@@ -121,6 +122,21 @@ export function getParcelStateRange(req) {
   const mincoords = server.extractFromReq(req, 'mincoords')
   const maxcoords = server.extractFromReq(req, 'maxcoords')
   return ParcelState.inRange(mincoords, maxcoords)
+}
+
+/**
+ * Retrieve the current version of the code.
+ * @return {Object} object - three keys: `branch`, `short`, and `commit`,
+ *                           holding the info of the current state of the git repo
+ */
+app.get('/api/version', server.handleRequest(getVersion))
+
+export function getVersion(req) {
+  return {
+    branch: git.branch(),
+    commit: git.long(),
+    short: git.short()
+  }
 }
 
 /**
