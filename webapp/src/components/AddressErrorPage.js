@@ -1,8 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import locations from '../locations'
-
 import ErrorPage from './ErrorPage'
 
 export default function AddressErrorPage() {
