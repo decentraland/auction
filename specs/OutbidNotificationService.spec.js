@@ -99,7 +99,7 @@ describe('OutbidNotificationService', function() {
 
       // text is good
       expect(results.summary.text).to.be.equal(
-        'This is the summary of parcel outbids from the last notification:\n\nThe parcel 1,1 now belongs to 0xdead for 1000.\nVisit https://auction.decentraland.today/1/1 to place a new bid!\n\nThe parcel 1,2 now belongs to 0xbeef for 2000.\nVisit https://auction.decentraland.today/1/2 to place a new bid!\n\n'
+        'This is the summary of parcel outbids from the last notification:\n\nThe parcel 1,1 now belongs to 0xdead for 1000.\nVisit https://auction.decentraland.org/1/1 to place a new bid!\n\nThe parcel 1,2 now belongs to 0xbeef for 2000.\nVisit https://auction.decentraland.org/1/2 to place a new bid!\n\n'
       )
 
       // selected the right parcels
