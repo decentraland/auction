@@ -6,6 +6,7 @@ import git from 'git-rev-sync'
 
 import { server, env } from 'decentraland-commons'
 import db from './lib/db'
+import coordinatesUtils from './lib/coordinates'
 
 import {
   AddressState,
@@ -104,7 +105,34 @@ app.post('/api/parcelState/group', server.handleRequest(getParcelStateGroup))
 
 export function getParcelStateGroup(req) {
   const coordinates = server.extractFromReq(req, 'coordinates')
-  return ParcelState.findInCoordinates(coordinates)
+
+  // Point scan
+  if (coordinates.length <= env.get('PARCEL_RANGE_THRESHOLD', 100)) {
+    return ParcelState.findInCoordinates(coordinates)
+  }
+
+  // Range scan
+  const xCoords = []
+  const yCoords = []
+
+  coordinates.forEach(coord => {
+    const [x, y] = coordinatesUtils.toArray(coord)
+    xCoords.push(parseInt(x, 10))
+    yCoords.push(parseInt(y, 10))
+  })
+
+  const mincoords = [
+    Math.min.apply(null, xCoords),
+    Math.min.apply(null, yCoords)
+  ]
+  const maxcoords = [
+    Math.max.apply(null, xCoords),
+    Math.max.apply(null, yCoords)
+  ]
+
+  return ParcelState.inRange(mincoords, maxcoords).then(parcels => {
+    return parcels.filter(parcel => coordinates.includes(parcel.id))
+  })
 }
 
 /**
