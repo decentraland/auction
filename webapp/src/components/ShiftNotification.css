@@ -1,0 +1,26 @@
+.shift-notification {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #3E396B;
+  z-index: 950;
+  max-width: 301px;
+  padding: 22px 20px 22px 20px;
+}
+
+.shift-notification h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #3E396B;
+}
+
+.shift-notification p {
+  margin: 0;
+  padding: 0;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #3E396B;
+}

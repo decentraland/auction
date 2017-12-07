@@ -133,3 +133,17 @@ export function closeMenu() {
     type: types.menu.close
   }
 }
+
+// Shift key
+
+export function shiftDown() {
+  return {
+    type: types.shift.down
+  }
+}
+
+export function shiftUp() {
+  return {
+    type: types.shift.up
+  }
+}

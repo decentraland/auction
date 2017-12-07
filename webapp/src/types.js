@@ -73,5 +73,10 @@ export default {
     close: '[Close] Menu'
   },
 
+  shift: {
+    up: '[Shift] Key up (not pressed)',
+    down: '[Shift] Key down (pressed)',
+  },
+
   changeLocation: 'Change location URL'
 }

@@ -22,3 +22,12 @@
   height: 10px;
   background-image: url("../images/laquo.svg");
 }
+
+.Icon-Shift {
+  width: 11px;
+  height: 13px;
+  margin-right: 6px;
+  position: relative;
+  top: 1px;
+  background-image: url("../images/shift.svg");
+}
