@@ -16,13 +16,8 @@ class MinimapContainer extends React.Component {
     })
   }
 
-  constructor(...args) {
-    super(...args)
-    this.onDragEnd = newRange => ({})
-  }
-
   render() {
-    return <Minimap {...this.props.range} onDragEnd={this.onDragEnd} />
+    return <Minimap {...this.props.range} />
   }
 }
 
