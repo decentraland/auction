@@ -8,6 +8,7 @@ import ParcelsMapContainer from '../containers/ParcelsMapContainer'
 import ModalContainer from '../containers/modals/ModalContainer'
 import ShiftNotificationContainer from '../containers/ShiftNotificationContainer'
 import MinimapContainer from '../containers/MinimapContainer'
+import GoogleAnalyticsContainer from '../containers/GoogleAnalyticsContainer'
 
 import './HomePage.css'
 
@@ -25,6 +26,7 @@ export default function HomePage({ requiredDataReady }) {
       {requiredDataReady && <MinimapContainer />}
       <ParcelsMapContainer requiredDataReady={requiredDataReady} />
       <ModalContainer />
+      <GoogleAnalyticsContainer />
     </div>
   )
 }

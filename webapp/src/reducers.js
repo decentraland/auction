@@ -280,3 +280,18 @@ export default {
   shift,
   range
 }
+
+export function analytics(state, action) {
+  switch (action.type) {
+    case '@@router/LOCATION_CHANGE':
+      return null
+    case types.fetchParcels.success:
+      return Object.assign({}, action, {
+        parcelStates: action.parcelStates.length
+      })
+    case types.fetchProjects.success:
+      return Object.assign({}, action, { projects: action.projects.length })
+    default:
+      return action
+  }
+}
