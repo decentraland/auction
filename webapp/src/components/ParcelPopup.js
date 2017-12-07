@@ -23,7 +23,7 @@ export default function ParcelPopup(props) {
     <div className="parcel-popup">
       {className && (
         <div className={`header ${className}`}>
-          {parcelUtils.getBidStatus(parcel, addressState.address, className)}
+          {parcelUtils.getBidStatus(parcel, addressState)}
         </div>
       )}
       <div className="body">

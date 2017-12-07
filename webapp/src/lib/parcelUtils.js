@@ -1,71 +1,75 @@
 import tinycolor2 from 'tinycolor2'
 
 import { ONE_LAND_IN_MANA } from './land'
-import { buildCoordinate } from './util'
+import { buildCoordinate, capitalize } from './util'
 import * as addressStateUtils from './addressStateUtils'
 
-export function getBidStatus(parcel, ownerAddress, debug) {
-  if (!parcel) return ''
-  if (isReserved(parcel)) return 'Reserved'
-  if (!parcel.amount) return ''
-
-  const byAddress = parcel.address === ownerAddress
-  let status = ''
-
-  if (hasEnded(parcel)) {
-    status = byAddress ? 'Won' : 'Lost'
-  } else {
-    status = byAddress ? 'Winning' : 'Outbid'
-  }
-
-  return status
-}
-
 export const COLORS = {
-  Won: '#4A90E2',
-  Winning: '#30D7A9',
-  Lost: '#3C225F',
-  Outbid: '#EF303B',
-  Taken: '#4F3A4B',
-  Reserved: '#FFF',
-  LittleValue: '#FFF189',
-  BigValue: '#EF303B',
-  Default: '#EAEAEA',
-  Loading: '#AAAAAA'
+  won: '#4A90E2',
+  winning: '#30D7A9',
+  lost: '#3C225F',
+  outbid: '#EF303B',
+  taken: '#4F3A4B',
+  reserved: '#FFF',
+  littleValue: '#FFF189',
+  bigValue: '#EF303B',
+  default: '#EAEAEA',
+  loading: '#AAAAAA'
 }
 
 export const CLASS_NAMES = {
-  Won: 'won',
-  Winning: 'winning',
-  Lost: 'lost',
-  Outbid: 'outbid',
-  Taken: 'taken',
-  Reserved: 'reserved',
-  Default: 'default',
-  Loading: 'loading'
+  won: 'won',
+  winning: 'winning',
+  lost: 'lost',
+  outbid: 'outbid',
+  taken: 'taken',
+  reserved: 'reserved',
+  default: 'default',
+  loading: 'loading'
 }
 
 export function getClassName(parcel, addressState) {
-  if (!parcel || parcel.error) return CLASS_NAMES.Loading
-  if (isReserved(parcel)) return CLASS_NAMES.Reserved
-  if (!parcel.amount) return CLASS_NAMES.Default
+  if (!parcel || parcel.error) return CLASS_NAMES.loading
+  if (isReserved(parcel)) return CLASS_NAMES.reserved
+  if (!parcel.amount) return CLASS_NAMES.default
 
   let className = ''
 
   if (addressStateUtils.hasBidInParcel(addressState, parcel)) {
-    const status = getBidStatus(parcel, addressState.address)
-    className = CLASS_NAMES[status] || CLASS_NAMES.Default
+    const byAddress = parcel.address === addressState.address
+
+    if (hasEnded(parcel)) {
+      className = byAddress ? CLASS_NAMES.won : CLASS_NAMES.lost
+    } else {
+      className = byAddress ? CLASS_NAMES.winning : CLASS_NAMES.outbid
+    }
   } else if (hasEnded(parcel)) {
-    className = CLASS_NAMES.Taken
+    className = CLASS_NAMES.taken
   }
 
   return className
 }
 
+export function getBidStatus(parcel, addressState) {
+  const className = getClassName(parcel, addressState)
+  let status = ''
+
+  switch (className) {
+    case CLASS_NAMES.default:
+    case CLASS_NAMES.loading:
+      status = ''
+      break
+    default:
+      status = capitalize(className)
+  }
+
+  return status
+}
+
 export function getColorByAmount(amount) {
   // toHsv() => { h: 0, s: 1, v: 1, a: 1 }
-  const minHSV = tinycolor2(COLORS.LittleValue).toHsv()
-  const maxHSV = tinycolor2(COLORS.BigValue).toHsv()
+  const minHSV = tinycolor2(COLORS.littleValue).toHsv()
+  const maxHSV = tinycolor2(COLORS.bigValue).toHsv()
 
   const h = calculateColorValue(amount, minHSV.h, maxHSV.h)
   const s = calculateColorValue(amount, minHSV.s, maxHSV.s)

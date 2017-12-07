@@ -195,7 +195,6 @@ function* handleOngoingAuctionsFetchRequest(action) {
     let parcelStates = yield select(selectors.getParcelStates)
     let addressState = yield select(selectors.getAddressStateData)
 
-    const address = addressState.address
     const ongoingAuctions = []
 
     const bidCoordinates = addressStateUtils.getBidCoordinates(addressState)
@@ -207,11 +206,11 @@ function* handleOngoingAuctionsFetchRequest(action) {
 
     for (const coordinate of bidCoordinates) {
       const parcel = parcelStates[coordinate]
-      const status = parcelUtils.getBidStatus(parcel, address)
+      const status = parcelUtils.getBidStatus(parcel, addressState)
 
       ongoingAuctions.push({
-        address,
         status,
+        address: addressState.address,
         x: parcel.x,
         y: parcel.y,
         amount: parcel.amount,

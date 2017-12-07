@@ -20,3 +20,13 @@ export function shortenAddress(address) {
     return address.slice(0, 6) + '...' + address.slice(42 - 5)
   }
 }
+
+export function capitalize(str) {
+  if (typeof str !== 'string') return null
+  if (!str.trim()) return str
+
+  let firstLetter = str.charAt(0).toUpperCase()
+  let rest = str.slice(1)
+
+  return firstLetter + rest
+}
