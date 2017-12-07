@@ -22,8 +22,8 @@ export default function HomePage({ requiredDataReady }) {
           <ShiftNotificationContainer />
         </div>
       )}
+      {requiredDataReady && <MinimapContainer />}
       <ParcelsMapContainer requiredDataReady={requiredDataReady} />
-      <MinimapContainer />
       <ModalContainer />
     </div>
   )
