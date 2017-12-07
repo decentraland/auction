@@ -68,9 +68,9 @@ export default {
     failed: '[Failed] Failed to deregister email'
   },
 
-  menu: {
-    open: '[Open] Menu',
-    close: '[Close] Menu'
+  sidebar: {
+    open: '[Open] Sidebar',
+    close: '[Close] Sidebar'
   },
 
   shift: {

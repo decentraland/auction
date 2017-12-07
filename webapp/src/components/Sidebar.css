@@ -1,4 +1,4 @@
-.Menu {
+.Sidebar {
   width: 620px;
   height: 100%;
   top: 0;
@@ -11,7 +11,7 @@
   box-shadow: 0 2px 6px 0 rgba(0,0,0,0.05);
 }
 
-.Menu.in {
+.Sidebar.in {
   overflow: scroll;
   transform: translateX(0%);
 }
@@ -19,17 +19,17 @@
 /* -----------------------------------------------------------------------
  Header */
 
-.Menu header {
+.Sidebar header {
   position: relative;
   padding: 24px;
 }
 
-.Menu .Icon-decentraland {
+.Sidebar .Icon-decentraland {
   width: 36px;
   height: 36px;
 }
 
-.Menu .menu-title {
+.Sidebar .sidebar-title {
   margin: 0 10px;
   font-size: 18px;
   letter-spacing: -0.2px;
@@ -40,7 +40,7 @@
   display: inline-block;
 }
 
-.Menu .Icon-laquo {
+.Sidebar .Icon-laquo {
   top: 38px;
   right: 24px;
   position: absolute;
@@ -128,7 +128,7 @@
 }
 
 @media (max-width: 620px) {
-  .Menu {
+  .Sidebar {
     width: 100%;
   }
 }

@@ -12,14 +12,14 @@ import Loading from './Loading'
 import Icon from './Icon'
 import SetupNotificationContainer from '../containers/SetupNotificationContainer'
 
-import './Menu.css'
+import './Sidebar.css'
 
-export default class Menu extends React.Component {
+export default class Sidebar extends React.Component {
   static propTypes = {
     visible: PropTypes.bool,
     addressState: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array).isRequired,
-    onHide: PropTypes.func.isRequired
+    changeVisibility: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -28,29 +28,52 @@ export default class Menu extends React.Component {
 
   getClassName() {
     const visibleClass = this.props.visible ? 'in' : ''
-    return `Menu ${visibleClass}`
+    return `Sidebar ${visibleClass}`
+  }
+
+  show = () => {
+    this.props.changeVisibility(true)
+  }
+
+  hide = () => {
+    this.props.changeVisibility(false)
   }
 
   render() {
-    const { addressState, onHide, ongoingAuctions } = this.props
+    const { visible, addressState, ongoingAuctions } = this.props
 
     return (
       <div className={this.getClassName()}>
-        <header>
-          <Icon name="decentraland" />
-          <h1 className="menu-title">Decentraland</h1>
-
-          <div onClick={onHide}>
-            <Icon name="laquo" />
-          </div>
-        </header>
-
-        <Balance addressState={addressState} />
-        <SetupNotificationContainer />
-        <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
+        {visible ? (
+          <ExpandedSidebar
+            addressState={addressState}
+            ongoingAuctions={ongoingAuctions}
+          />
+        ) : (
+          <CollapsedSidebar />
+        )}
       </div>
     )
   }
+}
+
+function ExpandedSidebar({ addressState, ongoingAuctions }) {
+  return (
+    <div>
+      <header>
+        <Icon name="decentraland" />
+        <h1 className="sidebar-title">Decentraland</h1>
+      </header>
+
+      <Balance addressState={addressState} />
+      <SetupNotificationContainer />
+      <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={this.hide} />
+    </div>
+  )
+}
+
+function CollapsedSidebar() {
+  return <div />
 }
 
 function Balance({ addressState, ongoingAuctions, onHide }) {
