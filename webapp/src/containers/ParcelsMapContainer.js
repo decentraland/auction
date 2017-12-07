@@ -5,7 +5,12 @@ import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
 import locations from '../locations'
-import { parcelRangeChange, openModal, changeLocation, fastBid } from '../actions'
+import {
+  parcelRangeChange,
+  openModal,
+  changeLocation,
+  fastBid
+} from '../actions'
 import * as parcelUtils from '../lib/parcelUtils'
 import { stateData } from '../lib/propTypes'
 

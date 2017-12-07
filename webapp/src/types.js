@@ -75,7 +75,7 @@ export default {
 
   shift: {
     up: '[Shift] Key up (not pressed)',
-    down: '[Shift] Key down (pressed)',
+    down: '[Shift] Key down (pressed)'
   },
 
   fastBid: '[FastBid] Requested fast bid',

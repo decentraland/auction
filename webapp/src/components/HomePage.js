@@ -6,12 +6,11 @@ import SearchContainer from '../containers/SearchContainer'
 import PendingConfirmationBidsContainer from '../containers/PendingConfirmationBidsContainer'
 import ParcelsMapContainer from '../containers/ParcelsMapContainer'
 import ModalContainer from '../containers/modals/ModalContainer'
-
-import ShiftNotification from './ShiftNotification'
+import ShiftNotificationContainer from '../containers/ShiftNotificationContainer'
 
 import './HomePage.css'
 
-export default function HomePage({ requiredDataReady, shiftNeverPressed }) {
+export default function HomePage({ requiredDataReady }) {
   return (
     <div className="HomePage">
       {requiredDataReady && (
@@ -19,11 +18,11 @@ export default function HomePage({ requiredDataReady, shiftNeverPressed }) {
           <MenuContainer />
           <SearchContainer />
           <PendingConfirmationBidsContainer />
+          <ShiftNotificationContainer />
         </div>
       )}
       <ParcelsMapContainer requiredDataReady={requiredDataReady} />
       <ModalContainer />
-      { shiftNeverPressed && <ShiftNotification /> }
     </div>
   )
 }
