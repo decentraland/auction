@@ -26,24 +26,25 @@ export default class Sidebar extends React.Component {
     visible: false
   }
 
-  getClassName() {
-    const visibleClass = this.props.visible ? 'in' : ''
-    return `Sidebar ${visibleClass}`
+  getVisibilityClassName() {
+    return this.props.visible ? 'in' : 'out'
   }
 
-  show = () => {
-    this.props.changeVisibility(true)
-  }
-
-  hide = () => {
-    this.props.changeVisibility(false)
+  toggle = () => {
+    const { visible, changeVisibility } = this.props
+    changeVisibility(!visible)
   }
 
   render() {
     const { visible, addressState, ongoingAuctions } = this.props
 
     return (
-      <div className={this.getClassName()}>
+      <div className={`Sidebar ${this.getVisibilityClassName()}`}>
+        <header>
+          <Icon name="decentraland" />
+          {visible && <h1 className="sidebar-title fadein">Decentraland</h1>}
+        </header>
+
         {visible ? (
           <ExpandedSidebar
             addressState={addressState}
@@ -52,6 +53,11 @@ export default class Sidebar extends React.Component {
         ) : (
           <CollapsedSidebar />
         )}
+
+        <div
+          className={`toggle-button ${this.getVisibilityClassName()}`}
+          onClick={this.toggle}
+        />
       </div>
     )
   }
@@ -59,24 +65,27 @@ export default class Sidebar extends React.Component {
 
 function ExpandedSidebar({ addressState, ongoingAuctions }) {
   return (
-    <div>
-      <header>
-        <Icon name="decentraland" />
-        <h1 className="sidebar-title">Decentraland</h1>
-      </header>
-
+    <div className="ExpandedSidebar fadein">
       <Balance addressState={addressState} />
       <SetupNotificationContainer />
-      <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={this.hide} />
+      <OngoingAuctions ongoingAuctions={ongoingAuctions} />
     </div>
   )
 }
 
 function CollapsedSidebar() {
-  return <div />
+  return (
+    <div className="CollapsedSidebar">
+      <div>BIDS</div>
+      <div>WINNING</div>
+      <div>LOSING</div>
+      <div>WON</div>
+      <div>LOST</div>
+    </div>
+  )
 }
 
-function Balance({ addressState, ongoingAuctions, onHide }) {
+function Balance({ addressState, ongoingAuctions }) {
   return (
     <div className="your-balance">
       <h2>Your Balance</h2>

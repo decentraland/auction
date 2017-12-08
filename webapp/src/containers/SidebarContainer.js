@@ -24,8 +24,8 @@ class SidebarContainer extends React.Component {
     if (visible) {
       this.props.openSidebar()
 
-      // Wait a bit for the Sidebar animation to end
-      setTimeout(() => this.props.fetchOngoingAuctions(), 500)
+      // Skip a frame to avoid lagging the sidebar animation
+      setTimeout(() => this.props.fetchOngoingAuctions(), 0)
     } else {
       this.props.closeSidebar()
     }

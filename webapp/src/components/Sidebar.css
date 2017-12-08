@@ -1,27 +1,42 @@
 .Sidebar {
-  width: 620px;
+  width: 86px;
   height: 100%;
   top: 0;
   left: -24px;
-  position: absolute;
-  transition: transform 0.3s ease-in-out;
-  transform: translateX(-120%);
+  position: relative;
+  float: left;
+  transition: width 0.3s ease-in-out;
   z-index: 700;
   background: #FFF;
   box-shadow: 0 2px 6px 0 rgba(0,0,0,0.05);
 }
 
 .Sidebar.in {
-  overflow: scroll;
-  transform: translateX(0%);
+  width: 620px;
 }
 
-/* -----------------------------------------------------------------------
- Header */
+.Sidebar.in .ExpandedSidebar {
+  overflow: scroll;
+}
+
+.Sidebar.in .fadein {
+  animation: 0.7s ease 0s normal forwards 1 fadein;
+}
+
+@keyframes fadein {
+    0% { opacity: 0; }
+    66% { opacity: 0; }
+    100% { opacity: 1; }
+}
 
 .Sidebar header {
   position: relative;
   padding: 24px;
+}
+
+.Sidebar.out header {
+  background-color: #FCFCFC;
+  border-bottom: 1px solid #EDEDED;
 }
 
 .Sidebar .Icon-decentraland {
@@ -132,6 +147,25 @@
     width: 100%;
   }
 }
+
+/* -----------------------------------------------------------------------
+ Toggle button */
+
+.Sidebar .toggle-button {
+  width: 28px;
+  height: 88px;
+  top: 50%;
+  right: -28px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: #FFF;
+  cursor: pointer;
+}
+.Sidebar .toggle-button.in { background-image: url("../images/collapseArrow.svg"); }
+.Sidebar .toggle-button.out { background-image: url("../images/expandArrow.svg"); }
 
 /* -----------------------------------------------------------------------
  Errors */
