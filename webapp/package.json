@@ -6,6 +6,7 @@
     "start": "react-scripts start",
     "pretest": "npm run lint",
     "lint": "npx eslint src/",
+    "lint:fix": "npx eslint --fix src/",
     "test": "CI=true react-scripts test --env=jsdom",
     "prebuild": "npm run test",
     "build": "react-scripts build",

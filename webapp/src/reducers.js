@@ -7,6 +7,13 @@ const INITIAL_STATE = {
 
   projects: { loading: true },
 
+  range: {
+    minX: 0,
+    maxX: 0,
+    minY: 0,
+    maxY: 0
+  },
+
   parcelStates: { loading: true }, // doest NOT use a `data` property
   pendingConfirmationBids: { data: [] },
 
@@ -68,6 +75,9 @@ export const selectors = {
   },
   getShift(state) {
     return state.shift
+  },
+  getRange(state) {
+    return state.range
   }
 }
 
@@ -77,6 +87,15 @@ function web3Connected(state = INITIAL_STATE.web3Connected, action) {
       return true
     case types.connectWeb3.failed:
       return false
+    default:
+      return state
+  }
+}
+
+function range(state = INITIAL_STATE.range, action) {
+  switch (action.type) {
+    case types.parcelRangeChanged:
+      return action
     default:
       return state
   }
@@ -258,5 +277,6 @@ export default {
   modal,
   email,
   menu,
-  shift
+  shift,
+  range
 }

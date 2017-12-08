@@ -7,6 +7,7 @@ import PendingConfirmationBidsContainer from '../containers/PendingConfirmationB
 import ParcelsMapContainer from '../containers/ParcelsMapContainer'
 import ModalContainer from '../containers/modals/ModalContainer'
 import ShiftNotificationContainer from '../containers/ShiftNotificationContainer'
+import MinimapContainer from '../containers/MinimapContainer'
 
 import './HomePage.css'
 
@@ -21,6 +22,7 @@ export default function HomePage({ requiredDataReady }) {
           <ShiftNotificationContainer />
         </div>
       )}
+      {requiredDataReady && <MinimapContainer />}
       <ParcelsMapContainer requiredDataReady={requiredDataReady} />
       <ModalContainer />
     </div>
