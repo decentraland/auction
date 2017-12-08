@@ -33,6 +33,8 @@ export default function ExpandedSidebar(props) {
       <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
 
       <DeRegisterEmailContainer />
+
+      <Footer />
     </div>
   )
 }
@@ -152,4 +154,32 @@ AuctionTableRow.propTypes = {
 
 AuctionTableRow.defaultProps = {
   className: ''
+}
+
+function Footer() {
+  return (
+    <footer className="Footer">
+      <div className="social-icons">
+        <Icon name="twitter" />
+        <Icon name="rocketchat" />
+        <Icon name="github" />
+        <Icon name="reddit" />
+        <Icon name="facebook" />
+      </div>
+      <div className="links">
+        <Link to="https://blog.decentraland.org" target="_blank">
+          Blog
+        </Link>
+        <Link to="https://decentraland.org" target="_blank">
+          Website
+        </Link>
+        <Link to="https://decentraland.org/whitepaper.pdf" target="_blank">
+          Whitepaper
+        </Link>
+      </div>
+      <div className="copyright">
+        Copyright 2017 Decentraland. All rights reserved.
+      </div>
+    </footer>
+  )
 }

@@ -57,3 +57,20 @@
   color: #000000;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
 }
+
+.Sidebar .toggle-button {
+  width: 28px;
+  height: 88px;
+  top: 50%;
+  right: -28px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: #FFF;
+  cursor: pointer;
+}
+.Sidebar .toggle-button.in { background-image: url("../images/collapseArrow.svg"); }
+.Sidebar .toggle-button.out { background-image: url("../images/expandArrow.svg"); }
+

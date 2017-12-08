@@ -15,7 +15,6 @@
 
 .ExpandedSidebar .DeRegisterEmail {
   margin-top: 24px;
-  margin-bottom: 24px;
 }
 
 /* -----------------------------------------------------------------------
@@ -132,23 +131,40 @@
 }
 
 /* -----------------------------------------------------------------------
- Toggle button */
+ Footer */
 
-.Sidebar .toggle-button {
-  width: 28px;
-  height: 88px;
-  top: 50%;
-  right: -28px;
-  position: absolute;
-  background-repeat: no-repeat;
-  background-position: center center;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  background-color: #FFF;
-  cursor: pointer;
+.Footer {
+  width: 100%;
+  margin-top: 40px;
+  padding: 32px 0;
+  font-size: 14px;
+  background-color: #FBFBFB;
+  text-align: center;
 }
-.Sidebar .toggle-button.in { background-image: url("../images/collapseArrow.svg"); }
-.Sidebar .toggle-button.out { background-image: url("../images/expandArrow.svg"); }
+
+.Footer .social-icons .Icon {
+  margin-right: 24px;
+}
+.Footer .social-icons .Icon:last-child {
+  margin-right: 0;
+}
+
+.Footer .links {
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.Footer .links a {
+  margin-right: 27px;
+  color: #000;
+}
+.Footer .links a:last-child {
+  margin-right: 0;
+}
+
+.Footer .copyright {
+  color: #929292;
+}
 
 /* -----------------------------------------------------------------------
  Errors */
