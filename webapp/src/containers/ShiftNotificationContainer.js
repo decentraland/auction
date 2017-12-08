@@ -11,13 +11,13 @@ const SHIFT = 'Shift'
 
 class ShiftNotificationContainer extends React.Component {
   static propTypes = {
-    shiftneverPressed: PropTypes.boolean,
-    shiftDown: PropTypes.function,
-    shiftUp: PropTypes.function
+    shiftneverPressed: PropTypes.bool,
+    shiftDown: PropTypes.func,
+    shiftUp: PropTypes.func
   }
 
-  constructor(...args) {
-    super(...args)
+  constructor(props) {
+    super(props)
 
     this.listenDown = event => {
       if (event.key === SHIFT) {
