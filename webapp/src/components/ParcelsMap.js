@@ -36,7 +36,7 @@ export default class ParcelsMap extends React.Component {
 
     onMoveEnd: PropTypes.func,
     onZoomEnd: PropTypes.func,
-    onParcelBid: PropTypes.func,
+    onParcelBid: PropTypes.func
   }
 
   static defaultProps = {
