@@ -1,7 +1,21 @@
 
 .ExpandedSidebar {
-  overflow: scroll;
   width: 620px;
+  height: 100%;
+  padding-bottom: 90px; /* Compensate the header */
+  overflow: scroll;
+}
+
+/* -----------------------------------------------------------------------
+ RegisterEmail */
+
+.ExpandedSidebar .RegisterEmail {
+  margin-bottom: 30px;
+}
+
+.ExpandedSidebar .DeRegisterEmail {
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
 /* -----------------------------------------------------------------------

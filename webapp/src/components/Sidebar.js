@@ -13,6 +13,7 @@ export default class Sidebar extends React.Component {
     visible: PropTypes.bool,
     addressState: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array).isRequired,
+    dashboard: PropTypes.object.isRequired,
     changeVisibility: PropTypes.func.isRequired
   }
 
@@ -33,31 +34,8 @@ export default class Sidebar extends React.Component {
     return this.props.visible ? 'in' : 'out'
   }
 
-  getDashboardData() {
-    const { ongoingAuctions } = this.props
-
-    if (!ongoingAuctions.data) {
-      return { bids: '--', winning: '--', losing: '--', won: '--', lost: '--' }
-    }
-
-    return {
-      bids: ongoingAuctions.data.length,
-      winning: this.countBidsByStatus('Winning'),
-      losing: this.countBidsByStatus('Losing'),
-      won: this.countBidsByStatus('Won'),
-      lost: this.countBidsByStatus('Lost')
-    }
-  }
-
-  countBidsByStatus(status) {
-    return this.props.ongoingAuctions.data.filter(
-      auction => auction.status === status
-    ).length
-  }
-
   render() {
-    const { visible, addressState, ongoingAuctions } = this.props
-    const dashboard = this.getDashboardData()
+    const { visible, addressState, ongoingAuctions, dashboard } = this.props
 
     return (
       <div className={`Sidebar ${this.getVisibilityClassName()}`}>

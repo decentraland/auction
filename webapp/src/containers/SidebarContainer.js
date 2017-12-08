@@ -33,6 +33,28 @@ class SidebarContainer extends React.Component {
     }
   }
 
+  getDashboardData() {
+    const { ongoingAuctions } = this.props
+
+    if (!ongoingAuctions.data) {
+      return { bids: '--', winning: '--', losing: '--', won: '--', lost: '--' }
+    }
+
+    return {
+      bids: ongoingAuctions.data.length,
+      winning: this.countBidsByStatus('Winning'),
+      losing: this.countBidsByStatus('Losing'),
+      won: this.countBidsByStatus('Won'),
+      lost: this.countBidsByStatus('Lost')
+    }
+  }
+
+  countBidsByStatus(status) {
+    return this.props.ongoingAuctions.data.filter(
+      auction => auction.status === status
+    ).length
+  }
+
   render() {
     const { addressState, ongoingAuctions, sidebar } = this.props
 
@@ -41,6 +63,7 @@ class SidebarContainer extends React.Component {
         addressState={addressState}
         visible={sidebar.open}
         ongoingAuctions={ongoingAuctions}
+        dashboard={this.getDashboardData()}
         changeVisibility={this.changeVisibility}
       />
     )
