@@ -23,17 +23,23 @@ export default class ParcelsMap extends React.Component {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     bounds: PropTypes.arrayOf(PropTypes.array),
+
     minZoom: PropTypes.number.isRequired,
     maxZoom: PropTypes.number.isRequired,
     baseZoom: PropTypes.number.isRequired,
     zoom: PropTypes.number.isRequired,
     tileSize: PropTypes.number.isRequired,
+
     getAddressState: PropTypes.func.isRequired,
     getParcelStates: PropTypes.func.isRequired,
     getProjects: PropTypes.func.isRequired,
+
     onMoveEnd: PropTypes.func,
     onZoomEnd: PropTypes.func,
-    onParcelBid: PropTypes.func
+    onParcelBid: PropTypes.func,
+
+    shiftPressed: PropTypes.bool.isRequired,
+    fastBid: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -108,7 +114,8 @@ export default class ParcelsMap extends React.Component {
       center: this.getCenter(x, y),
       layers: [this.parcelGrid],
       renderer: L.svg(),
-      zoomAnimation: false
+      zoomAnimation: false,
+      boxZoom: false
     })
 
     this.map.zoomControl.setPosition('topright')
@@ -182,6 +189,10 @@ export default class ParcelsMap extends React.Component {
     this.props.onParcelBid(parcel)
   }
 
+  triggerFastBid(parcel) {
+    this.props.fastBid(parcel)
+  }
+
   getCenter(x, y) {
     return isNaN(x)
       ? new L.LatLng(0, 0)
@@ -236,6 +247,9 @@ export default class ParcelsMap extends React.Component {
 
     if (unBiddable) return
 
+    if (this.props.shiftPressed) {
+      return this.triggerFastBid(parcel)
+    }
     this.onParcelBid(parcel)
   }
 

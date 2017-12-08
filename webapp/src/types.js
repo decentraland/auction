@@ -73,5 +73,12 @@ export default {
     close: '[Close] Menu'
   },
 
+  shift: {
+    up: '[Shift] Key up (not pressed)',
+    down: '[Shift] Key down (pressed)'
+  },
+
+  fastBid: '[FastBid] Requested fast bid',
+
   changeLocation: 'Change location URL'
 }

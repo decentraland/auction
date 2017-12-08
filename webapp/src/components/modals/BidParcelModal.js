@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { preventDefault } from '../../lib/util'
 import { ONE_LAND_IN_MANA } from '../../lib/land'
 import { stateData } from '../../lib/propTypes'
+import { minimumBid } from '../../lib/parcelUtils'
 import pendingBidsUtils from '../../lib/pendingBidsUtils'
 
 import Modal from './Modal'
@@ -11,8 +12,6 @@ import Button from '../Button'
 import Loading from '../Loading'
 
 import './BidParcelModal.css'
-
-const BID_INCREMENT_PERCENTAGE = 1.1
 
 export default class BidParcelModal extends React.Component {
   static propTypes = {
@@ -111,9 +110,7 @@ export default class BidParcelModal extends React.Component {
 
   getMinimumBidValue() {
     const { parcel } = this.props
-    return parcel.amount
-      ? Math.ceil(parcel.amount * BID_INCREMENT_PERCENTAGE)
-      : ONE_LAND_IN_MANA
+    return minimumBid(parcel.amount)
   }
 
   render() {

@@ -22,6 +22,11 @@ const INITIAL_STATE = {
     data: window.localStorage ? window.localStorage.getItem('email') : ''
   },
 
+  shift: {
+    never: true,
+    pressed: false
+  },
+
   menu: {
     open: false
   }
@@ -60,6 +65,9 @@ export const selectors = {
   },
   getMenu(state) {
     return state.menu
+  },
+  getShift(state) {
+    return state.shift
   }
 }
 
@@ -223,6 +231,23 @@ function menu(state = INITIAL_STATE.menu, action) {
   }
 }
 
+function shift(state = INITIAL_STATE.shift, action) {
+  switch (action.type) {
+    case types.shift.up:
+      return {
+        never: false,
+        pressed: false
+      }
+    case types.shift.down:
+      return {
+        never: false,
+        pressed: true
+      }
+    default:
+      return state
+  }
+}
+
 export default {
   web3Connected,
   addressState,
@@ -232,5 +257,6 @@ export default {
   ongoingAuctions,
   modal,
   email,
-  menu
+  menu,
+  shift
 }

@@ -40,6 +40,13 @@ export function clickParcel(x, y) {
   }
 }
 
+export function fastBid(parcel) {
+  return {
+    type: types.fastBid,
+    parcel
+  }
+}
+
 // -------------------------------------------------------------------------
 // Bids
 
@@ -131,5 +138,19 @@ export function openMenu() {
 export function closeMenu() {
   return {
     type: types.menu.close
+  }
+}
+
+// Shift key
+
+export function shiftDown() {
+  return {
+    type: types.shift.down
+  }
+}
+
+export function shiftUp() {
+  return {
+    type: types.shift.up
   }
 }

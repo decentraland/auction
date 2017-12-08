@@ -116,3 +116,12 @@ export function getBounds() {
     maxY: 160
   }
 }
+
+export const MINIMUM_BID_INCREMENT = 1.1
+
+export function minimumBid(previousBid) {
+  if (!previousBid) {
+    return ONE_LAND_IN_MANA
+  }
+  return Math.ceil(previousBid * MINIMUM_BID_INCREMENT)
+}

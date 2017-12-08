@@ -6,6 +6,7 @@ import SearchContainer from '../containers/SearchContainer'
 import PendingConfirmationBidsContainer from '../containers/PendingConfirmationBidsContainer'
 import ParcelsMapContainer from '../containers/ParcelsMapContainer'
 import ModalContainer from '../containers/modals/ModalContainer'
+import ShiftNotificationContainer from '../containers/ShiftNotificationContainer'
 
 import './HomePage.css'
 
@@ -17,6 +18,7 @@ export default function HomePage({ requiredDataReady }) {
           <MenuContainer />
           <SearchContainer />
           <PendingConfirmationBidsContainer />
+          <ShiftNotificationContainer />
         </div>
       )}
       <ParcelsMapContainer requiredDataReady={requiredDataReady} />
