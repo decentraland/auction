@@ -1,0 +1,17 @@
+.CollapsedSidebar {
+  width: 86px;
+}
+
+.CollapsedSidebar header {
+  background-color: #FCFCFC;
+  border-bottom: 1px solid #EDEDED;
+}
+
+.CollapsedSidebar .SidebarDashboard {
+  padding-top: 24px;
+  padding-left: 16px;
+}
+
+.CollapsedSidebar .SidebarDashboard li {
+  margin-bottom: 30px;
+}

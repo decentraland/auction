@@ -1,0 +1,176 @@
+
+.ExpandedSidebar {
+  width: 620px;
+  height: 100%;
+  padding-bottom: 90px; /* Compensate the header */
+  overflow: scroll;
+}
+
+/* -----------------------------------------------------------------------
+ RegisterEmail */
+
+.ExpandedSidebar .RegisterEmail {
+  margin-bottom: 30px;
+}
+
+.ExpandedSidebar .DeRegisterEmail {
+  margin-top: 24px;
+}
+
+/* -----------------------------------------------------------------------
+ Dashboard */
+
+.ExpandedSidebar .SidebarDashboard {
+  padding-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ExpandedSidebar .SidebarDashboard li {
+  width: 19%;
+  padding-left: 9px;
+}
+
+.ExpandedSidebar .SidebarDashboard .dashboard-value {
+  margin-top: 18px;
+}
+
+/* -----------------------------------------------------------------------
+ UserData */
+
+.UserData {
+  padding: 24px;
+}
+
+.UserData h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 20px;
+  color: #000000;
+}
+
+.UserData .address {
+  font-size: 15px;
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  float: right;
+}
+
+.UserData .Icon-address {
+  margin-right: 12px;
+  vertical-align: text-bottom;
+}
+
+.UserData .mana-value {
+  font-size: 14px;
+  color: #7B7B7B;
+}
+
+/* -----------------------------------------------------------------------
+ Ongoing Auctions */
+
+.OngoingAuctions {
+  padding: 24px 0;
+}
+
+.OngoingAuctions h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  margin-left: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.OngoingAuctions .table-row {
+  width: 100%;
+  height: 64px;
+  padding: 24px;
+}
+
+.OngoingAuctions .table-row-empty {
+  width: 100%;
+  padding-left: 24px;
+  font-size: 15px;
+  color: #7B7B7B;
+}
+
+
+.OngoingAuctions .table-header {
+  color: #7B7B7B;
+}
+
+.OngoingAuctions .table-row.gray {
+  background-color: #FBFBFB;
+}
+
+.OngoingAuctions .table-row > div {
+  height: 100%;
+  float: left;
+}
+
+.OngoingAuctions .table .col-land      { width: 10%; }
+.OngoingAuctions .table .col-status    { width: 20%; }
+.OngoingAuctions .table .col-amount    { width: 25%; }
+.OngoingAuctions .table .col-time-left { width: 20%; }
+.OngoingAuctions .table .col-address   { width: 25%; }
+
+.OngoingAuctions .table .won     { color: #4A90E2; }
+.OngoingAuctions .table .winning { color: #30D7A9; }
+.OngoingAuctions .table .lost    { color: #3C225F; }
+.OngoingAuctions .table .outbid  { color: #EF303B; }
+
+.OngoingAuctions .col-status {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 620px) {
+  .Sidebar {
+    width: 100%;
+  }
+}
+
+/* -----------------------------------------------------------------------
+ Footer */
+
+.Footer {
+  width: 100%;
+  margin-top: 40px;
+  padding: 32px 0;
+  font-size: 14px;
+  background-color: #FBFBFB;
+  text-align: center;
+}
+
+.Footer .social-icons .Icon {
+  margin-right: 24px;
+}
+.Footer .social-icons .Icon:last-child {
+  margin-right: 0;
+}
+
+.Footer .links {
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.Footer .links a {
+  margin-right: 27px;
+  color: #000;
+}
+.Footer .links a:last-child {
+  margin-right: 0;
+}
+
+.Footer .copyright {
+  color: #929292;
+}
+
+/* -----------------------------------------------------------------------
+ Errors */
+
+.UserData .mana-value .text-danger,
+.OngoingAuctions .text-danger {
+  color: #A94442;
+}

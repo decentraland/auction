@@ -35,7 +35,7 @@ const INITIAL_STATE = {
     pressed: false
   },
 
-  menu: {
+  sidebar: {
     open: false
   }
 }
@@ -71,8 +71,8 @@ export const selectors = {
   getEmail(state) {
     return state.email
   },
-  getMenu(state) {
-    return state.menu
+  getSidebar(state) {
+    return state.sidebar
   },
   getShift(state) {
     return state.shift
@@ -238,14 +238,14 @@ function email(state = INITIAL_STATE.email, action) {
   }
 }
 
-function menu(state = INITIAL_STATE.menu, action) {
+function sidebar(state = INITIAL_STATE.sidebar, action) {
   switch (action.type) {
-    case types.menu.open:
+    case types.sidebar.open:
       return {
         open: true
       }
-    case types.menu.close:
-      return INITIAL_STATE.menu
+    case types.sidebar.close:
+      return INITIAL_STATE.sidebar
     default:
       return state
   }
@@ -277,7 +277,7 @@ export default {
   ongoingAuctions,
   modal,
   email,
-  menu,
+  sidebar,
   shift,
   range
 }

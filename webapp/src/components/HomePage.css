@@ -1,14 +1,18 @@
 .HomePage {
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 .HomePage .controls {
   height: 100%;
-  padding-top: 24px;
   top: 0;
   left: 24px;
   position: absolute;
+}
+
+.HomePage .top-controls {
+  display: inline-block;
 }
 
 .HomePage > .Loading {

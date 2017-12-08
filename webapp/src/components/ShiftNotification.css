@@ -1,23 +1,35 @@
-.shift-notification {
-  position: absolute;
-  left: 20px;
+.ShiftNotification {
+  width: 300px;
+  padding: 22px 20px 22px 20px;
+  left: 70px;
   bottom: 20px;
+  position: absolute;
   background: white;
   border-radius: 4px;
   border: 1px solid #3E396B;
   z-index: 950;
-  max-width: 301px;
-  padding: 22px 20px 22px 20px;
 }
 
-.shift-notification h3 {
+@media (max-width: 768px) {
+  .ShiftNotification {
+    display: none;
+  }
+}
+
+.ShiftNotification .Icon-shift {
+  margin-right: 6px;
+  position: relative;
+  top: 1px;
+}
+
+.ShiftNotification h3 {
   margin: 0;
   padding: 0;
   font-size: 14px;
   color: #3E396B;
 }
 
-.shift-notification p {
+.ShiftNotification p {
   margin: 0;
   padding: 0;
   margin-top: 10px;

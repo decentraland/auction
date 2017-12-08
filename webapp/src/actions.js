@@ -127,17 +127,18 @@ export function deregisterEmail() {
   }
 }
 
-// Menu
+// -------------------------------------------------------------------------
+// Sidebar
 
-export function openMenu() {
+export function openSidebar() {
   return {
-    type: types.menu.open
+    type: types.sidebar.open
   }
 }
 
-export function closeMenu() {
+export function closeSidebar() {
   return {
-    type: types.menu.close
+    type: types.sidebar.close
   }
 }
 

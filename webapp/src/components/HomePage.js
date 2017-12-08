@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import MenuContainer from '../containers/MenuContainer'
+import SidebarContainer from '../containers/SidebarContainer'
 import SearchContainer from '../containers/SearchContainer'
 import PendingConfirmationBidsContainer from '../containers/PendingConfirmationBidsContainer'
 import ParcelsMapContainer from '../containers/ParcelsMapContainer'
@@ -18,9 +18,11 @@ export default function HomePage({ requiredDataReady }) {
     <div className="HomePage">
       {requiredDataReady && (
         <div className="controls">
-          <MenuContainer />
-          <SearchContainer />
-          <PendingConfirmationBidsContainer />
+          <SidebarContainer />
+          <div className="top-controls">
+            <SearchContainer />
+            <PendingConfirmationBidsContainer />
+          </div>
           <ShiftNotificationContainer />
         </div>
       )}

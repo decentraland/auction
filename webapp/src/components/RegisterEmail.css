@@ -1,0 +1,53 @@
+.RegisterEmail {
+  padding: 0 16px;
+}
+
+.RegisterEmail > form {
+  width: 100%;
+  padding: 16px;
+  border-radius: 5px;
+  background-color: #FBFBFB;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.10);
+}
+
+.updates-text {
+  font-size: 14px;
+}
+
+.updates-text h3 {
+  font-size: 14px;
+  font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
+}
+
+.inputs {
+  position: relative;
+}
+
+.inputs .email {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #EDEDED;
+  outline: none;
+  padding: 12px;
+}
+
+.inputs .submit {
+  width: 20px;
+  height: 20px;
+  top: 13px;
+  right: 0;
+  position: absolute;
+  border: none;
+  background-image: url("../images/rightArrow.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #FBFBFB;
+  color: transparent;
+}
+
+.inputs p {
+  font-size: 16px;
+  float: left;
+  margin: 8px 24px;
+}

@@ -1,0 +1,16 @@
+.SidebarDashboard {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.SidebarDashboard .dashboard-heading {
+  font-size: 12px;
+  color: #7B7B7B;
+  margin-bottom: 7px;
+}
+
+.SidebarDashboard .dashboard-value {
+  font-size: 14px;
+  color: #000000;
+}

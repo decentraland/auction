@@ -2,67 +2,68 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
+import locations from '../locations'
 import { distanceInWordsToNow } from '../lib/dateUtils'
 import { buildCoordinate, shortenAddress } from '../lib/util'
 import { stateData } from '../lib/propTypes'
 
-import locations from '../locations'
+import RegisterEmailContainer from '../containers/RegisterEmailContainer'
+import DeRegisterEmailContainer from '../containers/DeRegisterEmailContainer'
 
-import Loading from './Loading'
 import Icon from './Icon'
-import SetupNotificationContainer from '../containers/SetupNotificationContainer'
+import Loading from './Loading'
+import SidebarDashboard from './SidebarDashboard'
 
-import './Menu.css'
+import './ExpandedSidebar.css'
 
-export default class Menu extends React.Component {
-  static propTypes = {
-    visible: PropTypes.bool,
-    addressState: stateData(PropTypes.object).isRequired,
-    ongoingAuctions: stateData(PropTypes.array).isRequired,
-    onHide: PropTypes.func.isRequired
-  }
+export default function ExpandedSidebar(props) {
+  const { addressState, ongoingAuctions, dashboard, onHide } = props
 
-  static defaultProps = {
-    visible: false
-  }
+  return (
+    <div className="ExpandedSidebar fadein">
+      <UserData addressState={addressState} />
 
-  getClassName() {
-    const visibleClass = this.props.visible ? 'in' : ''
-    return `Menu ${visibleClass}`
-  }
+      <RegisterEmailContainer />
 
-  render() {
-    const { addressState, onHide, ongoingAuctions } = this.props
-
-    return (
-      <div className={this.getClassName()}>
-        <header>
-          <Icon name="decentraland" />
-          <h1 className="menu-title">Decentraland</h1>
-
-          <div onClick={onHide}>
-            <Icon name="laquo" />
-          </div>
-        </header>
-
-        <Balance addressState={addressState} />
-        <SetupNotificationContainer />
-        <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
+      <div>
+        <div className="heading">Dashboard</div>
+        <SidebarDashboard dashboard={dashboard} />
       </div>
-    )
-  }
+
+      <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
+
+      <DeRegisterEmailContainer />
+
+      <Footer />
+    </div>
+  )
 }
 
-function Balance({ addressState, ongoingAuctions, onHide }) {
+ExpandedSidebar.propTypes = {
+  addressState: stateData(PropTypes.object),
+  ongoingAuctions: stateData(PropTypes.array),
+  dashboard: PropTypes.object,
+  onHide: PropTypes.func
+}
+
+function UserData({ addressState, ongoingAuctions }) {
   return (
-    <div className="your-balance">
-      <h2>Your Balance</h2>
+    <div className="UserData">
+      <h2>
+        Your balance
+        {addressState.data && (
+          <div className="address">
+            <Icon name="address" />
+            {shortenAddress(addressState.data.address)}
+          </div>
+        )}
+      </h2>
+
       {addressState.loading ? (
         <Loading />
       ) : addressState.error ? (
         <div className="mana-value text-danger">
-          Couldn&#39;t fetch your current balance. Try refreshing the page and
-          trying again.
+          Couldn&#39;t fetch your current balance. Try refreshing the page.
         </div>
       ) : (
         <div className="mana-value">{addressState.data.balance} MANA</div>
@@ -73,8 +74,8 @@ function Balance({ addressState, ongoingAuctions, onHide }) {
 
 function OngoingAuctions({ ongoingAuctions, onHide }) {
   return (
-    <div className="ongoing-auctions">
-      <h3>Ongoing auctions</h3>
+    <div className="OngoingAuctions">
+      <div className="heading">Ongoing auctions</div>
       {ongoingAuctions.loading ? (
         <Loading />
       ) : ongoingAuctions.error ? (
@@ -83,13 +84,13 @@ function OngoingAuctions({ ongoingAuctions, onHide }) {
           few minutes.
         </div>
       ) : (
-        <AuctionTable auctions={ongoingAuctions.data} onHide={onHide} />
+        <AuctionTable auctions={ongoingAuctions.data} onLandClick={onHide} />
       )}
     </div>
   )
 }
 
-function AuctionTable({ auctions, onHide }) {
+function AuctionTable({ auctions, onLandClick }) {
   if (auctions.length) {
     return (
       <div className="table">
@@ -105,7 +106,7 @@ function AuctionTable({ auctions, onHide }) {
           <AuctionTableRow
             key={index}
             auction={auction}
-            onLandClick={onHide}
+            onLandClick={onLandClick}
             className={index % 2 === 0 ? 'gray' : ''}
           />
         ))}
@@ -147,9 +148,38 @@ function AuctionTableRow({ auction, className, onLandClick }) {
 
 AuctionTableRow.propTypes = {
   auction: PropTypes.object,
-  className: PropTypes.string
+  className: PropTypes.string,
+  onLandClick: PropTypes.func
 }
 
 AuctionTableRow.defaultProps = {
   className: ''
+}
+
+function Footer() {
+  return (
+    <footer className="Footer">
+      <div className="social-icons">
+        <Icon name="twitter" />
+        <Icon name="rocketchat" />
+        <Icon name="github" />
+        <Icon name="reddit" />
+        <Icon name="facebook" />
+      </div>
+      <div className="links">
+        <Link to="https://blog.decentraland.org" target="_blank">
+          Blog
+        </Link>
+        <Link to="https://decentraland.org" target="_blank">
+          Website
+        </Link>
+        <Link to="https://decentraland.org/whitepaper.pdf" target="_blank">
+          Whitepaper
+        </Link>
+      </div>
+      <div className="copyright">
+        Copyright 2017 Decentraland. All rights reserved.
+      </div>
+    </footer>
+  )
 }
