@@ -19,7 +19,7 @@ export default function Minimap({ minY, minX, maxY, maxX }) {
   const width = (maxX - minX) * MINIMAP_SIZE / PARCELS
 
   return (
-    <div className="minimap">
+    <div className="Minimap">
       <div
         className="minimap-focus"
         style={{
