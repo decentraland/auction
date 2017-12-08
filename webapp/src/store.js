@@ -6,7 +6,9 @@ import createSagasMiddleware from 'redux-saga'
 import reduxThunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
 
-import reducers from './reducers'
+import { createGoogleAnalyticsMiddleware } from './analyticsMiddleware'
+
+import reducers, { analytics } from './reducers'
 import rootSaga from './sagas'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
@@ -18,13 +20,23 @@ const history = createHistory()
 const historyMiddleware = routerMiddleware(history)
 
 const sagasMiddleware = createSagasMiddleware()
+
+const analyticsMiddleware = createGoogleAnalyticsMiddleware(analytics)
+
 const store = createStore(
   combineReducers({
     ...reducers,
     router: routerReducer
   }),
+
   composeEnhancers(
-    applyMiddleware(reduxThunk, logger, sagasMiddleware, historyMiddleware)
+    applyMiddleware(
+      reduxThunk,
+      logger,
+      sagasMiddleware,
+      historyMiddleware,
+      analyticsMiddleware
+    )
   )
 )
 

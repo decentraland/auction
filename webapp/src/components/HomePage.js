@@ -7,6 +7,7 @@ import PendingConfirmationBidsContainer from '../containers/PendingConfirmationB
 import ParcelsMapContainer from '../containers/ParcelsMapContainer'
 import ShiftNotificationContainer from '../containers/ShiftNotificationContainer'
 import MinimapContainer from '../containers/MinimapContainer'
+import GoogleAnalyticsContainer from '../containers/GoogleAnalyticsContainer'
 import HelpButtonContainer from '../containers/HelpButtonContainer'
 import ModalContainer from '../containers/modals/ModalContainer'
 
@@ -27,6 +28,7 @@ export default function HomePage({ requiredDataReady }) {
       {requiredDataReady && <MinimapContainer />}
       {requiredDataReady && <HelpButtonContainer />}
       <ModalContainer />
+      <GoogleAnalyticsContainer />
     </div>
   )
 }
