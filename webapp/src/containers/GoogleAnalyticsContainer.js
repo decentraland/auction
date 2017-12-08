@@ -39,6 +39,7 @@ class GoogleAnalyticsContainer extends React.Component {
     window.gtag('config', window.GA_TRACKING_ID, {
       user_id: address
     })
+    this.configurated = true
   }
 
   render() {
