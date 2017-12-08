@@ -37,9 +37,6 @@ export default class ParcelsMap extends React.Component {
     onMoveEnd: PropTypes.func,
     onZoomEnd: PropTypes.func,
     onParcelBid: PropTypes.func,
-
-    shiftPressed: PropTypes.bool.isRequired,
-    fastBid: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -189,10 +186,6 @@ export default class ParcelsMap extends React.Component {
     this.props.onParcelBid(parcel)
   }
 
-  triggerFastBid(parcel) {
-    this.props.fastBid(parcel)
-  }
-
   getCenter(x, y) {
     return isNaN(x)
       ? new L.LatLng(0, 0)
@@ -247,9 +240,6 @@ export default class ParcelsMap extends React.Component {
 
     if (unBiddable) return
 
-    if (this.props.shiftPressed) {
-      return this.triggerFastBid(parcel)
-    }
     this.onParcelBid(parcel)
   }
 

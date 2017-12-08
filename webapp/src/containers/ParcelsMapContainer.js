@@ -79,7 +79,13 @@ class ParcelsMapContainer extends React.Component {
   }
 
   onParcelBid = parcel => {
-    this.props.openModal('BidParcelModal', parcel)
+    const { shiftPressed, openModal, fastBid } = this.props
+
+    if (shiftPressed) {
+      fastBid(parcel)
+    } else {
+      openModal('BidParcelModal', parcel)
+    }
   }
 
   fetchParcelRange(minX, minY, maxX, maxY) {
@@ -135,8 +141,6 @@ class ParcelsMapContainer extends React.Component {
         onMoveEnd={this.onMoveEnd}
         onZoomEnd={this.onZoomEnd}
         onParcelBid={this.onParcelBid}
-        shiftPressed={this.props.shiftPressed}
-        fastBid={this.props.fastBid}
       />
     ) : (
       <Loading />
