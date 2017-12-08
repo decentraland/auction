@@ -16,9 +16,7 @@ export default class DeRegisterEmail extends React.Component {
               Unsubscribe
             </span>
           </h3>
-          <p>
-            You are subscribed with {currentEmail}
-          </p>
+          <p>You are subscribed with {currentEmail}</p>
         </div>
       </div>
     )
