@@ -26,13 +26,39 @@ export default class Sidebar extends React.Component {
     visible: false
   }
 
+  toggle = () => {
+    const { visible, changeVisibility } = this.props
+    changeVisibility(!visible)
+  }
+
+  hide = () => {
+    this.props.changeVisibility(false)
+  }
+
   getVisibilityClassName() {
     return this.props.visible ? 'in' : 'out'
   }
 
-  toggle = () => {
-    const { visible, changeVisibility } = this.props
-    changeVisibility(!visible)
+  getDashboardData() {
+    const { ongoingAuctions } = this.props
+
+    if (!ongoingAuctions.data) {
+      return { bids: '--', winning: '--', losing: '--', won: '--', lost: '--' }
+    }
+
+    return {
+      bids: ongoingAuctions.data.length,
+      winning: this.countBidsByStatus('winning'),
+      losing: this.countBidsByStatus('losing'),
+      won: this.countBidsByStatus('won'),
+      lost: this.countBidsByStatus('lost')
+    }
+  }
+
+  countBidsByStatus(status) {
+    return this.props.ongoingAuctions.data.filter(
+      auction => auction.status === status
+    ).length
   }
 
   render() {
@@ -49,9 +75,10 @@ export default class Sidebar extends React.Component {
           <ExpandedSidebar
             addressState={addressState}
             ongoingAuctions={ongoingAuctions}
+            onHide={this.hide}
           />
         ) : (
-          <CollapsedSidebar />
+          <CollapsedSidebar dashboard={this.getDashboardData()} />
         )}
 
         <div
@@ -63,24 +90,41 @@ export default class Sidebar extends React.Component {
   }
 }
 
-function ExpandedSidebar({ addressState, ongoingAuctions }) {
+function ExpandedSidebar({ addressState, ongoingAuctions, onHide }) {
   return (
     <div className="ExpandedSidebar fadein">
       <Balance addressState={addressState} />
       <SetupNotificationContainer />
-      <OngoingAuctions ongoingAuctions={ongoingAuctions} />
+      <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
     </div>
   )
 }
 
-function CollapsedSidebar() {
+function CollapsedSidebar({ dashboard }) {
   return (
     <div className="CollapsedSidebar">
-      <div>BIDS</div>
-      <div>WINNING</div>
-      <div>LOSING</div>
-      <div>WON</div>
-      <div>LOST</div>
+      <ul className="dashboard">
+        <li>
+          <div className="dashboard-heading">BIDS</div>
+          <div className="dashboard-value">{dashboard.bids}</div>
+        </li>
+        <li>
+          <div className="dashboard-heading">WINNING</div>
+          <div className="dashboard-value">{dashboard.winning}</div>
+        </li>
+        <li>
+          <div className="dashboard-heading">LOSING</div>
+          <div className="dashboard-value">{dashboard.losing}</div>
+        </li>
+        <li>
+          <div className="dashboard-heading">WON</div>
+          <div className="dashboard-value">{dashboard.won}</div>
+        </li>
+        <li>
+          <div className="dashboard-heading">LOST</div>
+          <div className="dashboard-value">{dashboard.lost}</div>
+        </li>
+      </ul>
     </div>
   )
 }
