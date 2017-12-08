@@ -110,6 +110,10 @@
   float: left;
 }
 
+.ongoing-auctions .table .col-land a { 
+  color: #000000;
+ }
+
 .ongoing-auctions .table .col-land      { width: 10%; }
 .ongoing-auctions .table .col-status    { width: 20%; }
 .ongoing-auctions .table .col-amount    { width: 25%; }

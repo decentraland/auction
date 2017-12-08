@@ -46,6 +46,10 @@
   color: #FFF;
 }
 
+.PendingConfirmationBidsTable .table .col-land a {
+  color: #000000;
+}
+
 .PendingConfirmationBidsTable .table .col-land        { width: 9%; }
 .PendingConfirmationBidsTable .table .col-your-bid    { width: 17%; }
 .PendingConfirmationBidsTable .table .col-current-bid { width: 17%; }
