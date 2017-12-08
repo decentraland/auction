@@ -1,5 +1,5 @@
 .IntroModal {
-
+  color: #3E396B;
 }
 
 .IntroModal .modal-header {
@@ -111,4 +111,10 @@
 .IntroModal .get-started .Button {
   padding: 11px 44px;
   border-radius: 20px;
+}
+
+@media (min-width: 768px) {
+  .IntroModal .modal-dialog {
+    width: 720px;
+  }
 }

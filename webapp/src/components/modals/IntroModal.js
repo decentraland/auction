@@ -15,7 +15,7 @@ export default class IntroModal extends React.Component {
     const { onClose, ...props } = this.props
 
     return (
-      <Modal className="IntroModal" onClose={onClose} {...props}>
+      <Modal className="IntroModal modal-lg" onClose={onClose} {...props}>
         <div className="banner">
           <Icon name="decentraland" />
           <h2>Welcome to the Terraform Auction</h2>

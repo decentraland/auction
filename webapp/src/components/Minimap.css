@@ -1,14 +1,14 @@
-.minimap {
+.Minimap {
   width: 150px;
   height: 150px;
   background: rgba(0, 0, 0, 0.4);
   position: absolute;
-  right: 20px;
+  right: 85px;
   bottom: 20px;
   z-index: 1040;
 }
 
-.minimap-focus {
+.Minimap .minimap-focus {
   width: 20px;
   height: 20px;
   border: 1px solid white;
