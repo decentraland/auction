@@ -17,8 +17,10 @@ export default function HomePage({ requiredDataReady }) {
       {requiredDataReady && (
         <div className="controls">
           <SidebarContainer />
-          <SearchContainer />
-          <PendingConfirmationBidsContainer />
+          <div className="top-controls">
+            <SearchContainer />
+            <PendingConfirmationBidsContainer />
+          </div>
           <ShiftNotificationContainer />
         </div>
       )}

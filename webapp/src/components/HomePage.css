@@ -11,6 +11,10 @@
   position: absolute;
 }
 
+.HomePage .top-controls {
+  display: inline-block;
+}
+
 .HomePage > .Loading {
   font-size: 10px;
   top: 25%;
