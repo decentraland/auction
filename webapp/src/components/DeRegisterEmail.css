@@ -18,6 +18,8 @@
 }
 
 .DeRegisterEmail .unsubscribe {
+  top: 13px;
+  position: relative;
   float: right;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
   color: #EF303B;
