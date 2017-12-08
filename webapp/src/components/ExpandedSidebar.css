@@ -29,6 +29,7 @@
 
 .ExpandedSidebar .SidebarDashboard li {
   width: 19%;
+  padding-left: 9px;
 }
 
 .ExpandedSidebar .SidebarDashboard .dashboard-value {
