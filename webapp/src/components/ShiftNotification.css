@@ -1,13 +1,19 @@
 .ShiftNotification {
-  position: absolute;
+  width: 300px;
+  padding: 22px 20px 22px 20px;
   left: 70px;
   bottom: 20px;
+  position: absolute;
   background: white;
   border-radius: 4px;
   border: 1px solid #3E396B;
   z-index: 950;
-  max-width: 301px;
-  padding: 22px 20px 22px 20px;
+}
+
+@media (max-width: 768px) {
+  .ShiftNotification {
+    display: none;
+  }
 }
 
 .ShiftNotification .Icon-shift {
