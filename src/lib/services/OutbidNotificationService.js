@@ -12,11 +12,20 @@ class OutbidNotificationService {
     this.Job = Job
     this.smtp = null
 
+    this.appUrl = env.get('APP_URL')
+    if (!this.appUrl) {
+      throw new Error('Missing required env APP_URL')
+    }
+
     this.setSMTPClient(SMTPClient)
   }
 
   static hoursAgoToDate(hours) {
     return new Date(new Date().getTime() - hours * 3600 * 1000)
+  }
+
+  toParcelLink(opts) {
+    return `${this.appUrl}/${opts.x}/${opts.y}`
   }
 
   setSMTPClient(SMTPClient = SMTP) {
@@ -39,9 +48,12 @@ class OutbidNotificationService {
       from: `The Decentraland Team <${emailSender}>`,
       to: opts.email,
       subject: 'The Parcel has been outbid!',
-      text: `The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.
-          Visit auction.decentraland.org/parcels/${opts.x},${opts.y} to place a new bid!`,
-      html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.</p><p>Visit auction.decentraland.org/parcels/${opts.x},${opts.y} to place a new bid!</p>`
+      text: `The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}. Visit ${this.toParcelLink(
+        opts
+      )} to place a new bid!`,
+      html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.<br/>Visit ${this.toParcelLink(
+        opts
+      )} to place a new bid!</p>`
     }))
 
     this.smtp.setTemplate(SIMPLE_TEMPLATE_NAME, opts => ({
@@ -96,10 +108,11 @@ class OutbidNotificationService {
 
     for (const parcel of parcelStates) {
       text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.\n`
-      text += `Visit https://auction.decentraland.org/parcels/${parcel.x},${parcel.y} to place a new bid!\n\n`
+      text += `Visit ${this.toParcelLink(parcel)} to place a new bid!\n\n`
 
-      html += `<p>The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.</p>`
-      html += `<p>Visit https://auction.decentraland.org/parcels/${parcel.x},${parcel.y} to place a new bid!</p>`
+      html += `<p>The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}. <br/>Visit ${this.toParcelLink(
+        parcel
+      )} to place a new bid!</p>`
     }
 
     return { text, html }
