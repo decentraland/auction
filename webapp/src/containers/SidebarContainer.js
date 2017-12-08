@@ -20,24 +20,24 @@ class SidebarContainer extends React.Component {
     closeSidebar: PropTypes.func.isRequired
   }
 
+  componentWillMount() {
+    this.props.fetchOngoingAuctions()
+  }
+
   changeVisibility = visible => {
     if (visible) {
       this.props.openSidebar()
-
-      // Skip a frame to avoid lagging the sidebar animation
-      setTimeout(() => this.props.fetchOngoingAuctions(), 0)
+      this.props.fetchOngoingAuctions()
     } else {
       this.props.closeSidebar()
     }
   }
 
   render() {
-    const { parcelStates, addressState, ongoingAuctions, sidebar } = this.props
-    const isLoading = parcelStates.loading || addressState.loading
+    const { addressState, ongoingAuctions, sidebar } = this.props
 
-    return isLoading ? null : (
+    return (
       <Sidebar
-        key="2"
         addressState={addressState}
         visible={sidebar.open}
         ongoingAuctions={ongoingAuctions}
@@ -49,7 +49,6 @@ class SidebarContainer extends React.Component {
 
 export default connect(
   state => ({
-    parcelStates: selectors.getParcelStates(state),
     addressState: selectors.getAddressState(state),
     ongoingAuctions: selectors.getOngoingAuctions(state),
     sidebar: selectors.getSidebar(state)

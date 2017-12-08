@@ -48,10 +48,10 @@ export default class Sidebar extends React.Component {
 
     return {
       bids: ongoingAuctions.data.length,
-      winning: this.countBidsByStatus('winning'),
-      losing: this.countBidsByStatus('losing'),
-      won: this.countBidsByStatus('won'),
-      lost: this.countBidsByStatus('lost')
+      winning: this.countBidsByStatus('Winning'),
+      losing: this.countBidsByStatus('Losing'),
+      won: this.countBidsByStatus('Won'),
+      lost: this.countBidsByStatus('Lost')
     }
   }
 
