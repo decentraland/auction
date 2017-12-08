@@ -1,0 +1,145 @@
+
+.ExpandedSidebar {
+  overflow: scroll;
+  width: 620px;
+}
+
+/* -----------------------------------------------------------------------
+ Dashboard */
+
+.ExpandedSidebar .SidebarDashboard {
+  padding-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ExpandedSidebar .SidebarDashboard li {
+  width: 19%;
+}
+
+.ExpandedSidebar .SidebarDashboard .dashboard-value {
+  margin-top: 18px;
+}
+
+/* -----------------------------------------------------------------------
+ UserData */
+
+.UserData {
+  padding: 24px;
+}
+
+.UserData h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 20px;
+  color: #000000;
+}
+
+.UserData .address {
+  font-size: 15px;
+  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  float: right;
+}
+
+.UserData .Icon-address {
+  margin-right: 12px;
+  vertical-align: text-bottom;
+}
+
+.UserData .mana-value {
+  font-size: 14px;
+  color: #7B7B7B;
+}
+
+/* -----------------------------------------------------------------------
+ Ongoing Auctions */
+
+.OngoingAuctions {
+  padding: 24px 0;
+}
+
+.OngoingAuctions h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  margin-left: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.OngoingAuctions .table-row {
+  width: 100%;
+  height: 64px;
+  padding: 24px;
+}
+
+.OngoingAuctions .table-row-empty {
+  width: 100%;
+  padding-left: 24px;
+  font-size: 15px;
+  color: #7B7B7B;
+}
+
+
+.OngoingAuctions .table-header {
+  color: #7B7B7B;
+}
+
+.OngoingAuctions .table-row.gray {
+  background-color: #FBFBFB;
+}
+
+.OngoingAuctions .table-row > div {
+  height: 100%;
+  float: left;
+}
+
+.OngoingAuctions .table .col-land      { width: 10%; }
+.OngoingAuctions .table .col-status    { width: 20%; }
+.OngoingAuctions .table .col-amount    { width: 25%; }
+.OngoingAuctions .table .col-time-left { width: 20%; }
+.OngoingAuctions .table .col-address   { width: 25%; }
+
+.OngoingAuctions .table .won     { color: #4A90E2; }
+.OngoingAuctions .table .winning { color: #30D7A9; }
+.OngoingAuctions .table .lost    { color: #3C225F; }
+.OngoingAuctions .table .outbid  { color: #EF303B; }
+
+.OngoingAuctions .col-status {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 620px) {
+  .Sidebar {
+    width: 100%;
+  }
+}
+
+/* -----------------------------------------------------------------------
+ Toggle button */
+
+.Sidebar .toggle-button {
+  width: 28px;
+  height: 88px;
+  top: 50%;
+  right: -28px;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: #FFF;
+  cursor: pointer;
+}
+.Sidebar .toggle-button.in { background-image: url("../images/collapseArrow.svg"); }
+.Sidebar .toggle-button.out { background-image: url("../images/expandArrow.svg"); }
+
+/* -----------------------------------------------------------------------
+ Errors */
+
+.UserData .mana-value .text-danger,
+.OngoingAuctions .text-danger {
+  color: #A94442;
+}

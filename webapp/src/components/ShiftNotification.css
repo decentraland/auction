@@ -1,4 +1,4 @@
-.shift-notification {
+.ShiftNotification {
   position: absolute;
   left: 70px;
   bottom: 20px;
@@ -10,14 +10,20 @@
   padding: 22px 20px 22px 20px;
 }
 
-.shift-notification h3 {
+.ShiftNotification .Icon-shift {
+  margin-right: 6px;
+  position: relative;
+  top: 1px;
+}
+
+.ShiftNotification h3 {
   margin: 0;
   padding: 0;
   font-size: 14px;
   color: #3E396B;
 }
 
-.shift-notification p {
+.ShiftNotification p {
   margin: 0;
   padding: 0;
   margin-top: 10px;

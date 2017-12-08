@@ -1,5 +1,4 @@
 .Sidebar {
-  width: 86px;
   height: 100%;
   top: 0;
   left: -24px;
@@ -9,14 +8,6 @@
   z-index: 700;
   background: #FFF;
   box-shadow: 0 2px 6px 0 rgba(0,0,0,0.05);
-}
-
-.Sidebar.in {
-  width: 620px;
-}
-
-.Sidebar.in .ExpandedSidebar {
-  overflow: scroll;
 }
 
 .Sidebar.in .fadein {
@@ -32,11 +23,6 @@
 .Sidebar header {
   position: relative;
   padding: 24px;
-}
-
-.Sidebar.out header {
-  background-color: #FCFCFC;
-  border-bottom: 1px solid #EDEDED;
 }
 
 .Sidebar .Icon-decentraland {
@@ -62,144 +48,11 @@
   cursor: pointer;
 }
 
-/* -----------------------------------------------------------------------
- Dashboard */
-
-.dashboard {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.dashboard .dashboard-heading {
-  font-size: 12px;
-  color: #7B7B7B;
-  margin-bottom: 7px;
-}
-
-.dashboard .dashboard-value {
+.Sidebar .heading {
+  padding: 16px;
+  border-top: 1px solid #EDEDED;
   font-size: 14px;
-  color: #000000;
-}
-
-.CollapsedSidebar .dashboard {
-  padding-top: 24px;
-  padding-left: 16px;
-}
-
-.CollapsedSidebar .dashboard li {
-  margin-bottom: 30px;
-}
-
-/* -----------------------------------------------------------------------
- Balance */
-
-.your-balance {
-  padding: 24px;
   background-color: #FCFCFC;
-}
-
-.your-balance h2 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 20px;
   color: #000000;
-}
-
-.your-balance .mana {
-  font-size: 14px;
-  color: #7B7B7B;
-}
-
-/* -----------------------------------------------------------------------
- Ongoing Auctions */
-
-.ongoing-auctions {
-  padding: 24px 0;
-}
-
-.ongoing-auctions h3 {
-  margin-top: 0;
-  margin-bottom: 24px;
-  margin-left: 24px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #000000;
-}
-
-.ongoing-auctions .table-row {
-  width: 100%;
-  height: 64px;
-  padding: 24px;
-}
-
-.ongoing-auctions .table-row-empty {
-  width: 100%;
-  padding-left: 24px;
-  font-size: 15px;
-  color: #7B7B7B;
-}
-
-
-.ongoing-auctions .table-header {
-  color: #7B7B7B;
-}
-
-.ongoing-auctions .table-row.gray {
-  background-color: #FBFBFB;
-}
-
-.ongoing-auctions .table-row > div {
-  height: 100%;
-  float: left;
-}
-
-.ongoing-auctions .table .col-land      { width: 10%; }
-.ongoing-auctions .table .col-status    { width: 20%; }
-.ongoing-auctions .table .col-amount    { width: 25%; }
-.ongoing-auctions .table .col-time-left { width: 20%; }
-.ongoing-auctions .table .col-address   { width: 25%; }
-
-.ongoing-auctions .table .won     { color: #4A90E2; }
-.ongoing-auctions .table .winning { color: #02B45D; }
-.ongoing-auctions .table .lost    { color: #000000; }
-.ongoing-auctions .table .outbid  { color: #B40202; }
-
-
-.ongoing-auctions .col-status {
-  font-size: 14px;
-  font-weight: 700;
-}
-
-@media (max-width: 620px) {
-  .Sidebar {
-    width: 100%;
-  }
-}
-
-/* -----------------------------------------------------------------------
- Toggle button */
-
-.Sidebar .toggle-button {
-  width: 28px;
-  height: 88px;
-  top: 50%;
-  right: -28px;
-  position: absolute;
-  background-repeat: no-repeat;
-  background-position: center center;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  background-color: #FFF;
-  cursor: pointer;
-}
-.Sidebar .toggle-button.in { background-image: url("../images/collapseArrow.svg"); }
-.Sidebar .toggle-button.out { background-image: url("../images/expandArrow.svg"); }
-
-/* -----------------------------------------------------------------------
- Errors */
-
-.mana-value .text-danger,
-.ongoing-auctions .text-danger {
-  color: #A94442;
+  font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
 }

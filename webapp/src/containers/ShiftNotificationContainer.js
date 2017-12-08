@@ -42,7 +42,8 @@ class ShiftNotificationContainer extends React.Component {
   }
 
   render() {
-    return this.props.shiftneverPressed && <ShiftNotification />
+    // return this.props.shiftneverPressed && <ShiftNotification />
+    return null
   }
 }
 

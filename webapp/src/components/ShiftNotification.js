@@ -6,9 +6,9 @@ import './ShiftNotification.css'
 
 export default function ShiftNotification() {
   return (
-    <div className="shift-notification">
+    <div className="ShiftNotification">
       <h3>
-        <Icon name="Shift" /> Shift + Click
+        <Icon name="shift" /> Shift + Click
       </h3>
       <p>
         While holding shift, clicking on a parcel will automatically add the
