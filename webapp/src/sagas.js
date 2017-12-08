@@ -7,7 +7,9 @@ import { eth, env } from 'decentraland-commons'
 import locations from './locations'
 import types from './types'
 import { selectors } from './reducers'
+
 import { buildCoordinate } from './lib/util'
+import localStorage from './lib/localStorage'
 import * as addressStateUtils from './lib/addressStateUtils'
 import * as parcelUtils from './lib/parcelUtils'
 import api from './lib/api'
@@ -291,9 +293,8 @@ function* handleEmailRegister(action) {
     if (parcelStateIds.length > 0) {
       yield call(() => api.postOutbidNotification(email, parcelStateIds))
     }
-    if (window.localStorage) {
-      window.localStorage.setItem('email', email)
-    }
+    localStorage.setItem('email', email)
+
     yield put({ type: types.registerEmail.success, data: email })
   } catch (error) {
     console.warn(error)
@@ -306,9 +307,8 @@ function* handleEmailDeregister(action) {
 
   try {
     yield call(() => api.deleteOutbidNotification(email.data))
-    if (window.localStorage) {
-      window.localStorage.removeItem('email')
-    }
+    localStorage.removeItem('email')
+
     yield put({ type: types.deregisterEmail.success })
   } catch (error) {
     console.warn(error)

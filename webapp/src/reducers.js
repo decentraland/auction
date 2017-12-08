@@ -1,4 +1,5 @@
 import types from './types'
+import localStorage from './lib/localStorage'
 
 const INITIAL_STATE = {
   web3Connected: false,
@@ -26,7 +27,7 @@ const INITIAL_STATE = {
   },
 
   email: {
-    data: window.localStorage ? window.localStorage.getItem('email') : ''
+    data: localStorage.getItem('email') || ''
   },
 
   shift: {
