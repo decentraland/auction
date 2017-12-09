@@ -6,7 +6,7 @@ import * as addressStateUtils from './addressStateUtils'
 
 export const COLORS = {
   won: '#4A90E2',
-  winning: '#30D7A9',
+  winning: '#97b9e5',
   lost: '#3C225F',
   outbid: '#EF303B',
   taken: '#4F3A4B',
