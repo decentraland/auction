@@ -33,6 +33,11 @@
   color: #7B7B7B;
 }
 
+.PendingConfirmationBidsTable .table-content {
+  max-height: 300px;
+  overflow: hidden;
+}
+
 .PendingConfirmationBidsTable .table-row.gray {
   background-color: #FBFBFB;
 }

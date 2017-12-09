@@ -54,14 +54,16 @@ export default class PendingConfirmationBidsTable extends React.Component {
             <div className="col-actions">ACTIONS</div>
           </div>
 
-          {pendingConfirmationBids.data.map((bid, index) => (
-            <UnconfirmedBidsTableRow
-              key={index}
-              bid={bid}
-              className={index % 2 === 0 ? 'gray' : ''}
-              onDelete={onDeleteBid}
-            />
-          ))}
+          <div className="table-content">
+            {pendingConfirmationBids.data.map((bid, index) => (
+              <UnconfirmedBidsTableRow
+                key={index}
+                bid={bid}
+                className={index % 2 === 0 ? 'gray' : ''}
+                onDelete={onDeleteBid}
+              />
+            ))}
+          </div>
 
           <form
             method="POST"
