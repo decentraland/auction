@@ -40,7 +40,9 @@ export default class PendingConfirmationBidsTable extends React.Component {
 
     return (
       <div className="PendingConfirmationBidsTable">
-        <h3>Pending Confirmation</h3>
+        <h3>
+          {`Pending Confirmation (${pendingConfirmationBids.data.length})`}
+        </h3>
 
         {pendingConfirmationBids.error && (
           <div className="text-danger">
