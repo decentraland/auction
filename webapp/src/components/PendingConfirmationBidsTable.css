@@ -35,7 +35,7 @@
 
 .PendingConfirmationBidsTable .table-content {
   max-height: 300px;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .PendingConfirmationBidsTable .table-row.gray {
