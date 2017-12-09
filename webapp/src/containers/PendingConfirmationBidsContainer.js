@@ -40,6 +40,18 @@ class PendingConfirmationBidsContainer extends React.Component {
     confirmBids(bids)
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { pendingConfirmationBids } = this.props
+
+    // scroll down on insert
+    if (
+      pendingConfirmationBids.data.length >
+      prevProps.pendingConfirmationBids.data.length
+    ) {
+      this.contentElement.scrollTop = this.contentElement.scrollHeight
+    }
+  }
+
   render() {
     const { pendingConfirmationBids } = this.props
 
@@ -48,6 +60,7 @@ class PendingConfirmationBidsContainer extends React.Component {
         pendingConfirmationBids={pendingConfirmationBids}
         onConfirmBids={this.confirmBids}
         onDeleteBid={this.deleteBid}
+        contentRef={e => (this.contentElement = e)}
       />
     )
   }

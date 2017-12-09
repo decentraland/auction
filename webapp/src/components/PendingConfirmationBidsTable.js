@@ -27,7 +27,12 @@ export default class PendingConfirmationBidsTable extends React.Component {
   }
 
   render() {
-    const { pendingConfirmationBids, onConfirmBids, onDeleteBid } = this.props
+    const {
+      pendingConfirmationBids,
+      onConfirmBids,
+      onDeleteBid,
+      contentRef
+    } = this.props
 
     if (pendingConfirmationBids.data.length === 0) {
       return null
@@ -54,7 +59,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
             <div className="col-actions">ACTIONS</div>
           </div>
 
-          <div className="table-content">
+          <div className="table-content" ref={contentRef}>
             {pendingConfirmationBids.data.map((bid, index) => (
               <UnconfirmedBidsTableRow
                 key={index}
