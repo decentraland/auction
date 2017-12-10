@@ -110,10 +110,10 @@ export function projectForParcel(parcel, projects) {
 
 export function getBounds() {
   return {
-    minX: -160,
-    minY: -160,
-    maxX: 160,
-    maxY: 160
+    minX: -150,
+    minY: -150,
+    maxX: 150,
+    maxY: 150
   }
 }
 

@@ -34,6 +34,7 @@
     "decentraland-commons": "git+https://github.com/decentraland/commons.git#release",
     "express": "^4.16.2",
     "git-rev-sync": "^1.9.1",
+    "google-spreadsheet": "^2.0.4",
     "postgres-bytea": "^1.0.0",
     "uuid": "^3.1.0"
   },
