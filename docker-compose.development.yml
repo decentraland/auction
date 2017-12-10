@@ -15,7 +15,6 @@ services:
   postgres:
     volumes:
       - ./docker/10-init-development.sql:/docker-entrypoint-initdb.d/10-init.sql
-      - ./data/postgres:/var/lib/postgresql
 
   api:
     environment:
