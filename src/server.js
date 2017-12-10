@@ -191,19 +191,18 @@ export async function postBidGroup(req) {
   const newBidGroup = server.extractFromReq(req, 'bidGroup')
   newBidGroup.receivedAt = new Date()
 
-  const {
-    bidGroup,
-    parcelStates,
-    error
-  } = await new BidService().processBidGroup(newBidGroup)
+  const { bidGroup, error } = await new BidService().processBidGroup(
+    newBidGroup
+  )
 
-  const bidParcels = parcelStates ? parcelStates.filter(ps => !ps.error) : []
-
-  if (error || bidParcels.length === 0) {
-    throw new Error(`
+  if (error) {
+    const serverError = new Error(`
       An error occurred trying to bid.
-      ${JSON.stringify(parcelStates)} ${error || ''}
+      Received: ${JSON.stringify(newBidGroup)}
+      Error: ${JSON.stringify(error)}
     `)
+    serverError.data = error
+    throw serverError
   }
 
   await new BidReceiptService().sign(bidGroup)
