@@ -119,14 +119,23 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
 
     if (rect.getElement()) {
       rect
-        .on('click', () => this.options.onTileClick(x, y))
-        .on('mouseover', () => this.debouncedOnMouseOver(x, y, tile.center))
+        .on('click', () => this.options.onTileClick(x, y, tile))
+        .on('mouseover', () => this.mouseOverChange(x, y, tile.center))
     }
   },
 
+  mouseOverChange(x, y, center) {
+    this.clearPopup()
+    this.debouncedOnMouseOver(x, y, center)
+  },
+
   onMouseOver(x, y, center) {
-    if (this.popup) this.popup.remove()
+    this.clearPopup()
     this.popup = this.options.addPopup(x, y, center)
+  },
+
+  clearPopup() {
+    if (this.popup) this.popup.remove()
   },
 
   loadCellCoordinates(x, y, tile) {

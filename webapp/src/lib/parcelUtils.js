@@ -14,6 +14,7 @@ export const COLORS = {
   littleValue: '#FFF189',
   bigValue: '#EF303B',
   default: '#EAEAEA',
+  pending: '#02B45D',
   loading: '#AAAAAA'
 }
 
@@ -25,12 +26,23 @@ export const CLASS_NAMES = {
   taken: 'taken',
   reserved: 'reserved',
   default: 'default',
+  pending: 'pending',
   loading: 'loading'
 }
 
-export function getClassName(parcel, addressState) {
+export function isPending(parcel, pendingConfirmationBids) {
+  return (
+    pendingConfirmationBids &&
+    pendingConfirmationBids.filter(
+      bid => bid.x === parcel.x && bid.y === parcel.y
+    ).length > 0
+  )
+}
+
+export function getClassName(parcel, addressState, pendingConfirmationBids) {
   if (!parcel || parcel.error) return CLASS_NAMES.loading
   if (isReserved(parcel)) return CLASS_NAMES.reserved
+  if (isPending(parcel, pendingConfirmationBids)) return CLASS_NAMES.pending
   if (!parcel.amount) return CLASS_NAMES.default
 
   let className = ''

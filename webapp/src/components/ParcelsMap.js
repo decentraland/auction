@@ -33,6 +33,7 @@ export default class ParcelsMap extends React.Component {
     getAddressState: PropTypes.func.isRequired,
     getParcelStates: PropTypes.func.isRequired,
     getProjects: PropTypes.func.isRequired,
+    getPendingConfirmationBids: PropTypes.func.isRequired,
 
     onMoveEnd: PropTypes.func,
     onZoomEnd: PropTypes.func,
@@ -66,7 +67,10 @@ export default class ParcelsMap extends React.Component {
       !this.panInProgress &&
       (this.props.x !== nextProps.x || this.props.y !== nextProps.y)
 
-    const shouldRedraw = this.map && !nextProps.getParcelStates().loading
+    const shouldRedraw =
+      (this.map && !nextProps.getParcelStates().loading) ||
+      nextProps.getPendingConfirmationBids().length !==
+        this.props.getPendingConfirmationBids().length
 
     const shouldDebounce = this.props.tileSize !== nextProps.tileSize
 
@@ -212,8 +216,12 @@ export default class ParcelsMap extends React.Component {
     const { x, y } = this.mapCoordinates.latLngToCartesian(coords)
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
-
-    const className = parcelUtils.getClassName(parcel, addressState)
+    const pendingConfirmationBids = this.props.getPendingConfirmationBids()
+    const className = parcelUtils.getClassName(
+      parcel,
+      addressState,
+      pendingConfirmationBids
+    )
     const dataset = { x, y }
 
     let style = null
@@ -229,7 +237,7 @@ export default class ParcelsMap extends React.Component {
   }
 
   // Called by the Parcel Grid on each tile click
-  onTileClick = (x, y) => {
+  onTileClick = (x, y, tile) => {
     const parcel = this.getParcelData(x, y)
 
     const unBiddable =
@@ -241,6 +249,7 @@ export default class ParcelsMap extends React.Component {
     if (unBiddable) return
 
     this.onParcelBid(parcel)
+    setTimeout(() => this.parcelGrid && this.parcelGrid.loadCell(tile, 0), 10)
   }
 
   // Called by the Parcel Grid on each tile hover
