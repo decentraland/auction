@@ -184,7 +184,7 @@ function* handleParcelRangeChange(action) {
   // For each parcel in screen, if it is not loaded, request to fetch it
   // For parcels already loaded, we don't care in here
   const parcelsToFetch = parcelUtils
-    .generateMatrix(minX, minY, maxX, maxY)
+    .generateMatrix(minX - 3, minY - 3, maxX + 3, maxY + 3)
     .filter(coordinate => !parcelStates[coordinate])
 
   if (parcelsToFetch.length) {
