@@ -120,15 +120,16 @@ async function reserveProjects(reservation) {
   for (const projectName in reservation) {
     const project = await Project.findByName(projectName)
     if (!project) {
-      throw new Error(`Could not find project ${projectName}.`)
+      log.error(`Could not find project ${projectName}.`)
+      continue
     }
 
     for (let coord of reservation[projectName]) {
-      log.info(
-        `Reserving parcel ${coord} for project ${projectName} ( ${project.id} )`
-      )
       await ParcelState.update({ projectId: project.id }, { id: coord })
     }
+    log.info(
+      `Reserved ${reservation[projectName].length} parcels for project ${projectName} ( ${project.id} )`
+    )
   }
 }
 
