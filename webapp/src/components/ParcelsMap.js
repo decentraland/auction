@@ -112,6 +112,7 @@ export default class ParcelsMap extends React.Component {
       layers: [this.parcelGrid],
       renderer: L.svg(),
       zoomAnimation: false,
+      scrollWheelZoom: false,
       boxZoom: false
     })
 
