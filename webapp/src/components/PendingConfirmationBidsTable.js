@@ -46,11 +46,12 @@ export default class PendingConfirmationBidsTable extends React.Component {
           "The bid couldn't be confirmed. This is probably due to timing, please try again in a few moments."
         break
       case 'PARCEL_ERRORS':
-        message = Object.keys(error.parcels)
-          .map(parcelId =>
-            this.getParcelErrorMessage(parcelId, error.parcels[parcelId])
-          )
-          .join('\n')
+        message = Object.keys(error.parcels).map(parcelId => (
+          <p key={parcelId}>
+            {' '}
+            {this.getParcelErrorMessage(parcelId, error.parcels[parcelId])}{' '}
+          </p>
+        ))
         break
       default:
         message =
@@ -65,7 +66,9 @@ export default class PendingConfirmationBidsTable extends React.Component {
 
     switch (error.code) {
       case 'OUT_OF_BOUNDS':
-        message = `Invalid coordinates for ${parcelId}, it's outside the map bounds`
+        message = `Invalid coordinates for ${
+          parcelId
+        }, it's outside the map bounds`
         break
       case 'INSUFFICIENT_BALANCE':
         message = `Your balance it's not enough to bid on ${parcelId}`
@@ -76,7 +79,9 @@ export default class PendingConfirmationBidsTable extends React.Component {
         ).toLocaleDateString()}`
         break
       case 'INSUFFICIENT_INCREMENT':
-        message = `The bid of ${error.bidAmount}MANA on ${parcelId} is not enought. The minimum is ${error.minimumAmount}MANA`
+        message = `The bid of ${error.bidAmount}MANA on ${
+          parcelId
+        } is not enought. The minimum is ${error.minimumAmount}MANA`
         break
       default:
         message = ''
