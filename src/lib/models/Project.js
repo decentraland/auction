@@ -11,7 +11,8 @@ class Project extends Model {
     'public',
     'parcels',
     'priority',
-    'disabled'
+    'disabled',
+    'lookup'
   ]
 
   static count(name) {

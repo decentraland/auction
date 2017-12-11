@@ -127,8 +127,10 @@ async function reserveProjects(reservation) {
     for (let coord of reservation[projectName]) {
       await ParcelState.update({ projectId: project.id }, { id: coord })
     }
+
+    const reservedParcels = reservation[projectName].length
     log.info(
-      `Reserved ${reservation[projectName].length} parcels for project ${projectName} ( ${project.id} )`
+      `Reserved ${reservedParcels} parcels for project ${projectName} ( ${project.id} )`
     )
   }
 }
