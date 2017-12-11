@@ -111,6 +111,10 @@ class ParcelsMapContainer extends React.Component {
     return this.props.projects
   }
 
+  getPendingConfirmationBids = () => {
+    return this.props.pendingConfirmationBids.data
+  }
+
   getTileSize() {
     const zoomDifference = this.baseZoom - this.state.zoom
     return this.baseTileSize / Math.pow(2, zoomDifference)
@@ -137,6 +141,7 @@ class ParcelsMapContainer extends React.Component {
         tileSize={this.getTileSize()}
         getAddressState={this.getAddressState}
         getParcelStates={this.getParcelStates}
+        getPendingConfirmationBids={this.getPendingConfirmationBids}
         getProjects={this.getProjects}
         onMoveEnd={this.onMoveEnd}
         onZoomEnd={this.onZoomEnd}
@@ -153,6 +158,7 @@ export default withRouter(
     (state, ownProps) => ({
       parcelStates: selectors.getParcelStates(state),
       addressState: selectors.getAddressState(state),
+      pendingConfirmationBids: selectors.getPendingConfirmationBids(state),
       projects: selectors.getProjects(state),
       requiredDataReady: ownProps.requiredDataReady,
       shiftPressed: selectors.getShift(state).pressed,

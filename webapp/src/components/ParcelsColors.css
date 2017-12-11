@@ -5,6 +5,7 @@
 #map path.outbid   { fill: #EF303B; }
 #map path.taken    { fill: #4F3A4B; }
 #map path.reserved { fill: #FFFFFF; }
+#map path.pending  { fill: #02B45D; }
 #map path.default  { fill: #EAEAEA; }
 #map path.loading  { fill: #AAAAAA; }
 
