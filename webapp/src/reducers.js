@@ -175,14 +175,19 @@ function pendingConfirmationBids(
   state = INITIAL_STATE.pendingConfirmationBids,
   action
 ) {
-  const filterActionBid = () =>
-    state.data.filter(bid => bid.x !== action.bid.x || bid.y !== action.bid.y)
+  const isActionBid = bid => bid.x === action.bid.x && bid.y === action.bid.y
 
   switch (action.type) {
     case types.appendUnconfirmedBid:
-      return { data: [...filterActionBid(), action.bid] }
+      return {
+        data: state.data.find(isActionBid)
+          ? state.data.map(bid => (isActionBid(bid) ? action.bid : bid))
+          : [...state.data, action.bid]
+      }
     case types.deleteUnconfirmedBid:
-      return { data: filterActionBid() }
+      return {
+        data: state.data.filter(bid => !isActionBid(bid))
+      }
     case types.confirmBids.success:
       return INITIAL_STATE.pendingConfirmationBids
     case types.confirmBids.failed:
