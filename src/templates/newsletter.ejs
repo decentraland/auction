@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Decentraland</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+
+  <body style="color: #3D3A68; font-family: 'Source Sans Pro SemiBold', Helvetica, sans-serif;">
+    <div style="width: 800px; margin: auto; border: 1px solid #ccc; padding: 64px;">
+      <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" style="background: #FFFFFF;">
+        <tbody>
+          <img src="<%= appUrl %>/static/media/logo.b7751b3e.svg" style="width: 35px;" />
+
+          <h1 style="font-size: 22px; font-weight: bold;">Decentraland</h1>
+          <h3 style="font-size: 15px; font-weight: normal;">Genesis City Auction, December 15th ~ December 22th</h3>
+          <hr style="border: 1px solid #DDDDDD; height: 0px; margin: 32px 0;" />
+
+          <h2 style="font-size: 20px; margin-top: 48px;">You've been outbid on the following parcels of land:</h2>
+
+          <% for (const parcelState of parcelStates) { %>
+            <p>
+              <span>
+                <strong><%= parcelState.x %>,<%= parcelState.y %>:</strong> Your bid has been overtaken by a bid of <%= parcelState.amount %> MANA.
+              </span>
+              <br/>
+              <a style="color: #30D7A9; display: block; font-size: 16px; padding-top: 8px; text-decoration: none;" href="<%= appUrl %>/<%= parcelState.x %>/<%= parcelState.y %>">Click here to enter a new bid.</a>
+            </p>
+          <% } %>
+
+          <hr style="border: 1px solid #DDDDDD; height: 0px; margin: 32px 0;" />
+          <div>
+            <p>
+              No longer need notifications? 
+              <a style="color: #30D7A9; text-decoration: none;" href="<%= appUrl %>/unsubscribe/<%= email %>">Click here to unsubscribe.</a>
+            </p>
+            <p style="font-size: 12px;">
+              This message was generated and delivered by the Genesis City System for Notification and Messaging.
+            </p>
+          </div>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
