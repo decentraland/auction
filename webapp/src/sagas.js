@@ -45,6 +45,9 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest)
   yield takeLatest(types.confirmBids.success, handleEmailRegisterBids)
 
+  yield takeEvery(types.confirmBids.success, handleOngoingAuctionsFetchRequest)
+  yield takeEvery(types.confirmBids.failed, handleOngoingAuctionsFetchRequest)
+
   yield takeLatest(types.confirmBids.failed, handleAddressFetchReload)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
 
