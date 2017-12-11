@@ -52,7 +52,7 @@ export default class Sidebar extends React.Component {
             onHide={this.hide}
           />
         ) : (
-          <CollapsedSidebar dashboard={dashboard} />
+          <CollapsedSidebar dashboard={dashboard} onClick={this.toggle} />
         )}
 
         <div
