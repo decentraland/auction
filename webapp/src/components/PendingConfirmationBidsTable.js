@@ -71,7 +71,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
         message = `Invalid coordinates for ${parcelId}, it's outside the map bounds`
         break
       case 'INSUFFICIENT_BALANCE':
-        message = `Your balance it's not enough to bid on ${parcelId}`
+        message = `Your balance is not enough to bid on ${parcelId}`
         break
       case 'AUCTION_ENDED':
         message = `Auction on ${parcelId} ended at ${new Date(
@@ -79,7 +79,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
         ).toLocaleDateString()}`
         break
       case 'INSUFFICIENT_INCREMENT':
-        message = `The bid of ${error.bidAmount}MANA on ${parcelId} is not enought. The minimum is ${error.minimumAmount}MANA`
+        message = `The bid of ${error.bidAmount} MANA on ${parcelId} is not enough. The minimum is ${error.minimumAmount} MANA`
         break
       default:
         message = ''
