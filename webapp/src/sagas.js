@@ -12,6 +12,7 @@ import { buildCoordinate } from './lib/util'
 import localStorage from './lib/localStorage'
 import * as addressStateUtils from './lib/addressStateUtils'
 import * as parcelUtils from './lib/parcelUtils'
+import * as pendingBidsUtils from './lib/pendingBidsUtils'
 import api from './lib/api'
 
 // TODO: We need to avoid having a infinite spinner when an error occurs and the user navigates back to the root location.
@@ -30,7 +31,7 @@ function* rootSaga() {
 
   yield takeEvery(types.fetchProjects.request, handleProjectsFetchRequest)
 
-  yield takeEvery(types.intentUnconfirmedBid, handleIntentUnconfirmedBid)
+  yield takeEvery(types.appendUnconfirmedBid, handleAddressUpdateBalance)
 
   yield takeEvery(types.fastBid, handleFastBid)
 
@@ -108,12 +109,28 @@ function* handleAddressFetchRequest(action) {
 function* handleAddressFetchReload(action) {
   try {
     const addressState = yield fetchAddressState()
-    Object.assign({ bidGroups: [], latestBidGroupId: null }, addressState)
-    yield put({ type: types.fetchAddressState.success, addressState })
+    yield handleAddressUpdateBalance({ addressState })
   } catch (error) {
     // Let it slide
     console.warn(error)
   }
+}
+
+function* handleAddressUpdateBalance(action) {
+  const pendingConfirmationBids = yield select(
+    selectors.getPendingConfirmationBidsData
+  )
+  const addressState = action.addressState
+    ? action.addressState
+    : yield select(selectors.getAddressStateData)
+
+  const pendingMana = pendingBidsUtils.getTotalManaBidded(
+    pendingConfirmationBids
+  )
+
+  addressState.balance = addressState.totalBalance - pendingMana
+
+  yield put({ type: types.fetchAddressState.success, addressState })
 }
 
 function* fetchAddressState() {
@@ -135,7 +152,15 @@ function* fetchAddressState() {
     )
   }
 
-  return addressState
+  console.log('fetchAddressState', addressState)
+  return Object.assign(
+    {
+      bidGroups: [],
+      latestBidGroupId: null,
+      totalBalance: addressState.balance
+    },
+    addressState
+  )
 }
 
 function* handleAddresStateStartLoading(action) {
@@ -290,6 +315,39 @@ function getBidGroupsNonce(bidGroups) {
   return nonces.pop() + 1
 }
 
+function* handleFastBid(action) {
+  const parcel = action.parcel
+  if (parcel.projectId) {
+    // TODO: Show message, can't bid on project
+    return
+  }
+
+  const { x, y } = parcel
+  const amount = parcelUtils.minimumBid(parcel.amount)
+  const addressState = yield select(selectors.getAddressState)
+
+  if (addressState.loading || !addressState.data.balance) {
+    // TODO: Balance not loaded?
+    return
+  }
+  if (amount > addressState.data.balance) {
+    // TODO: Not enough balance
+    return
+  }
+
+  yield put({
+    type: types.appendUnconfirmedBid,
+    bid: {
+      x,
+      y,
+      address: addressState.data.address,
+      currentBid: parcel.amount,
+      yourBid: amount,
+      endsAt: parcel.endsAt
+    }
+  })
+}
+
 // -------------------------------------------------------------------------
 // Email
 
@@ -332,51 +390,6 @@ function* handleEmailRegisterBids(action) {
   if (email.data) {
     yield call(() => api.postOutbidNotification(email.data, parcelStateIds))
   }
-}
-
-function* handleIntentUnconfirmedBid(action) {
-  const pendingConfirmationBids = yield select(
-    selectors.getPendingConfirmationBids
-  )
-
-  const exists =
-    pendingConfirmationBids.data.filter(
-      bid => bid.x === action.bid.x && bid.y === action.bid.y
-    ).length > 0
-
-  if (!exists) {
-    yield put({ type: types.appendUnconfirmedBid, bid: action.bid })
-  }
-}
-
-function* handleFastBid(action) {
-  const parcel = action.parcel
-  if (parcel.projectId) {
-    // TODO: Show message, can't bid on project
-    return
-  }
-  const { x, y } = parcel
-  const amount = parcelUtils.minimumBid(parcel.amount)
-  const addressState = yield select(selectors.getAddressState)
-  if (addressState.loading || !addressState.data.balance) {
-    // TODO: Balance not loaded?
-    return
-  }
-  if (amount > addressState.data.balance) {
-    // TODO: Not enough balance
-    return
-  }
-  yield put({
-    type: types.appendUnconfirmedBid,
-    bid: {
-      x,
-      y,
-      address: addressState.data.address,
-      currentBid: parcel.amount,
-      yourBid: amount,
-      endsAt: parcel.endsAt
-    }
-  })
 }
 
 export default rootSaga

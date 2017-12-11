@@ -5,7 +5,7 @@ import { preventDefault } from '../../lib/util'
 import { ONE_LAND_IN_MANA } from '../../lib/land'
 import { stateData } from '../../lib/propTypes'
 import { minimumBid } from '../../lib/parcelUtils'
-import pendingBidsUtils from '../../lib/pendingBidsUtils'
+import * as pendingBidsUtils from '../../lib/pendingBidsUtils'
 
 import Modal from './Modal'
 import Button from '../Button'
@@ -24,11 +24,12 @@ export default class BidParcelModal extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      bidValue: this.getMinimumBidValue()
-    }
 
-    let { pendingConfirmationBids } = props
+    const { pendingConfirmationBids, parcel } = props
+
+    this.state = {
+      bidValue: parcel.yourBid || this.getMinimumBidValue()
+    }
 
     // Cache for later use
     this.pendingManaBalance = pendingBidsUtils.getTotalManaBidded(

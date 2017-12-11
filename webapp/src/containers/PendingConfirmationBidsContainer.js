@@ -3,8 +3,9 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { confirmBids, deleteUnconfirmedBid } from '../actions'
+import { openModal, confirmBids, deleteUnconfirmedBid } from '../actions'
 import { stateData } from '../lib/propTypes'
+import { buildCoordinate } from '../lib/util'
 
 import PendingConfirmationBidsTable from '../components/PendingConfirmationBidsTable'
 
@@ -12,17 +13,8 @@ class PendingConfirmationBidsContainer extends React.Component {
   static propTypes = {
     pendingConfirmationBids: stateData(PropTypes.array),
     deleteUnconfirmedBid: PropTypes.func,
-    confirmBids: PropTypes.func
-  }
-
-  deleteBid = bid => {
-    const isConfirmed = window.confirm(
-      `Are you sure you want to delete your bid for ${bid.x},${bid.y} ?`
-    )
-
-    if (isConfirmed) {
-      this.props.deleteUnconfirmedBid(bid)
-    }
+    confirmBids: PropTypes.func,
+    openModal: PropTypes.func
   }
 
   confirmBids = event => {
@@ -40,6 +32,30 @@ class PendingConfirmationBidsContainer extends React.Component {
     confirmBids(bids)
   }
 
+  editBid = bid => {
+    const parcel = {
+      id: buildCoordinate(bid.x, bid.y),
+      x: bid.x,
+      y: bid.y,
+      address: bid.address,
+      amount: bid.currentBid,
+      yourBid: bid.yourBid,
+      endsAt: bid.endsAt
+    }
+
+    this.props.openModal('BidParcelModal', parcel)
+  }
+
+  deleteBid = bid => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete your bid for ${bid.x},${bid.y} ?`
+    )
+
+    if (isConfirmed) {
+      this.props.deleteUnconfirmedBid(bid)
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const { pendingConfirmationBids } = this.props
 
@@ -52,6 +68,10 @@ class PendingConfirmationBidsContainer extends React.Component {
     }
   }
 
+  setContentElement = element => {
+    this.contentElement = element
+  }
+
   render() {
     const { pendingConfirmationBids } = this.props
 
@@ -59,8 +79,9 @@ class PendingConfirmationBidsContainer extends React.Component {
       <PendingConfirmationBidsTable
         pendingConfirmationBids={pendingConfirmationBids}
         onConfirmBids={this.confirmBids}
+        onEditBid={this.editBid}
         onDeleteBid={this.deleteBid}
-        contentRef={e => (this.contentElement = e)}
+        contentRef={this.setContentElement}
       />
     )
   }
@@ -70,5 +91,5 @@ export default connect(
   state => ({
     pendingConfirmationBids: selectors.getPendingConfirmationBids(state)
   }),
-  { confirmBids, deleteUnconfirmedBid }
+  { openModal, confirmBids, deleteUnconfirmedBid }
 )(PendingConfirmationBidsContainer)

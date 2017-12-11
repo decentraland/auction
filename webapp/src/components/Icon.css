@@ -35,6 +35,12 @@
   background-image: url("../images/address.svg");
 }
 
+.Icon-pencil {
+  width: 9px;
+  height: 9px;
+  background-image: url("../images/pencil.svg");
+}
+
 .Icon-twitter, .Icon-rocketchat, .Icon-github, .Icon-reddit, .Icon-facebook {
   width: 16px;
   height: 15px;

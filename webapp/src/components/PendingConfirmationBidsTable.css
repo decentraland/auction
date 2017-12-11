@@ -59,13 +59,23 @@
 .PendingConfirmationBidsTable .table .col-actions     { width: 10%; }
 .PendingConfirmationBidsTable .table .col-confirm     { width: 30%; }
 
-.PendingConfirmationBidsTable .table .col-actions.delete {
+.PendingConfirmationBidsTable .table .col-actions {
   text-align: center;
-  color: #f44336;
+}
+
+.PendingConfirmationBidsTable .table .col-actions .delete {
+  font-size: 15px;
+  color: #F44336;
   cursor: pointer;
 }
-.PendingConfirmationBidsTable .table .col-actions.delete:hover {
-  color: #bd4e4c;
+.PendingConfirmationBidsTable .table .col-actions .delete:hover {
+  color: #BD4E4C;
+}
+
+.PendingConfirmationBidsTable .table .col-actions .Icon-pencil {
+  margin-right: 6px;
+  vertical-align: middle;
+  cursor: pointer;
 }
 
 .PendingConfirmationBidsTable .table .col-confirm {
