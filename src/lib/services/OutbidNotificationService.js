@@ -1,5 +1,6 @@
 import { env, SMTP } from 'decentraland-commons'
 
+import EJS from 'ejs'
 import { OutbidNotification, Job, ParcelState } from '../models'
 
 const SINGLE_TEMPLATE_NAME = 'outbid-single'
@@ -100,19 +101,26 @@ class OutbidNotificationService {
     }
   }
 
-  buildSummary(parcelStates) {
+  async buildSummary(email, parcelStates) {
+    const html = await new Promise((resolve, reject) => {
+      EJS.renderFile(
+        './src/templates/newsletter.ejs',
+        {
+          appUrl: this.appUrl,
+          email: email,
+          parcelStates: parcelStates
+        },
+        (err, html) => {
+          err ? reject(err) : resolve(html)
+        }
+      )
+    })
+
     let text =
       'This is the summary of parcel outbids from the last notification:\n\n'
-    let html =
-      '<p>This is the summary of parcel outbids from the last notification:</p>'
-
     for (const parcel of parcelStates) {
       text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.\n`
       text += `Visit ${this.toParcelLink(parcel)} to place a new bid!\n\n`
-
-      html += `<p>The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}. <br/>Visit ${this.toParcelLink(
-        parcel
-      )} to place a new bid!</p>`
     }
 
     return { text, html }
@@ -161,7 +169,7 @@ class OutbidNotificationService {
 
     // send mail
     const subject = 'Summary of the Decentraland auction'
-    const summary = this.buildSummary(parcelStates)
+    const summary = this.buildSummary(email, parcelStates)
     await this.Job.perform(
       {
         type: 'outbid_notification_multi',
