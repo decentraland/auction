@@ -152,7 +152,6 @@ function* fetchAddressState() {
     )
   }
 
-  console.log('fetchAddressState', addressState)
   return Object.assign(
     {
       bidGroups: [],

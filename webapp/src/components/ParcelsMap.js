@@ -227,7 +227,7 @@ export default class ParcelsMap extends React.Component {
 
     let style = null
     if (!className) {
-      style = { color: parcelUtils.getColorByAmount(parcel.amount) }
+      style = { fill: parcelUtils.getColorByAmount(parcel.amount) }
     }
 
     return {
