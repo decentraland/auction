@@ -81,6 +81,10 @@ export default class IntroModal extends React.Component {
                   <div className="key winning" />
                   <div className="text">WINNING</div>
                 </div>
+                <div className="land">
+                  <div className="key pending" />
+                  <div className="text">PENDING</div>
+                </div>
               </div>
             </div>
 
