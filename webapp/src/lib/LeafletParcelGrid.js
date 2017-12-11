@@ -114,10 +114,15 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
     } else if (loadedTile.className !== className) {
       const element = loadedTile.getElement()
 
-      element.classList.remove(loadedTile.className)
-      element.classList.add(className)
-
-      this.loadedTiles[tile.id].className = className
+      if (loadedTile.className) {
+        element.classList.remove(loadedTile.className)
+      }
+      if (className) {
+        element.classList.add(className)
+      }
+      if (this.loadedTiles[tile.id]) {
+        this.loadedTiles[tile.id].className = className
+      }
     }
   },
 
