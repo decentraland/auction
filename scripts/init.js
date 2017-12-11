@@ -69,16 +69,17 @@ async function upsertProjects() {
   log.info('Upserting projects')
 
   const query = await Project.count()
-  if (query.amount > 0) {
-    return
+  if (query.amount === 0) {
+    execSync('psql $CONNECTION_STRING -f ./projects.sql')
   }
-  execSync('psql $CONNECTION_STRING -f ./projects.sql')
 
   const { lookup } = parcelsDescription
   const projects = await Project.find()
 
+  log.info('Adding lookup coordinates')
+
   for (const project of projects) {
-    await Project.update({ id: project.id }, { lookup: lookup[project.name] })
+    await Project.update({ lookup: lookup[project.name] }, { id: project.id })
   }
 }
 
