@@ -34,18 +34,26 @@ class SidebarContainer extends React.Component {
   }
 
   getDashboardData() {
-    const { ongoingAuctions } = this.props
+    const { ongoingAuctions, addressState } = this.props
 
-    if (!ongoingAuctions.data) {
-      return { bids: '--', winning: '--', losing: '--', won: '--', lost: '--' }
-    }
-
-    return {
-      bids: ongoingAuctions.data.length,
-      winning: this.countBidsByStatus('Winning'),
-      losing: this.countBidsByStatus('Losing'),
-      won: this.countBidsByStatus('Won'),
-      lost: this.countBidsByStatus('Lost')
+    if (ongoingAuctions.data) {
+      return {
+        balance: addressState.data.balance,
+        bids: ongoingAuctions.data.length,
+        winning: this.countBidsByStatus('Winning'),
+        losing: this.countBidsByStatus('Losing'),
+        won: this.countBidsByStatus('Won'),
+        lost: this.countBidsByStatus('Lost')
+      }
+    } else {
+      return {
+        balance: '--',
+        bids: '--',
+        winning: '--',
+        losing: '--',
+        won: '--',
+        lost: '--'
+      }
     }
   }
 

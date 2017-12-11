@@ -7,6 +7,10 @@ export default function SidebarDashboard({ dashboard }) {
   return (
     <ul className="SidebarDashboard">
       <li>
+        <div className="dashboard-heading">BALANCE</div>
+        <div className="dashboard-value">{dashboard.balance}</div>
+      </li>
+      <li>
         <div className="dashboard-heading">BIDS</div>
         <div className="dashboard-value">{dashboard.bids}</div>
       </li>
