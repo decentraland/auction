@@ -62,6 +62,9 @@ export const selectors = {
   getPendingConfirmationBids(state) {
     return state.pendingConfirmationBids
   },
+  getPendingConfirmationBidsData(state) {
+    return state.pendingConfirmationBids.data
+  },
   getOngoingAuctions(state) {
     return state.ongoingAuctions
   },
@@ -109,22 +112,16 @@ function addressState(state = INITIAL_STATE.addressState, action) {
     case types.fetchAddressState.request:
       return { loading: true }
     case types.fetchAddressState.success:
-      action.addressState.balance = parseFloat(action.addressState.balance, 10)
-      return { loading: false, data: action.addressState }
+      return {
+        loading: false,
+        data: {
+          ...action.addressState,
+          totalBalance: parseFloat(action.addressState.totalBalance, 10),
+          balance: parseFloat(action.addressState.balance, 10)
+        }
+      }
     case types.fetchAddressState.failed:
       return { loading: false, error: action.error }
-    case types.appendUnconfirmedBid:
-      if (state.data) {
-        return {
-          ...state,
-          data: {
-            ...state.data,
-            balance: state.data.balance - action.bid.yourBid
-          }
-        }
-      } else {
-        return state
-      }
     case types.deleteUnconfirmedBid:
       if (state.data) {
         return {
@@ -154,6 +151,7 @@ function projects(state = INITIAL_STATE.projects, action) {
       return state
   }
 }
+
 function parcelStates(state = INITIAL_STATE.parcelStates, action) {
   switch (action.type) {
     case types.fetchParcels.request:
@@ -177,15 +175,19 @@ function pendingConfirmationBids(
   state = INITIAL_STATE.pendingConfirmationBids,
   action
 ) {
-  const filterActionBid = () =>
-    state.data.filter(bid => bid.x !== action.bid.x || bid.y !== action.bid.y)
+  const isActionBid = bid => bid.x === action.bid.x && bid.y === action.bid.y
 
-  // TODO: LocalStorage?
   switch (action.type) {
     case types.appendUnconfirmedBid:
-      return { data: [...filterActionBid(), action.bid] }
+      return {
+        data: state.data.find(isActionBid)
+          ? state.data.map(bid => (isActionBid(bid) ? action.bid : bid))
+          : [...state.data, action.bid]
+      }
     case types.deleteUnconfirmedBid:
-      return { data: filterActionBid() }
+      return {
+        data: state.data.filter(bid => !isActionBid(bid))
+      }
     case types.confirmBids.success:
       return INITIAL_STATE.pendingConfirmationBids
     case types.confirmBids.failed:

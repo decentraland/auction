@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom'
 
 import { distanceInWordsToNow } from '../lib/dateUtils'
 import { preventDefault, buildCoordinate, shortenAddress } from '../lib/util'
-import pendingBidsUtils from '../lib/pendingBidsUtils'
+import * as pendingBidsUtils from '../lib/pendingBidsUtils'
 import { stateData } from '../lib/propTypes'
 
 import locations from '../locations'
 
 import Button from './Button'
+import Icon from './Icon'
 
 import './PendingConfirmationBidsTable.css'
 
@@ -17,6 +18,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
   static propTypes = {
     pendingConfirmationBids: stateData(PropTypes.array).isRequired,
     onConfirmBids: PropTypes.func.isRequired,
+    onEditBid: PropTypes.func.isRequired,
     onDeleteBid: PropTypes.func.isRequired
   }
 
@@ -66,9 +68,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
 
     switch (error.code) {
       case 'OUT_OF_BOUNDS':
-        message = `Invalid coordinates for ${
-          parcelId
-        }, it's outside the map bounds`
+        message = `Invalid coordinates for ${parcelId}, it's outside the map bounds`
         break
       case 'INSUFFICIENT_BALANCE':
         message = `Your balance it's not enough to bid on ${parcelId}`
@@ -79,9 +79,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
         ).toLocaleDateString()}`
         break
       case 'INSUFFICIENT_INCREMENT':
-        message = `The bid of ${error.bidAmount}MANA on ${
-          parcelId
-        } is not enought. The minimum is ${error.minimumAmount}MANA`
+        message = `The bid of ${error.bidAmount}MANA on ${parcelId} is not enought. The minimum is ${error.minimumAmount}MANA`
         break
       default:
         message = ''
@@ -91,12 +89,8 @@ export default class PendingConfirmationBidsTable extends React.Component {
   }
 
   render() {
-    const {
-      pendingConfirmationBids,
-      onConfirmBids,
-      onDeleteBid,
-      contentRef
-    } = this.props
+    const { pendingConfirmationBids, contentRef } = this.props
+    const { onConfirmBids, onEditBid, onDeleteBid } = this.props
 
     if (pendingConfirmationBids.data.length === 0) {
       return null
@@ -119,7 +113,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
             <div className="col-current-bid">CURRENT BID</div>
             <div className="col-time-left">TIME LEFT</div>
             <div className="col-address">ADDRESS</div>
-            <div className="col-actions">ACTIONS</div>
+            <div className="col-actions">EDIT/REMOVE</div>
           </div>
 
           <div className="table-content" ref={contentRef}>
@@ -128,7 +122,8 @@ export default class PendingConfirmationBidsTable extends React.Component {
                 key={index}
                 bid={bid}
                 className={index % 2 === 0 ? 'gray' : ''}
-                onDelete={onDeleteBid}
+                onEdit={() => onEditBid(bid)}
+                onDelete={() => onDeleteBid(bid)}
               />
             ))}
           </div>
@@ -160,7 +155,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
   }
 }
 
-function UnconfirmedBidsTableRow({ bid, className, onDelete }) {
+function UnconfirmedBidsTableRow({ bid, className, onEdit, onDelete }) {
   const land = buildCoordinate(bid.x, bid.y)
 
   const currentBid = isAvailable(bid.currentBid)
@@ -180,8 +175,13 @@ function UnconfirmedBidsTableRow({ bid, className, onDelete }) {
       <div className="col-current-bid">{currentBid}</div>
       <div className="col-time-left">{timeLeft} </div>
       <div className="col-address">{shortenAddress(bid.address)}</div>
-      <div className="col-actions delete" onClick={() => onDelete(bid)}>
-        x
+      <div className="col-actions">
+        <span className="edit" onClick={onEdit}>
+          <Icon name="pencil" />
+        </span>
+        <span className="delete" onClick={onDelete}>
+          x
+        </span>
       </div>
     </div>
   )
