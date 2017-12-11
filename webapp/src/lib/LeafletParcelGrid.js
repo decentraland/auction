@@ -29,7 +29,6 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   onAdd(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map)
     this.map = map
-    this.tiles = []
     this.popup = null
     this.debouncedOnMouseOver = debounce(this.onMouseOver, 215)
     this.setupGrid(map.getBounds())
@@ -47,8 +46,10 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
     map.off('resize', this.resizeHandler, this)
   },
 
-  clearLayer() {
-    this.tiles = []
+  clearLayers(...args) {
+    L.FeatureGroup.prototype.clearLayers(this, ...args)
+    this.loadedTiles = {}
+    this.loadedCoordinates = {}
   },
 
   moveHandler(event) {
@@ -96,32 +97,40 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
       tile.center
     )
 
-    if (this.loadedTiles[tile.id] !== className) {
+    const loadedTile = this.loadedTiles[tile.id]
+
+    if (!loadedTile) {
       const attributes = Object.assign({ className }, this.options.style, style)
       const { x, y } = dataset
+      const rect = this.getRectangleLayer(tile, attributes, x, y)
 
-      setTimeout(
-        () => this.addRectangleLayer(tile, attributes, x, y),
-        renderDelay
-      )
+      setTimeout(() => this.addLayer(rect), renderDelay)
 
       if (this.shouldShowCoordinates(x, y)) {
         this.loadCellCoordinates(x, y, tile)
       }
 
-      this.loadedTiles[tile.id] = className
+      this.loadedTiles[tile.id] = rect
+    } else if (loadedTile.className !== className) {
+      const element = loadedTile.getElement()
+
+      element.classList.remove(loadedTile.className)
+      element.classList.add(className)
+
+      this.loadedTiles[tile.id].className = className
     }
   },
 
-  addRectangleLayer(tile, attributes, x, y) {
+  getRectangleLayer(tile, attributes, x, y) {
     const rect = L.rectangle(tile.bounds, attributes)
-    this.addLayer(rect)
 
-    if (rect.getElement()) {
-      rect
-        .on('click', () => this.options.onTileClick(x, y, tile))
-        .on('mouseover', () => this.mouseOverChange(x, y, tile.center))
-    }
+    rect
+      .on('click', () => this.options.onTileClick(x, y, tile))
+      .on('mouseover', () => this.mouseOverChange(x, y, tile.center))
+
+    rect.className = attributes.className
+
+    return rect
   },
 
   mouseOverChange(x, y, center) {
