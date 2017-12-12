@@ -9,17 +9,17 @@ export default class LeafletMapCoordinates {
   toLatLngBounds(bounds) {
     let [lower, upper] = bounds
 
-    lower = this.cartesianToLatLng({ x: lower[0], y: lower[1] })
-    upper = this.cartesianToLatLng({ x: upper[0], y: upper[1] })
+    let a = this.cartesianToLatLng({ x: lower[0], y: lower[1] })
+    let b = this.cartesianToLatLng({ x: upper[0], y: upper[1] })
 
-    return new L.LatLngBounds(lower, upper)
+    return new L.LatLngBounds(a, b)
   }
 
   cartesianToLatLng({ x, y }) {
     const mapSize = this.getMapSize()
     const offset = this.getOffset()
 
-    const lat = -y / offset * mapSize
+    const lat = y / offset * mapSize
     const lng = x / offset * mapSize
 
     return new L.LatLng(lat, lng)
@@ -30,7 +30,7 @@ export default class LeafletMapCoordinates {
     const offset = this.getOffset()
 
     const x = Math.round(lng * offset / mapSize)
-    const y = Math.round(-lat * offset / mapSize)
+    const y = Math.round(lat * offset / mapSize)
 
     return { x, y }
   }
