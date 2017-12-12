@@ -37,7 +37,7 @@ export default class IntroModal extends React.Component {
           <p className="text">
             <b>Minimum Bids</b>
             <br />
-            Each parcel of land has a minimum bid amount 10% higher than the
+            Each parcel of land has a minimum bid amount 25% higher than the
             previous bid.
           </p>
 
