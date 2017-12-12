@@ -5,18 +5,23 @@ import { buildCoordinate, capitalize } from './util'
 import * as addressStateUtils from './addressStateUtils'
 
 export const COLORS = {
-  won: '#4A90E2',
-  winning: '#97b9e5',
-  lost: '#3C225F',
-  outbid: '#EF303B',
-  taken: '#4F3A4B',
-  reserved: '#FFF',
-  littleValue: '#FFF189',
-  bigValue: '#EF303B',
+  won: '#558FDE',
+  winning: '#96B8E7',
+  lost: '#49255D',
+  outbid: '#DF423E',
+  taken: '#3C516A',
+  genesis: '#FFFFFF',
+  roads: '#5C5C5C',
+  district: '#AA8CDD',
+  littleValue: '#FEF191',
+  bigValue: '#FF0000',
   default: '#EAEAEA',
   pending: '#02B45D',
   loading: '#AAAAAA'
 }
+
+const minHSV = tinycolor2(COLORS.littleValue).toHsv()
+const maxHSV = tinycolor2(COLORS.bigValue).toHsv()
 
 export const CLASS_NAMES = {
   won: 'won',
@@ -78,13 +83,10 @@ export function getBidStatus(parcel, addressState) {
   return status
 }
 
-export function getColorByAmount(amount) {
+export function getColorByAmount(amount, maxAmount) {
   // toHsv() => { h: 0, s: 1, v: 1, a: 1 }
-  const minHSV = tinycolor2(COLORS.littleValue).toHsv()
-  const maxHSV = tinycolor2(COLORS.bigValue).toHsv()
-
-  const h = calculateColorValue(amount, minHSV.h, maxHSV.h)
-  const s = calculateColorValue(amount, minHSV.s, maxHSV.s)
+  const h = memorizedHue(amount, maxAmount)
+  const s = memorizedSat(amount, maxAmount)
 
   return tinycolor2({ h, s, v: 1, a: 1 }).toHexString()
 }
@@ -97,9 +99,39 @@ export function hasEnded(parcel) {
   return parcel.endsAt && Date.now() >= parcel.endsAt.getTime()
 }
 
-function calculateColorValue(amount, minValue, maxValue) {
+var savedMaxAmount = null
+var savedHues = {}
+var savedSats = {}
+
+function memorizedHue(amount, maxAmount) {
+  if (maxAmount === savedMaxAmount) {
+    if (!savedHues[amount]) {
+      savedHues[amount] = calculateColorValue(amount, maxAmount, minHSV.h, maxHSV.h)
+    }
+    return savedHues[amount]
+  } else {
+    savedMaxAmount = maxAmount
+    savedHues = {}
+    return memorizedHue(amount, maxAmount)
+  }
+}
+
+function memorizedSat(amount, maxAmount) {
+  if (maxAmount === savedMaxAmount) {
+    if (!savedSats[amount]) {
+      savedSats[amount] = calculateColorValue(amount, maxAmount, minHSV.s, maxHSV.s)
+    }
+    return savedSats[amount]
+  } else {
+    savedMaxAmount = maxAmount
+    savedSats = {}
+    return memorizedSat(amount, maxAmount)
+  }
+}
+
+function calculateColorValue(amount, maxAmount, minValue, maxValue) {
   const priceRate = amount - ONE_LAND_IN_MANA
-  return (maxValue - minValue) * amount / (priceRate + minValue)
+  return (priceRate * (maxValue - minValue)) / maxAmount + minValue
 }
 
 export function generateMatrix(minX, minY, maxX, maxY) {

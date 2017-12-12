@@ -12,6 +12,7 @@ import {
   fastBid
 } from '../actions'
 import * as parcelUtils from '../lib/parcelUtils'
+import { ONE_LAND_IN_MANA } from '../lib/land'
 import { stateData } from '../lib/propTypes'
 
 import ParcelsMap from '../components/ParcelsMap'
@@ -103,6 +104,10 @@ class ParcelsMapContainer extends React.Component {
     return this.props.addressState.data
   }
 
+  getMaxAmount = () => {
+    return this.props.maxAmount - ONE_LAND_IN_MANA
+  }
+
   getParcelStates = () => {
     return this.props.parcelStates
   }
@@ -143,6 +148,7 @@ class ParcelsMapContainer extends React.Component {
         getParcelStates={this.getParcelStates}
         getPendingConfirmationBids={this.getPendingConfirmationBids}
         getProjects={this.getProjects}
+        getMaxAmount={this.getMaxAmount}
         onMoveEnd={this.onMoveEnd}
         onZoomEnd={this.onZoomEnd}
         onParcelBid={this.onParcelBid}
@@ -157,6 +163,7 @@ export default withRouter(
   connect(
     (state, ownProps) => ({
       parcelStates: selectors.getParcelStates(state),
+      maxAmount: selectors.getMaxAmount(state),
       addressState: selectors.getAddressState(state),
       pendingConfirmationBids: selectors.getPendingConfirmationBids(state),
       projects: selectors.getProjects(state),
