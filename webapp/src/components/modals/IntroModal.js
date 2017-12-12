@@ -61,7 +61,7 @@ export default class IntroModal extends React.Component {
             </p>
             <p>
               For testing purposes, please report bugs and errors you encounter
-              in the #test_auction channel in RocketChat.
+              in the <b>#test_auction</b> channel in RocketChat.
             </p>
           </div>
 
