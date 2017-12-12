@@ -12,11 +12,19 @@ export default function WalletErrorPage() {
       <div className="error-message">
         <p>
           Please make sure your&nbsp;
-          <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://metamask.io"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Metamask
           </a>
           &nbsp; or&nbsp;
-          <a href="https://github.com/ethereum/mist" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://github.com/ethereum/mist"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Mist
           </a>
           &nbsp;account is connected and unlocked, then refresh the page.
@@ -29,7 +37,11 @@ export default function WalletErrorPage() {
         <br />
         <p>
           Confused about what&#39;s going on? Check out the&nbsp;
-          <a href="https://wiki.decentraland.org/" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://wiki.decentraland.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             wiki
           </a>&nbsp; for answers.
         </p>
