@@ -7,12 +7,12 @@ export default class LeafletMapCoordinates {
   }
 
   toLatLngBounds(bounds) {
-    let [lower, upper] = bounds
+    const [lower, upper] = bounds
 
-    let a = this.cartesianToLatLng({ x: lower[0], y: lower[1] })
-    let b = this.cartesianToLatLng({ x: upper[0], y: upper[1] })
+    const southWest = this.cartesianToLatLng({ x: lower[0], y: lower[1] })
+    const northEast = this.cartesianToLatLng({ x: upper[0], y: upper[1] })
 
-    return new L.LatLngBounds(a, b)
+    return new L.LatLngBounds(southWest, northEast)
   }
 
   cartesianToLatLng({ x, y }) {
