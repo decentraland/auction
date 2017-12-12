@@ -140,7 +140,7 @@ describe('BidService', function() {
           {
             x: 0,
             y: 0,
-            amount: 110
+            amount: 125
           }
         ],
         receivedAt: DATE_TIMESTAMP
@@ -207,7 +207,7 @@ describe('BidService', function() {
       })
     })
 
-    it('should enforce a 10% increase minimum', () => {
+    it('should enforce a 25% increase minimum', () => {
       bid.amount = 101
 
       expect(
@@ -216,12 +216,12 @@ describe('BidService', function() {
         code: ERROR_CODES.insufficientIncrement,
         bidAmount: bid.amount,
         parcelAmount: 100,
-        minimumAmount: '110'
+        minimumAmount: '125'
       })
     })
 
     it('should not reject a bid with just enough balance to increase amount bid', () => {
-      address.balance = 10
+      address.balance = 25
       parcel.address = bidGroup.address
       expect(
         bidService.getBidValidationError(address, parcel, bidGroup, bid)
@@ -288,7 +288,7 @@ describe('BidService', function() {
           {
             x: 0,
             y: 0,
-            amount: 110
+            amount: 125
           }
         ]
       }

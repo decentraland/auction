@@ -129,7 +129,7 @@ export function getBounds() {
   }
 }
 
-export const MINIMUM_BID_INCREMENT = 1.1
+export const MINIMUM_BID_INCREMENT = 1.25
 
 export function minimumBid(previousBid) {
   if (!previousBid) {
