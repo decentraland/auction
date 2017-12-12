@@ -15,6 +15,16 @@
   text-align: center;
 }
 
+.IntroModal h3 {
+  font-size: 24px;
+}
+
+.IntroModal h4 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 16px;
+}
+
 .IntroModal .banner h2 {
   font-size: 28px;
   font-family: "Source Sans Pro Light", Helvetica, sans-serif;
@@ -26,7 +36,11 @@
 }
 
 .IntroModal .modal-body {
-  padding: 60px 24px;
+  padding: 20px 24px;
+}
+
+.IntroModal .modal-body p {
+  font-size: 16px;
 }
 
 .IntroModal .land-color-keys {
