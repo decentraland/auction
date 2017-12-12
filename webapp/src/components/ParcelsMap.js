@@ -94,8 +94,8 @@ export default class ParcelsMap extends React.Component {
 
   debounceMapMethodsByTileSize(tileSize) {
     const delay = 32000
-    this.debouncedRedrawMap = debounce(this.redrawMap, delay / tileSize)
-    this.debouncedOnMoveEnd = debounce(this.onMoveEnd, delay / tileSize)
+    this.debouncedRedrawMap = debounce(this.redrawMap, Math.max(200, delay / tileSize))
+    this.debouncedOnMoveEnd = debounce(this.onMoveEnd, Math.max(200, delay / tileSize))
   }
 
   createMap(container) {
