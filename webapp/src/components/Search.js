@@ -144,7 +144,7 @@ export default class Search extends React.Component {
         items={this.getItems()}
         getItemValue={this.getItemValue}
         value={value}
-        placeholder="Search for districts or coordinates"
+        inputProps={{ placeholder: "Search for districts or coordinates..." }}
         onChange={this.onChange}
         onSelect={this.onSelect}
         onClick={this.onSelect}
