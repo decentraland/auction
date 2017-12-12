@@ -122,7 +122,7 @@
 .OngoingAuctions .table .won     { color: #4A90E2; }
 .OngoingAuctions .table .winning { color: #97b9e5; }
 .OngoingAuctions .table .lost    { color: #3C225F; }
-.OngoingAuctions .table .outbid  { color: #EF303B; }
+.OngoingAuctions .table .outbid  { color: #F04ACC; }
 
 .OngoingAuctions .col-status {
   font-size: 14px;
