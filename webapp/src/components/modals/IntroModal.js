@@ -18,40 +18,52 @@ export default class IntroModal extends React.Component {
       <Modal className="IntroModal modal-lg" onClose={onClose} {...props}>
         <div className="banner">
           <Icon name="decentraland" />
-          <h2>Welcome to the Terraform Auction</h2>
+          <h2>Welcome to the Terraform Auction Beta</h2>
         </div>
 
         <div className="modal-body">
-          <p className="text">
-            From December 15 to December 20 the community is shaping the world
-            of Decentraland.
-          </p>
-          <p className="text">
-            This is a dry run of how that event will look like.
-          </p>
-          <p className="text">
-            <b>Parcels</b>
-            <br />
-            There are 250,000 parcels of land available in Decentraland,
-            bringing the average price of a parcel to 3,400 MANA. Districts have
-            been placed around the world.
-          </p>
+          <h3 className="text">
+            The Decentraland community will begin shaping a new world on
+            December 15th.
+          </h3>
+          <div className="text">
+            <h4>Parcels</h4>
+            <p>
+              90,000 parcels of land are initially available in Decentraland’s
+              Genesis City. About 1/3rd of these have been allocated to
+              community districts placed throughout the city, while the
+              remainder will be auctioned through this web app.
+            </p>
+          </div>
 
-          <p className="text">
-            <b>Minimum Bids</b>
-            <br />
-            Each parcel of land has a minimum bid amount 25% higher than the
-            previous bid.
-          </p>
+          <div className="text">
+            <h4>Minimum Bids</h4>
+            <p>
+              Each parcel of land has a minimum bid amount 25% higher than the
+              previous bid.
+            </p>
+          </div>
 
-          <p className="text">
-            <b>Timeline</b>
-            <br />
-            The auction will be open for 120 hours. Any parcels with active bids
-            at that time will remain active, with a 30-hour closing period after
-            each new bid. Once all active bids have been won, Unused MANA will
-            be returned.
-          </p>
+          <div className="text">
+            <h4>Timeline</h4>
+            <p>
+              The auction will last seven days, starting at 10PM GMT on December
+              15th.
+            </p>
+            <p>
+              To prevent last-minute takeovers, the bidding window will be
+              extended for parcels with bids made within the final 30 hours.
+              This extension is equal to n, where n = 30 - hours_remaining.
+            </p>
+            <p>
+              Once all active bids have finished, unused MANA will be returned
+              to users’ wallets.
+            </p>
+            <p>
+              For testing purposes, please report bugs and errors you encounter
+              in the <b>#test_auction</b> channel in RocketChat.
+            </p>
+          </div>
 
           <div className="land-color-keys">
             <h3>Land Color Key</h3>
