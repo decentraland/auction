@@ -52,7 +52,7 @@ class PendingConfirmationBidsContainer extends React.Component {
   }
 
   clearAllBids = () => {
-    if (confirm('Are you sure you want to clear all pending bids?')) {
+    if (window.confirm('Are you sure you want to clear all pending bids?')) {
       this.props.clearAllBids()
     }
   }
