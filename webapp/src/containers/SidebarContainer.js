@@ -41,7 +41,7 @@ class SidebarContainer extends React.Component {
         balance: addressState.data.balance,
         bids: ongoingAuctions.data.length,
         winning: this.countBidsByStatus('Winning'),
-        losing: this.countBidsByStatus('Losing'),
+        losing: this.countBidsByStatus('Outbid'),
         won: this.countBidsByStatus('Won'),
         lost: this.countBidsByStatus('Lost')
       }
