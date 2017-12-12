@@ -38,6 +38,7 @@ export default {
 
   appendUnconfirmedBid: 'Append new unconfirmed bid',
   deleteUnconfirmedBid: 'Remove unconfirmed bid',
+  clearAllBids: 'Clear all bids',
 
   fetchOngoingAuctions: {
     request: '[Request] Ongoing auctions requested',

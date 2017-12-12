@@ -6,12 +6,23 @@
   position: relative;
 }
 
+.PendingConfirmationBidsTable .clear {
+  float: right;
+  margin-right: relative;
+  top: -17px;
+  right: 2px;
+  padding-right: 20px;
+  position: relative;
+  cursor: pointer;
+}
+
 .PendingConfirmationBidsTable h3 {
   margin: 24px 24px 0;
   padding-top: 24px;
   font-size: 16px;
   font-weight: 600;
   color: #000000;
+  width: 80%;
 }
 
 .PendingConfirmationBidsTable .text-danger {

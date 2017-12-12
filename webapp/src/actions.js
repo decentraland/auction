@@ -77,6 +77,12 @@ export function confirmBids(bids) {
   }
 }
 
+export function clearAllBids(bids) {
+  return {
+    type: types.clearAllBids
+  }
+}
+
 // -------------------------------------------------------------------------
 // Modal
 
