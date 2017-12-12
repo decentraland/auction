@@ -93,14 +93,17 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   },
 
   loadCell(tile, renderDelay) {
-    const { className, dataset, style } = this.options.getTileAttributes(
+    const { className, dataset, fillColor } = this.options.getTileAttributes(
       tile.center
     )
 
     const loadedTile = this.loadedTiles[tile.id]
 
     if (!loadedTile) {
-      const attributes = Object.assign({ className }, this.options.style, style)
+      const attributes = Object.assign({}, this.options.style, {
+        className,
+        fillColor
+      })
       const { x, y } = dataset
       const rect = this.getRectangleLayer(tile, attributes, x, y)
 
@@ -111,7 +114,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
       }
 
       this.loadedTiles[tile.id] = rect
-    } else if (loadedTile.className !== className) {
+    } else if (this.tileChanged(loadedTile, className, fillColor)) {
       const element = loadedTile.getElement()
 
       element.removeAttribute('style')
@@ -123,10 +126,11 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
       if (className) {
         element.classList.add(className)
       } else {
-        Object.assign(element.style, style)
+        Object.assign(element.style, { fill: fillColor })
       }
 
       this.loadedTiles[tile.id].className = className
+      this.loadedTiles[tile.id].fill = fillColor
     }
   },
 
@@ -138,8 +142,13 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
       .on('mouseover', () => this.mouseOverChange(x, y, tile.center))
 
     rect.className = attributes.className
+    rect.fillColor = attributes.fillColor
 
     return rect
+  },
+
+  tileChanged(tile, className, fillColor) {
+    return tile.className !== className || tile.fillColor !== fillColor
   },
 
   mouseOverChange(x, y, center) {

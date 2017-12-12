@@ -220,6 +220,7 @@ export default class ParcelsMap extends React.Component {
     const addressState = this.props.getAddressState()
     const maxAmount = this.props.getMaxAmount()
     const pendingConfirmationBids = this.props.getPendingConfirmationBids()
+
     const className = parcelUtils.getClassName(
       parcel,
       addressState,
@@ -227,15 +228,17 @@ export default class ParcelsMap extends React.Component {
     )
     const dataset = { x, y }
 
-    let style = null
+    let fillColor = null
+
     if (!className) {
-      style = { fill: parcelUtils.getColorByAmount(parcel.amount, maxAmount) }
+      fillColor = parcelUtils.getColorByAmount(parcel.amount, maxAmount)
     }
+
 
     return {
       className,
       dataset,
-      style
+      fillColor
     }
   }
 
