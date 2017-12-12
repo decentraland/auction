@@ -4,7 +4,9 @@
 #map path.lost     { fill: #3C225F; }
 #map path.outbid   { fill: #EF303B; }
 #map path.taken    { fill: #4F3A4B; }
-#map path.reserved { fill: #FFFFFF; }
+#map path.genesis  { fill: #FFFFFF; }
+#map path.roads    { fill: #5C5C5C; }
+#map path.district { fill: #AA8CDD; }
 #map path.pending  { fill: #02B45D; }
 #map path.default  { fill: #EAEAEA; }
 #map path.loading  { fill: #AAAAAA; }
@@ -14,6 +16,8 @@
 #map .header.lost     { background-color: #3C225F; }
 #map .header.outbid   { background-color: #EF303B; }
 #map .header.taken    { background-color: #4F3A4B; }
-#map .header.reserved { background-color: #FFFFFF; }
+#map .header.genesis  { background-color: #FFFFFF; }
+#map .header.roads    { background-color: #FFFFFF; }
+#map .header.district { background-color: #FFFFFF; }
 #map .header.default  { display: none; }
 #map .header.loading  { display: none; }

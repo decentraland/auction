@@ -5,18 +5,25 @@ import { buildCoordinate, capitalize } from './util'
 import * as addressStateUtils from './addressStateUtils'
 
 export const COLORS = {
-  won: '#4A90E2',
-  winning: '#97b9e5',
-  lost: '#3C225F',
-  outbid: '#EF303B',
-  taken: '#4F3A4B',
-  reserved: '#FFF',
-  littleValue: '#FFF189',
-  bigValue: '#EF303B',
+  won: '#558FDE',
+  winning: '#96B8E7',
+  lost: '#49255D',
+  outbid: '#DF423E',
+  taken: '#3C516A',
+  genesis: '#FFFFFF',
+  roads: '#5C5C5C',
+  district: '#AA8CDD',
+  littleValue: '#FEF191',
+  bigValue: '#FF0000',
   default: '#EAEAEA',
   pending: '#02B45D',
   loading: '#AAAAAA'
 }
+
+const genesis = '55327350-d9f0-4cae-b0f3-8745a0431099'
+const roads = 'f77140f9-c7b4-4787-89c9-9fa0e219b079'
+const minHSV = tinycolor2(COLORS.littleValue).toHsv()
+const maxHSV = tinycolor2(COLORS.bigValue).toHsv()
 
 export const CLASS_NAMES = {
   won: 'won',
@@ -24,7 +31,9 @@ export const CLASS_NAMES = {
   lost: 'lost',
   outbid: 'outbid',
   taken: 'taken',
-  reserved: 'reserved',
+  genesis: 'genesis',
+  district: 'district',
+  roads: 'roads',
   default: 'default',
   pending: 'pending',
   loading: 'loading'
@@ -41,7 +50,7 @@ export function isPending(parcel, pendingConfirmationBids) {
 
 export function getClassName(parcel, addressState, pendingConfirmationBids) {
   if (!parcel || parcel.error) return CLASS_NAMES.loading
-  if (isReserved(parcel)) return CLASS_NAMES.reserved
+  if (reservation(parcel)) return reservation(parcel)
   if (isPending(parcel, pendingConfirmationBids)) return CLASS_NAMES.pending
   if (!parcel.amount) return CLASS_NAMES.default
 
@@ -71,6 +80,12 @@ export function getBidStatus(parcel, addressState) {
     case CLASS_NAMES.loading:
       status = ''
       break
+    case CLASS_NAMES.genesis:
+      status = 'Plaza'
+      break
+    case CLASS_NAMES.roads:
+      status = 'Road'
+      break
     default:
       status = capitalize(className)
   }
@@ -78,28 +93,72 @@ export function getBidStatus(parcel, addressState) {
   return status
 }
 
-export function getColorByAmount(amount) {
+export function getColorByAmount(amount, maxAmount) {
   // toHsv() => { h: 0, s: 1, v: 1, a: 1 }
-  const minHSV = tinycolor2(COLORS.littleValue).toHsv()
-  const maxHSV = tinycolor2(COLORS.bigValue).toHsv()
-
-  const h = calculateColorValue(amount, minHSV.h, maxHSV.h)
-  const s = calculateColorValue(amount, minHSV.s, maxHSV.s)
+  const h = memorizedHue(amount, maxAmount)
+  const s = memorizedSat(amount, maxAmount)
 
   return tinycolor2({ h, s, v: 1, a: 1 }).toHexString()
 }
 
-export function isReserved(parcel) {
-  return !!parcel.projectId
+export function reservation(parcel) {
+  return (
+    !!parcel.projectId &&
+    (parcel.projectId === genesis
+      ? CLASS_NAMES.genesis
+      : parcel.projectId === roads ? CLASS_NAMES.roads : CLASS_NAMES.district)
+  )
 }
 
 export function hasEnded(parcel) {
   return parcel.endsAt && Date.now() >= parcel.endsAt.getTime()
 }
 
-function calculateColorValue(amount, minValue, maxValue) {
+var savedMaxAmount = null
+var savedHues = {}
+var savedSats = {}
+
+function memorizedHue(amount, maxAmount) {
+  if (maxAmount === savedMaxAmount) {
+    if (!savedHues[amount]) {
+      savedHues[amount] = calculateColorValue(
+        amount,
+        maxAmount,
+        minHSV.h,
+        maxHSV.h
+      )
+    }
+    return savedHues[amount]
+  } else {
+    savedMaxAmount = maxAmount
+    savedHues = {}
+    savedSats = {}
+    return memorizedHue(amount, maxAmount)
+  }
+}
+
+function memorizedSat(amount, maxAmount) {
+  if (maxAmount === savedMaxAmount) {
+    if (!savedSats[amount]) {
+      savedSats[amount] = calculateColorValue(
+        amount,
+        maxAmount,
+        minHSV.s,
+        maxHSV.s
+      )
+    }
+    return savedSats[amount]
+  } else {
+    savedMaxAmount = maxAmount
+    savedHues = {}
+    savedSats = {}
+    return memorizedSat(amount, maxAmount)
+  }
+}
+
+function calculateColorValue(amount, maxAmount, minValue, maxValue) {
   const priceRate = amount - ONE_LAND_IN_MANA
-  return (maxValue - minValue) * amount / (priceRate + minValue)
+  return priceRate * (maxValue - minValue) / maxAmount + minValue
 }
 
 export function generateMatrix(minX, minY, maxX, maxY) {
@@ -114,7 +173,7 @@ export function generateMatrix(minX, minY, maxX, maxY) {
 
 export function projectForParcel(parcel, projects) {
   for (const project of projects.data) {
-    if (project.id === parcel.projectId) {
+    if (project.id === parcel.projectId && project.name !== 'Roads') {
       return project
     }
   }

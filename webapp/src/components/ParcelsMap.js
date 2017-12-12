@@ -33,6 +33,7 @@ export default class ParcelsMap extends React.Component {
     getAddressState: PropTypes.func.isRequired,
     getParcelStates: PropTypes.func.isRequired,
     getProjects: PropTypes.func.isRequired,
+    getMaxAmount: PropTypes.func.isRequired,
     getPendingConfirmationBids: PropTypes.func.isRequired,
 
     onMoveEnd: PropTypes.func,
@@ -223,7 +224,9 @@ export default class ParcelsMap extends React.Component {
     const { x, y } = this.mapCoordinates.latLngToCartesian(coords)
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
+    const maxAmount = this.props.getMaxAmount()
     const pendingConfirmationBids = this.props.getPendingConfirmationBids()
+
     const className = parcelUtils.getClassName(
       parcel,
       addressState,
@@ -231,15 +234,16 @@ export default class ParcelsMap extends React.Component {
     )
     const dataset = { x, y }
 
-    let style = null
+    let fillColor = null
+
     if (!className) {
-      style = { fill: parcelUtils.getColorByAmount(parcel.amount) }
+      fillColor = parcelUtils.getColorByAmount(parcel.amount, maxAmount)
     }
 
     return {
       className,
       dataset,
-      style
+      fillColor
     }
   }
 
@@ -250,7 +254,7 @@ export default class ParcelsMap extends React.Component {
     const unBiddable =
       !parcel ||
       parcel.error ||
-      parcelUtils.isReserved(parcel) ||
+      parcelUtils.reservation(parcel) ||
       parcelUtils.hasEnded(parcel)
 
     if (unBiddable) return

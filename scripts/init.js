@@ -38,6 +38,7 @@ async function upsertRoadsProject() {
     log.info('Inserting Genesis Plaza project')
 
     await Project.insert({
+      id: '55327350-d9f0-4cae-b0f3-8745a0431099',
       name: 'Genesis Plaza',
       desc: 'Decentraland Genesis Plaza',
       link: '',
@@ -53,6 +54,7 @@ async function upsertRoadsProject() {
     log.info('Inserting Roads project')
 
     await Project.insert({
+      id: 'f77140f9-c7b4-4787-89c9-9fa0e219b079',
       name: 'Roads',
       desc: 'Decentraland roads connecting districts',
       link: '',
@@ -60,7 +62,7 @@ async function upsertRoadsProject() {
       parcels: 0,
       priority: 0,
       disabled: false,
-      lookup: lookup['Roads']
+      lookup: ''
     })
   }
 }
@@ -69,7 +71,7 @@ async function upsertProjects() {
   log.info('Upserting projects')
 
   const query = await Project.count()
-  if (query.amount === 0) {
+  if (!query.amount) {
     execSync('psql $CONNECTION_STRING -f ./projects.sql')
   }
 

@@ -24,7 +24,7 @@ class ParcelStateService {
 
 function isDuplicatedError(error) {
   const duplicateErrorRegexp = /duplicate key value violates unique constraint ".+_pkey"/
-  return error.search(duplicateErrorRegexp) !== -1
+  return error && error.search && error.search(duplicateErrorRegexp) !== -1
 }
 
 export default ParcelStateService

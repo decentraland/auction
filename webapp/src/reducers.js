@@ -1,3 +1,5 @@
+import { createSelector } from 'reselect'
+
 import types from './types'
 import localStorage from './lib/localStorage'
 
@@ -40,49 +42,78 @@ const INITIAL_STATE = {
   }
 }
 
+function getWeb3Connected(state) {
+  return state.web3Connected
+}
+function getAddressState(state) {
+  return state.addressState
+}
+function getAddressStateData(state) {
+  return state.addressState.data
+}
+function getProjects(state) {
+  return state.projects
+}
+function getProjectsData(state) {
+  return state.projects.data
+}
+function getParcelStates(state) {
+  return state.parcelStates
+}
+
+const getMaxAmount = createSelector(
+  [getParcelStates],
+  parcelStates =>
+    parcelStates && !parcelStates.loading
+      ? Object.values(parcelStates).reduce(
+          (prev, next) =>
+            next && next.amount ? Math.max(prev, next.amount) : prev,
+          0
+        )
+      : 1000
+)
+
+function getPendingConfirmationBids(state) {
+  return state.pendingConfirmationBids
+}
+function getPendingConfirmationBidsData(state) {
+  return state.pendingConfirmationBids.data
+}
+function getOngoingAuctions(state) {
+  return state.ongoingAuctions
+}
+function getModal(state) {
+  return state.modal
+}
+function getEmail(state) {
+  return state.email
+}
+function getSidebar(state) {
+  return state.sidebar
+}
+function getShift(state) {
+  return state.shift
+}
+function getRange(state) {
+  return state.range
+}
+
 export const selectors = {
-  getWeb3Connected(state) {
-    return state.web3Connected
-  },
-  getAddressState(state) {
-    return state.addressState
-  },
-  getAddressStateData(state) {
-    return state.addressState.data
-  },
-  getProjects(state) {
-    return state.projects
-  },
-  getProjectsData(state) {
-    return state.projects.data
-  },
-  getParcelStates(state) {
-    return state.parcelStates
-  },
-  getPendingConfirmationBids(state) {
-    return state.pendingConfirmationBids
-  },
-  getPendingConfirmationBidsData(state) {
-    return state.pendingConfirmationBids.data
-  },
-  getOngoingAuctions(state) {
-    return state.ongoingAuctions
-  },
-  getModal(state) {
-    return state.modal
-  },
-  getEmail(state) {
-    return state.email
-  },
-  getSidebar(state) {
-    return state.sidebar
-  },
-  getShift(state) {
-    return state.shift
-  },
-  getRange(state) {
-    return state.range
-  }
+  getWeb3Connected,
+  getAddressState,
+  getAddressStateData,
+  getProjects,
+  getProjectsData,
+  getParcelStates,
+  getMaxAmount,
+  getPendingConfirmationBids,
+  getPendingConfirmationBidsData,
+  getOngoingAuctions,
+  getModal,
+  getEmail,
+  getSidebar,
+  getShift,
+  getRange
 }
 
 function web3Connected(state = INITIAL_STATE.web3Connected, action) {
@@ -157,13 +188,11 @@ function parcelStates(state = INITIAL_STATE.parcelStates, action) {
     case types.fetchParcels.request:
       return { ...state, loading: true, error: null }
     case types.fetchParcels.success:
-      return action.parcelStates.reduce(
-        (total, parcel) => ({
-          ...total,
-          [`${parcel.x},${parcel.y}`]: parcel
-        }),
-        { ...state, loading: false, error: null }
-      )
+      const result = { ...state, loading: false, error: null }
+      action.parcelStates.forEach(parcel => {
+        result[`${parcel.x},${parcel.y}`] = parcel
+      })
+      return result
     case types.fetchParcels.failed:
       return { ...state, loading: false, error: action.error }
     default:

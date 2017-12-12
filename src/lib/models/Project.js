@@ -24,7 +24,7 @@ class Project extends Model {
   }
 
   static insert(project) {
-    project.id = uuid.v4()
+    project.id = project.id || uuid.v4()
     return super.insert(project)
   }
 }

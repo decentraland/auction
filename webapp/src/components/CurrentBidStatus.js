@@ -4,7 +4,7 @@ import * as parcelUtils from '../lib/parcelUtils'
 
 export default function CurrentBidStatus({ addressState, parcel, projects }) {
   const isError = parcel.error
-  const isReserved = parcelUtils.isReserved(parcel)
+  const isReserved = parcelUtils.reservation(parcel)
 
   const status = []
 
@@ -18,8 +18,6 @@ export default function CurrentBidStatus({ addressState, parcel, projects }) {
 
     if (project) {
       status.push(<div key="2">{project.name}</div>)
-    } else {
-      status.push(<div key="3">Road</div>)
     }
   }
 
