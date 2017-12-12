@@ -15,14 +15,9 @@ class SearchContainer extends React.Component {
     projects: PropTypes.array
   }
 
-  constructor(...args) {
-    super(...args)
-
-    const { minX, minY, maxX, maxY } = parcelUtils.getBounds()
-    this.coordinates = parcelUtils
-      .generateMatrix(minX, minY, maxX, maxY)
-      .map(coordinate => ({ name: coordinate }))
-      .sort((a, b) => a.name.length - b.name.length)
+  constructor(props) {
+    super(props)
+    this.coorinates = this.getCoordinates()
   }
 
   componentWillMount() {
@@ -32,6 +27,14 @@ class SearchContainer extends React.Component {
   onSelect = coordinate => {
     const [x, y] = coordinate.split(',')
     this.props.changeLocation(locations.parcelDetail(x, y))
+  }
+
+  getCoordinates() {
+    const { minX, minY, maxX, maxY } = parcelUtils.getBounds()
+
+    return parcelUtils
+      .generateMatrix(minX, minY, maxX, maxY)
+      .map(coordinate => ({ name: coordinate }))
   }
 
   render() {
