@@ -176,12 +176,12 @@ export default class ParcelsMap extends React.Component {
 
     bounds.min = {
       x: sw.x,
-      y: ne.y
+      y: sw.y
     }
 
     bounds.max = {
       x: ne.x,
-      y: sw.y
+      y: ne.y
     }
 
     return { position, bounds }
