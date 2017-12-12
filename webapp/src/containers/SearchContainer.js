@@ -30,6 +30,7 @@ class SearchContainer extends React.Component {
     return parcelUtils
       .generateMatrix(minX, minY, maxX, maxY)
       .map(coordinate => ({ name: coordinate }))
+      .sort((a, b) => a.name.length - b.name.length)
   }
 
   render() {
