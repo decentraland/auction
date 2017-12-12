@@ -17,3 +17,7 @@
 .CollapsedSidebar .SidebarDashboard li {
   margin-bottom: 30px;
 }
+
+.CollapsedSidebar .HelpButton {
+  margin-top: 60px;
+}

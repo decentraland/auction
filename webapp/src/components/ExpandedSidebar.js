@@ -9,6 +9,7 @@ import { stateData } from '../lib/propTypes'
 
 import RegisterEmailContainer from '../containers/RegisterEmailContainer'
 import DeRegisterEmailContainer from '../containers/DeRegisterEmailContainer'
+import HelpButtonContainer from '../containers/HelpButtonContainer'
 
 import Icon from './Icon'
 import Loading from './Loading'
@@ -33,6 +34,8 @@ export default function ExpandedSidebar(props) {
       <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
 
       <DeRegisterEmailContainer />
+
+      <HelpButtonContainer />
 
       <Footer />
     </div>
