@@ -187,10 +187,21 @@ export async function getBidGroup(req) {
  */
 app.post('/api/bidgroup', server.handleRequest(postBidGroup))
 
+async function delay(milis) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, milis)
+  })
+}
+
+let lock = false
 export async function postBidGroup(req) {
   const newBidGroup = server.extractFromReq(req, 'bidGroup')
   newBidGroup.receivedAt = new Date()
 
+  while (lock) {
+    await delay(100)
+  }
+  lock = true
   const { bidGroup, error } = await new BidService().processBidGroup(
     newBidGroup
   )
@@ -202,11 +213,12 @@ export async function postBidGroup(req) {
       Error: ${JSON.stringify(error)}
     `)
     serverError.data = error
+    lock = false
     throw serverError
   }
 
   await new BidReceiptService().sign(bidGroup)
-
+  lock = false
   return true
 }
 
