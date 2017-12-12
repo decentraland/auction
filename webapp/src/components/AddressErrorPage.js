@@ -1,6 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-
 import ErrorPage from './ErrorPage'
 
 export default function AddressErrorPage() {
@@ -18,23 +16,23 @@ export default function AddressErrorPage() {
         <p>
           Remember that you to participate in the auction
           <br />you need to have MANA staked on the&nbsp;
-          <Link to="https://terraform.decentraland.org" target="_blank">
+          <a href="https://terraform.decentraland.org" target="_blank" rel="noopener noreferrer">
             Terraform Registration
-          </Link>
+          </a>
         </p>
         <br />
         <p>
           If your think this is a mistake, please please contact us using&nbsp;
-          <Link to="https://chat.decentraland.org" target="_blank">
+          <a href="https://chat.decentraland.org" target="_blank" rel="noopener noreferrer">
             Rocket Chat
-          </Link>.
+          </a>.
         </p>
         <br />
         <p>
           Confused about what&#39;s going on? Check out the&nbsp;
-          <Link to="https://wiki.decentraland.org/" target="_blank">
+          <a href="https://wiki.decentraland.org/" target="_blank" rel="noopener noreferrer">
             wiki
-          </Link>&nbsp; for answers.
+          </a>&nbsp; for answers.
         </p>
       </div>
     </ErrorPage>

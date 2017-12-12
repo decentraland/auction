@@ -6,5 +6,6 @@ export default {
 
   error: '/error',
   walletError: '/walletError',
-  addressError: '/addressError'
+  addressError: '/addressError',
+  serverError: '/serverError'
 }

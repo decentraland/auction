@@ -23,7 +23,9 @@ function* rootSaga() {
   yield takeEvery(types.changeLocation, handleLocationChange)
 
   yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange)
+
   yield takeLatest(types.fetchParcels.request, handleParcelFetchRequest)
+  yield takeEvery(types.fetchParcels.failed, retryParcelFetch)
 
   yield takeLatest(types.connectWeb3.success, handleAddressFetchRequest)
   yield takeLatest(types.fetchManaBalance.request, handleAddressFetchRequest)
@@ -187,6 +189,15 @@ function* handleProjectsFetchRequest(action) {
 // -------------------------------------------------------------------------
 // Parcel States
 
+function* retryParcelFetch(action) {
+  if (action.retry > 3) {
+    yield put(replace(locations.serverError))
+    return
+  }
+  yield delay(2000 * action.retry)
+  yield call(handleParcelFetchRequest, action)
+}
+
 function* handleParcelFetchRequest(action) {
   try {
     const parcelStates = yield call(() => api.fetchParcelStates(action.parcels))
@@ -200,7 +211,12 @@ function* handleParcelFetchRequest(action) {
     yield put({ type: types.fetchParcels.success, parcelStates })
   } catch (error) {
     console.warn(error)
-    yield put({ type: types.fetchParcels.failed, error: error.message })
+    yield put({
+      type: types.fetchParcels.failed,
+      error: error.message,
+      parcels: action.parcels,
+      retry: (action.retry || 0) + 1
+    })
   }
 }
 
