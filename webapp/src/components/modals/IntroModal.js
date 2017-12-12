@@ -23,8 +23,11 @@ export default class IntroModal extends React.Component {
 
         <div className="modal-body">
           <p className="text">
-            From December 12 to December 20 the community is shaping the world
+            From December 15 to December 20 the community is shaping the world
             of Decentraland.
+          </p>
+          <p className="text">
+            This is a dry run of how that event will look like.
           </p>
           <p className="text">
             <b>Parcels</b>
