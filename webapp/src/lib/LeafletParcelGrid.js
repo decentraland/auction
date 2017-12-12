@@ -215,8 +215,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
         tiles.push({
           id: row + ':' + col,
           bounds: tileBounds,
-          center: tileCenter,
-          distance: tileCenter.distanceTo(mainCenter)
+          center: tileCenter
         })
       }
     }
