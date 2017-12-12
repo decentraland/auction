@@ -20,6 +20,8 @@ export const COLORS = {
   loading: '#AAAAAA'
 }
 
+const genesis = '55327350-d9f0-4cae-b0f3-8745a0431099'
+const roads = 'f77140f9-c7b4-4787-89c9-9fa0e219b079'
 const minHSV = tinycolor2(COLORS.littleValue).toHsv()
 const maxHSV = tinycolor2(COLORS.bigValue).toHsv()
 
@@ -29,7 +31,9 @@ export const CLASS_NAMES = {
   lost: 'lost',
   outbid: 'outbid',
   taken: 'taken',
-  reserved: 'reserved',
+  genesis: 'genesis',
+  district: 'district',
+  roads: 'roads',
   default: 'default',
   pending: 'pending',
   loading: 'loading'
@@ -46,7 +50,7 @@ export function isPending(parcel, pendingConfirmationBids) {
 
 export function getClassName(parcel, addressState, pendingConfirmationBids) {
   if (!parcel || parcel.error) return CLASS_NAMES.loading
-  if (isReserved(parcel)) return CLASS_NAMES.reserved
+  if (reservation(parcel)) return reservation(parcel)
   if (isPending(parcel, pendingConfirmationBids)) return CLASS_NAMES.pending
   if (!parcel.amount) return CLASS_NAMES.default
 
@@ -76,6 +80,12 @@ export function getBidStatus(parcel, addressState) {
     case CLASS_NAMES.loading:
       status = ''
       break
+    case CLASS_NAMES.genesis:
+      status = 'Plaza'
+      break
+    case CLASS_NAMES.roads:
+      status = 'Road'
+      break
     default:
       status = capitalize(className)
   }
@@ -91,8 +101,14 @@ export function getColorByAmount(amount, maxAmount) {
   return tinycolor2({ h, s, v: 1, a: 1 }).toHexString()
 }
 
-export function isReserved(parcel) {
-  return !!parcel.projectId
+export function reservation(parcel) {
+  return !!parcel.projectId &&
+    (parcel.projectId === genesis
+     ? CLASS_NAMES.genesis
+     : parcel.projectId === roads
+       ? CLASS_NAMES.roads
+       : CLASS_NAMES.district
+    )
 }
 
 export function hasEnded(parcel) {
@@ -146,7 +162,10 @@ export function generateMatrix(minX, minY, maxX, maxY) {
 
 export function projectForParcel(parcel, projects) {
   for (const project of projects.data) {
-    if (project.id === parcel.projectId) {
+    if (project.id === parcel.projectId
+      && project.name !== 'Roads'
+      && project.name !== 'Genesis Plaza')
+    {
       return project
     }
   }

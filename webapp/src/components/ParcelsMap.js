@@ -246,7 +246,7 @@ export default class ParcelsMap extends React.Component {
     const unBiddable =
       !parcel ||
       parcel.error ||
-      parcelUtils.isReserved(parcel) ||
+      parcelUtils.reservation(parcel) ||
       parcelUtils.hasEnded(parcel)
 
     if (unBiddable) return
