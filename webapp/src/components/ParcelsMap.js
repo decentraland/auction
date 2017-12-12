@@ -64,32 +64,44 @@ export default class ParcelsMap extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const shouldUpdateCenter =
-      !this.panInProgress &&
-      (this.props.x !== nextProps.x || this.props.y !== nextProps.y)
-
-    const shouldRedraw =
-      (this.map && !nextProps.getParcelStates().loading) ||
-      nextProps.getPendingConfirmationBids().length !==
-        this.props.getPendingConfirmationBids().length
-
-    const shouldDebounce = this.props.tileSize !== nextProps.tileSize
-
-    if (shouldUpdateCenter) {
+    if (this.shouldUpdateCenter(nextProps)) {
       const newCenter = this.getCenter(nextProps.x, nextProps.y)
       this.setView(newCenter)
     }
 
-    if (shouldRedraw) {
+    if (this.shouldRedraw(nextProps)) {
       this.debouncedRedrawMap()
     }
 
-    if (shouldDebounce) {
+    if (this.shouldDebounce(nextProps)) {
       this.debounceMapMethodsByTileSize(nextProps.tileSize)
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    return this.props.tileSize !== nextProps.tileSize
+  }
+
+  shouldUpdateCenter(nextProps) {
+    return (
+      !this.panInProgress &&
+      (this.props.x !== nextProps.x || this.props.y !== nextProps.y)
+    )
+  }
+
+  shouldRedraw(nextProps) {
+    const nextParcelStates = nextProps.getParcelStates()
+    const nextPendingConfirmationBids = nextProps.getParcelStates()
+
+    const pendingConfirmationBids = this.props.getPendingConfirmationBids()
+
+    return (
+      (this.map && !nextParcelStates.loading) ||
+      pendingConfirmationBids.length !== nextPendingConfirmationBids.length
+    )
+  }
+
+  shouldDebounce(nextProps) {
     return this.props.tileSize !== nextProps.tileSize
   }
 
@@ -169,7 +181,10 @@ export default class ParcelsMap extends React.Component {
   }
 
   onMoveEnd = () => {
-    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+    const { bounds, position } = this.getCurrentPositionAndBounds()
+
+    this.parcelGrid.setCenter(position)
+    this.props.onMoveEnd({ bounds, position })
   }
 
   getCurrentPositionAndBounds() {
