@@ -19,7 +19,8 @@ export default class PendingConfirmationBidsTable extends React.Component {
     pendingConfirmationBids: stateData(PropTypes.array).isRequired,
     onConfirmBids: PropTypes.func.isRequired,
     onEditBid: PropTypes.func.isRequired,
-    onDeleteBid: PropTypes.func.isRequired
+    onDeleteBid: PropTypes.func.isRequired,
+    onClearAll: PropTypes.func.isRequired
   }
 
   getTotalMana() {
@@ -94,7 +95,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
 
   render() {
     const { pendingConfirmationBids, contentRef } = this.props
-    const { onConfirmBids, onEditBid, onDeleteBid } = this.props
+    const { onConfirmBids, onEditBid, onDeleteBid, onClearAll } = this.props
 
     if (pendingConfirmationBids.data.length === 0) {
       return null
@@ -102,9 +103,15 @@ export default class PendingConfirmationBidsTable extends React.Component {
 
     return (
       <div className="PendingConfirmationBidsTable">
-        <h3>
-          {`Pending Confirmation (${pendingConfirmationBids.data.length})`}
-        </h3>
+        <div className="header">
+          <h3>
+            {`Pending Confirmation (${pendingConfirmationBids.data.length})`}
+          </h3>
+          <div className="clear" onClick={onClearAll}>
+            <span className="deleteAll">Clear all</span>
+            <span className="cross">✕</span>
+          </div>
+        </div>
 
         {pendingConfirmationBids.error && (
           <div className="text-danger">{this.getErrorMessage()}</div>

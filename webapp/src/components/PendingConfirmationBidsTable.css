@@ -4,6 +4,26 @@
   background-color: #FFF;
   z-index: 600;
   position: relative;
+  border-radius: 6px;
+  margin-top: 20px;
+  background-color: #FCFCFC;
+}
+
+.PendingConfirmationBidsTable .clear {
+  float: right;
+  margin-right: relative;
+  top: -17px;
+  right: 2px;
+  padding-right: 10px;
+  position: relative;
+  cursor: pointer;
+  text-transform: uppercase;
+  color: #7B7B7B;
+}
+
+.PendingConfirmationBidsTable .clear .cross {
+  position: relative;
+  margin-left: 5px;
 }
 
 .PendingConfirmationBidsTable h3 {
@@ -12,6 +32,7 @@
   font-size: 16px;
   font-weight: 600;
   color: #000000;
+  width: 80%;
 }
 
 .PendingConfirmationBidsTable .text-danger {
@@ -19,6 +40,7 @@
 }
 
 .PendingConfirmationBidsTable .table {
+  background-color: white;
 }
 
 .PendingConfirmationBidsTable .table-row {
@@ -49,6 +71,7 @@
 .PendingConfirmationBidsTable .confirm-bids {
   background-color: #02B45D;
   color: #FFF;
+  border-radius: 0px 0px 6px 6px;
 }
 
 .PendingConfirmationBidsTable .table .col-land        { width: 9%; }
