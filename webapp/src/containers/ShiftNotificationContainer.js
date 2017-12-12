@@ -42,13 +42,15 @@ class ShiftNotificationContainer extends React.Component {
   }
 
   render() {
-    return this.props.shiftneverPressed && <ShiftNotification />
+    return (this.props.shiftneverPressed || this.props.isShiftUp)
+      && <ShiftNotification shiftUp={this.props.isShiftUp} />
   }
 }
 
 export default connect(
   state => ({
-    shiftneverPressed: selectors.getShift(state).never
+    shiftneverPressed: selectors.getShift(state).never,
+    isShiftUp: selectors.getShift(state).pressed
   }),
   {
     shiftDown: actions.shiftDown,
