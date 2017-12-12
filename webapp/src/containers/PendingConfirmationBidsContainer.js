@@ -51,7 +51,11 @@ class PendingConfirmationBidsContainer extends React.Component {
     this.props.openModal('BidParcelModal', parcel)
   }
 
-  clearAllBids = () => this.props.clearAllBids()
+  clearAllBids = () => {
+    if (confirm('Are you sure you want to clear all pending bids?')) {
+      this.props.clearAllBids()
+    }
+  }
 
   deleteBid = bid => this.props.deleteUnconfirmedBid(bid)
 
