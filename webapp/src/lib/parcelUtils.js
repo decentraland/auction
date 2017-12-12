@@ -122,12 +122,18 @@ var savedSats = {}
 function memorizedHue(amount, maxAmount) {
   if (maxAmount === savedMaxAmount) {
     if (!savedHues[amount]) {
-      savedHues[amount] = calculateColorValue(amount, maxAmount, minHSV.h, maxHSV.h)
+      savedHues[amount] = calculateColorValue(
+        amount,
+        maxAmount,
+        minHSV.h,
+        maxHSV.h
+      )
     }
     return savedHues[amount]
   } else {
     savedMaxAmount = maxAmount
     savedHues = {}
+    savedSats = {}
     return memorizedHue(amount, maxAmount)
   }
 }
@@ -135,11 +141,17 @@ function memorizedHue(amount, maxAmount) {
 function memorizedSat(amount, maxAmount) {
   if (maxAmount === savedMaxAmount) {
     if (!savedSats[amount]) {
-      savedSats[amount] = calculateColorValue(amount, maxAmount, minHSV.s, maxHSV.s)
+      savedSats[amount] = calculateColorValue(
+        amount,
+        maxAmount,
+        minHSV.s,
+        maxHSV.s
+      )
     }
     return savedSats[amount]
   } else {
     savedMaxAmount = maxAmount
+    savedHues = {}
     savedSats = {}
     return memorizedSat(amount, maxAmount)
   }
