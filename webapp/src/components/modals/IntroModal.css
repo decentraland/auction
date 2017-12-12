@@ -16,6 +16,8 @@
 }
 
 .IntroModal h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
   font-size: 24px;
 }
 
@@ -36,7 +38,7 @@
 }
 
 .IntroModal .modal-body {
-  padding: 20px 24px;
+  padding: 50px 30px;
 }
 
 .IntroModal .modal-body p {
