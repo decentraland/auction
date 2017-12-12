@@ -4,7 +4,7 @@ import bodyParser from 'body-parser'
 import path from 'path'
 import git from 'git-rev-sync'
 
-import { server, env } from 'decentraland-commons'
+import { server, env, utils } from 'decentraland-commons'
 import db from './lib/db'
 import coordinatesUtils from './lib/coordinates'
 
@@ -187,21 +187,16 @@ export async function getBidGroup(req) {
  */
 app.post('/api/bidgroup', server.handleRequest(postBidGroup))
 
-async function delay(milis) {
-  return new Promise((resolve, reject) => {
-    setTimeout(resolve, milis)
-  })
-}
-
 let lock = false
 export async function postBidGroup(req) {
   const newBidGroup = server.extractFromReq(req, 'bidGroup')
   newBidGroup.receivedAt = new Date()
 
   while (lock) {
-    await delay(100)
+    await utils.sleep(100)
   }
   lock = true
+
   const { bidGroup, error } = await new BidService().processBidGroup(
     newBidGroup
   )
@@ -219,6 +214,7 @@ export async function postBidGroup(req) {
 
   await new BidReceiptService().sign(bidGroup)
   lock = false
+
   return true
 }
 
