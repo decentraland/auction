@@ -6,6 +6,7 @@ import locations from './locations'
 import HomePageContainer from './containers/HomePageContainer'
 
 import WalletErrorPage from './components/WalletErrorPage'
+import ServerError from './components/ServerError'
 import AddressErrorPage from './components/AddressErrorPage'
 
 export default function Routes() {
@@ -15,6 +16,7 @@ export default function Routes() {
       <Route exact path={locations.parcel} component={HomePageContainer} />
 
       <Route exact path={locations.walletError} component={WalletErrorPage} />
+      <Route exact path={locations.serverError} component={ServerError} />
       <Route exact path={locations.addressError} component={AddressErrorPage} />
       <Route exact path={locations.error} component={WalletErrorPage} />
     </Switch>

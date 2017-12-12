@@ -1,38 +1,32 @@
 import React from 'react'
 import ErrorPage from './ErrorPage'
 
-export default function AddressErrorPage() {
+export default function ServerError() {
   return (
     <ErrorPage>
       <h2>
-        Uh-oh.<br /> We couldn&#39;t retrieve your account information.
+        Uh-oh. <br />
+        We couldn’t retrieve information from the server.
       </h2>
       <div className="error-message">
-        <p>
-          We couldn&#39;t retrieve any account information associated with your
-          current address. Are you using the correct address?
-        </p>
+        <p>Please try again in a few minutes.</p>
         <br />
         <p>
-          Remember that you to participate in the auction
-          <br />you need to have MANA staked on the&nbsp;
-          <a
-            href="https://terraform.decentraland.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Terraform Registration
-          </a>
-        </p>
-        <br />
-        <p>
-          If your think this is a mistake, please please contact us using&nbsp;
+          If the problem persists, contact us at our&nbsp;
           <a
             href="https://chat.decentraland.org"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Rocket Chat
+            Community Chat
+          </a>
+          &nbsp; or via&nbsp;
+          <a
+            href="https://twitter.com/decentraland"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Twitter
           </a>.
         </p>
         <br />

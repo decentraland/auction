@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 
 import ErrorPage from './ErrorPage'
 
@@ -13,13 +12,21 @@ export default function WalletErrorPage() {
       <div className="error-message">
         <p>
           Please make sure your&nbsp;
-          <Link to="https://metamask.io" target="_blank">
+          <a
+            href="https://metamask.io"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Metamask
-          </Link>
+          </a>
           &nbsp; or&nbsp;
-          <Link to="https://github.com/ethereum/mist" target="_blank">
+          <a
+            href="https://github.com/ethereum/mist"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Mist
-          </Link>
+          </a>
           &nbsp;account is connected and unlocked, then refresh the page.
         </p>
         <br />
@@ -30,9 +37,13 @@ export default function WalletErrorPage() {
         <br />
         <p>
           Confused about what&#39;s going on? Check out the&nbsp;
-          <Link to="https://wiki.decentraland.org/" target="_blank">
+          <a
+            href="https://wiki.decentraland.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             wiki
-          </Link>&nbsp; for answers.
+          </a>&nbsp; for answers.
         </p>
       </div>
     </ErrorPage>
