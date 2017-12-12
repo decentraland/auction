@@ -40,7 +40,7 @@ export default class IntroModal extends React.Component {
           <p className="text">
             <b>Minimum Bids</b>
             <br />
-            Each parcel of land has a minimum bid amount 10% higher than the
+            Each parcel of land has a minimum bid amount 25% higher than the
             previous bid.
           </p>
 
@@ -48,7 +48,7 @@ export default class IntroModal extends React.Component {
             <b>Timeline</b>
             <br />
             The auction will be open for 120 hours. Any parcels with active bids
-            at that time will remain active, with a 36-hour closing period after
+            at that time will remain active, with a 30-hour closing period after
             each new bid. Once all active bids have been won, Unused MANA will
             be returned.
           </p>
