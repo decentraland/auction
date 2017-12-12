@@ -234,7 +234,6 @@ export default class ParcelsMap extends React.Component {
       fillColor = parcelUtils.getColorByAmount(parcel.amount, maxAmount)
     }
 
-
     return {
       className,
       dataset,

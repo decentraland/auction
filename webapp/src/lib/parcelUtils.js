@@ -102,13 +102,12 @@ export function getColorByAmount(amount, maxAmount) {
 }
 
 export function reservation(parcel) {
-  return !!parcel.projectId &&
+  return (
+    !!parcel.projectId &&
     (parcel.projectId === genesis
-     ? CLASS_NAMES.genesis
-     : parcel.projectId === roads
-       ? CLASS_NAMES.roads
-       : CLASS_NAMES.district
-    )
+      ? CLASS_NAMES.genesis
+      : parcel.projectId === roads ? CLASS_NAMES.roads : CLASS_NAMES.district)
+  )
 }
 
 export function hasEnded(parcel) {
@@ -159,7 +158,7 @@ function memorizedSat(amount, maxAmount) {
 
 function calculateColorValue(amount, maxAmount, minValue, maxValue) {
   const priceRate = amount - ONE_LAND_IN_MANA
-  return (priceRate * (maxValue - minValue)) / maxAmount + minValue
+  return priceRate * (maxValue - minValue) / maxAmount + minValue
 }
 
 export function generateMatrix(minX, minY, maxX, maxY) {

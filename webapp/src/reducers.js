@@ -61,13 +61,16 @@ function getParcelStates(state) {
   return state.parcelStates
 }
 
-const getMaxAmount = createSelector([getParcelStates],
-  parcelStates => parcelStates && !parcelStates.loading
-  ? Object.values(parcelStates).reduce(
-      (prev, next) => next && next.amount ? Math.max(prev, next.amount) : prev,
-      0
-    )
-  : 1000
+const getMaxAmount = createSelector(
+  [getParcelStates],
+  parcelStates =>
+    parcelStates && !parcelStates.loading
+      ? Object.values(parcelStates).reduce(
+          (prev, next) =>
+            next && next.amount ? Math.max(prev, next.amount) : prev,
+          0
+        )
+      : 1000
 )
 
 function getPendingConfirmationBids(state) {
@@ -110,7 +113,7 @@ export const selectors = {
   getEmail,
   getSidebar,
   getShift,
-  getRange,
+  getRange
 }
 
 function web3Connected(state = INITIAL_STATE.web3Connected, action) {
