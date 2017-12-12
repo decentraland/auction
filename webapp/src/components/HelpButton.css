@@ -2,12 +2,13 @@
   width: 51px;
   height: 51px;
   padding-top: 7px;
-  font-size: 28px;
-  right: 20px;
+  font-size: 24px;
+  left: 20px;
   bottom: 20px;
   position: absolute;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
   background-color: #FFF;
+  border: 1px solid #30D7A9;
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
