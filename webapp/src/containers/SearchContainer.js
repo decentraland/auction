@@ -17,7 +17,7 @@ class SearchContainer extends React.Component {
 
   constructor(props) {
     super(props)
-    this.coorinates = this.getCoordinates()
+    this.coordinates = this.getCoordinates()
   }
 
   componentWillMount() {
