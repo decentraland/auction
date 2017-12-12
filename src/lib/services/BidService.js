@@ -32,9 +32,9 @@ export default class BidService {
     this.maximumX = getBn(1e4)
     this.maximumY = getBn(1e4)
 
-    this.increment = getBn(1.1)
+    this.increment = getBn(1.25)
 
-    this.gracePeriod = 36 * HOURS_IN_MILLIS
+    this.gracePeriod = 30 * HOURS_IN_MILLIS
   }
 
   async processBidGroup(bidGroupData) {
