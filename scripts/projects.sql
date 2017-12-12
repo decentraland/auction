@@ -77,14 +77,6 @@ ff5159ad-358c-42bb-ae1c-db211bf77227	The Battleground	An Environment for PvP, RP
 ea2c3a3e-bbd6-49d9-814c-3b64b37b057a	SciArt Lab	Research and Development Lab for the open exploration of Science, Art and Technology.	https://github.com/decentraland/districts/issues/78	t	\N	\N	f	2017-12-10 17:57:12.29	2017-12-10 17:57:12.29
 \.
 
-
---
--- Name: projects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('projects_id_seq', 1, false);
-
-
 --
 -- PostgreSQL database dump complete
 --

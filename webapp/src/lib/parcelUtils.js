@@ -162,10 +162,7 @@ export function generateMatrix(minX, minY, maxX, maxY) {
 
 export function projectForParcel(parcel, projects) {
   for (const project of projects.data) {
-    if (project.id === parcel.projectId
-      && project.name !== 'Roads'
-      && project.name !== 'Genesis Plaza')
-    {
+    if (project.id === parcel.projectId && project.name !== 'Roads') {
       return project
     }
   }
