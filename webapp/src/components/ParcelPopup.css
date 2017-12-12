@@ -1,5 +1,6 @@
 .leaflet-popup {
   z-index: 800;
+  user-select: none;
 }
 
 .leaflet-popup a.leaflet-popup-close-button {
@@ -26,6 +27,7 @@
 .parcel-popup {
   font-size: 14px;
   color: #FFF;
+  user-select: none;
 }
 
 .parcel-popup .header {
