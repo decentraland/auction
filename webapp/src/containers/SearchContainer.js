@@ -15,6 +15,11 @@ class SearchContainer extends React.Component {
     projects: PropTypes.array
   }
 
+  constructor(props) {
+    super(props)
+    this.coorinates = this.getCoordinates()
+  }
+
   componentWillMount() {
     this.props.fetchProjects()
   }
@@ -30,6 +35,7 @@ class SearchContainer extends React.Component {
     return parcelUtils
       .generateMatrix(minX, minY, maxX, maxY)
       .map(coordinate => ({ name: coordinate }))
+      .sort((a, b) => a.name.length - b.name.length)
   }
 
   render() {
@@ -37,7 +43,7 @@ class SearchContainer extends React.Component {
 
     return (
       <Search
-        coordinates={this.getCoordinates()}
+        coordinates={this.coordinates}
         projects={projects}
         onSelect={this.onSelect}
       />

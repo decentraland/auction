@@ -32,6 +32,10 @@
   padding-left: 9px;
 }
 
+.ExpandedSidebar .SidebarDashboard .balance {
+  display: none;
+}
+
 .ExpandedSidebar .SidebarDashboard .dashboard-value {
   margin-top: 18px;
 }

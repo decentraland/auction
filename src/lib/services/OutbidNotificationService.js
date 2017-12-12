@@ -118,6 +118,7 @@ class OutbidNotificationService {
 
     let text =
       'This is the summary of parcel outbids from the last notification:\n\n'
+
     for (const parcel of parcelStates) {
       text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.\n`
       text += `Visit ${this.toParcelLink(parcel)} to place a new bid!\n\n`
@@ -169,7 +170,8 @@ class OutbidNotificationService {
 
     // send mail
     const subject = 'Summary of the Decentraland auction'
-    const summary = this.buildSummary(email, parcelStates)
+    const summary = await this.buildSummary(email, parcelStates)
+
     await this.Job.perform(
       {
         type: 'outbid_notification_multi',

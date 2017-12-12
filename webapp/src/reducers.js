@@ -248,6 +248,12 @@ function sidebar(state = INITIAL_STATE.sidebar, action) {
       return {
         open: true
       }
+    case types.deleteUnconfirmedBid:
+    case types.appendUnconfirmedBid:
+    case types.parcelRangeChanged:
+      return {
+        open: false
+      }
     case types.sidebar.close:
       return INITIAL_STATE.sidebar
     default:

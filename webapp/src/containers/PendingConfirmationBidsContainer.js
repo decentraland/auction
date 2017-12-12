@@ -47,16 +47,8 @@ class PendingConfirmationBidsContainer extends React.Component {
   }
 
   clearAllBids = () => this.props.clearAllBids()
-
-  deleteBid = bid => {
-    const isConfirmed = window.confirm(
-      `Are you sure you want to delete your bid for ${bid.x},${bid.y} ?`
-    )
-
-    if (isConfirmed) {
-      this.props.deleteUnconfirmedBid(bid)
-    }
-  }
+  
+  deleteBid = bid => this.props.deleteUnconfirmedBid(bid)
 
   componentDidUpdate(prevProps, prevState) {
     const { pendingConfirmationBids } = this.props

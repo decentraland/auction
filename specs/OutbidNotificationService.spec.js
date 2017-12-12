@@ -109,7 +109,9 @@ describe('OutbidNotificationService', function() {
 
   afterEach(() =>
     Promise.all(
-      ['jobs', 'outbid_notifications', 'parcel_states'].map(db.truncate.bind(db))
+      ['jobs', 'outbid_notifications', 'parcel_states'].map(
+        db.truncate.bind(db)
+      )
     )
   )
 })
