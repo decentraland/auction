@@ -1,5 +1,6 @@
 .IntroModal {
   color: #3E396B;
+  user-select: text;
 }
 
 .IntroModal .modal-header {
