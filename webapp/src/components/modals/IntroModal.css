@@ -98,16 +98,16 @@
   position: absolute;
 }
 
-.land-color-keys .active-top-half {
+.little-value {
   top: 0;
   left: 0;
-  border-top: 32px solid #FFF189;
+  border-top: 32px solid #CCC; /* color on index.css */
   border-right: 32px solid transparent;
 }
-.land-color-keys .active-bottom-half {
+.big-value {
   bottom: 0;
   right: 0;
-  border-bottom: 32px solid #F04ACC;
+  border-bottom: 32px solid #CCC; /* color on index.css */
   border-left: 32px solid transparent;
 }
 

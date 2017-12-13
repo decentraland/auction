@@ -39,10 +39,13 @@ a:hover {
 .winning  { background-color: #90B9E9; color: #90B9E9; fill: #90B9E9; }
 .lost     { background-color: #4F225F; color: #4F225F; fill: #4F225F; }
 .outbid   { background-color: #F04ACC; color: #F04ACC; fill: #F04ACC; }
-.taken    { background-color: #4F3A4B; color: #4F3A4B; fill: #4F3A4B; }
+.taken    { background-color: #39516B; color: #39516B; fill: #39516B; }
 .genesis  { background-color: #FFFFFF; color: #FFFFFF; fill: #FFFFFF; }
 .roads    { background-color: #5C5C5C; color: #5C5C5C; fill: #5C5C5C; }
-.district { background-color: #AA8CDD; color: #AA8CDD; fill: #AA8CDD; }
-.pending  { background-color: #02B45D; color: #02B45D; fill: #02B45D; }
+.district { background-color: #B18AE0; color: #B18AE0; fill: #B18AE0; }
+.pending  { background-color: #64D1B3; color: #64D1B3; fill: #64D1B3; }
 .default  { background-color: #EAEAEA; color: #EAEAEA; fill: #EAEAEA; }
 .loading  { background-color: #AAAAAA; color: #AAAAAA; fill: #AAAAAA; }
+
+.little-value { border-top-color: #FFF189; }
+.big-value    { border-bottom-color: #EF303B; }
