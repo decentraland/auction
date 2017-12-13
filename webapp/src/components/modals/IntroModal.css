@@ -98,28 +98,18 @@
   position: absolute;
 }
 
-.land-color-keys .active-top-half {
+.little-value {
   top: 0;
   left: 0;
-  border-top: 32px solid #FFF189;
+  border-top: 32px solid #CCC; /* color on index.css */
   border-right: 32px solid transparent;
 }
-.land-color-keys .active-bottom-half {
+.big-value {
   bottom: 0;
   right: 0;
-  border-bottom: 32px solid #F04ACC;
+  border-bottom: 32px solid #CCC; /* color on index.css */
   border-left: 32px solid transparent;
 }
-
-.land-color-keys .won      { background-color: #4A90E2; }
-.land-color-keys .winning  { background-color: #97b9e5; }
-.land-color-keys .lost     { background-color: #3C225F; }
-.land-color-keys .outbid   { background-color: #F04ACC; }
-.land-color-keys .taken    { background-color: #4F3A4B; }
-.land-color-keys .reserved { background-color: #FFFFFF; }
-.land-color-keys .pending  { background-color: #02B45D; }
-.land-color-keys .default  { background-color: #EAEAEA; }
-.land-color-keys .loading  { background-color: #AAAAAA; }
 
 .IntroModal .get-started {
   margin-top: 50px;

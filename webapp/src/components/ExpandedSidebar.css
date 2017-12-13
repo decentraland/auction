@@ -119,14 +119,10 @@
 .OngoingAuctions .table .col-time-left { width: 20%; }
 .OngoingAuctions .table .col-address   { width: 25%; }
 
-.OngoingAuctions .table .won     { color: #4A90E2; }
-.OngoingAuctions .table .winning { color: #97b9e5; }
-.OngoingAuctions .table .lost    { color: #3C225F; }
-.OngoingAuctions .table .outbid  { color: #F04ACC; }
-
 .OngoingAuctions .col-status {
   font-size: 14px;
   font-weight: 700;
+  background-color: transparent;
 }
 
 @media (max-width: 620px) {

@@ -12,7 +12,6 @@ import LeafletParcelGrid from '../lib/LeafletParcelGrid'
 import ParcelPopup from './ParcelPopup'
 
 import './ParcelsMap.css'
-import './ParcelsColors.css'
 
 const MAP_ID = 'map'
 
@@ -254,7 +253,7 @@ export default class ParcelsMap extends React.Component {
     const unBiddable =
       !parcel ||
       parcel.error ||
-      parcelUtils.reservation(parcel) ||
+      parcelUtils.isReserved(parcel) ||
       parcelUtils.hasEnded(parcel)
 
     if (unBiddable) return

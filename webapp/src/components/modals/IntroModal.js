@@ -72,8 +72,8 @@ export default class IntroModal extends React.Component {
               <div className="lands">
                 <div className="land">
                   <div className="key">
-                    <div className="key active active-top-half" />
-                    <div className="key active active-bottom-half" />
+                    <div className="key active little-value" />
+                    <div className="key active big-value" />
                   </div>
                   <div className="text">ACTIVE</div>
                 </div>
