@@ -164,7 +164,7 @@ const importAddressStates = async () => {
     if (await AddressState.findByAddress(address)) {
       log.info(`[${address}] Updating balance(${balance})`)
       await AddressState.update({ balance }, { address })
-    } else {
+    } else if (balance > 0) {
       log.info(`[${address}] Inserting balance(${balance})`)
       await AddressState.insert({ address, balance })
     }
