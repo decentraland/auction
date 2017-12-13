@@ -224,8 +224,6 @@ function pendingConfirmationBids(
       return {
         data: state.data.filter(bid => !isActionBid(bid))
       }
-    case types.clearAllBids:
-      return INITIAL_STATE.pendingConfirmationBids
     case types.confirmBids.success:
       return INITIAL_STATE.pendingConfirmationBids
     case types.confirmBids.failed:
