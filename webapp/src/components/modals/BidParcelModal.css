@@ -6,6 +6,12 @@
 	background-color: #FFF;
 }
 
+.BidParcelModal .modal {
+	position: fixed;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
 .BidParcelModal .modal-dialog {
 	width: 320px;
 }
