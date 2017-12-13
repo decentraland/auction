@@ -154,7 +154,9 @@ const buildBuyTxData = (address, parcels) => {
     .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0))
 
   log.info(
-    `(proc) [${address}] ${parcels.length} bids found = total cost: ${totalCost}`
+    `(proc) [${address}] ${
+      parcels.length
+    } bids found = total cost: ${totalCost}`
   )
   log.info(`(proc) [${address}] X- > ${JSON.stringify(X)}`)
   log.info(`(proc) [${address}] Y -> ${JSON.stringify(Y)}`)
@@ -176,7 +178,9 @@ const findParcelsToBuy = async (address, batchSize) => {
       .splice(0, batchSize)
 
     log.info(
-      `(proc) [${address}] Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
+      `(proc) [${address}] Progress => ${doneParcels.length} out of ${
+        parcels.length
+      } = selected ${sendParcels.length}`
     )
     return sendParcels
   } catch (err) {

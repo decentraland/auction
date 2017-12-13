@@ -53,7 +53,8 @@ export async function writeProjects(output, mapInfo, districtsInfo) {
   })
 }
 
-const sum = (items, selector) => items.reduce((sum, item) => sum + selector(item), 0)
+const sum = (items, selector) =>
+  items.reduce((sum, item) => sum + selector(item), 0)
 
 export async function writeLookup(output, mapInfo, map, district) {
   output.lookup = {}
@@ -62,7 +63,9 @@ export async function writeLookup(output, mapInfo, map, district) {
     const split = coords.map(coords => coords.split(','))
     const sumX = sum(split, item => parseInt(item[0]))
     const sumY = sum(split, item => parseInt(item[1]))
-    output.lookup[name] = `${Math.floor(sumX / coords.length)},${Math.floor(sumY / coords.length)}`
+    output.lookup[name] = `${Math.floor(sumX / coords.length)},${Math.floor(
+      sumY / coords.length
+    )}`
   })
 }
 
@@ -70,14 +73,14 @@ export async function getAll(url) {
   const doc = new GoogleSpreadsheet(url)
   const getInfo = promisify(doc.getInfo.bind(doc))
   const info = await getInfo()
-  const readRows = async (sheet, ...args) => await (promisify(sheet.getRows.bind(sheet)))(...args)
+  const readRows = async (sheet, ...args) =>
+    await promisify(sheet.getRows.bind(sheet))(...args)
   const generalInfo = await readRows(info.worksheets[0])
   const mapInfo = await readRows(info.worksheets[1])
   const districtInfo = await readRows(info.worksheets[2])
 
   return { generalInfo, mapInfo, districtInfo }
 }
-
 
 // const { getAll, defaultUrl, writeSize, writeProjects, writeLookup } = require('./loadSheet'); var e = {}; getAll(defaultUrl).then(f => e = f)
 
@@ -99,4 +102,3 @@ if (!module.parent) {
     .then(() => console.log('End.'))
     .catch(err => console.log(err.stack))
 }
-
