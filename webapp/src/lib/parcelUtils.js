@@ -87,7 +87,7 @@ export function getColorByAmount(amount, maxAmount) {
   const h = memorizedHue(amount, maxAmount)
   const s = memorizedSat(amount, maxAmount)
 
-  return tinycolor2({ h, s, v: 1, a: 1 }).toHexString()
+  return tinycolor2({ h: -h, s, v: 1, a: 1 }).toHexString()
 }
 
 export function isReserved(parcel) {
@@ -114,7 +114,7 @@ function memorizedHue(amount, maxAmount) {
       savedHues[amount] = calculateColorValue(
         amount,
         maxAmount,
-        minHSV.h,
+        -minHSV.h,
         maxHSV.h
       )
     }
@@ -148,7 +148,7 @@ function memorizedSat(amount, maxAmount) {
 
 function calculateColorValue(amount, maxAmount, minValue, maxValue) {
   const priceRate = amount - ONE_LAND_IN_MANA
-  return priceRate * (maxValue - minValue) / maxAmount + minValue
+  return priceRate * (maxValue - minValue) / (maxAmount + minValue) + minValue
 }
 
 export function generateMatrix(minX, minY, maxX, maxY) {

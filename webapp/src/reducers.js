@@ -70,7 +70,7 @@ const getMaxAmount = createSelector(
             next && next.amount ? Math.max(prev, next.amount) : prev,
           0
         )
-      : 1000
+      : 50000
 )
 
 function getPendingConfirmationBids(state) {
