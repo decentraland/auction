@@ -17,6 +17,14 @@ class ModalContainer extends React.Component {
     onClose: PropTypes.func
   }
 
+  onKeyDown = e => {
+    // If ESC key pressed
+    if (e.keyCode === 27) {
+      const { closeModal } = this.props
+      closeModal()
+    }
+  }
+
   render() {
     const { modal, closeModal } = this.props
     const { open, name, data } = modal
@@ -34,6 +42,7 @@ class ModalContainer extends React.Component {
       <ModalComponent
         visible={open}
         data={data}
+        onKeyDown={e => this.onKeyDown(e)}
         onClose={preventDefault(closeModal)}
       />
     )
