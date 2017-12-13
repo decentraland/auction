@@ -3,6 +3,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import path from 'path'
 import git from 'git-rev-sync'
+import ethUtils from 'ethereumjs-util'
 
 import { server, env, utils } from 'decentraland-commons'
 import db from './lib/db'
@@ -191,9 +192,58 @@ export async function getBidGroup(req) {
  */
 app.post('/api/bidgroup', server.handleRequest(postBidGroup))
 
+const bidMatch = '\\((-?\\d+),(-?\\d+)\\) for (\\d+) MANA'
+
+function extractBids(data, address) {
+  const regexp = new RegExp(bidMatch, 'gi')
+  const result = []
+  let match
+  while (match = regexp.exec(data)) {
+    result.push({
+      x: parseInt(match[1], 10),
+      y: parseInt(match[2], 10),
+      amount: parseInt(match[3], 10),
+      address
+    })
+  }
+  return result
+}
+
+export async function verifyBidGroup(data) {
+  const message = new Buffer(data.message.substr(2), 'hex')
+  const signature = ethUtils.fromRpcSig(
+    new Buffer(data.signature.substr(2), 'hex')
+  )
+  const pubkey = ethUtils.ecrecover(
+    ethUtils.hashPersonalMessage(message),
+    signature.v,
+    signature.r,
+    signature.s
+  )
+  const address = '0x' + ethUtils.pubToAddress(pubkey).toString('hex')
+
+  return {
+    bids: extractBids(message.toString(), address),
+    address: address,
+    message: data.message,
+    signature: data.signature,
+    nonce: data.nonce
+  }
+}
+
 let lock = false
 export async function postBidGroup(req) {
-  const newBidGroup = server.extractFromReq(req, 'bidGroup')
+  const data = server.extractFromReq(req, 'bidGroup')
+  let newBidGroup
+  try {
+    newBidGroup = await verifyBidGroup(data)
+  } catch (error) {
+    console.log(error.stack)
+    throw new Error(`Unable to verify signature`)
+  }
+  if (!newBidGroup.bids) {
+    throw new Error(`Unable to extract data from request`)
+  }
   newBidGroup.receivedAt = new Date()
 
   while (lock) {
