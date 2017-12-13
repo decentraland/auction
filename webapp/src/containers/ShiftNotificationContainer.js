@@ -11,9 +11,10 @@ const SHIFT = 'Shift'
 
 class ShiftNotificationContainer extends React.Component {
   static propTypes = {
-    shiftneverPressed: PropTypes.bool,
-    shiftDown: PropTypes.func,
-    shiftUp: PropTypes.func
+    hasPlacedBids: PropTypes.bool,
+    isPressed: PropTypes.bool,
+    shiftDown: PropTypes.function,
+    shiftUp: PropTypes.function
   }
 
   constructor(props) {
@@ -29,28 +30,34 @@ class ShiftNotificationContainer extends React.Component {
         this.props.shiftUp()
       }
     }
+    this.clear = () => this.props.shiftUp()
   }
 
   componentWillMount() {
     window.addEventListener('keydown', this.listenDown)
     window.addEventListener('keyup', this.listenUp)
+    window.addEventListener('focus', this.clear)
   }
 
   componentWillUnmount() {
     window.removeEventListener('keyup', this.listenUp)
     window.removeEventListener('keydown', this.listenDown)
+    window.removeEventListener('focus', this.clear)
   }
 
   render() {
-    return (this.props.shiftneverPressed || this.props.isShiftUp)
-      && <ShiftNotification shiftUp={this.props.isShiftUp} />
+    return this.props.hasPlacedBids && this.props.isPressed ? (
+      <ShiftNotification />
+    ) : (
+      <span />
+    )
   }
 }
 
 export default connect(
   state => ({
-    shiftneverPressed: selectors.getShift(state).never,
-    isShiftUp: selectors.getShift(state).pressed
+    hasPlacedBids: selectors.hasPlacedBids(state),
+    isPressed: selectors.isShiftPressed(state)
   }),
   {
     shiftDown: actions.shiftDown,

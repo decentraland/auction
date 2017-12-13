@@ -80,9 +80,9 @@ class ParcelsMapContainer extends React.Component {
   }
 
   onParcelBid = parcel => {
-    const { shiftPressed, openModal, fastBid } = this.props
+    const { isShiftPressed, openModal, fastBid } = this.props
 
-    if (shiftPressed) {
+    if (isShiftPressed) {
       fastBid(parcel)
     } else {
       openModal('BidParcelModal', parcel)
@@ -168,7 +168,7 @@ export default withRouter(
       pendingConfirmationBids: selectors.getPendingConfirmationBids(state),
       projects: selectors.getProjects(state),
       requiredDataReady: ownProps.requiredDataReady,
-      shiftPressed: selectors.getShift(state).pressed,
+      isShiftPressed: selectors.isShiftPressed(state),
       center: ownProps.match.params // from withRouter
     }),
     { parcelRangeChange, openModal, changeLocation, fastBid }
