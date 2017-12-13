@@ -17,7 +17,9 @@ export default class IntroModal extends React.Component {
     return (
       <Modal className="IntroModal modal-lg" onClose={onClose} {...props}>
         <div className="banner">
-          <h2><Icon name="decentraland" /> Welcome to the Terraform Auction Beta</h2>
+          <h2>
+            <Icon name="decentraland" /> Welcome to the Terraform Auction Beta
+          </h2>
         </div>
 
         <div className="modal-body">
@@ -60,7 +62,15 @@ export default class IntroModal extends React.Component {
             </p>
             <p>
               For testing purposes, please report bugs and errors you encounter
-              in the <a href="https://chat.decentraland.org/channels/test/auction" target="_blank" rel="noopener noreferrer">#test_auction</a> channel in RocketChat.
+              in the{' '}
+              <a
+                href="https://chat.decentraland.org/channels/test/auction"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                #test_auction
+              </a>{' '}
+              channel in RocketChat.
             </p>
           </div>
 

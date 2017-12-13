@@ -43,7 +43,7 @@
 
 .BidParcelModal .text {
   font-size: 14px;
-	padding: 20px 10px 0 0;
+	padding: 20px 0 0 0;
 }
 
 .BidParcelModal .text .parcel-coords {
@@ -54,6 +54,10 @@
 .BidParcelModal .manaInput {
   margin-top: 25px;
   margin-bottom: 25px;
+}
+
+.BidParcelModal .manaInput .text {
+  min-width: 18%
 }
 
 .BidParcelModal .manaToBid {
