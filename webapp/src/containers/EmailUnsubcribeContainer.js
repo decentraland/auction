@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
@@ -13,8 +12,7 @@ class EmailUnsubcribeContainer extends React.Component {
   }
 
   render() {
-    console.log(this.props)
-    const email = 'abarmat@gmail.com'
+    const email = this.props.match.params.email
     return <EmailUnsubscribe email={email} onUnsubscribe={this.onUnsubscribe} />
   }
 }
