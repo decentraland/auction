@@ -184,11 +184,12 @@ function projects(state = INITIAL_STATE.projects, action) {
 }
 
 function parcelStates(state = INITIAL_STATE.parcelStates, action) {
+  let result
   switch (action.type) {
     case types.fetchParcels.request:
       return { ...state, loading: true, error: null }
     case types.fetchParcels.success:
-      const result = { ...state, loading: false, error: null }
+      result = { ...state, loading: false, error: null }
       action.parcelStates.forEach(parcel => {
         result[`${parcel.x},${parcel.y}`] = parcel
       })

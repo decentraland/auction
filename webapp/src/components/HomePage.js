@@ -8,7 +8,6 @@ import ParcelsMapContainer from '../containers/ParcelsMapContainer'
 import ShiftNotificationContainer from '../containers/ShiftNotificationContainer'
 import MinimapContainer from '../containers/MinimapContainer'
 import GoogleAnalyticsContainer from '../containers/GoogleAnalyticsContainer'
-import HelpButtonContainer from '../containers/HelpButtonContainer'
 import ModalContainer from '../containers/modals/ModalContainer'
 
 import './HomePage.css'
@@ -28,7 +27,6 @@ export default function HomePage({ requiredDataReady }) {
       )}
       <ParcelsMapContainer requiredDataReady={requiredDataReady} />
       {requiredDataReady && <MinimapContainer />}
-      {requiredDataReady && <HelpButtonContainer />}
       <ModalContainer />
       <GoogleAnalyticsContainer />
     </div>

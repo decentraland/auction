@@ -201,8 +201,6 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
 
   getCellsInBounds(bounds) {
     const offset = this.getBoundsOffset(bounds)
-    const mainCenter = bounds.getCenter()
-
     const tiles = []
 
     for (let i = 0; i <= this.rows; i++) {
@@ -215,8 +213,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
         tiles.push({
           id: row + ':' + col,
           bounds: tileBounds,
-          center: tileCenter,
-          distance: tileCenter.distanceTo(mainCenter)
+          center: tileCenter
         })
       }
     }

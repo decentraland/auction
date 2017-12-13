@@ -109,7 +109,9 @@ async function initParcels() {
   const { x, y, reserved, roads } = parcelsDescription
 
   log.info(
-    `Inserting a matrix from coords (${x.min} ${y.min}) to (${x.max} ${y.max}). This might take a while.`
+    `Inserting a matrix from coords (${x.min} ${y.min}) to (${x.max} ${
+      y.max
+    }). This might take a while.`
   )
   await parcelStateService.insertMatrix(x.min, y.min, x.max, y.max)
 
@@ -133,7 +135,9 @@ async function reserveProjects(reservation) {
 
     const reservedParcels = reservation[projectName].length
     log.info(
-      `Reserved ${reservedParcels} parcels for project ${projectName} ( ${project.id} )`
+      `Reserved ${reservedParcels} parcels for project ${projectName} ( ${
+        project.id
+      } )`
     )
   }
 }
