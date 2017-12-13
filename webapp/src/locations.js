@@ -7,5 +7,6 @@ export default {
   error: '/error',
   walletError: '/walletError',
   addressError: '/addressError',
-  serverError: '/serverError'
+  serverError: '/serverError',
+  unsubscribe: '/unsubscribe/:email/:hash'
 }

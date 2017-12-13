@@ -1,0 +1,28 @@
+.EmailUnsubscribe {
+  height: 100%;  
+}
+
+.EmailUnsubscribe .content {
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #3E396B;
+}
+
+.EmailUnsubscribe h2 {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.EmailUnsubscribe p {
+  font-size: 24px;
+  font-weight: lighter;
+  margin-bottom: 32px;
+}
+
+.EmailUnsubscribe input[type="submit"] {
+  padding: 11px 44px;
+  border-radius: 20px;
+}

@@ -5,6 +5,7 @@ import locations from './locations'
 
 import HomePageContainer from './containers/HomePageContainer'
 import IntercomContainer from './containers/IntercomContainer'
+import EmailUnsubcribeContainer from './containers/EmailUnsubcribeContainer'
 
 import WalletErrorPage from './components/WalletErrorPage'
 import ServerError from './components/ServerError'
@@ -15,6 +16,11 @@ export default function Routes() {
     <Switch key="1">
       <Route exact path={locations.root} component={HomePageContainer} />
       <Route exact path={locations.parcel} component={HomePageContainer} />
+      <Route
+        exact
+        path={locations.unsubscribe}
+        component={EmailUnsubcribeContainer}
+      />
 
       <Route exact path={locations.walletError} component={WalletErrorPage} />
       <Route exact path={locations.serverError} component={ServerError} />
