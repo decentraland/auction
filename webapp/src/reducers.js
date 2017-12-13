@@ -97,7 +97,7 @@ function getRange(state) {
   return state.range
 }
 function hasPlacedBids(state) {
-  return (
+  return !!(
     (state.ongoingAuctions.data && state.ongoingAuctions.data.length) ||
     state.pendingConfirmationBids.data.length
   )
