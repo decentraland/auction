@@ -13,8 +13,8 @@ class ShiftNotificationContainer extends React.Component {
   static propTypes = {
     hasPlacedBids: PropTypes.bool,
     isPressed: PropTypes.bool,
-    shiftDown: PropTypes.function,
-    shiftUp: PropTypes.function
+    shiftDown: PropTypes.func,
+    shiftUp: PropTypes.func
   }
 
   constructor(props) {
