@@ -1,4 +1,5 @@
 import L from 'leaflet'
+import { eth } from 'decentraland-commons'
 
 export default class LeafletMapCoordinates {
   constructor(baseZoom) {
@@ -26,11 +27,20 @@ export default class LeafletMapCoordinates {
   }
 
   latLngToCartesian({ lng, lat }) {
-    const mapSize = this.getMapSize()
-    const offset = this.getOffset()
+    const mapSize = getBn(this.getMapSize())
+    const offset = getBn(this.getOffset())
 
-    const x = Math.round(lng * offset / mapSize)
-    const y = Math.round(lat * offset / mapSize)
+    const x = getBn(lng)
+      .mul(offset)
+      .dividedBy(mapSize)
+      .round()
+      .toNumber()
+
+    const y = getBn(lat)
+      .mul(offset)
+      .dividedBy(mapSize)
+      .round()
+      .toNumber()
 
     return { x, y }
   }
@@ -52,4 +62,12 @@ export default class LeafletMapCoordinates {
     // leaflet considers the map as going from `-180` to `180
     return 180
   }
+}
+
+const bnCache = {}
+function getBn(number) {
+  if (!bnCache[number]) {
+    bnCache[number] = new eth.utils.toBigNumber(number)
+  }
+  return bnCache[number]
 }
