@@ -5,19 +5,8 @@ import { buildCoordinate, capitalize } from './util'
 import * as addressStateUtils from './addressStateUtils'
 
 export const COLORS = {
-  won: '#558FDE',
-  winning: '#96B8E7',
-  lost: '#49255D',
-  outbid: '#F04ACC',
-  taken: '#3C516A',
-  genesis: '#FFFFFF',
-  roads: '#5C5C5C',
-  district: '#AA8CDD',
-  littleValue: '#FEF191',
-  bigValue: '#EF303B',
-  default: '#EAEAEA',
-  pending: '#02B45D',
-  loading: '#AAAAAA'
+  littleValue: '#FFF189',
+  bigValue: '#EF303B'
 }
 
 const genesis = '55327350-d9f0-4cae-b0f3-8745a0431099'
@@ -50,7 +39,7 @@ export function isPending(parcel, pendingConfirmationBids) {
 
 export function getClassName(parcel, addressState, pendingConfirmationBids) {
   if (!parcel || parcel.error) return CLASS_NAMES.loading
-  if (reservation(parcel)) return reservation(parcel)
+  if (isReserved(parcel)) return getReservationClass(parcel)
   if (isPending(parcel, pendingConfirmationBids)) return CLASS_NAMES.pending
   if (!parcel.amount) return CLASS_NAMES.default
 
@@ -101,13 +90,14 @@ export function getColorByAmount(amount, maxAmount) {
   return tinycolor2({ h, s, v: 1, a: 1 }).toHexString()
 }
 
-export function reservation(parcel) {
-  return (
-    !!parcel.projectId &&
-    (parcel.projectId === genesis
-      ? CLASS_NAMES.genesis
-      : parcel.projectId === roads ? CLASS_NAMES.roads : CLASS_NAMES.district)
-  )
+export function isReserved(parcel) {
+  return !!parcel.projectId
+}
+
+export function getReservationClass(parcel) {
+  return parcel.projectId === genesis
+    ? CLASS_NAMES.genesis
+    : parcel.projectId === roads ? CLASS_NAMES.roads : CLASS_NAMES.district
 }
 
 export function hasEnded(parcel) {
