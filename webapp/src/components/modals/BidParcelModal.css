@@ -72,7 +72,7 @@
 }
 
 .BidParcelModal .confirm-bids {
-  background-color: #02B45D;
+  background-color: #30d7a9;
   color: #FFF;
 	border-radius: 0px 0px 5px 5px;
 	width: 100%;
@@ -86,6 +86,6 @@
 }
 
 .BidParcelModal .confirm-bids:focus {
-	background-color: #30d7a9;
+	background-color: #33e4b2;
 	color: #FFF;
 }
