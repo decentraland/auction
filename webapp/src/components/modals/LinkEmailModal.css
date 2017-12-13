@@ -1,0 +1,73 @@
+.LinkEmailModal {
+  color: #3E396B;
+  user-select: text;
+}
+
+.LinkEmailModal .modal-header {
+  border: none;
+  background-color: #FCFCFC;
+}
+
+.LinkEmailModal .banner {
+  padding: 20px 0 50px;
+  border-bottom: 1px solid #EDEDED;
+  background-color: #FCFCFC;
+  text-align: center;
+}
+
+.LinkEmailModal h3 {
+  margin-top: 0;
+  margin-bottom: 42px;
+  font-size: 24px;
+}
+
+.LinkEmailModal .banner h2 {
+  font-size: 28px;
+  font-family: "Source Sans Pro Light", Helvetica, sans-serif;
+}
+
+.LinkEmailModal .banner .Icon-decentraland {
+  width: 59px;
+  height: 59px;
+}
+
+.LinkEmailModal .banner .Icon-link-graph {
+  margin-top: 20px;
+}
+
+.LinkEmailModal .modal-body {
+  padding: 50px 30px;
+}
+
+.LinkEmailModal .modal-body p {
+  font-size: 16px;
+}
+
+.LinkEmailModal .email-container {
+  margin-top: 30px;
+}
+
+.LinkEmailModal .email {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #EDEDED;
+  outline: none;
+  padding: 12px;
+}
+
+.LinkEmailModal .sign-button {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.LinkEmailModal .sign-button .Button {
+  padding: 11px 44px;
+  border-radius: 20px;
+}
+
+@media (min-width: 768px) {
+  .LinkEmailModal .modal-dialog {
+    width: 720px;
+  }
+}

@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+
 import { connect } from 'react-redux'
 
 import { selectors } from '../../reducers'
@@ -14,7 +15,7 @@ class BidParcelModalContainer extends React.Component {
     pendingConfirmationBids: stateData(PropTypes.array).isRequired,
     appendUnconfirmedBid: PropTypes.func.isRequired,
     closeSidebar: PropTypes.func.isRequired
-    // Here we should extend ...ModelContainer.propTypes but webpack is broken and doesn't understand the import
+    // Here we should extend ...ModalContainer.propTypes but webpack is broken and doesn't understand the import
     // Try it yourself: import ModalContainer from "./ModalContainer"
   }
 

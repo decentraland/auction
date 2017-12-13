@@ -4,8 +4,14 @@ import PropTypes from 'prop-types'
 import './RegisterEmail.css'
 
 export default class RegisterEmail extends React.Component {
+  static propTypes = {
+    email: PropTypes.string,
+    onEmailChange: PropTypes.func,
+    onRegister: PropTypes.func
+  }
+
   render() {
-    const { email, onChange, onRegister } = this.props
+    const { email, onEmailChange, onRegister } = this.props
 
     return (
       <div className="RegisterEmail">
@@ -25,7 +31,7 @@ export default class RegisterEmail extends React.Component {
               required="required"
               placeholder="Email"
               className="email"
-              onChange={onChange}
+              onChange={onEmailChange}
             />
 
             <input className="submit" type="submit" value="" />
@@ -34,10 +40,4 @@ export default class RegisterEmail extends React.Component {
       </div>
     )
   }
-}
-
-RegisterEmail.propTypes = {
-  email: PropTypes.string,
-  onChange: PropTypes.func,
-  onRegister: PropTypes.func
 }

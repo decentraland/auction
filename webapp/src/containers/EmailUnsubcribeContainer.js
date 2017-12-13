@@ -7,7 +7,7 @@ import { deregisterEmail } from '../actions'
 import EmailUnsubscribe from '../components/EmailUnsubscribe'
 
 class EmailUnsubcribeContainer extends React.Component {
-  onUnsubscribe() {
+  onUnsubscribe = () => {
     deregisterEmail()
   }
 

@@ -21,13 +21,13 @@ class RegisterEmailContainer extends React.Component {
     }
   }
 
-  onChange = e => {
-    this.setState({ email: e.target.value })
+  onEmailChange = event => {
+    this.setState({ email: event.target.value })
   }
 
-  onRegister = e => {
+  onRegister = event => {
     this.props.registerEmail(this.state.email)
-    e.preventDefault()
+    event.preventDefault()
   }
 
   isRegistered() {
@@ -38,7 +38,7 @@ class RegisterEmailContainer extends React.Component {
     return !this.isRegistered() ? (
       <RegisterEmail
         email={this.state.email}
-        onChange={this.onChange}
+        onEmailChange={this.onEmailChange}
         onRegister={this.onRegister}
       />
     ) : null
