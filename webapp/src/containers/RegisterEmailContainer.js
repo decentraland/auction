@@ -9,7 +9,7 @@ import RegisterEmail from '../components/RegisterEmail'
 
 class RegisterEmailContainer extends React.Component {
   static propTypes = {
-    email: PropTypes.object.isRequired,
+    email: PropTypes.string.isRequired,
     registerEmail: PropTypes.func.isRequired
   }
 
@@ -31,7 +31,7 @@ class RegisterEmailContainer extends React.Component {
   }
 
   isRegistered() {
-    return !!this.props.email.data
+    return !!this.props.email
   }
 
   render() {

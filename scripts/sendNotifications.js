@@ -30,6 +30,8 @@ async function main() {
     // send all
     log.info(`Sending auction summary emails [hours=${argv.hours}]...`)
     const service = new OutbidNotificationService()
+    service.setSMTPClient()
+
     const results = await service.sendAllSummaryMails(argv.hours)
 
     const values = Object.values(results)

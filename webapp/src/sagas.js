@@ -368,17 +368,28 @@ function* handleFastBid(action) {
 // Email
 
 function* handleEmailRegister(action) {
-  const email = action.data
-  const ongoingAuctions = yield select(selectors.getOngoingAuctions)
-  const parcelStateIds = ongoingAuctions.data.map(bid => `${bid.x},${bid.y}`)
+  const { email } = action
+  const { address } = yield select(selectors.getAddressStateData)
+
+  const payload = `EMAIL: ${email}`
+  const message = eth.utils.toHex(payload)
+  const signature = yield call(() => eth.remoteSign(message, address))
+
+  const ongoingAuctions = yield select(selectors.getOngoingAuctionsData)
 
   try {
-    if (parcelStateIds.length > 0) {
-      yield call(() => api.postOutbidNotification(email, parcelStateIds))
+    if (ongoingAuctions && ongoingAuctions.length > 0) {
+      const parcelStateIds = ongoingAuctions.map(bid =>
+        buildCoordinate(bid.x, bid.y)
+      )
+      yield call(() =>
+        api.postOutbidNotification(message, signature, parcelStateIds)
+      )
     }
+
     localStorage.setItem('email', email)
 
-    yield put({ type: types.registerEmail.success, data: email })
+    yield put({ type: types.registerEmail.success, email })
   } catch (error) {
     console.warn(error)
     yield put({ type: types.registerEmail.failed, error: error.message })
@@ -389,7 +400,7 @@ function* handleEmailDeregister(action) {
   const email = yield select(selectors.getEmail)
 
   try {
-    yield call(() => api.deleteOutbidNotification(email.data))
+    yield call(() => api.deleteOutbidNotification(email))
     localStorage.removeItem('email')
 
     yield put({ type: types.deregisterEmail.success })
@@ -401,10 +412,12 @@ function* handleEmailDeregister(action) {
 
 function* handleEmailRegisterBids(action) {
   const email = yield select(selectors.getEmail)
-  const parcelStateIds = action.bids.map(bid => `${bid.x},${bid.y}`)
 
-  if (email.data) {
-    yield call(() => api.postOutbidNotification(email.data, parcelStateIds))
+  if (email) {
+    // const parcelStateIds = action.bids.map(bid => buildCoordinate(bid.x, bid.y))
+    // SEND ONLY THE ADDRESS
+    // yield call(() => api.postOutbidNotification(email, parcelStateIds))
+    yield call(() => {})
   }
 }
 

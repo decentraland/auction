@@ -120,7 +120,7 @@ export function changeLocation(url) {
 export function registerEmail(email) {
   return {
     type: types.registerEmail.request,
-    data: email
+    email
   }
 }
 

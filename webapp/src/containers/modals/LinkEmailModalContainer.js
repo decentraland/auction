@@ -11,7 +11,7 @@ import { LinkEmailModal } from '../../components/modals'
 
 class LinkEmailModalContainer extends React.Component {
   static propTypes = {
-    email: PropTypes.object,
+    email: PropTypes.string,
     registerEmail: PropTypes.func
     // Here we should extend ...ModalContainer.propTypes but webpack is broken and doesn't understand the import
     // Try it yourself: import ModalContainer from "./ModalContainer"
@@ -42,14 +42,10 @@ class LinkEmailModalContainer extends React.Component {
   }
 
   isRegistered() {
-    return false // !!this.props.email.data
+    return false // !!this.props.email
   }
 
   render() {
-    console.log('*********************************************')
-    console.log(this.state)
-    console.log(this.state.email)
-    console.log('*********************************************')
     return !this.isRegistered() ? (
       <LinkEmailModal
         {...this.props}

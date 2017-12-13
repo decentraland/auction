@@ -42,7 +42,7 @@ export default class LinkEmailModal extends React.Component {
           <form action="POST" onSubmit={preventDefault(onSign)}>
             <div className="email-container">
               <input
-                type="text"
+                type="email"
                 className="email"
                 placeholder="Email"
                 value={email}

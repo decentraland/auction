@@ -5,10 +5,11 @@ import path from 'path'
 import git from 'git-rev-sync'
 import ethUtils from 'ethereumjs-util'
 
-import { server, env, utils } from 'decentraland-commons'
+import { server, env, eth, utils } from 'decentraland-commons'
 import db from './lib/db'
 import coordinatesUtils from './lib/coordinates'
 import omitInArray from './lib/omitInArray'
+import signedMessage from './lib/signedMessage'
 
 import {
   AddressState,
@@ -18,7 +19,11 @@ import {
   OutbidNotification
 } from './lib/models'
 
-import { BidService, BidReceiptService } from './lib/services'
+import {
+  BidService,
+  BidReceiptService,
+  OutbidNotificationService
+} from './lib/services'
 
 env.load()
 
@@ -294,20 +299,26 @@ app.post(
 )
 
 export async function postOutbidNotification(req) {
-  const email = server.extractFromReq(req, 'email')
+  const message = server.extractFromReq(req, 'message')
+  const signature = server.extractFromReq(req, 'signature')
   const parcelStateIds = server.extractFromReq(req, 'parcelStateIds').split(';')
 
-  for (const parcelStateId of parcelStateIds) {
-    const notification = await OutbidNotification.findActiveByParcelStateId(
-      parcelStateId
-    )
-    if (!notification) {
-      await OutbidNotification.insert({
-        email,
-        parcelStateId
-      })
-    }
+  const address = await eth.remoteRecover(message, signature)
+  if (!address) {
+    throw new Error('Invalid signature')
   }
+
+  const decoded = eth.utils.fromHex(message)
+
+  const email = ''
+
+  console.log('*********************************************')
+  console.log(decoded)
+  console.log('*********************************************')
+
+  const service = new OutbidNotificationService()
+  await service.registerParcelNotifications(email, parcelStateIds)
+
   return true
 }
 
@@ -334,6 +345,7 @@ export async function deleteOutbidNotification(req) {
 if (require.main === module) {
   db
     .connect()
+    .then(() => eth.connect())
     .then(() => {
       httpServer.listen(SERVER_PORT, () =>
         console.log('Server running on port', SERVER_PORT)

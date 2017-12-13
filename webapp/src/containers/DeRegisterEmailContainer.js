@@ -9,7 +9,7 @@ import DeRegisterEmail from '../components/DeRegisterEmail'
 
 class DeRegisterEmailContainer extends React.Component {
   static propTypes = {
-    email: PropTypes.object.isRequired,
+    email: PropTypes.string.isRequired,
     deregisterEmail: PropTypes.func.isRequired
   }
 
@@ -20,7 +20,7 @@ class DeRegisterEmailContainer extends React.Component {
   }
 
   isRegistered() {
-    return !!this.props.email.data
+    return !!this.props.email
   }
 
   render() {
@@ -28,7 +28,7 @@ class DeRegisterEmailContainer extends React.Component {
 
     return this.isRegistered() ? (
       <DeRegisterEmail
-        currentEmail={email.data}
+        currentEmail={email}
         onDeregister={this.onDeregister}
       />
     ) : null

@@ -27,9 +27,7 @@ const INITIAL_STATE = {
     data: null
   },
 
-  email: {
-    data: localStorage.getItem('email') || ''
-  },
+  email: localStorage.getItem('email') || '',
 
   shift: {
     pressed: false
@@ -73,6 +71,9 @@ function getPendingConfirmationBidsData(state) {
 function getOngoingAuctions(state) {
   return state.ongoingAuctions
 }
+function getOngoingAuctionsData(state) {
+  return state.ongoingAuctions.data
+}
 function getModal(state) {
   return state.modal
 }
@@ -107,6 +108,7 @@ export const selectors = {
   getPendingConfirmationBids,
   getPendingConfirmationBidsData,
   getOngoingAuctions,
+  getOngoingAuctionsData,
   getModal,
   getEmail,
   getSidebar,
@@ -266,13 +268,9 @@ function modal(state = INITIAL_STATE.modal, action) {
 function email(state = INITIAL_STATE.email, action) {
   switch (action.type) {
     case types.registerEmail.success:
-      return {
-        data: action.data
-      }
+      return action.email
     case types.deregisterEmail.success:
-      return {
-        data: ''
-      }
+      return ''
     default:
       return state
   }
