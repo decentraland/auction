@@ -3,12 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import {
-  openModal,
-  confirmBids,
-  deleteUnconfirmedBid,
-  clearAllBids
-} from '../actions'
+import { openModal, confirmBids, deleteUnconfirmedBid } from '../actions'
 import { stateData } from '../lib/propTypes'
 import { buildCoordinate } from '../lib/util'
 
@@ -53,7 +48,8 @@ class PendingConfirmationBidsContainer extends React.Component {
 
   clearAllBids = () => {
     if (window.confirm('Are you sure you want to clear all pending bids?')) {
-      this.props.clearAllBids()
+      const { pendingConfirmationBids } = this.props
+      pendingConfirmationBids.data.map(this.props.deleteUnconfirmedBid)
     }
   }
 
@@ -95,5 +91,5 @@ export default connect(
   state => ({
     pendingConfirmationBids: selectors.getPendingConfirmationBids(state)
   }),
-  { openModal, confirmBids, deleteUnconfirmedBid, clearAllBids }
+  { openModal, confirmBids, deleteUnconfirmedBid }
 )(PendingConfirmationBidsContainer)
