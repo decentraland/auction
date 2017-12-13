@@ -97,13 +97,12 @@ export default class BidParcelModal extends React.Component {
         onBid={preventDefault(this.onBid)}
         onBidValueChange={this.onBidValueChange}
         onBidValueReset={this.onBidValueReset}
-        onClose={onClose}
       />
     ) : (
       <div>
         <p className="text">You don&#39;t have enough balance to bid.</p>
-        <Button type="default" className="btn btn-primary" onClick={onClose}>
-          Close
+        <Button type="default" className="go-back" onClick={onClose}>
+          Go back
         </Button>
       </div>
     )
@@ -118,12 +117,20 @@ export default class BidParcelModal extends React.Component {
     const { parcel, addressState, onClose, ...props } = this.props
 
     return (
-      <Modal className="BidParcelModal" onClose={onClose} {...props}>
+      <Modal
+        className="BidParcelModal"
+        title={`Land ${parcel.x},${parcel.y}`}
+        onClose={onClose}
+        {...props}
+      >
         <div className="modal-body">
           <p className="text">
-            You are bidding on the LAND {parcel.x},{parcel.y}.
+            Enter an amount of {this.getMinimumBidValue()} MANA or more
             <br />
-            The minimum bid is {this.getMinimumBidValue()} MANA.
+            to bid on{' '}
+            <span className="parcel-coords">
+              {parcel.x},{parcel.y}
+            </span>
             <br />
             {this.pendingManaBalance
               ? `You have ${this.pendingManaBalance} MANA pending.`
@@ -143,8 +150,7 @@ function BidForm({
   manaBalance,
   onBid,
   onBidValueChange,
-  onBidValueReset,
-  onClose
+  onBidValueReset
 }) {
   return (
     <form action="POST" onSubmit={onBid}>
@@ -166,14 +172,9 @@ function BidForm({
         <span className="text">{manaBalance}</span>
       </div>
 
-      <div className="buttons">
-        <Button type="secondary" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button type="primary" isSubmit={true}>
-          Bid
-        </Button>
-      </div>
+      <Button type="default" className="confirm-bids" isSubmit={true}>
+        Bid
+      </Button>
     </form>
   )
 }

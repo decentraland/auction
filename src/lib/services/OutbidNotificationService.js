@@ -49,10 +49,14 @@ class OutbidNotificationService {
       from: `The Decentraland Team <${emailSender}>`,
       to: opts.email,
       subject: 'The Parcel has been outbid!',
-      text: `The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}. Visit ${this.toParcelLink(
+      text: `The parcel ${opts.x},${opts.y} now belongs to ${
+        opts.address
+      } for ${opts.amount}. Visit ${this.toParcelLink(
         opts
       )} to place a new bid!`,
-      html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.<br/>Visit ${this.toParcelLink(
+      html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${
+        opts.address
+      } for ${opts.amount}.<br/>Visit ${this.toParcelLink(
         opts
       )} to place a new bid!</p>`
     }))
@@ -120,7 +124,9 @@ class OutbidNotificationService {
       'This is the summary of parcel outbids from the last notification:\n\n'
 
     for (const parcel of parcelStates) {
-      text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.\n`
+      text += `The parcel ${parcel.x},${parcel.y} now belongs to ${
+        parcel.address
+      } for ${parcel.amount}.\n`
       text += `Visit ${this.toParcelLink(parcel)} to place a new bid!\n\n`
     }
 
@@ -152,9 +158,9 @@ class OutbidNotificationService {
     }
 
     // get active notifications for user
-    const parcelIds = await this.OutbidNotification
-      .findActiveByEmail(email)
-      .then(rows => rows.map(row => row.parcelStateId))
+    const parcelIds = await this.OutbidNotification.findActiveByEmail(
+      email
+    ).then(rows => rows.map(row => row.parcelStateId))
     if (parcelIds.length === 0) {
       throw new Error(`No active notifications found for user ${email}`)
     }

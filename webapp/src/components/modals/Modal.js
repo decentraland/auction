@@ -4,14 +4,28 @@ import PropTypes from 'prop-types'
 import './Modal.css'
 
 export default function Modal(props) {
-  const { className, title, visible, body, footer, children, onClose } = props
+  const {
+    className,
+    title,
+    visible,
+    body,
+    footer,
+    children,
+    onClose,
+    onKeyDown
+  } = props
 
   const containerClassName = `${className} ${visible ? 'modal-open' : ''}`
   const modalClassName = `modal fade ${visible ? 'in' : ''}`
 
   return (
     <div className={containerClassName}>
-      <div className={modalClassName} tabIndex="-1" role="dialog">
+      <div
+        className={modalClassName}
+        tabIndex="-1"
+        role="dialog"
+        onKeyDown={onKeyDown}
+      >
         <div className="modal-dialog" role="document">
           <div className="modal-content">
             <div className="modal-header">
