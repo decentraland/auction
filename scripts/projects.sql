@@ -73,8 +73,10 @@ ff5159ad-358c-42bb-ae1c-db211bf77227	The Battleground	An Environment for PvP, RP
 153afe16-4820-4e7a-8b88-0daef567003e	Hunted District	An area dedicated to what scares us the dark side of thing and anything related to horror. The town will host various genres and themes such as goar, ghost, zombies, cults, among other horror subjects.	https://github.com/decentraland/districts/issues/73	t	\N	\N	f	2017-10-28 17:00:34.939	2017-10-28 17:00:34.939
 9e6d810b-efc8-4f5b-a215-1f37b16341d8	Alvy Gardens	Hanging Garden Styled District with a Pixel Art aesthetic	https://github.com/decentraland/districts/issues/75	t	\N	\N	f	2017-11-29 15:06:20.613	2017-11-29 15:06:20.613
 81bbd64a-b757-452c-b715-f37a726a0299	Fluffy DC	Have you already dreamt about a world filled with extra cute kitties? We will make this dream a reality.	https://github.com/decentraland/districts/issues/76	t	\N	\N	f	2017-12-07 11:55:40.443	2017-12-07 11:55:40.443
-00356265-d762-453d-8eae-14dc0deaa380	Русь матушка - Mother Russia Land	First land for Russian community	https://github.com/decentraland/districts/issues/80	t	\N	\N	f	2017-12-10 15:59:10.105	2017-12-10 15:59:10.105
 ea2c3a3e-bbd6-49d9-814c-3b64b37b057a	SciArt Lab	Research and Development Lab for the open exploration of Science, Art and Technology.	https://github.com/decentraland/districts/issues/78	t	\N	\N	f	2017-12-10 17:57:12.29	2017-12-10 17:57:12.29
+00356265-d762-453d-8eae-14dc0deaa380	Mother Russia Land	First land for Russian community	https://github.com/decentraland/districts/issues/80	t	\N	\N	f	2017-12-10 15:59:10.105	2017-12-10 15:59:10.105
+32e326b5-8b66-412e-be48-738c51321a2c	Yoga Center	Organize daily yoga classes in a quiet and relaxing environment.	https://github.com/decentraland/districts/issues/82	t	\N	\N	f	2017-12-12 02:30:20.982	2017-12-12 02:30:20.982
+19076857-8a84-41b7-950f-dc91365c8313	NEO TOKYO	This is a world where you can become Ninja! The idea is to bring back ninja into the future cybernetic world.	https://github.com/decentraland/districts/issues/83	t	\N	\N	f	2017-12-12 12:46:51.629	2017-12-12 12:46:51.629
 \.
 
 --
