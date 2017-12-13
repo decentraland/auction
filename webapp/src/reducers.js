@@ -33,7 +33,6 @@ const INITIAL_STATE = {
   },
 
   shift: {
-    never: true,
     pressed: false
   },
 
@@ -91,11 +90,17 @@ function getEmail(state) {
 function getSidebar(state) {
   return state.sidebar
 }
-function getShift(state) {
-  return state.shift
+function isShiftPressed(state) {
+  return state.shift.pressed
 }
 function getRange(state) {
   return state.range
+}
+function hasPlacedBids(state) {
+  return (
+    (state.ongoingAuctions.data && state.ongoingAuctions.data.length) ||
+    state.pendingConfirmationBids.data.length
+  )
 }
 
 export const selectors = {
@@ -112,8 +117,9 @@ export const selectors = {
   getModal,
   getEmail,
   getSidebar,
-  getShift,
-  getRange
+  isShiftPressed,
+  getRange,
+  hasPlacedBids
 }
 
 function web3Connected(state = INITIAL_STATE.web3Connected, action) {
@@ -184,11 +190,12 @@ function projects(state = INITIAL_STATE.projects, action) {
 }
 
 function parcelStates(state = INITIAL_STATE.parcelStates, action) {
+  let result
   switch (action.type) {
     case types.fetchParcels.request:
       return { ...state, loading: true, error: null }
     case types.fetchParcels.success:
-      const result = { ...state, loading: false, error: null }
+      result = { ...state, loading: false, error: null }
       action.parcelStates.forEach(parcel => {
         result[`${parcel.x},${parcel.y}`] = parcel
       })
@@ -294,12 +301,10 @@ function shift(state = INITIAL_STATE.shift, action) {
   switch (action.type) {
     case types.shift.up:
       return {
-        never: false,
         pressed: false
       }
     case types.shift.down:
       return {
-        never: false,
         pressed: true
       }
     default:
