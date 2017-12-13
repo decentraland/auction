@@ -14,7 +14,7 @@ class MinimapContainer extends React.Component {
       minX: PropTypes.number,
       minY: PropTypes.number,
       maxX: PropTypes.number,
-      maxY: PropTypes.number,
+      maxY: PropTypes.number
     })
   }
 
@@ -25,8 +25,11 @@ class MinimapContainer extends React.Component {
   }
 }
 
-export default connect(state => ({
-  range: selectors.getRange(state)
-}), {
-  changeLocation
-})(MinimapContainer)
+export default connect(
+  state => ({
+    range: selectors.getRange(state)
+  }),
+  {
+    changeLocation
+  }
+)(MinimapContainer)

@@ -13,14 +13,13 @@ const baseY = Math.abs(bounds.minY)
 const baseX = Math.abs(bounds.minX)
 
 export default class Minimap extends React.Component {
-
   constructor(props, ...args) {
     super(props, ...args)
     this.state = {
       minX: props.minX,
       maxX: props.maxX,
       minY: props.minY,
-      maxY: props.maxY,
+      maxY: props.maxY
     }
   }
 
@@ -46,7 +45,8 @@ export default class Minimap extends React.Component {
       this.props.maxX - this.props.minX
     )
     const maxX = this.boundCoord(this.props.maxX + x)
-    const minY = this.boundCoord(this.props.minY - y,
+    const minY = this.boundCoord(
+      this.props.minY - y,
       0,
       this.props.maxY - this.props.minY
     )
@@ -61,18 +61,18 @@ export default class Minimap extends React.Component {
   }
 
   get currentX() {
-    const bound = this.refs.map.getBoundingClientRect()
+    const bound = this.map.getBoundingClientRect()
     return bound.left + (this.props.minX + this.halfWidth + baseX) * scale
   }
 
   get currentY() {
-    const bound = this.refs.map.getBoundingClientRect()
+    const bound = this.map.getBoundingClientRect()
     return bound.top - (this.props.maxY - this.halfHeight - baseY) * scale
   }
 
   newCenter(deltaX, deltaY) {
-    deltaX /= scale;
-    deltaY /= scale;
+    deltaX /= scale
+    deltaY /= scale
     const x = this.averageX + deltaX
     const y = this.averageY - deltaY
     return { x: this.boundCoord(x), y: this.boundCoord(y) }
@@ -84,13 +84,13 @@ export default class Minimap extends React.Component {
     this.updateWithDeltaMouseCoords(deltaX, deltaY, { down: false })
   }
 
-  mouseDown = (ev) => {
+  mouseDown = ev => {
     const deltaX = ev.clientX - this.currentX
     const deltaY = ev.clientY - this.currentY
     this.updateWithDeltaMouseCoords(deltaX, deltaY, { down: true })
   }
 
-  mouseUp = (ev) => {
+  mouseUp = ev => {
     if (this.state.down) {
       const deltaX = ev.clientX - this.currentX
       const deltaY = ev.clientY - this.currentY
@@ -98,7 +98,7 @@ export default class Minimap extends React.Component {
     }
   }
 
-  mouseMove = (ev) => {
+  mouseMove = ev => {
     if (this.state.down) {
       const deltaX = ev.clientX - this.currentX
       const deltaY = ev.clientY - this.currentY
@@ -106,7 +106,7 @@ export default class Minimap extends React.Component {
     }
   }
 
-  mouseOut = (ev) => {
+  mouseOut = ev => {
     if (ev.target === window) {
       if (this.state.down) {
         const deltaX = ev.clientX - this.currentX
@@ -146,12 +146,12 @@ export default class Minimap extends React.Component {
 
   get height() {
     const { minY, maxY } = this.props
-    return (maxY - minY)
+    return maxY - minY
   }
 
   get width() {
     const { minX, maxX } = this.props
-    return (maxX - minX)
+    return maxX - minX
   }
 
   render() {
@@ -160,13 +160,13 @@ export default class Minimap extends React.Component {
     const left = (minX + baseX) * scale
 
     return (
-      <div className="Minimap"
-        ref='map'
+      <div
+        className="Minimap"
+        ref={map => (this.map = map)}
         onMouseDown={this.mouseDown}
       >
         <div
           className="minimap-focus"
-          ref='focus'
           style={{
             top,
             left,
