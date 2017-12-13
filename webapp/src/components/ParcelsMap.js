@@ -12,7 +12,6 @@ import LeafletParcelGrid from '../lib/LeafletParcelGrid'
 import ParcelPopup from './ParcelPopup'
 
 import './ParcelsMap.css'
-import './ParcelsColors.css'
 
 const MAP_ID = 'map'
 

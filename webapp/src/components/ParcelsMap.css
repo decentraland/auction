@@ -16,3 +16,6 @@
 #map .coordinates-zoom-10 { font-size: 1.1em; }
 #map .coordinates-zoom-9 { font-size: 0.8em; }
 #map .coordinates-zoom-8 { font-size: 0.5em; }
+
+#map .header.default  { display: none; }
+#map .header.loading  { display: none; }

@@ -35,14 +35,10 @@
   text-align: center;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+  color: #FFF;
 }
 
-.parcel-popup .header.district {
-  color: #666;
-}
-.parcel-popup .header.genesis {
-  color: #666;
-}
+.parcel-popup .header.genesis,
 .parcel-popup .header.roads {
   color: #666;
 }
