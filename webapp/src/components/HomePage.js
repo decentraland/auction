@@ -21,8 +21,8 @@ export default function HomePage({ requiredDataReady }) {
           <div className="top-controls">
             <SearchContainer />
             <PendingConfirmationBidsContainer />
+            <ShiftNotificationContainer />
           </div>
-          <ShiftNotificationContainer />
         </div>
       )}
       <ParcelsMapContainer requiredDataReady={requiredDataReady} />

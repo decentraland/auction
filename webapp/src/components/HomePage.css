@@ -13,6 +13,8 @@
 
 .HomePage .top-controls {
   display: inline-block;
+  height: 100%;
+  position: relative;
 }
 
 .HomePage > .Loading {
