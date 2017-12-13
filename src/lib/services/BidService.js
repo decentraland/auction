@@ -83,6 +83,14 @@ export default class BidService {
     const result = { bidGroup: null, error: null }
 
     if (utils.isEmptyObject(parcelStates.error)) {
+      for (let index in bidGroup.bids) {
+        const bid = bidGroup.bids[index]
+        const parcelId = this.ParcelState.hashId(bid.x, bid.y)
+        const parcelState = parcelMap.find(parcel => parcel.id === parcelId)
+
+        await this.restoreOutbidBalance(parcelState, bidGroup)
+      }
+
       for (const id in parcelStates.success) {
         await this.ParcelState.update(parcelStates.success[id], { id })
       }
@@ -99,6 +107,18 @@ export default class BidService {
     }
 
     return result
+  }
+
+  async restoreOutbidBalance(parcelState, bidGroup) {
+    if (parcelState.address && parcelState.address !== bidGroup.address) {
+      const outbidAddress = await this.AddressState.findByAddress(
+        parcelState.address
+      )
+      outbidAddress.balance = getBn(outbidAddress.balance)
+        .plus(getBn(parcelState.amount))
+        .toString()
+      await this.AddressState.update(outbidAddress, { id: outbidAddress.id })
+    }
   }
 
   async getBidGroupValidationError(bidGroup) {
