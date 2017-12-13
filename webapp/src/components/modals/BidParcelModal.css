@@ -1,19 +1,48 @@
 
 .BidParcelModal {
-  text-align: center;
+	text-align: center;
+	width: 240px;
+	color: #3e396b;
+	background-color: #FFF;
+}
+
+.BidParcelModal .modal-dialog {
+	width: 320px;
 }
 
 .BidParcelModal .modal-header {
-  border-bottom: none;
+	border-bottom: none;
+	background-color: #FCFCFC;
+	padding: 14px 14px 10px;
+	border-radius: 5px 5px 0 0;
+}
+
+.BidParcelModal .modal-header .close {
+	font-size: 29px;
+	font-weight: 500;
+	margin-top: -6px;
+	opacity: .5;
 }
 
 .BidParcelModal .modal-body {
-  padding-bottom: 50px;
+  padding: 0px;
+}
+
+.BidParcelModal .modal-title {
+	float: left;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1.6;
 }
 
 .BidParcelModal .text {
-  font-size: 18px;
-  color: #9A9A9A;
+  font-size: 14px;
+	padding: 20px 10px 0 0;
+}
+
+.BidParcelModal .text .parcel-coords {
+	font-size: 15px;
+	font-weight: 700;
 }
 
 .BidParcelModal .manaInput {
@@ -22,18 +51,34 @@
 }
 
 .BidParcelModal .manaToBid {
-  width: 150px;
-  border: 1px solid #DCDCDC;
+  width: 110px;
+  border: 1px solid #eaeaea;
   padding: 3px 10px;
-  border-radius: 5px;
-  font-size: 17px;
+  border-radius: 2px;
+	font-size: 15px;
+	font-weight: 700;
   margin: 0 15px;
   text-align: center;
-  box-shadow: none;
-  outline-color: #30D7A9;
-  color: #30D7A9;
+	box-shadow: none;
+	background-color: #f8f8f8;
+}
+
+.BidParcelModal .manaInput .text {
+	color: #aaa;
 }
 
 .BidParcelModal .buttons .btn-secondary {
   margin-right: 20px;
+}
+
+.BidParcelModal .confirm-bids {
+  background-color: #30d7a9;
+  color: #FFF;
+	border-radius: 0px 0px 5px 5px;
+	width: 100%;
+}
+
+.BidParcelModal .confirm-bids:focus {
+	background-color: #33e4b2;
+	color: #FFF;
 }
