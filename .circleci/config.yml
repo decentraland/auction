@@ -40,6 +40,18 @@ jobs:
       - run:
           name: Deploy to S3 if tests pass and branch is Master
           command: aws s3 sync webapp/build s3://auction.decentraland.today/ --delete --acl public-read
+  staging:
+    docker:
+      - image: circleci/node:7.10
+    working_directory: /tmp/auction
+    steps:
+      - restore_cache:
+          keys:
+          - build-{{ .Revision }}
+      - run: sudo apt-get -y -qq install awscli
+      - run:
+          name: Deploy to S3 if tests pass and branch is Master
+          command: aws s3 sync webapp/build s3://staging.decentraland.today/ --delete --acl public-read
 
 workflows:
   version: 2
@@ -52,4 +64,10 @@ workflows:
           filters:
             branches:
               only: master
+      - staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: staging
 
