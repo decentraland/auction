@@ -11,6 +11,7 @@ import Sidebar from '../components/Sidebar'
 class SidebarContainer extends React.Component {
   static propTypes = {
     addressState: stateData(PropTypes.object).isRequired,
+    parcelStates: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array),
     fetchOngoingAuctions: PropTypes.func,
     sidebar: PropTypes.shape({
@@ -63,13 +64,19 @@ class SidebarContainer extends React.Component {
     ).length
   }
 
+  isLoading() {
+    const { loading, addressState, parcelStates } = this.props
+    return loading || addressState.loading || parcelStates.loading
+  }
+
   render() {
     const { addressState, ongoingAuctions, sidebar } = this.props
 
     return (
       <Sidebar
-        addressState={addressState}
         visible={sidebar.open}
+        isLoading={this.isLoading()}
+        addressState={addressState}
         ongoingAuctions={ongoingAuctions}
         dashboard={this.getDashboardData()}
         changeVisibility={this.changeVisibility}
@@ -81,7 +88,9 @@ class SidebarContainer extends React.Component {
 export default connect(
   state => ({
     addressState: selectors.getAddressState(state),
+    parcelStates: selectors.getParcelStates(state),
     ongoingAuctions: selectors.getOngoingAuctions(state),
+    loading: selectors.getLoading(state),
     sidebar: selectors.getSidebar(state)
   }),
   { fetchOngoingAuctions, openSidebar, closeSidebar }

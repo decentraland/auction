@@ -3,6 +3,7 @@ import localStorage from './lib/localStorage'
 
 const INITIAL_STATE = {
   web3Connected: false,
+  loading: false, // Comunicate that *something* is loading. Should be manually set to false again
 
   addressState: { loading: true },
 
@@ -41,6 +42,9 @@ const INITIAL_STATE = {
 
 function getWeb3Connected(state) {
   return state.web3Connected
+}
+function getLoading(state) {
+  return state.loading
 }
 function getAddressState(state) {
   return state.addressState
