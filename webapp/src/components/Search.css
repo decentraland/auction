@@ -66,6 +66,12 @@
   border: none;
 }
 
+.autocomplete-item > p > span > .matched {
+  background-color: transparent;
+  padding: 0;
+  color: #3e396b;
+}
+
 .autocomplete-highlight {
   background-color: #FCFCFC;
 }

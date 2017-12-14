@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
+import Highlighter from 'react-highlight-words'
 
 import './Search.css'
 
@@ -76,10 +77,18 @@ export default class Search extends React.Component {
   renderItem = (item, isHighlighted) => {
     const highlightClass = isHighlighted ? 'autocomplete-highlight' : ''
     const className = `autocomplete-item ${highlightClass}`
+    const { value } = this.state
 
     return (
       <div key={item.name} className={className} name={item.name}>
-        <p>{item.name}</p>
+        <p>
+          <Highlighter
+            highlightClassName="matched"
+            searchWords={[value]}
+            autoEscape={true}
+            textToHighlight={item.name}
+          />
+        </p>
       </div>
     )
   }
