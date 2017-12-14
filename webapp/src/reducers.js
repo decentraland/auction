@@ -61,9 +61,9 @@ function getProjectsData(state) {
 function getParcelStates(state) {
   return state.parcelStates
 }
-
-const getMaxAmount = () => 50000
-
+function getMaxAmount() {
+  return 50000
+}
 function getPendingConfirmationBids(state) {
   return state.pendingConfirmationBids
 }
@@ -97,6 +97,7 @@ function hasPlacedBids(state) {
 
 export const selectors = {
   getWeb3Connected,
+  getLoading,
   getAddressState,
   getAddressStateData,
   getProjects,
@@ -125,10 +126,10 @@ function web3Connected(state = INITIAL_STATE.web3Connected, action) {
   }
 }
 
-function range(state = INITIAL_STATE.range, action) {
+function loading(state = INITIAL_STATE.loading, action) {
   switch (action.type) {
-    case types.parcelRangeChanged:
-      return action
+    case types.setLoading:
+      return action.loading
     default:
       return state
   }
@@ -194,6 +195,15 @@ function parcelStates(state = INITIAL_STATE.parcelStates, action) {
       return result
     case types.fetchParcels.failed:
       return { ...state, loading: false, error: action.error }
+    default:
+      return state
+  }
+}
+
+function range(state = INITIAL_STATE.range, action) {
+  switch (action.type) {
+    case types.parcelRangeChanged:
+      return action
     default:
       return state
   }
@@ -304,16 +314,17 @@ function shift(state = INITIAL_STATE.shift, action) {
 
 export default {
   web3Connected,
+  loading,
   addressState,
   projects,
   parcelStates,
+  range,
   pendingConfirmationBids,
   ongoingAuctions,
   modal,
   email,
   sidebar,
-  shift,
-  range
+  shift
 }
 
 export function analytics(state, action) {

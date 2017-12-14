@@ -209,6 +209,7 @@ function* handleParcelFetchRequest(action) {
     }
 
     yield put({ type: types.fetchParcels.success, parcelStates })
+    yield put({ type: types.setLoading, loading: false })
   } catch (error) {
     console.warn(error)
     yield put({

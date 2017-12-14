@@ -9,6 +9,7 @@ import {
   parcelRangeChange,
   openModal,
   changeLocation,
+  setLoading,
   fastBid
 } from '../actions'
 import * as parcelUtils from '../lib/parcelUtils'
@@ -25,12 +26,15 @@ class ParcelsMapContainer extends React.Component {
     projects: stateData(PropTypes.array).isRequired,
     parcelRangeChange: PropTypes.func.isRequired,
     requiredDataReady: PropTypes.bool,
+    isShiftPressed: PropTypes.bool,
     center: PropTypes.shape({
       x: PropTypes.string,
       y: PropTypes.string
     }),
     openModal: PropTypes.func.isRequired,
-    changeLocation: PropTypes.func.isRequired
+    changeLocation: PropTypes.func.isRequired,
+    setLoading: PropTypes.func.isRequired,
+    fastBid: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -60,6 +64,10 @@ class ParcelsMapContainer extends React.Component {
       x: parseInt(x, 10) || 0,
       y: parseInt(y, 10) || 0
     }
+  }
+
+  onMoveStart = () => {
+    this.props.setLoading(true) // Set back to false on `types.fetchParcels.success`
   }
 
   onMoveEnd = ({ position, bounds }) => {
@@ -149,6 +157,7 @@ class ParcelsMapContainer extends React.Component {
         getPendingConfirmationBids={this.getPendingConfirmationBids}
         getProjects={this.getProjects}
         getMaxAmount={this.getMaxAmount}
+        onMoveStart={this.onMoveStart}
         onMoveEnd={this.onMoveEnd}
         onZoomEnd={this.onZoomEnd}
         onParcelBid={this.onParcelBid}
@@ -171,6 +180,6 @@ export default withRouter(
       isShiftPressed: selectors.isShiftPressed(state),
       center: ownProps.match.params // from withRouter
     }),
-    { parcelRangeChange, openModal, changeLocation, fastBid }
+    { parcelRangeChange, openModal, changeLocation, setLoading, fastBid }
   )(ParcelsMapContainer)
 )

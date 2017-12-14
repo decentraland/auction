@@ -5,6 +5,8 @@ export default {
     failed: '[Failed] Failed to connect to web3 provider'
   },
 
+  setLoading: 'Set loading value',
+
   fetchManaBalance: {
     request: '[Request] Fetch MANA balance request',
     success: '[Success] MANA balance fetched',

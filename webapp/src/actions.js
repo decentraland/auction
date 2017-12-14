@@ -11,6 +11,16 @@ export function connectWeb3(address) {
 }
 
 // -------------------------------------------------------------------------
+// Loading
+
+export function setLoading(loading = false) {
+  return {
+    type: types.setLoading,
+    loading
+  }
+}
+
+// -------------------------------------------------------------------------
 // Projects
 
 export function fetchProjects() {
