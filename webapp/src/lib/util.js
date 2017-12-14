@@ -30,3 +30,16 @@ export function capitalize(str) {
 
   return firstLetter + rest
 }
+
+export function insertScript({
+  type = 'text/javascript',
+  async = true,
+  ...props
+}) {
+  const script = document.createElement('script')
+  Object.assign(script, { type, async: async, ...props }) // WARN, babel breaks on `{ async }`
+
+  document.body.appendChild(script)
+
+  return script
+}

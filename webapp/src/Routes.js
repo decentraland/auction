@@ -4,14 +4,15 @@ import { Switch, Route } from 'react-router'
 import locations from './locations'
 
 import HomePageContainer from './containers/HomePageContainer'
+import IntercomContainer from './containers/IntercomContainer'
 
 import WalletErrorPage from './components/WalletErrorPage'
 import ServerError from './components/ServerError'
 import AddressErrorPage from './components/AddressErrorPage'
 
 export default function Routes() {
-  return (
-    <Switch>
+  return [
+    <Switch key="1">
       <Route exact path={locations.root} component={HomePageContainer} />
       <Route exact path={locations.parcel} component={HomePageContainer} />
 
@@ -19,6 +20,7 @@ export default function Routes() {
       <Route exact path={locations.serverError} component={ServerError} />
       <Route exact path={locations.addressError} component={AddressErrorPage} />
       <Route exact path={locations.error} component={WalletErrorPage} />
-    </Switch>
-  )
+    </Switch>,
+    <IntercomContainer key="2" />
+  ]
 }

@@ -94,6 +94,7 @@
 
 .OngoingAuctions .table-row-empty {
   width: 100%;
+  padding-top: 24px;
   padding-left: 24px;
   font-size: 15px;
   color: #7B7B7B;
