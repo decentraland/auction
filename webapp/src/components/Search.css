@@ -5,28 +5,56 @@
 }
 
 .Search > input {
+  font-family: "Source Sans Pro Light", Helvetica, sans-serif;
+  font-weight: 700;
   width: 480px;
   height: 48px;
   padding: 5px 20px;
-  font-size: 15px;
+  font-size: 14px;
   box-shadow: 0 2px 6px 0 rgba(0,0,0,0.05);
-  border-radius: 8px;
+  border-radius: 5px;
   border: none;
+  color: #aaa;
+}
+
+.Search > input:focus {
+  outline-width: 0;
+}
+
+.Search.search-active > input {
+  border-radius: 5px 5px 0 5px;
+  color: #3e396b;
 }
 
 .Search h4 {
-  margin: 0;
-  padding: 5px 20px;
-  background-color: #30D7A9;
-  color: #FFF;
+  font-size: 14px;
+  font-weight: 700;
+  margin: -1px 0 0 0;
+  padding: 15px 20px;
+  background-color: #FCFCFC;
+  color: #3e396b;
 }
 
 .autocomplete-item {
-  padding: 5px 20px;
-  font-size: 15px;
+  font-family: "Source Sans Pro Light", Helvetica, sans-serif;
+  font-weight: 700;
+  padding: 0px 20px;
+  font-size: 14px;
   cursor: pointer;
+  border: none;
+}
+
+.autocomplete-item > p {
+  color: #aaa;
+  border-bottom: 1px solid #dedede;
+  padding: 15px 0;
+  margin: 0;
+}
+
+.autocomplete-item:last-child > p {
+  border: none;
 }
 
 .autocomplete-highlight {
-  background-color: #FFD27F;
+  background-color: #FCFCFC;
 }

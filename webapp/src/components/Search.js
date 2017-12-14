@@ -35,7 +35,16 @@ export default class Search extends React.Component {
       projects: false
     }
 
-    style = { ...style, ...this.menuStyle }
+    style = {
+      ...style,
+      ...this.menuStyle,
+      background: 'rgba(255, 255, 255, 1)',
+      minWidth: '425px',
+      left: '165px',
+      zIndex: -1,
+      borderRadius: '0 0 3px 3px',
+      padding: 0
+    }
 
     return (
       <div style={style}>
@@ -70,7 +79,7 @@ export default class Search extends React.Component {
 
     return (
       <div key={item.name} className={className} name={item.name}>
-        {item.name}
+        <p>{item.name}</p>
       </div>
     )
   }
@@ -127,6 +136,10 @@ export default class Search extends React.Component {
     this.setState({ value: '' })
   }
 
+  onMenuVisibilityChange = isOpen => {
+    this.setState({ isOpen })
+  }
+
   isMatch(itemValue, value) {
     itemValue = itemValue.toLowerCase()
     value = value.toLowerCase()
@@ -134,11 +147,11 @@ export default class Search extends React.Component {
   }
 
   render() {
-    const { value } = this.state
-
+    const { value, isOpen } = this.state
+    const searchActive = isOpen ? 'search-active' : ''
     return (
       <Autocomplete
-        wrapperProps={{ className: 'Search hidden-xs' }}
+        wrapperProps={{ className: `Search hidden-xs ${searchActive}` }}
         renderMenu={this.renderMenu}
         renderItem={this.renderItem}
         items={this.getItems()}
@@ -148,6 +161,7 @@ export default class Search extends React.Component {
         onChange={this.onChange}
         onSelect={this.onSelect}
         onClick={this.onSelect}
+        onMenuVisibilityChange={this.onMenuVisibilityChange}
       />
     )
   }
