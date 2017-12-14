@@ -143,10 +143,10 @@
   text-align: center;
 }
 
-.Footer .social-icons .Icon {
+.Footer .social-icons a {
   margin-right: 24px;
 }
-.Footer .social-icons .Icon:last-child {
+.Footer .social-icons a:last-child {
   margin-right: 0;
 }
 

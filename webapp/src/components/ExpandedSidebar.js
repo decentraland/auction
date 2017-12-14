@@ -160,11 +160,21 @@ function Footer() {
   return (
     <footer className="Footer">
       <div className="social-icons">
-        <Icon name="twitter" />
-        <Icon name="rocketchat" />
-        <Icon name="github" />
-        <Icon name="reddit" />
-        <Icon name="facebook" />
+        <Link to="https://twitter.com/decentraland/" target="_blank">
+          <Icon name="twitter" />
+        </Link>
+        <Link to="https://chat.decentraland.org/" target="_blank">
+          <Icon name="rocketchat" />
+        </Link>
+        <Link to="https://github.com/decentraland/" target="_blank">
+          <Icon name="github" />
+        </Link>
+        <Link to="https://reddit.com/r/decentraland/" target="_blank">
+          <Icon name="reddit" />
+        </Link>
+        <Link to="https://www.facebook.com/decentraland/" target="_blank">
+          <Icon name="facebook" />
+        </Link>
       </div>
       <div className="links">
         <Link to="https://blog.decentraland.org" target="_blank">
