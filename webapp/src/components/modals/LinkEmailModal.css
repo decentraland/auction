@@ -67,9 +67,19 @@
   border-radius: 20px;
 }
 
-.LinkEmailModal .success {
+.LinkEmailModal .sign-result {
   margin-top: 30px;
   text-align: center;
+}
+
+.LinkEmailModal .error-result {
+  margin-top: 18px;
+  text-align: center;
+  color: #A94442;
+}
+
+.LinkEmailModal .success {
+  cursor: pointer;
 }
 
 @media (min-width: 768px) {

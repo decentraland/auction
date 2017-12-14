@@ -46,19 +46,21 @@ export default class LinkEmailModal extends React.Component {
         <div className="modal-body">
           <div>
             <p>Please link your MetaMask or Mist to your email address.</p>
-            <p>This email is where you will recieve bid status updates.</p>
+            <p>This email is where you will receive bid status updates.</p>
             <p>
               By entering it below and signing it to your MetaMask or Mist, you
               prevent others from stealing your notifications and ensure you
-              recieve the correct status update
+              receive the correct status update
             </p>
           </div>
 
           {currentEmail.loading ? (
             <Loading />
           ) : currentEmail.data ? (
-            <div className="success">
-              <SuccessCheck />
+            <div className="sign-result">
+              <div className="success" onClick={onClose}>
+                <SuccessCheck />
+              </div>
             </div>
           ) : (
             <form action="POST" onSubmit={preventDefault(onSign)}>
@@ -71,6 +73,13 @@ export default class LinkEmailModal extends React.Component {
                   onChange={onEmailChange}
                 />
               </div>
+
+              {currentEmail.error && (
+                <div className="error-result">
+                  An error ocurred trying to send the email to the server,
+                  please try again
+                </div>
+              )}
 
               <div className="sign-button">
                 <Button type="primary" isSubmit={true}>
