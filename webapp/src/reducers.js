@@ -1,5 +1,3 @@
-import { createSelector } from 'reselect'
-
 import types from './types'
 import localStorage from './lib/localStorage'
 
@@ -60,17 +58,7 @@ function getParcelStates(state) {
   return state.parcelStates
 }
 
-const getMaxAmount = createSelector(
-  [getParcelStates],
-  parcelStates =>
-    parcelStates && !parcelStates.loading
-      ? Object.values(parcelStates).reduce(
-          (prev, next) =>
-            next && next.amount ? Math.max(prev, next.amount) : prev,
-          0
-        )
-      : 50000
-)
+const getMaxAmount = () => 50000
 
 function getPendingConfirmationBids(state) {
   return state.pendingConfirmationBids

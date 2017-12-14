@@ -83,6 +83,8 @@ export function getBidStatus(parcel, addressState) {
 }
 
 export function getColorByAmount(amount, maxAmount) {
+  maxAmount = amount > maxAmount ? amount : maxAmount
+
   // toHsv() => { h: 0, s: 1, v: 1, a: 1 }
   const h = memorizedHue(amount, maxAmount)
   const s = memorizedSat(amount, maxAmount)
