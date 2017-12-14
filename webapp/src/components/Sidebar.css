@@ -16,14 +16,26 @@
 }
 
 @keyframes fadein {
-    0% { opacity: 0; }
-    66% { opacity: 0; }
-    100% { opacity: 1; }
+  0% { opacity: 0; }
+  66% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 .Sidebar header {
   position: relative;
   padding: 24px;
+}
+
+.Sidebar header .HelpButton {
+  margin-top: 0;
+  padding-top: 3px;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  left: inherit;
+  bottom: inherit;
+  position: relative;
+  float: right;
 }
 
 .Sidebar .Icon-decentraland {
