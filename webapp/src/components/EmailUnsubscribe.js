@@ -35,6 +35,11 @@ export default function EmailUnsubscribe({ email, onUnsubscribe }) {
               <div>
                 <p>
                   You are about to unsubscribe <b>{email.data}</b>
+                  <br />
+                  <br />
+                  After unsubscribing, you will no longer receive email
+                  notifications for existing or future bids in the Terraform
+                  Auction
                 </p>
 
                 <Button type="primary" onClick={onUnsubscribe}>

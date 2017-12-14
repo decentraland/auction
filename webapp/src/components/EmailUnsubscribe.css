@@ -4,6 +4,9 @@
 
 .EmailUnsubscribe .content {
   height: 80%;
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,7 +16,6 @@
 
 .EmailUnsubscribe .content > .Loading {
   font-size: 10px;
-  top: 25%;
 }
 
 .EmailUnsubscribe h2 {
