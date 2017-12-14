@@ -20,15 +20,14 @@ export default class AddressService {
 
   async lockedMANABalanceOf(address) {
     // get MANA locked to districts
-    const monthlyLandBalances = await this.DistrictEntry.getMonthlyLockedBalanceByAddress(
-      address,
-      LAND_MANA_COST
-    ).then(balances => fillByMonth(balances))
+    const monthlyLandBalances = await this.DistrictEntry
+      .getMonthlyLockedBalanceByAddress(address, LAND_MANA_COST)
+      .then(balances => fillByMonth(balances))
 
     // get total MANA locked to terraform
-    const monthlyLockedBalances = await this.LockedBalanceEvent.getMonthlyLockedBalanceByAddress(
-      address
-    ).then(balances => fillByMonth(balances))
+    const monthlyLockedBalances = await this.LockedBalanceEvent
+      .getMonthlyLockedBalanceByAddress(address)
+      .then(balances => fillByMonth(balances))
 
     // adjust MANA balances to bonuses
     const beforeNovBalanceToAuction = calculateTotalForMonths(

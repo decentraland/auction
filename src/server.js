@@ -198,7 +198,7 @@ function extractBids(data, address) {
   const regexp = new RegExp(bidMatch, 'gi')
   const result = []
   let match
-  while (match = regexp.exec(data)) {
+  while ((match = regexp.exec(data))) {
     result.push({
       x: parseInt(match[1], 10),
       y: parseInt(match[2], 10),
@@ -239,10 +239,10 @@ export async function postBidGroup(req) {
     newBidGroup = await verifyBidGroup(data)
   } catch (error) {
     console.log(error.stack)
-    throw new Error(`Unable to verify signature`)
+    throw new Error('Unable to verify signature')
   }
   if (!newBidGroup.bids) {
-    throw new Error(`Unable to extract data from request`)
+    throw new Error('Unable to extract data from request')
   }
   newBidGroup.receivedAt = new Date()
 
