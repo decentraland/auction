@@ -15,28 +15,31 @@
   animation: 0.5s ease 0s normal forwards 1 fadein;
 }
 
-.Sidebar.in header .HelpButton {
-  display: block;
-  float: right;
-  left: 0;
-  margin-top: 0;
-  position: relative;
-  top: -5px;
-}
-
-.Sidebar.out header .HelpButton {
-  display: none;
-}
-
 @keyframes fadein {
-    0% { opacity: 0; }
-    66% { opacity: 0; }
-    100% { opacity: 1; }
+  0% { opacity: 0; }
+  66% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 .Sidebar header {
   position: relative;
   padding: 24px;
+}
+
+.Sidebar.in header .HelpButton {
+ margin-top: 0;
+ padding-top: 3px;
+ width: 36px;
+ height: 36px;
+ font-size: 20px;
+ left: inherit;
+ bottom: inherit;
+ position: relative;
+ float: right;
+}
+
+.Sidebar.out header .HelpButton {
+  display: none;
 }
 
 .Sidebar .Icon-decentraland {
