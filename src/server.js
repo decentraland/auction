@@ -280,17 +280,22 @@ export function getProjects(req) {
 }
 
 /**
- * Register to an email notification service to be notified if you're outbid
- * @param  {string} email         - Email to register to the notification service
+ * Register to an email notification service to be notified if you're outbid.
+ * It supports either an address or a message+signature combo
+ * @param  {string} address       - User address
+ * @param  {string} message       - Unsubscribe message signed with the user address. Contains the user email
+ * @param  {string} signature     - Signature generated for the message.
  * @param  {string} parcelStateId - Parcel state to watch
- * @return {boolean}      - Wether the operation was successfull or not
+ * @return {boolean} - Wether the operation was successfull or not
  */
 app.post(
   '/api/outbidNotification',
   server.handleRequest(postOutbidNotification)
 )
 
-async function getEmailAndAddress(req) {
+export async function postOutbidNotification(req) {
+  const parcelStateIds = server.extractFromReq(req, 'parcelStateIds').split(';')
+
   let address = null
   let email = null
 
@@ -304,19 +309,11 @@ async function getEmailAndAddress(req) {
     const message = server.extractFromReq(req, 'message')
     const signature = server.extractFromReq(req, 'signature')
 
-    const result = verifyMessage(message, signature)
+    const extracted = verifyMessage(message, signature)
 
-    address = result.address
-    email = result.message.toString()
+    address = extracted.address
+    email = extracted.message.toString()
   }
-
-  return { email, address }
-}
-
-export async function postOutbidNotification(req) {
-  const parcelStateIds = server.extractFromReq(req, 'parcelStateIds').split(';')
-
-  const { email, address } = await getEmailAndAddress(req)
 
   await AddressState.update({ email }, { address })
   await new OutbidNotificationService().registerParcelNotifications(
@@ -329,8 +326,9 @@ export async function postOutbidNotification(req) {
 
 /**
  * Unregister an email to all notifications
- * @param  {string} email - Email to register to the notification service
- * @return {boolean}      - Wether the operation was successfull or not
+ * @param  {string} message   - Unsubscribe message signed with the user address. Contains the user email
+ * @param  {string} signature - Signature generated for the message.
+ * @return {boolean}          - Wether the operation was successfull or not
  */
 
 app.delete(
@@ -339,7 +337,11 @@ app.delete(
 )
 
 export async function deleteOutbidNotification(req) {
-  const { address } = await getEmailAndAddress(req)
+  const message = server.extractFromReq(req, 'message')
+  const signature = server.extractFromReq(req, 'signature')
+
+  const { address } = verifyMessage(message, signature)
+
   const addressState = await AddressState.findByAddress(address)
 
   await OutbidNotification.delete({ email: addressState.email })
