@@ -104,6 +104,11 @@ export default {
       "email" text NOT NULL,
       "active" boolean DEFAULT TRUE`
     )
+    await this.createIndex(
+      'outbid_notifications',
+      'outbid_notifications_parcel_state_id_idx',
+      ['"parcelStateId"']
+    )
 
     await this.createTable(
       'jobs',
@@ -113,7 +118,7 @@ export default {
       "state" text,
       "data" json`
     )
-    await this.createIndex('jobs', 'jobs_reference_id', ['"referenceId"'])
+    await this.createIndex('jobs', 'jobs_reference_id_idx', ['"referenceId"'])
 
     await this.createTable(
       'district_entries',
