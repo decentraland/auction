@@ -2,14 +2,17 @@
   width: 51px;
   height: 51px;
   padding-top: 7px;
-  font-size: 28px;
-  right: 20px;
-  bottom: 20px;
-  position: absolute;
+  font-size: 24px;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
   background-color: #FFF;
+  border: 1px solid #30D7A9;
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
   z-index: 1040;
+  margin: auto;
+  margin-top: 32px;
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
 }

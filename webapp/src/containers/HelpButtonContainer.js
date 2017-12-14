@@ -11,8 +11,9 @@ class HelpButtonContainer extends React.Component {
     openModal: PropTypes.func
   }
 
-  openIntroModal = () => {
+  openIntroModal = e => {
     this.props.openModal('IntroModal')
+    e.stopPropagation()
   }
 
   render() {

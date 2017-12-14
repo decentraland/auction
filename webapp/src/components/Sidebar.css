@@ -15,6 +15,19 @@
   animation: 0.5s ease 0s normal forwards 1 fadein;
 }
 
+.Sidebar.in header .HelpButton {
+  display: block;
+  float: right;
+  left: 0;
+  margin-top: 0;
+  position: relative;
+  top: -5px;
+}
+
+.Sidebar.out header .HelpButton {
+  display: none;
+}
+
 @keyframes fadein {
     0% { opacity: 0; }
     66% { opacity: 0; }

@@ -5,6 +5,7 @@ import { stateData } from '../lib/propTypes'
 import Icon from './Icon'
 import ExpandedSidebar from './ExpandedSidebar'
 import CollapsedSidebar from './CollapsedSidebar'
+import HelpButtonContainer from '../containers/HelpButtonContainer'
 
 import './Sidebar.css'
 
@@ -40,6 +41,7 @@ export default class Sidebar extends React.Component {
     return (
       <div className={`Sidebar ${this.getVisibilityClassName()}`}>
         <header>
+          <HelpButtonContainer />
           <Icon name="decentraland" />
           {visible && <h1 className="sidebar-title fadein">Decentraland</h1>}
         </header>
