@@ -56,6 +56,7 @@ export default class AddressService {
     return {
       monthlyLockedBalances,
       monthlyLandBalances,
+      totalLandMANA: totalLockedToDistricts,
       totalLockedMANA:
         Math.floor(beforeNovBalanceToAuction * BEFORE_NOVEMBER_DISCOUNT) +
         Math.floor(duringNovBalanceToAuction * DURING_NOVEMBER_DISCOUNT) +
