@@ -11,6 +11,11 @@
   color: #3E396B;
 }
 
+.EmailUnsubscribe .content > .Loading {
+  font-size: 10px;
+  top: 25%;
+}
+
 .EmailUnsubscribe h2 {
   font-size: 32px;
   margin-bottom: 32px;

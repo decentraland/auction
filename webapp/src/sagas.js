@@ -9,7 +9,6 @@ import types from './types'
 import { selectors } from './reducers'
 
 import { buildCoordinate } from './lib/util'
-import localStorage from './lib/localStorage'
 import * as addressStateUtils from './lib/addressStateUtils'
 import * as parcelUtils from './lib/parcelUtils'
 import * as pendingBidsUtils from './lib/pendingBidsUtils'
@@ -56,6 +55,12 @@ function* rootSaga() {
 
   yield takeLatest(types.subscribeEmail.request, handleEmailSubscribe)
   yield takeLatest(types.unsubscribeEmail.request, handleEmailUnsubscribe)
+  yield takeLatest(
+    types.unsubscribeEmailNewsletter.request,
+    handleEmailUnsubscribeNewsletter
+  )
+
+  yield takeLatest(types.subscribeEmail.success, handleAddressFetchReload)
 }
 
 // -------------------------------------------------------------------------
@@ -387,8 +392,6 @@ function* handleEmailSubscribe(action) {
       )
     }
 
-    localStorage.setItem('email', email)
-
     yield put({ type: types.subscribeEmail.success, email })
   } catch (error) {
     console.warn(error)
@@ -400,13 +403,33 @@ function* handleEmailUnsubscribe(action) {
   const { address } = yield select(selectors.getAddressStateData)
 
   try {
-    yield call(() => api.deleteOutbidNotification(address))
-    localStorage.removeItem('email')
+    yield call(() => api.deleteOutbidNotifications(address))
 
     yield put({ type: types.unsubscribeEmail.success })
   } catch (error) {
     console.warn(error)
     yield put({ type: types.unsubscribeEmail.failed, error: error.message })
+  }
+}
+
+function* handleEmailUnsubscribeNewsletter(action) {
+  const { address, email } = yield select(selectors.getAddressStateData)
+
+  const payload = email
+  const message = eth.utils.toHex(payload)
+
+  try {
+    const signature = yield call(() => eth.remoteSign(message, address))
+
+    yield call(() => api.deleteSignedOutbidNotifications(message, signature))
+
+    yield put({ type: types.unsubscribeEmailNewsletter.success })
+  } catch (error) {
+    console.warn(error)
+    yield put({
+      type: types.unsubscribeEmailNewsletter.failed,
+      error: error.message
+    })
   }
 }
 

@@ -3,44 +3,43 @@ import PropTypes from 'prop-types'
 
 import { connect } from 'react-redux'
 
-import { unsubscribeEmail, navigateTo } from '../actions'
+import { selectors } from '../reducers'
+import { connectWeb3, unsubscribeEmailNewsletter, navigateTo } from '../actions'
 import locations from '../locations'
 
 import EmailUnsubscribe from '../components/EmailUnsubscribe'
 
 class EmailUnsubcribeContainer extends React.Component {
   static propTypes = {
-    email: PropTypes.string
+    email: PropTypes.object,
+    unsubscribeEmailNewsletter: PropTypes.func
   }
 
   componentWillMount(props) {
-    const { email, token, navigateTo } = this.props
+    this.props.connectWeb3()
+  }
 
-    if (!email || !token) {
+  componentDidUpdate(prevProps, prevState) {
+    const { email, navigateTo } = this.props
+
+    if (!email.loading && email.data === null) {
       navigateTo(locations.root)
     }
   }
 
   onUnsubscribe = () => {
-    unsubscribeEmail()
+    this.props.unsubscribeEmailNewsletter()
   }
 
   render() {
     const { email } = this.props
-
-    return (
-      <EmailUnsubscribe
-        email={email}
-        onUnsubscribe={this.onUnsubscribe}
-      />
-    )
+    return <EmailUnsubscribe email={email} onUnsubscribe={this.onUnsubscribe} />
   }
 }
 
 export default connect(
-  (state, ownProps) => ({
-    email: ownProps.match.params.email,
-    token: ownProps.match.params.token
+  state => ({
+    email: selectors.getEmail(state)
   }),
-  { unsubscribeEmail, navigateTo }
+  { connectWeb3, unsubscribeEmailNewsletter, navigateTo }
 )(EmailUnsubcribeContainer)

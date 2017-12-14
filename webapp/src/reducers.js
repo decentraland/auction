@@ -1,5 +1,4 @@
 import types from './types'
-import localStorage from './lib/localStorage'
 
 const INITIAL_STATE = {
   web3Connected: false,
@@ -27,9 +26,7 @@ const INITIAL_STATE = {
     data: null
   },
 
-  email: {
-    data: localStorage.getItem('email') || ''
-  },
+  email: { loading: true, data: null },
 
   shift: {
     pressed: false
@@ -279,10 +276,13 @@ function email(state = INITIAL_STATE.email, action) {
     case types.subscribeEmail.success:
       return { loading: false, data: action.email }
     case types.unsubscribeEmail.success:
+    case types.unsubscribeEmailNewsletter.success:
       return { loading: false, data: '' }
     case types.subscribeEmail.failed:
     case types.unsubscribeEmail.failed:
       return { loading: false, error: action.error }
+    case types.fetchAddressState.success:
+      return { loading: false, data: action.addressState.email }
     default:
       return state
   }

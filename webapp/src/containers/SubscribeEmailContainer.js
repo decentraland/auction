@@ -9,9 +9,13 @@ import SubscribeEmail from '../components/SubscribeEmail'
 
 class SubscribeEmailContainer extends React.Component {
   static propTypes = {
-    email: PropTypes.string.isRequired,
+    email: PropTypes.string,
     openModal: PropTypes.func.isRequired,
     closeSidebar: PropTypes.func.isRequired
+  }
+
+  static defaultProps = {
+    email: ''
   }
 
   onSignup = () => {

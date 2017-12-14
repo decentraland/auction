@@ -19,7 +19,7 @@ export default function Routes() {
 
       <Route
         exact
-        path={locations.unsubscribeEmail}
+        path={locations.unsubscribe}
         component={EmailUnsubcribeContainer}
       />
 

@@ -5,7 +5,6 @@ export default {
   parcelDetail: (x, y) => `/${x}/${y}`,
 
   unsubscribe: '/unsubscribe',
-  unsubscribeEmail: '/unsubscribe/:email/:token',
 
   error: '/error',
   walletError: '/walletError',

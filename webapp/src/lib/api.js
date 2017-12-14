@@ -45,8 +45,12 @@ class API {
     })
   }
 
-  deleteOutbidNotification(address) {
+  deleteOutbidNotifications(address) {
     return this.request('delete', '/outbidNotification', { address })
+  }
+
+  deleteSignedOutbidNotifications(message, signature) {
+    return this.request('delete', '/outbidNotification', { message, signature })
   }
 
   request(method, path, params) {

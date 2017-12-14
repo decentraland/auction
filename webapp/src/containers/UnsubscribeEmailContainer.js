@@ -9,8 +9,12 @@ import UnsubscribeEmail from '../components/UnsubscribeEmail'
 
 class UnsubscribeEmailContainer extends React.Component {
   static propTypes = {
-    email: PropTypes.string.isRequired,
+    email: PropTypes.string,
     unsubscribeEmail: PropTypes.func.isRequired
+  }
+
+  static defaultProps = {
+    email: ''
   }
 
   onUnsubscribe = () => {
