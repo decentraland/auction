@@ -276,11 +276,10 @@ function email(state = INITIAL_STATE.email, action) {
     case types.subscribeEmail.success:
       return { loading: false, data: action.email }
     case types.unsubscribeEmail.success:
-    case types.unsubscribeEmailNewsletter.success:
       return { loading: false, data: '' }
     case types.subscribeEmail.failed:
     case types.unsubscribeEmail.failed:
-      return { loading: false, error: action.error }
+      return { ...state, loading: false, error: action.error }
     case types.fetchAddressState.success:
       return { loading: false, data: action.addressState.email }
     default:

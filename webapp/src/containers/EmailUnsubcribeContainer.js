@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { connectWeb3, unsubscribeEmailNewsletter, navigateTo } from '../actions'
+import { connectWeb3, unsubscribeEmail, navigateTo } from '../actions'
 import locations from '../locations'
 
 import EmailUnsubscribe from '../components/EmailUnsubscribe'
@@ -12,7 +12,7 @@ import EmailUnsubscribe from '../components/EmailUnsubscribe'
 class EmailUnsubcribeContainer extends React.Component {
   static propTypes = {
     email: PropTypes.object,
-    unsubscribeEmailNewsletter: PropTypes.func
+    unsubscribeEmail: PropTypes.func
   }
 
   componentWillMount(props) {
@@ -28,7 +28,7 @@ class EmailUnsubcribeContainer extends React.Component {
   }
 
   onUnsubscribe = () => {
-    this.props.unsubscribeEmailNewsletter()
+    this.props.unsubscribeEmail()
   }
 
   render() {
@@ -41,5 +41,5 @@ export default connect(
   state => ({
     email: selectors.getEmail(state)
   }),
-  { connectWeb3, unsubscribeEmailNewsletter, navigateTo }
+  { connectWeb3, unsubscribeEmail, navigateTo }
 )(EmailUnsubcribeContainer)

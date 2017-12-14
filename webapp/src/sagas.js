@@ -55,10 +55,6 @@ function* rootSaga() {
 
   yield takeLatest(types.subscribeEmail.request, handleEmailSubscribe)
   yield takeLatest(types.unsubscribeEmail.request, handleEmailUnsubscribe)
-  yield takeLatest(
-    types.unsubscribeEmailNewsletter.request,
-    handleEmailUnsubscribeNewsletter
-  )
 
   yield takeLatest(types.subscribeEmail.success, handleAddressFetchReload)
 }
@@ -400,19 +396,6 @@ function* handleEmailSubscribe(action) {
 }
 
 function* handleEmailUnsubscribe(action) {
-  const { address } = yield select(selectors.getAddressStateData)
-
-  try {
-    yield call(() => api.deleteOutbidNotifications(address))
-
-    yield put({ type: types.unsubscribeEmail.success })
-  } catch (error) {
-    console.warn(error)
-    yield put({ type: types.unsubscribeEmail.failed, error: error.message })
-  }
-}
-
-function* handleEmailUnsubscribeNewsletter(action) {
   const { address, email } = yield select(selectors.getAddressStateData)
 
   const payload = email
@@ -423,13 +406,10 @@ function* handleEmailUnsubscribeNewsletter(action) {
 
     yield call(() => api.deleteSignedOutbidNotifications(message, signature))
 
-    yield put({ type: types.unsubscribeEmailNewsletter.success })
+    yield put({ type: types.unsubscribeEmail.success })
   } catch (error) {
     console.warn(error)
-    yield put({
-      type: types.unsubscribeEmailNewsletter.failed,
-      error: error.message
-    })
+    yield put({ type: types.unsubscribeEmail.failed, error: error.message })
   }
 }
 

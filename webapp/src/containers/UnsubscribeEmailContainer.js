@@ -18,9 +18,7 @@ class UnsubscribeEmailContainer extends React.Component {
   }
 
   onUnsubscribe = () => {
-    if (window.confirm('Are you sure to unsubscribe?')) {
-      this.props.unsubscribeEmail()
-    }
+    this.props.unsubscribeEmail()
   }
 
   isRegistered() {

@@ -69,11 +69,6 @@ export default {
     success: '[Success] Email unsubscribed',
     failed: '[Failed] Failed to unsubscribe email'
   },
-  unsubscribeEmailNewsletter: {
-    request: '[Request] Unsubscribe email from newsletter',
-    success: '[Success] Email from newsletter unsubscribed',
-    failed: '[Failed] Failed to unsubscribe email from newsletter'
-  },
 
   sidebar: {
     open: '[Open] Sidebar',

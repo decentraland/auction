@@ -130,12 +130,6 @@ export function unsubscribeEmail() {
   }
 }
 
-export function unsubscribeEmailNewsletter() {
-  return {
-    type: types.unsubscribeEmailNewsletter.request
-  }
-}
-
 // -------------------------------------------------------------------------
 // Sidebar
 
