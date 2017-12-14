@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { stateData } from '../lib/propTypes'
 
+import HelpButtonContainer from '../containers/HelpButtonContainer'
+
 import Icon from './Icon'
 import ExpandedSidebar from './ExpandedSidebar'
 import CollapsedSidebar from './CollapsedSidebar'
@@ -42,6 +44,8 @@ export default class Sidebar extends React.Component {
         <header>
           <Icon name="decentraland" />
           {visible && <h1 className="sidebar-title fadein">Decentraland</h1>}
+          {visible &&
+      <HelpButtonContainer />}
         </header>
 
         {visible ? (
