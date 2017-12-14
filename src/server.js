@@ -294,8 +294,6 @@ app.post(
 )
 
 export async function postOutbidNotification(req) {
-  const parcelStateIds = server.extractFromReq(req, 'parcelStateIds').split(';')
-
   let address = null
   let email = null
 
@@ -315,11 +313,13 @@ export async function postOutbidNotification(req) {
     email = extracted.message.toString()
   }
 
-  await AddressState.update({ email }, { address })
-  await new OutbidNotificationService().registerParcelNotifications(
-    email,
-    parcelStateIds
-  )
+  if (email) {
+    await AddressState.update({ email }, { address })
+    await new OutbidNotificationService().registerParcelNotifications(
+      address,
+      email
+    )
+  }
 
   return true
 }

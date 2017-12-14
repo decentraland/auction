@@ -33,16 +33,12 @@ class API {
   postSignedOutbidNotification(message, signature, parcelStateIds) {
     return this.request('post', '/outbidNotification', {
       message,
-      signature,
-      parcelStateIds: parcelStateIds.join(';')
+      signature
     })
   }
 
-  postOutbidNotification(address, parcelStateIds) {
-    return this.request('post', '/outbidNotification', {
-      address,
-      parcelStateIds: parcelStateIds.join(';')
-    })
+  postOutbidNotification(address) {
+    return this.request('post', '/outbidNotification', { address })
   }
 
   deleteOutbidNotifications(address) {

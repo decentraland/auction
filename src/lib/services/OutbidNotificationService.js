@@ -1,7 +1,7 @@
+import EJS from 'ejs'
 import { env, SMTP } from 'decentraland-commons'
 
-import EJS from 'ejs'
-import { OutbidNotification, Job, ParcelState } from '../models'
+import { Bid, OutbidNotification, Job, ParcelState } from '../models'
 
 const SINGLE_TEMPLATE_NAME = 'outbid-single'
 const SIMPLE_TEMPLATE_NAME = 'outbid-multi'
@@ -66,11 +66,15 @@ class OutbidNotificationService {
     return this
   }
 
-  async registerParcelNotifications(email, parcelStateIds) {
-    for (const parcelStateId of parcelStateIds) {
+  async registerParcelNotifications(address, email) {
+    const bids = await Bid.findByAddress(address)
+    const parcelStateIds = bids.map(bid => ParcelState.hashId(bid.x, bid.y))
+
+    for (const parcelStateId of new Set(parcelStateIds)) {
       const notification = await OutbidNotification.findActiveByParcelStateId(
         parcelStateId
       )
+
       if (!notification) {
         await OutbidNotification.insert({
           email,

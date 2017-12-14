@@ -43,6 +43,9 @@ export default {
       '"bidIndex"',
       '"bidGroupId"'
     ])
+    await this.createIndex('bids', 'bid_address_idx', [
+      '"address"'
+    ])
 
     await this.createTable(
       'bid_receipts',

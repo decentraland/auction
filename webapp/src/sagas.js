@@ -377,16 +377,9 @@ function* handleEmailSubscribe(action) {
 
   try {
     const signature = yield call(() => eth.remoteSign(message, address))
-    const ongoingAuctions = yield select(selectors.getOngoingAuctionsData)
-
-    if (ongoingAuctions && ongoingAuctions.length > 0) {
-      const parcelStateIds = ongoingAuctions.map(bid =>
-        buildCoordinate(bid.x, bid.y)
-      )
-      yield call(() =>
-        api.postSignedOutbidNotification(message, signature, parcelStateIds)
-      )
-    }
+    yield call(() =>
+      api.postSignedOutbidNotification(message, signature)
+    )
 
     yield put({ type: types.subscribeEmail.success, email })
   } catch (error) {
@@ -417,8 +410,7 @@ function* handleEmailRegisterBids(action) {
   const { address } = yield select(selectors.getAddressStateData)
 
   if (address) {
-    const parcelStateIds = action.bids.map(bid => buildCoordinate(bid.x, bid.y))
-    yield call(() => api.postOutbidNotification(address, parcelStateIds))
+    yield call(() => api.postOutbidNotification(address))
   }
 }
 
