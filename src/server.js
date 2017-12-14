@@ -3,13 +3,12 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import path from 'path'
 import git from 'git-rev-sync'
-import ethUtils from 'ethereumjs-util'
 
 import { server, env, eth, utils } from 'decentraland-commons'
 import db from './lib/db'
 import coordinatesUtils from './lib/coordinates'
 import omitInArray from './lib/omitInArray'
-import signedMessage from './lib/signedMessage'
+import verifyMessage from './lib/verifyMessage'
 
 import {
   AddressState,
@@ -215,17 +214,7 @@ function extractBids(data, address) {
 }
 
 export async function verifyBidGroup(data) {
-  const message = new Buffer(data.message.substr(2), 'hex')
-  const signature = ethUtils.fromRpcSig(
-    new Buffer(data.signature.substr(2), 'hex')
-  )
-  const pubkey = ethUtils.ecrecover(
-    ethUtils.hashPersonalMessage(message),
-    signature.v,
-    signature.r,
-    signature.s
-  )
-  const address = '0x' + ethUtils.pubToAddress(pubkey).toString('hex')
+  const { message, address } = verifyMessage(data.message, data.signature)
 
   return {
     bids: extractBids(message.toString(), address),
@@ -240,15 +229,18 @@ let lock = false
 export async function postBidGroup(req) {
   const data = server.extractFromReq(req, 'bidGroup')
   let newBidGroup
+
   try {
     newBidGroup = await verifyBidGroup(data)
   } catch (error) {
     console.log(error.stack)
     throw new Error('Unable to verify signature')
   }
+
   if (!newBidGroup.bids) {
     throw new Error('Unable to extract data from request')
   }
+
   newBidGroup.receivedAt = new Date()
 
   while (lock) {
@@ -298,26 +290,39 @@ app.post(
   server.handleRequest(postOutbidNotification)
 )
 
-export async function postOutbidNotification(req) {
-  const message = server.extractFromReq(req, 'message')
-  const signature = server.extractFromReq(req, 'signature')
-  const parcelStateIds = server.extractFromReq(req, 'parcelStateIds').split(';')
+async function getEmailAndAddress(req) {
+  let address = null
+  let email = null
 
-  const address = await eth.remoteRecover(message, signature)
-  if (!address) {
-    throw new Error('Invalid signature')
+  try {
+    const reqAddress = server.extractFromReq(req, 'address')
+    const addressState = await AddressState.findByAddress(reqAddress)
+
+    address = addressState.address
+    email = addressState.email
+  } catch (error) {
+    const message = server.extractFromReq(req, 'message')
+    const signature = server.extractFromReq(req, 'signature')
+
+    const result = verifyMessage(message, signature)
+
+    address = result.address
+    email = result.message.toString()
   }
 
-  const decoded = eth.utils.fromHex(message)
+  return { email, address }
+}
 
-  const email = ''
+export async function postOutbidNotification(req) {
+  const parcelStateIds = server.extractFromReq(req, 'parcelStateIds').split(';')
 
-  console.log('*********************************************')
-  console.log(decoded)
-  console.log('*********************************************')
+  const { email, address } = await getEmailAndAddress(req)
 
-  const service = new OutbidNotificationService()
-  await service.registerParcelNotifications(email, parcelStateIds)
+  await AddressState.update({ email }, { address })
+  await new OutbidNotificationService().registerParcelNotifications(
+    email,
+    parcelStateIds
+  )
 
   return true
 }
@@ -334,8 +339,12 @@ app.delete(
 )
 
 export async function deleteOutbidNotification(req) {
-  const email = server.extractFromReq(req, 'email')
-  await OutbidNotification.delete({ email })
+  const { address } = await getEmailAndAddress(req)
+  const addressState = await AddressState.findByAddress(address)
+
+  await OutbidNotification.delete({ email: addressState.email })
+  await AddressState.update({ email: null }, { id: addressState.id })
+
   return true
 }
 
@@ -345,7 +354,6 @@ export async function deleteOutbidNotification(req) {
 if (require.main === module) {
   db
     .connect()
-    .then(() => eth.connect())
     .then(() => {
       httpServer.listen(SERVER_PORT, () =>
         console.log('Server running on port', SERVER_PORT)
