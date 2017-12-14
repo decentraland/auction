@@ -2,7 +2,7 @@
   padding: 0 16px;
 }
 
-.RegisterEmail > form {
+.RegisterEmail > div {
   width: 100%;
   padding: 16px;
   border-radius: 5px;
@@ -10,44 +10,21 @@
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.10);
 }
 
-.updates-text {
+.RegisterEmail .updates-text {
   font-size: 14px;
 }
 
-.updates-text h3 {
+.RegisterEmail .updates-text h3 {
   font-size: 14px;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
 }
 
-.inputs {
-  position: relative;
+.RegisterEmail .link {
+  color: #30D7A9;
+  cursor: pointer;
 }
 
-.inputs .email {
-  width: 100%;
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid #EDEDED;
-  outline: none;
-  padding: 12px;
-}
-
-.inputs .submit {
-  width: 20px;
-  height: 20px;
-  top: 13px;
-  right: 0;
-  position: absolute;
-  border: none;
-  background-image: url("../images/rightArrow.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: #FBFBFB;
-  color: transparent;
-}
-
-.inputs p {
-  font-size: 16px;
-  float: left;
-  margin: 8px 24px;
+.RegisterEmail .link:hover {
+  color: #30D7A9;
+  text-decoration: none;
 }

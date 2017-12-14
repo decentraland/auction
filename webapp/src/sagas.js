@@ -371,7 +371,7 @@ function* handleEmailRegister(action) {
   const { email } = action
   const { address } = yield select(selectors.getAddressStateData)
 
-  const payload = `EMAIL: ${email}`
+  const payload = email
   const message = eth.utils.toHex(payload)
   const signature = yield call(() => eth.remoteSign(message, address))
 
@@ -383,7 +383,7 @@ function* handleEmailRegister(action) {
         buildCoordinate(bid.x, bid.y)
       )
       yield call(() =>
-        api.postOutbidNotification(message, signature, parcelStateIds)
+        api.postSignedOutbidNotification(message, signature, parcelStateIds)
       )
     }
 
@@ -397,10 +397,10 @@ function* handleEmailRegister(action) {
 }
 
 function* handleEmailDeregister(action) {
-  const email = yield select(selectors.getEmail)
+  const { address } = yield select(selectors.getAddressStateData)
 
   try {
-    yield call(() => api.deleteOutbidNotification(email))
+    yield call(() => api.deleteOutbidNotification(address))
     localStorage.removeItem('email')
 
     yield put({ type: types.deregisterEmail.success })
@@ -411,13 +411,11 @@ function* handleEmailDeregister(action) {
 }
 
 function* handleEmailRegisterBids(action) {
-  const email = yield select(selectors.getEmail)
+  const { address } = yield select(selectors.getAddressStateData)
 
-  if (email) {
-    // const parcelStateIds = action.bids.map(bid => buildCoordinate(bid.x, bid.y))
-    // SEND ONLY THE ADDRESS
-    // yield call(() => api.postOutbidNotification(email, parcelStateIds))
-    yield call(() => {})
+  if (address) {
+    const parcelStateIds = action.bids.map(bid => buildCoordinate(bid.x, bid.y))
+    yield call(() => api.postOutbidNotification(address, parcelStateIds))
   }
 }
 

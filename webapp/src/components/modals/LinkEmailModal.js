@@ -6,26 +6,39 @@ import { preventDefault } from '../../lib/util'
 import Modal from './Modal'
 import Icon from '../Icon'
 import Button from '../Button'
+import SuccessCheck from '../SuccessCheck'
 
 import './LinkEmailModal.css'
 
 export default class LinkEmailModal extends React.Component {
   static propTypes = {
     ...Modal.propTypes,
+    currentEmail: PropTypes.string,
     email: PropTypes.string.isRequired,
     onEmailChange: PropTypes.func.isRequired,
     onSign: PropTypes.func.isRequired
   }
 
+  getLinkGraphName() {
+    return this.props.currentEmail ? 'linked-graph' : 'link-graph'
+  }
+
   render() {
-    const { email, onEmailChange, onSign, onClose, ...props } = this.props
+    const {
+      currentEmail,
+      email,
+      onEmailChange,
+      onSign,
+      onClose,
+      ...props
+    } = this.props
 
     return (
       <Modal className="LinkEmailModal modal-lg" onClose={onClose} {...props}>
         <div className="banner">
           <Icon name="decentraland" />
           <h2>Link your email to your public wallet address</h2>
-          <Icon name="link-graph" />
+          <Icon name={this.getLinkGraphName()} />
         </div>
 
         <div className="modal-body">
@@ -39,23 +52,29 @@ export default class LinkEmailModal extends React.Component {
             </p>
           </div>
 
-          <form action="POST" onSubmit={preventDefault(onSign)}>
-            <div className="email-container">
-              <input
-                type="email"
-                className="email"
-                placeholder="Email"
-                value={email}
-                onChange={onEmailChange}
-              />
+          {currentEmail ? (
+            <div className="success">
+              <SuccessCheck />
             </div>
+          ) : (
+            <form action="POST" onSubmit={preventDefault(onSign)}>
+              <div className="email-container">
+                <input
+                  type="email"
+                  className="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={onEmailChange}
+                />
+              </div>
 
-            <div className="sign-button">
-              <Button type="primary" isSubmit={true}>
-                Sign
-              </Button>
-            </div>
-          </form>
+              <div className="sign-button">
+                <Button type="primary" isSubmit={true}>
+                  Sign
+                </Button>
+              </div>
+            </form>
+          )}
         </div>
       </Modal>
     )

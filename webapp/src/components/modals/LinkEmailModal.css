@@ -31,7 +31,8 @@
   height: 59px;
 }
 
-.LinkEmailModal .banner .Icon-link-graph {
+.LinkEmailModal .banner .Icon-link-graph,
+.LinkEmailModal .banner .Icon-linked-graph {
   margin-top: 20px;
 }
 
@@ -64,6 +65,11 @@
 .LinkEmailModal .sign-button .Button {
   padding: 11px 44px;
   border-radius: 20px;
+}
+
+.LinkEmailModal .success {
+  margin-top: 30px;
+  text-align: center;
 }
 
 @media (min-width: 768px) {

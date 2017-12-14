@@ -3,31 +3,20 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { registerEmail } from '../actions'
+import { openModal, closeSidebar } from '../actions'
 
 import RegisterEmail from '../components/RegisterEmail'
 
 class RegisterEmailContainer extends React.Component {
   static propTypes = {
     email: PropTypes.string.isRequired,
-    registerEmail: PropTypes.func.isRequired
+    openModal: PropTypes.func.isRequired,
+    closeSidebar: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      email: ''
-    }
-  }
-
-  onEmailChange = event => {
-    this.setState({ email: event.target.value })
-  }
-
-  onRegister = event => {
-    this.props.registerEmail(this.state.email)
-    event.preventDefault()
+  onSignup = () => {
+    this.props.openModal('LinkEmailModal')
+    this.props.closeSidebar()
   }
 
   isRegistered() {
@@ -36,11 +25,7 @@ class RegisterEmailContainer extends React.Component {
 
   render() {
     return !this.isRegistered() ? (
-      <RegisterEmail
-        email={this.state.email}
-        onEmailChange={this.onEmailChange}
-        onRegister={this.onRegister}
-      />
+      <RegisterEmail onSignup={this.onSignup} />
     ) : null
   }
 }
@@ -49,5 +34,5 @@ export default connect(
   state => ({
     email: selectors.getEmail(state)
   }),
-  { registerEmail }
+  { openModal, closeSidebar }
 )(RegisterEmailContainer)

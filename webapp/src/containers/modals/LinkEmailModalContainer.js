@@ -3,9 +3,8 @@ import PropTypes from 'prop-types'
 
 import { connect } from 'react-redux'
 
-// import { selectors } from '../../reducers'
+import { selectors } from '../../reducers'
 import { registerEmail } from '../../actions'
-// import { stateData } from '../../lib/propTypes'
 
 import { LinkEmailModal } from '../../components/modals'
 
@@ -29,34 +28,26 @@ class LinkEmailModalContainer extends React.Component {
     this.setState({ email: event.target.value })
   }
 
-  onRegister = event => {
-    this.props.registerEmail(this.state.email)
-    event.preventDefault()
-  }
-
   onSign = () => {
-    const { onClose } = this.props
-    console.log('SIEEEEGGGNN', this.state.email)
-    onClose()
-    this.setState({ email: '' })
-  }
-
-  isRegistered() {
-    return false // !!this.props.email
+    this.props.registerEmail(this.state.email)
   }
 
   render() {
-    return !this.isRegistered() ? (
+    return (
       <LinkEmailModal
         {...this.props}
+        currentEmail={this.props.email}
         email={this.state.email}
         onEmailChange={this.onEmailChange}
         onSign={this.onSign}
       />
-    ) : null
+    )
   }
 }
 
-export default connect(state => ({}), {
-  registerEmail
-})(LinkEmailModalContainer)
+export default connect(
+  state => ({
+    email: selectors.getEmail(state)
+  }),
+  { registerEmail }
+)(LinkEmailModalContainer)
