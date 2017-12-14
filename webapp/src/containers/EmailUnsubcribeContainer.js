@@ -2,13 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { deregisterEmail } from '../actions'
+import { unsubscribeEmail } from '../actions'
 
 import EmailUnsubscribe from '../components/EmailUnsubscribe'
 
 class EmailUnsubcribeContainer extends React.Component {
   onUnsubscribe = () => {
-    deregisterEmail()
+    unsubscribeEmail()
   }
 
   render() {
@@ -22,5 +22,5 @@ export default connect(
     parcelStates: selectors.getParcelStates(state),
     addressState: selectors.getAddressState(state)
   }),
-  { deregisterEmail }
+  { unsubscribeEmail }
 )(EmailUnsubcribeContainer)

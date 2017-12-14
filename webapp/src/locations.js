@@ -8,5 +8,5 @@ export default {
   walletError: '/walletError',
   addressError: '/addressError',
   serverError: '/serverError',
-  unsubscribe: '/unsubscribe/:email/:hash'
+  unsubscribe: '/unsubscribe'
 }

@@ -54,8 +54,8 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.failed, handleAddressFetchReload)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
 
-  yield takeLatest(types.registerEmail.request, handleEmailRegister)
-  yield takeLatest(types.deregisterEmail.request, handleEmailDeregister)
+  yield takeLatest(types.subscribeEmail.request, handleEmailSubscribe)
+  yield takeLatest(types.unsubscribeEmail.request, handleEmailUnsubscribe)
 }
 
 // -------------------------------------------------------------------------
@@ -367,7 +367,7 @@ function* handleFastBid(action) {
 // -------------------------------------------------------------------------
 // Email
 
-function* handleEmailRegister(action) {
+function* handleEmailSubscribe(action) {
   const { email } = action
   const { address } = yield select(selectors.getAddressStateData)
 
@@ -389,24 +389,24 @@ function* handleEmailRegister(action) {
 
     localStorage.setItem('email', email)
 
-    yield put({ type: types.registerEmail.success, email })
+    yield put({ type: types.subscribeEmail.success, email })
   } catch (error) {
     console.warn(error)
-    yield put({ type: types.registerEmail.failed, error: error.message })
+    yield put({ type: types.subscribeEmail.failed, error: error.message })
   }
 }
 
-function* handleEmailDeregister(action) {
+function* handleEmailUnsubscribe(action) {
   const { address } = yield select(selectors.getAddressStateData)
 
   try {
     yield call(() => api.deleteOutbidNotification(address))
     localStorage.removeItem('email')
 
-    yield put({ type: types.deregisterEmail.success })
+    yield put({ type: types.unsubscribeEmail.success })
   } catch (error) {
     console.warn(error)
-    yield put({ type: types.deregisterEmail.failed, error: error.message })
+    yield put({ type: types.unsubscribeEmail.failed, error: error.message })
   }
 }
 

@@ -3,19 +3,19 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { deregisterEmail } from '../actions'
+import { unsubscribeEmail } from '../actions'
 
-import DeRegisterEmail from '../components/DeRegisterEmail'
+import UnsubscribeEmail from '../components/UnsubscribeEmail'
 
-class DeRegisterEmailContainer extends React.Component {
+class UnsubscribeEmailContainer extends React.Component {
   static propTypes = {
     email: PropTypes.string.isRequired,
-    deregisterEmail: PropTypes.func.isRequired
+    unsubscribeEmail: PropTypes.func.isRequired
   }
 
-  onDeregister = () => {
+  onUnsubscribe = () => {
     if (window.confirm('Are you sure to unsubscribe?')) {
-      this.props.deregisterEmail()
+      this.props.unsubscribeEmail()
     }
   }
 
@@ -27,9 +27,9 @@ class DeRegisterEmailContainer extends React.Component {
     const { email } = this.props
 
     return this.isRegistered() ? (
-      <DeRegisterEmail
+      <UnsubscribeEmail
         currentEmail={email}
-        onDeregister={this.onDeregister}
+        onUnsubscribe={this.onUnsubscribe}
       />
     ) : null
   }
@@ -39,5 +39,5 @@ export default connect(
   state => ({
     email: selectors.getEmail(state)
   }),
-  { deregisterEmail }
-)(DeRegisterEmailContainer)
+  { unsubscribeEmail }
+)(UnsubscribeEmailContainer)

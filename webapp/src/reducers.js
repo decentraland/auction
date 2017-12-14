@@ -267,9 +267,9 @@ function modal(state = INITIAL_STATE.modal, action) {
 
 function email(state = INITIAL_STATE.email, action) {
   switch (action.type) {
-    case types.registerEmail.success:
+    case types.subscribeEmail.success:
       return action.email
-    case types.deregisterEmail.success:
+    case types.unsubscribeEmail.success:
       return ''
     default:
       return state

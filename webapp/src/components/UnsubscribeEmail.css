@@ -1,8 +1,8 @@
-.DeRegisterEmail {
+.UnsubscribeEmail {
   padding: 0 16px;
 }
 
-.DeRegisterEmail .content {
+.UnsubscribeEmail .content {
   width: 100%;
   padding: 16px;
   border-radius: 5px;
@@ -12,12 +12,12 @@
   color: #3E396B;
 }
 
-.DeRegisterEmail .content h3 {
+.UnsubscribeEmail .content h3 {
   font-size: 14px;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
 }
 
-.DeRegisterEmail .unsubscribe {
+.UnsubscribeEmail .unsubscribe {
   top: 13px;
   position: relative;
   float: right;

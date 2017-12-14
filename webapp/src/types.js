@@ -59,15 +59,15 @@ export default {
     close: 'Close Modal'
   },
 
-  registerEmail: {
-    request: '[Request] Register email',
-    success: '[Success] Email registered',
-    failed: '[Failed] Failed to register email'
+  subscribeEmail: {
+    request: '[Request] Subscribe email',
+    success: '[Success] Email subscribed',
+    failed: '[Failed] Failed to subscribe email'
   },
-  deregisterEmail: {
-    request: '[Request] Deregister email',
-    success: '[Request] Email deregistered',
-    failed: '[Failed] Failed to deregister email'
+  unsubscribeEmail: {
+    request: '[Request] Unsubscribe email',
+    success: '[Request] Email unsubscribed',
+    failed: '[Failed] Failed to unsubscribe email'
   },
 
   sidebar: {

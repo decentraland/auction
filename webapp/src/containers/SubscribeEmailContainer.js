@@ -5,9 +5,9 @@ import { connect } from 'react-redux'
 import { selectors } from '../reducers'
 import { openModal, closeSidebar } from '../actions'
 
-import RegisterEmail from '../components/RegisterEmail'
+import SubscribeEmail from '../components/SubscribeEmail'
 
-class RegisterEmailContainer extends React.Component {
+class SubscribeEmailContainer extends React.Component {
   static propTypes = {
     email: PropTypes.string.isRequired,
     openModal: PropTypes.func.isRequired,
@@ -25,7 +25,7 @@ class RegisterEmailContainer extends React.Component {
 
   render() {
     return !this.isRegistered() ? (
-      <RegisterEmail onSignup={this.onSignup} />
+      <SubscribeEmail onSignup={this.onSignup} />
     ) : null
   }
 }
@@ -35,4 +35,4 @@ export default connect(
     email: selectors.getEmail(state)
   }),
   { openModal, closeSidebar }
-)(RegisterEmailContainer)
+)(SubscribeEmailContainer)

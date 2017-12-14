@@ -117,16 +117,16 @@ export function changeLocation(url) {
 // -------------------------------------------------------------------------
 // Email
 
-export function registerEmail(email) {
+export function subscribeEmail(email) {
   return {
-    type: types.registerEmail.request,
+    type: types.subscribeEmail.request,
     email
   }
 }
 
-export function deregisterEmail() {
+export function unsubscribeEmail() {
   return {
-    type: types.deregisterEmail.request
+    type: types.unsubscribeEmail.request
   }
 }
 

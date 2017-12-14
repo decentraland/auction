@@ -7,8 +7,8 @@ import { distanceInWordsToNow } from '../lib/dateUtils'
 import { buildCoordinate, shortenAddress } from '../lib/util'
 import { stateData } from '../lib/propTypes'
 
-import RegisterEmailContainer from '../containers/RegisterEmailContainer'
-import DeRegisterEmailContainer from '../containers/DeRegisterEmailContainer'
+import SubscribeEmailContainer from '../containers/SubscribeEmailContainer'
+import UnsubscribeEmailContainer from '../containers/UnsubscribeEmailContainer'
 
 import Icon from './Icon'
 import Loading from './Loading'
@@ -23,7 +23,7 @@ export default function ExpandedSidebar(props) {
     <div className="ExpandedSidebar fadein">
       <UserData addressState={addressState} />
 
-      <RegisterEmailContainer />
+      <SubscribeEmailContainer />
 
       <div>
         <div className="heading">Dashboard</div>
@@ -32,7 +32,7 @@ export default function ExpandedSidebar(props) {
 
       <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
 
-      <DeRegisterEmailContainer />
+      <UnsubscribeEmailContainer />
 
       <Footer />
     </div>

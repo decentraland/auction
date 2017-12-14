@@ -4,14 +4,14 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../../reducers'
-import { registerEmail } from '../../actions'
+import { subscribeEmail } from '../../actions'
 
 import { LinkEmailModal } from '../../components/modals'
 
 class LinkEmailModalContainer extends React.Component {
   static propTypes = {
     email: PropTypes.string,
-    registerEmail: PropTypes.func
+    subscribeEmail: PropTypes.func
     // Here we should extend ...ModalContainer.propTypes but webpack is broken and doesn't understand the import
     // Try it yourself: import ModalContainer from "./ModalContainer"
   }
@@ -29,7 +29,7 @@ class LinkEmailModalContainer extends React.Component {
   }
 
   onSign = () => {
-    this.props.registerEmail(this.state.email)
+    this.props.subscribeEmail(this.state.email)
   }
 
   render() {
@@ -49,5 +49,5 @@ export default connect(
   state => ({
     email: selectors.getEmail(state)
   }),
-  { registerEmail }
+  { subscribeEmail }
 )(LinkEmailModalContainer)

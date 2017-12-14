@@ -1,8 +1,8 @@
-.RegisterEmail {
+.SubscribeEmail {
   padding: 0 16px;
 }
 
-.RegisterEmail > div {
+.SubscribeEmail > div {
   width: 100%;
   padding: 16px;
   border-radius: 5px;
@@ -10,21 +10,21 @@
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.10);
 }
 
-.RegisterEmail .updates-text {
+.SubscribeEmail .updates-text {
   font-size: 14px;
 }
 
-.RegisterEmail .updates-text h3 {
+.SubscribeEmail .updates-text h3 {
   font-size: 14px;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
 }
 
-.RegisterEmail .link {
+.SubscribeEmail .link {
   color: #30D7A9;
   cursor: pointer;
 }
 
-.RegisterEmail .link:hover {
+.SubscribeEmail .link:hover {
   color: #30D7A9;
   text-decoration: none;
 }
