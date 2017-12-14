@@ -47,6 +47,11 @@
   height: 36px;
 }
 
+.Sidebar .Icon-decentraland-loading {
+  width: 40px;
+  height: 40px;
+}
+
 .Sidebar .sidebar-title {
   margin: 0 10px;
   font-size: 18px;

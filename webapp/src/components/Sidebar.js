@@ -42,7 +42,7 @@ export default class Sidebar extends React.Component {
       <div className={`Sidebar ${this.getVisibilityClassName()}`}>
         <header>
           <HelpButtonContainer />
-          <Icon name="decentraland" />
+          <Icon name="decentraland-loading" />
           {visible && <h1 className="sidebar-title fadein">Decentraland</h1>}
         </header>
 
