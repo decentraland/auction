@@ -1,5 +1,5 @@
 .EmailUnsubscribe {
-  height: 100%;  
+  height: 100%;
 }
 
 .EmailUnsubscribe .content {
@@ -12,14 +12,14 @@
 }
 
 .EmailUnsubscribe h2 {
-  font-size: 36px;
-  font-weight: bold;
+  font-size: 32px;
+  margin-bottom: 32px;
+  font-family: "Source Sans Pro Light", Helvetica, sans-serif;
 }
 
 .EmailUnsubscribe p {
-  font-size: 24px;
-  font-weight: lighter;
   margin-bottom: 32px;
+  font-size: 16px;
 }
 
 .EmailUnsubscribe input[type="submit"] {

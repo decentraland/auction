@@ -107,9 +107,9 @@ export function closeModal() {
 // -------------------------------------------------------------------------
 // Locations
 
-export function changeLocation(url) {
+export function navigateTo(url) {
   return {
-    type: types.changeLocation,
+    type: types.navigateTo,
     url
   }
 }
@@ -127,6 +127,14 @@ export function subscribeEmail(email) {
 export function unsubscribeEmail() {
   return {
     type: types.unsubscribeEmail.request
+  }
+}
+
+export function unsubscribeEmailNewsletter(email, token) {
+  return {
+    type: types.unsubscribeEmailNewsletter.request,
+    email,
+    token
   }
 }
 

@@ -6,11 +6,13 @@ import { connect } from 'react-redux'
 import { selectors } from '../../reducers'
 import { subscribeEmail } from '../../actions'
 
+import { stateData } from '../../lib/propTypes'
+
 import { LinkEmailModal } from '../../components/modals'
 
 class LinkEmailModalContainer extends React.Component {
   static propTypes = {
-    email: PropTypes.string,
+    email: stateData(PropTypes.string),
     subscribeEmail: PropTypes.func
     // Here we should extend ...ModalContainer.propTypes but webpack is broken and doesn't understand the import
     // Try it yourself: import ModalContainer from "./ModalContainer"

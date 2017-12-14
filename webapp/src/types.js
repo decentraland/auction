@@ -66,8 +66,13 @@ export default {
   },
   unsubscribeEmail: {
     request: '[Request] Unsubscribe email',
-    success: '[Request] Email unsubscribed',
+    success: '[Success] Email unsubscribed',
     failed: '[Failed] Failed to unsubscribe email'
+  },
+  unsubscribeEmailNewsletter: {
+    request: '[Request] Unsubscribe email from newsletter',
+    success: '[Success] Email from newsletter unsubscribed',
+    failed: '[Failed] Failed to unsubscribe email from newsletter'
   },
 
   sidebar: {
@@ -82,5 +87,5 @@ export default {
 
   fastBid: '[FastBid] Requested fast bid',
 
-  changeLocation: 'Change location URL'
+  navigateTo: 'Navigate to URL'
 }

@@ -16,9 +16,10 @@ export default function Routes() {
     <Switch key="1">
       <Route exact path={locations.root} component={HomePageContainer} />
       <Route exact path={locations.parcel} component={HomePageContainer} />
+
       <Route
         exact
-        path={locations.unsubscribe}
+        path={locations.unsubscribeEmail}
         component={EmailUnsubcribeContainer}
       />
 

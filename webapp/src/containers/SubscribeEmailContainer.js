@@ -32,7 +32,7 @@ class SubscribeEmailContainer extends React.Component {
 
 export default connect(
   state => ({
-    email: selectors.getEmail(state)
+    email: selectors.getEmailData(state)
   }),
   { openModal, closeSidebar }
 )(SubscribeEmailContainer)

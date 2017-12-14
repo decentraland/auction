@@ -27,7 +27,9 @@ const INITIAL_STATE = {
     data: null
   },
 
-  email: localStorage.getItem('email') || '',
+  email: {
+    data: localStorage.getItem('email') || ''
+  },
 
   shift: {
     pressed: false
@@ -80,6 +82,9 @@ function getModal(state) {
 function getEmail(state) {
   return state.email
 }
+function getEmailData(state) {
+  return state.email.data
+}
 function getSidebar(state) {
   return state.sidebar
 }
@@ -111,6 +116,7 @@ export const selectors = {
   getOngoingAuctionsData,
   getModal,
   getEmail,
+  getEmailData,
   getSidebar,
   isShiftPressed,
   getRange,
@@ -267,10 +273,16 @@ function modal(state = INITIAL_STATE.modal, action) {
 
 function email(state = INITIAL_STATE.email, action) {
   switch (action.type) {
+    case types.subscribeEmail.request:
+    case types.unsubscribeEmail.request:
+      return { ...state, loading: true }
     case types.subscribeEmail.success:
-      return action.email
+      return { loading: false, data: action.email }
     case types.unsubscribeEmail.success:
-      return ''
+      return { loading: false, data: '' }
+    case types.subscribeEmail.failed:
+    case types.unsubscribeEmail.failed:
+      return { loading: false, error: action.error }
     default:
       return state
   }

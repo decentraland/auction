@@ -20,7 +20,7 @@ import api from './lib/api'
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3)
 
-  yield takeEvery(types.changeLocation, handleLocationChange)
+  yield takeEvery(types.navigateTo, handleLocationChange)
 
   yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange)
 
@@ -373,11 +373,11 @@ function* handleEmailSubscribe(action) {
 
   const payload = email
   const message = eth.utils.toHex(payload)
-  const signature = yield call(() => eth.remoteSign(message, address))
-
-  const ongoingAuctions = yield select(selectors.getOngoingAuctionsData)
 
   try {
+    const signature = yield call(() => eth.remoteSign(message, address))
+    const ongoingAuctions = yield select(selectors.getOngoingAuctionsData)
+
     if (ongoingAuctions && ongoingAuctions.length > 0) {
       const parcelStateIds = ongoingAuctions.map(bid =>
         buildCoordinate(bid.x, bid.y)

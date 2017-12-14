@@ -2,25 +2,27 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { preventDefault } from '../../lib/util'
+import { stateData } from '../../lib/propTypes'
 
 import Modal from './Modal'
 import Icon from '../Icon'
-import Button from '../Button'
+import Loading from '../Loading'
 import SuccessCheck from '../SuccessCheck'
+import Button from '../Button'
 
 import './LinkEmailModal.css'
 
 export default class LinkEmailModal extends React.Component {
   static propTypes = {
     ...Modal.propTypes,
-    currentEmail: PropTypes.string,
+    currentEmail: stateData(PropTypes.string),
     email: PropTypes.string.isRequired,
     onEmailChange: PropTypes.func.isRequired,
     onSign: PropTypes.func.isRequired
   }
 
   getLinkGraphName() {
-    return this.props.currentEmail ? 'linked-graph' : 'link-graph'
+    return this.props.currentEmail.data ? 'linked-graph' : 'link-graph'
   }
 
   render() {
@@ -52,7 +54,9 @@ export default class LinkEmailModal extends React.Component {
             </p>
           </div>
 
-          {currentEmail ? (
+          {currentEmail.loading ? (
+            <Loading />
+          ) : currentEmail.data ? (
             <div className="success">
               <SuccessCheck />
             </div>

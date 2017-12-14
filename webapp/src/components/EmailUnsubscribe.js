@@ -1,8 +1,8 @@
 import React from 'react'
 
 import Navbar from './Navbar'
-
 import Button from './Button'
+
 import './EmailUnsubscribe.css'
 
 export default function EmailUnsubscribe(props) {

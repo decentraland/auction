@@ -37,7 +37,7 @@ class UnsubscribeEmailContainer extends React.Component {
 
 export default connect(
   state => ({
-    email: selectors.getEmail(state)
+    email: selectors.getEmailData(state)
   }),
   { unsubscribeEmail }
 )(UnsubscribeEmailContainer)

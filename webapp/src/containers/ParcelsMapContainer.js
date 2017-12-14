@@ -8,7 +8,7 @@ import locations from '../locations'
 import {
   parcelRangeChange,
   openModal,
-  changeLocation,
+  navigateTo,
   setLoading,
   fastBid
 } from '../actions'
@@ -32,7 +32,7 @@ class ParcelsMapContainer extends React.Component {
       y: PropTypes.string
     }),
     openModal: PropTypes.func.isRequired,
-    changeLocation: PropTypes.func.isRequired,
+    navigateTo: PropTypes.func.isRequired,
     setLoading: PropTypes.func.isRequired,
     fastBid: PropTypes.func.isRequired
   }
@@ -80,7 +80,7 @@ class ParcelsMapContainer extends React.Component {
       bounds.max.y - offset
     )
 
-    this.props.changeLocation(locations.parcelDetail(position.x, position.y))
+    this.props.navigateTo(locations.parcelDetail(position.x, position.y))
   }
 
   onZoomEnd = zoom => {
@@ -180,6 +180,6 @@ export default withRouter(
       isShiftPressed: selectors.isShiftPressed(state),
       center: ownProps.match.params // from withRouter
     }),
-    { parcelRangeChange, openModal, changeLocation, setLoading, fastBid }
+    { parcelRangeChange, openModal, navigateTo, setLoading, fastBid }
   )(ParcelsMapContainer)
 )
