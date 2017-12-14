@@ -23,13 +23,13 @@
 
 .Search:before {
   content: "";
-	display: block;
-	background: url("/search-icon.svg") no-repeat;
-	width: 20px;
-	height: 20px;
-	position: absolute;
-	right: 15px;
-	top: 15px;
+  display: block;
+  background: url("/search-icon.svg") no-repeat;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 15px;
+  top: 15px;
 }
 
 .Search.search-active > input {
