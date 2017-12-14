@@ -16,7 +16,7 @@ class LockedBalanceEvent extends Model {
          WHERE address = $1
      GROUP BY month
     `,
-      [address]
+      [address.toLowerCase()]
     )
   }
 

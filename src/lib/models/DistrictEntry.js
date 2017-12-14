@@ -27,7 +27,7 @@ class DistrictEntry extends Model {
   static getMonthlyLockedBalanceByAddress(address, landCost) {
     return this.db.query(
       'SELECT EXTRACT(month from TO_TIMESTAMP("userTimestamp"::bigint / 1000)) AS month, SUM(lands) * $1 AS mana FROM district_entries WHERE address = $2 GROUP BY month',
-      [landCost, address]
+      [landCost, address.toLowerCase()]
     )
   }
 }
