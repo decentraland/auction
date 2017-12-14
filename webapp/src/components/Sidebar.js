@@ -12,6 +12,7 @@ import './Sidebar.css'
 export default class Sidebar extends React.Component {
   static propTypes = {
     visible: PropTypes.bool,
+    isLoading: PropTypes.bool,
     addressState: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array).isRequired,
     dashboard: PropTypes.object.isRequired,
@@ -19,7 +20,8 @@ export default class Sidebar extends React.Component {
   }
 
   static defaultProps = {
-    visible: false
+    visible: false,
+    isLoading: false
   }
 
   toggle = () => {
@@ -35,15 +37,19 @@ export default class Sidebar extends React.Component {
     return this.props.visible ? 'in' : 'out'
   }
 
+  getDecentralandIconName() {
+    return this.props.isLoading ? 'decentraland-loading' : 'decentraland'
+  }
+
   render() {
-    const { visible, addressState, ongoingAuctions, dashboard } = this.props
+    let { visible, addressState, ongoingAuctions, dashboard } = this.props
 
     return (
       <div className={`Sidebar ${this.getVisibilityClassName()}`}>
         <header>
-          <HelpButtonContainer />
-          <Icon name="decentraland" />
+          <Icon name={this.getDecentralandIconName()} />
           {visible && <h1 className="sidebar-title fadein">Decentraland</h1>}
+          <HelpButtonContainer />
         </header>
 
         {visible ? (

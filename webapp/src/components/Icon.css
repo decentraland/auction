@@ -11,6 +11,12 @@
   background-image: url("../images/logo.svg");
 }
 
+.Icon-decentraland-loading {
+  width: 100px;
+  height: 100px;
+  background-image: url("../images/decentraland-loading.gif");
+}
+
 .Icon-hamburger {
   width: 16px;
   height: 11px;

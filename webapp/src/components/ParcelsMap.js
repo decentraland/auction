@@ -152,17 +152,18 @@ export default class ParcelsMap extends React.Component {
     this.panInProgress = false
   }
 
-  onMapMoveStart = event => {
+  onMapMoveStart = () => {
     this.panInProgress = true
+    this.props.onMoveStart()
   }
 
-  onMapMoveEnd = event => {
+  onMapMoveEnd = () => {
     if (this.panInProgress) {
       this.debouncedOnMoveEnd()
     }
   }
 
-  onZoomEnd = event => {
+  onZoomEnd = () => {
     this.props.onZoomEnd(this.map.getZoom())
     this.debouncedOnMoveEnd()
   }
