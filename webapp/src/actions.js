@@ -130,11 +130,9 @@ export function unsubscribeEmail() {
   }
 }
 
-export function unsubscribeEmailNewsletter(email, token) {
+export function unsubscribeEmailNewsletter() {
   return {
-    type: types.unsubscribeEmailNewsletter.request,
-    email,
-    token
+    type: types.unsubscribeEmailNewsletter.request
   }
 }
 
