@@ -7,11 +7,13 @@ export function buildCoordinate(x, y) {
   return `${x},${y}`
 }
 
+let timeoutId = null
 export function flashNotice(message, timeout = 3000) {
   const notice = <FlashNotice> {message} </FlashNotice>
   const target = document.getElementById('notice')
   ReactDOM.render(notice, target)
-  setTimeout(() => ReactDOM.unmountComponentAtNode(target), timeout)
+  clearTimeout(timeoutId)
+  timeoutId = setTimeout(() => ReactDOM.unmountComponentAtNode(target), timeout)
 }
 
 export function started() {

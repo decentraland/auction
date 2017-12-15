@@ -64,8 +64,6 @@ function* rootSaga() {
   yield takeLatest(types.unsubscribeEmail.request, handleEmailUnsubscribe)
 
   yield takeLatest(types.subscribeEmail.success, handleAddressFetchReload)
-
-  yield put({ type: types.connectWeb3.request })
 }
 
 // -------------------------------------------------------------------------
@@ -410,7 +408,7 @@ function getBidGroupsNonce(bidGroups) {
 function* handleFastBid(action) {
   const parcel = action.parcel
   if (parcel.projectId) {
-    yield call(() => flashNotice(`You can't bid on a project parcel`))
+    yield call(() => flashNotice("You can't bid on a project parcel"))
     return
   }
 
@@ -418,8 +416,7 @@ function* handleFastBid(action) {
   const amount = parcelUtils.minimumBid(parcel.amount)
   const addressState = yield select(selectors.getAddressState)
 
-  if (addressState.loading || !addressState.data.balance) {
-    // TODO: Balance not loaded?
+  if (addressState.loading) {
     return
   }
   if (amount > addressState.data.balance) {

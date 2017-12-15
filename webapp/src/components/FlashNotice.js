@@ -3,8 +3,8 @@ import React from 'react'
 import './FlashNotice.css'
 
 export default class FlashNotice extends React.Component {
-  constructor(...args) {
-    super(...args)
+  constructor(props) {
+    super(props)
     this.state = { visible: true }
   }
 
@@ -15,7 +15,9 @@ export default class FlashNotice extends React.Component {
       this.state.visible && (
         <div className="FlashNotice">
           {this.props.children} &nbsp;
-          <span onClick={this.dismiss}>✕</span>
+          <span onClick={this.dismiss} className="cross">
+            ✕
+          </span>
         </div>
       )
     )

@@ -1,7 +1,7 @@
 #notice {
   position: absolute;
   top: 25px;
-  right: 40px;
+  right: 50px;
   z-index: 2000;
 }
 
@@ -15,4 +15,5 @@
 
 .FlashNotice .cross {
   color: #CCC;
+  cursor: pointer;
 }
