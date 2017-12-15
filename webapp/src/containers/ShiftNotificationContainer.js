@@ -14,7 +14,12 @@ class ShiftNotificationContainer extends React.Component {
     hasPlacedBids: PropTypes.bool,
     isPressed: PropTypes.bool,
     shiftDown: PropTypes.func,
-    shiftUp: PropTypes.func
+    shiftUp: PropTypes.func,
+    modal: PropTypes.shape({
+      open: PropTypes.bool,
+      name: PropTypes.string,
+      data: PropTypes.object
+    })
   }
 
   constructor(props) {
@@ -46,7 +51,9 @@ class ShiftNotificationContainer extends React.Component {
   }
 
   render() {
-    return this.props.hasPlacedBids && this.props.isPressed ? (
+    const { hasPlacedBids, isPressed, modal } = this.props
+
+    return hasPlacedBids && isPressed && !modal.open ? (
       <ShiftNotification />
     ) : (
       <span />
@@ -57,7 +64,8 @@ class ShiftNotificationContainer extends React.Component {
 export default connect(
   state => ({
     hasPlacedBids: selectors.hasPlacedBids(state),
-    isPressed: selectors.isShiftPressed(state)
+    isPressed: selectors.isShiftPressed(state),
+    modal: selectors.getModal(state)
   }),
   {
     shiftDown: actions.shiftDown,
