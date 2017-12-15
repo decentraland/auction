@@ -86,6 +86,7 @@ export async function getAll(url) {
 
 export async function run(url) {
   const { generalInfo, mapInfo, districtInfo } = await getAll(url)
+  console.log(generalInfo)
   const finalData = {}
 
   checkInfo(mapInfo, districtInfo)
