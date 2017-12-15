@@ -9,7 +9,8 @@ import {
 } from 'redux-saga/effects'
 import { push, replace } from 'react-router-redux'
 
-import { eth, env, utils } from 'decentraland-commons'
+import { env, utils } from 'decentraland-commons'
+import { eth as web3Eth } from 'decentraland-commons'
 
 import locations from './locations'
 import types from './types'
@@ -65,6 +66,8 @@ function* rootSaga() {
   yield takeLatest(types.unsubscribeEmail.request, handleEmailUnsubscribe)
 
   yield takeLatest(types.subscribeEmail.success, handleAddressFetchReload)
+
+  yield put({ type: types.connectWeb3.request })
 }
 
 // -------------------------------------------------------------------------
@@ -89,19 +92,20 @@ async function connectLedger(action = {}) {
 async function connectBrowser(action = {}) {
   try {
     let retries = 0
-    let connected = await eth.reconnect(action.address)
+    let connected = await web3Eth.reconnect(action.address)
 
     while (!connected && retries <= 3) {
       await utils.sleep(1500)
-      connected = await eth.connect(action.address)
+      connected = await web3Eth.connect(action.address)
       retries += 1
     }
 
     if (!connected) return false
+    const address = await web3Eth.getAddress()
 
     return {
-      ethereum: eth,
-      address: eth.getAddress()
+      ethereum: web3Eth,
+      address
     }
   } catch (error) {
     return false
@@ -357,7 +361,7 @@ async function sign(message, address, ethereum, ledger) {
       console.log(error, error.stack)
     }
   } else {
-    return await eth.remoteSign(message, address)
+    return await ethereum.remoteSign(message, address)
   }
 }
 
@@ -369,7 +373,7 @@ function* handleConfirmBidsRequest(action) {
 
   try {
     const payload = buildBidsSignPayload(bids)
-    const message = eth.utils.toHex(payload)
+    const message = web3Eth.utils.toHex(payload)
     const signature = yield call(() => sign(message, address, ethereum, ledger))
 
     const bidGroup = {
@@ -460,7 +464,7 @@ function* handleEmailSubscribe(action) {
 
   const timestamp = new Date().getTime()
   const payload = `Decentraland Auction: Subscribe ${email} (${timestamp})`
-  const message = eth.utils.toHex(payload)
+  const message = web3Eth.utils.toHex(payload)
 
   try {
     const signature = yield call(() => sign(message, address, ethereum, ledger))
@@ -479,7 +483,7 @@ function* handleEmailUnsubscribe(action) {
 
   const timestamp = new Date().getTime()
   const payload = `Decentraland Auction: Unsubscribe ${email} (${timestamp})`
-  const message = eth.utils.toHex(payload)
+  const message = web3Eth.utils.toHex(payload)
 
   try {
     const signature = yield call(() => sign(message, address, ethereum, ledger))
