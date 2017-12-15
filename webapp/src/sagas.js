@@ -15,7 +15,7 @@ import locations from './locations'
 import types from './types'
 import { selectors } from './reducers'
 
-import { buildCoordinate } from './lib/util'
+import { buildCoordinate, flashNotice } from './lib/util'
 import * as addressStateUtils from './lib/addressStateUtils'
 import * as parcelUtils from './lib/parcelUtils'
 import * as pendingBidsUtils from './lib/pendingBidsUtils'
@@ -419,7 +419,7 @@ function getBidGroupsNonce(bidGroups) {
 function* handleFastBid(action) {
   const parcel = action.parcel
   if (parcel.projectId) {
-    // TODO: Show message, can't bid on project
+    yield call(() => flashNotice("You can't bid on a project parcel"))
     return
   }
 
@@ -427,12 +427,13 @@ function* handleFastBid(action) {
   const amount = parcelUtils.minimumBid(parcel.amount)
   const addressState = yield select(selectors.getAddressState)
 
-  if (addressState.loading || !addressState.data.balance) {
-    // TODO: Balance not loaded?
+  if (addressState.loading) {
     return
   }
   if (amount > addressState.data.balance) {
-    // TODO: Not enough balance
+    yield call(() =>
+      flashNotice(`You don't have enough balance to bid on ${x}, ${y}`)
+    )
     return
   }
 

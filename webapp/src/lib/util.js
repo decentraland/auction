@@ -1,5 +1,19 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+import FlashNotice from '../components/FlashNotice'
+
 export function buildCoordinate(x, y) {
   return `${x},${y}`
+}
+
+let timeoutId = null
+export function flashNotice(message, timeout = 3000) {
+  const notice = <FlashNotice> {message} </FlashNotice>
+  const target = document.getElementById('notice')
+  ReactDOM.render(notice, target)
+  clearTimeout(timeoutId)
+  timeoutId = setTimeout(() => ReactDOM.unmountComponentAtNode(target), timeout)
 }
 
 export function started() {

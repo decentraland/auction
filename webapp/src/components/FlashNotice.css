@@ -1,0 +1,19 @@
+#notice {
+  position: absolute;
+  top: 25px;
+  right: 50px;
+  z-index: 2000;
+}
+
+.FlashNotice {
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #DF423E;
+  color: #DF423E;
+  padding: 8px 16px 8px 16px;
+}
+
+.FlashNotice .cross {
+  color: #CCC;
+  cursor: pointer;
+}
