@@ -5,11 +5,13 @@ import createHistory from 'history/createBrowserHistory'
 import createSagasMiddleware from 'redux-saga'
 import reduxThunk from 'redux-thunk'
 import { createLogger } from 'redux-logger'
+import { env } from 'decentraland-commons'
 
 import { createGoogleAnalyticsMiddleware } from './analyticsMiddleware'
 
 import reducers, { analytics } from './reducers'
 import rootSaga from './sagas'
+import { started } from './lib/util'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
@@ -40,7 +42,9 @@ const store = createStore(
   )
 )
 
-sagasMiddleware.run(rootSaga)
+if (started() || env.isDevelopment()) {
+  sagasMiddleware.run(rootSaga)
+}
 
 export function dispatch(action) {
   if (typeof action === 'string') {

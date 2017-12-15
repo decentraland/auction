@@ -377,9 +377,7 @@ function* handleEmailSubscribe(action) {
 
   try {
     const signature = yield call(() => eth.remoteSign(message, address))
-    yield call(() =>
-      api.postSignedOutbidNotification(message, signature)
-    )
+    yield call(() => api.postSignedOutbidNotification(message, signature))
 
     yield put({ type: types.subscribeEmail.success, email })
   } catch (error) {

@@ -2,6 +2,10 @@ export function buildCoordinate(x, y) {
   return `${x},${y}`
 }
 
+export function started() {
+  return new Date().getTime() >= 1513375200000
+}
+
 export function isEmptyObject(obj) {
   return Object.keys(obj).length === 0
 }
