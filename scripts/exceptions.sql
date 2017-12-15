@@ -6,11 +6,11 @@
   "version": "2"
 }
  */
-UPDATE address_states SET address="0x1fCE36dDBB058757851D9391E65606cE4EBcaE8A" WHERE address="0xd5508cb1d545f10946019be079db7245a2729e1a";
+UPDATE address_states SET address='0x1fCE36dDBB058757851D9391E65606cE4EBcaE8A' WHERE address='0xd5508cb1d545f10946019be079db7245a2729e1a';
 
 /*
   User: @widedot on slack
   Address: 0x80ACB88C37422c7A8A132ce260b0040b02645DDb
   Tried to stake on Oct. 31 but lock transaction took too long -- Bonus of 500 MANA
 */
-UPDATE address_states SET balance=balance + 500 WHERE address="0x80ACB88C37422c7A8A132ce260b0040b02645DDb";
+UPDATE address_states SET balance=(balance::int * 1.1)::text WHERE address='0x80ACB88C37422c7A8A132ce260b0040b02645DDb';

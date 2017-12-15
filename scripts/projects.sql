@@ -77,7 +77,17 @@ ea2c3a3e-bbd6-49d9-814c-3b64b37b057a	SciArt Lab	Research and Development Lab for
 00356265-d762-453d-8eae-14dc0deaa380	Mother Russia Land	First land for Russian community	https://github.com/decentraland/districts/issues/80	t	\N	\N	f	2017-12-10 15:59:10.105	2017-12-10 15:59:10.105
 32e326b5-8b66-412e-be48-738c51321a2c	Yoga Center	Organize daily yoga classes in a quiet and relaxing environment.	https://github.com/decentraland/districts/issues/82	t	\N	\N	f	2017-12-12 02:30:20.982	2017-12-12 02:30:20.982
 19076857-8a84-41b7-950f-dc91365c8313	NEO TOKYO	This is a world where you can become Ninja! The idea is to bring back ninja into the future cybernetic world.	https://github.com/decentraland/districts/issues/83	t	\N	\N	f	2017-12-12 12:46:51.629	2017-12-12 12:46:51.629
+5940a005-c590-4820-842b-e4cd69fe680a	The Crypto Valley	We introduce a virtual Crypto Valley to break up the geographic constraints and provide free access to anyone in the world. It is a large area dedicated to Crypto projects, either existing or upcoming ones.	https://github.com/decentraland/districts/issues/93	t	\N	\N	f	2017-12-14 16:48:06.634	2017-12-14 16:48:06.634
+77909d00-5cc5-4a1f-948b-d173347964c7	Voltaire	The virtual representation of the Voltaire House	https://voltaire.ninja	t	\N	\N	f	2017-12-14 19:30:29.96	2017-12-14 19:30:29.96
 \.
+
+
+--
+-- Name: projects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('projects_id_seq', 1, false);
+
 
 --
 -- PostgreSQL database dump complete
