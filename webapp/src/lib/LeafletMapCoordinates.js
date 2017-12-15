@@ -1,10 +1,10 @@
 import L from 'leaflet'
-import { eth } from 'decentraland-commons'
 
 export default class LeafletMapCoordinates {
-  constructor(baseZoom) {
-    this.zoom = baseZoom
-    this.offset = Math.pow(2, baseZoom)
+  constructor(map, tileSize) {
+    this.map = map
+    this.tileSize = tileSize
+    this.origin = map.project(map.getBounds().getNorthWest())
   }
 
   toLatLngBounds(bounds) {
@@ -17,57 +17,24 @@ export default class LeafletMapCoordinates {
   }
 
   cartesianToLatLng({ x, y }) {
-    const mapSize = this.getMapSize()
-    const offset = this.getOffset()
+    const offsetX = x * this.tileSize
+    const offsetY = -y * this.tileSize
 
-    const lat = y / offset * mapSize
-    const lng = x / offset * mapSize
-
-    return new L.LatLng(lat, lng)
+    const point = new L.Point(
+      Math.round(offsetX + this.origin.x),
+      Math.round(offsetY + this.origin.y)
+    )
+    return this.map.unproject(point)
   }
 
-  latLngToCartesian({ lng, lat }) {
-    const mapSize = getBn(this.getMapSize())
-    const offset = getBn(this.getOffset())
+  latLngToCartesian(bounds) {
+    const offset = this.map.project(bounds)
+    const offsetX = offset.x - this.origin.x
+    const offsetY = this.origin.y - offset.y
 
-    const x = getBn(lng)
-      .mul(offset)
-      .dividedBy(mapSize)
-      .round()
-      .toNumber()
-
-    const y = getBn(lat)
-      .mul(offset)
-      .dividedBy(mapSize)
-      .round()
-      .toNumber()
-
-    return { x, y }
-  }
-
-  coordsToCartesian({ x, y }) {
-    const offset = this.getOffset()
     return {
-      x: x - offset,
-      y: y - offset
+      x: Math.round(offsetX / this.tileSize),
+      y: Math.round(offsetY / this.tileSize)
     }
   }
-
-  getOffset() {
-    // leaflet renders `2^zoomlevel` tiles across
-    return this.offset
-  }
-
-  getMapSize() {
-    // leaflet considers the map as going from `-180` to `180
-    return 180
-  }
-}
-
-const bnCache = {}
-function getBn(number) {
-  if (!bnCache[number]) {
-    bnCache[number] = new eth.utils.toBigNumber(number)
-  }
-  return bnCache[number]
 }
