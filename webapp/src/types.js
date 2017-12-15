@@ -7,12 +7,6 @@ export default {
 
   setLoading: 'Set loading value',
 
-  fetchManaBalance: {
-    request: '[Request] Fetch MANA balance request',
-    success: '[Success] MANA balance fetched',
-    failed: '[Failed] Failed to fetch MANA balance'
-  },
-
   fetchParcels: {
     request: '[Request] Fetch parcels requested',
     success: '[Success] Parcels retrieved',

@@ -25,6 +25,7 @@ import api from './lib/api'
 //       We can listen to URL changes and try to load web3 in that particular case
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3)
+  yield takeLatest(types.connectWeb3.success, handleAddressFetchRequest)
 
   yield takeEvery(types.navigateTo, handleLocationChange)
 
@@ -33,20 +34,22 @@ function* rootSaga() {
   yield takeLatest(types.fetchParcels.request, handleParcelFetchRequest)
   yield takeEvery(types.fetchParcels.failed, retryParcelFetch)
 
-  yield takeLatest(types.connectWeb3.success, handleAddressFetchRequest)
-  yield takeLatest(types.fetchManaBalance.request, handleAddressFetchRequest)
   yield takeLatest(types.fetchAddressState.request, handleAddressFetchRequest)
 
   yield takeEvery(types.fetchProjects.request, handleProjectsFetchRequest)
 
   yield takeEvery(types.appendUnconfirmedBid, handleAddressUpdateBalance)
 
-  yield takeEvery(types.fastBid, handleFastBid)
-
   yield takeEvery(
     types.fetchOngoingAuctions.request,
     handleOngoingAuctionsFetchRequest
   )
+  yield takeEvery(
+    types.fetchAddressState.success,
+    handleOngoingAuctionsFetchRequest
+  )
+
+  yield takeEvery(types.fastBid, handleFastBid)
 
   yield takeLatest(types.confirmBids.request, handleAddresStateStartLoading)
   yield takeLatest(types.confirmBids.request, handleConfirmBidsRequest)
@@ -54,9 +57,7 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.success, handleAddressFetchRequest)
   yield takeLatest(types.confirmBids.success, handleEmailRegisterBids)
 
-  yield takeEvery(types.confirmBids.success, handleOngoingAuctionsFetchRequest)
   yield takeEvery(types.confirmBids.failed, handleOngoingAuctionsFetchRequest)
-
   yield takeLatest(types.confirmBids.failed, handleAddressFetchReload)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
 
@@ -291,31 +292,39 @@ function* handleOngoingAuctionsFetchRequest(action) {
   try {
     let parcelStates = yield select(selectors.getParcelStates)
     let addressState = yield select(selectors.getAddressStateData)
-
-    const ongoingAuctions = []
+    let ongoingAuctions = yield select(selectors.getOngoingAuctionsData)
 
     const bidCoordinates = addressStateUtils.getBidCoordinates(addressState)
+
+    if (ongoingAuctions && ongoingAuctions.length === bidCoordinates.length) {
+      // Return early
+      yield put({ type: types.fetchOngoingAuctions.success, ongoingAuctions })
+      return
+    }
 
     if (bidCoordinates.length) {
       yield call(() => handleParcelFetchRequest({ parcels: bidCoordinates }))
       parcelStates = yield select(selectors.getParcelStates)
     }
 
-    for (const coordinate of bidCoordinates) {
+    const newAuctions = bidCoordinates.map(coordinate => {
       const parcel = parcelStates[coordinate]
       const status = parcelUtils.getBidStatus(parcel, addressState)
 
-      ongoingAuctions.push({
+      return {
         status,
         address: addressState.address,
         x: parcel.x,
         y: parcel.y,
         amount: parcel.amount,
         endsAt: parcel.endsAt
-      })
-    }
+      }
+    })
 
-    yield put({ type: types.fetchOngoingAuctions.success, ongoingAuctions })
+    yield put({
+      type: types.fetchOngoingAuctions.success,
+      ongoingAuctions: newAuctions
+    })
   } catch (error) {
     console.warn(error)
     yield put({
