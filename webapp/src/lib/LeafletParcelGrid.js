@@ -94,7 +94,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
 
   loadCell(tile, renderDelay) {
     const { className, dataset, fillColor } = this.options.getTileAttributes(
-      tile.center
+      tile.bounds.getNorthWest()
     )
 
     const loadedTile = this.loadedTiles[tile.id]

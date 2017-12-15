@@ -50,11 +50,9 @@ export default class ParcelsMap extends React.Component {
   componentWillMount() {
     this.map = null
     this.parcelGrid = null
-    this.mapCoordinates = new LeafletMapCoordinates(this.props.baseZoom)
+    this.mapCoordinates = null
 
     this.debounceMapMethodsByTileSize(this.props.tileSize)
-
-    setTimeout(() => this.onMoveEnd())
   }
 
   componentWillUnmount() {
@@ -106,6 +104,21 @@ export default class ParcelsMap extends React.Component {
   createMap(container) {
     const { x, y, tileSize, minZoom, maxZoom, bounds, zoom } = this.props
 
+    this.map = new L.Map(MAP_ID, {
+      minZoom,
+      maxZoom,
+      zoom,
+      center: new L.LatLng(0, 0),
+      layers: [],
+      renderer: L.svg(),
+      zoomAnimation: false,
+      scrollWheelZoom: false,
+      boxZoom: false,
+      doubleClickZoom: false
+    })
+
+    this.mapCoordinates = new LeafletMapCoordinates(this.map, tileSize)
+
     this.parcelGrid = new LeafletParcelGrid({
       getTileAttributes: this.getTileAttributes,
       onTileClick: this.onTileClick,
@@ -113,20 +126,10 @@ export default class ParcelsMap extends React.Component {
       tileSize: tileSize
     })
 
-    this.map = new L.Map(MAP_ID, {
-      minZoom,
-      maxZoom,
-      zoom,
-      center: this.getCenter(x, y),
-      layers: [this.parcelGrid],
-      renderer: L.svg(),
-      zoomAnimation: false,
-      scrollWheelZoom: false,
-      boxZoom: false
-    })
-
     this.map.zoomControl.setPosition('topright')
     this.map.setMaxBounds(this.mapCoordinates.toLatLngBounds(bounds))
+    this.map.addLayer(this.parcelGrid)
+    this.map.setView(this.getCenter(x, y))
 
     this.attachMapEvents()
 
@@ -194,9 +197,7 @@ export default class ParcelsMap extends React.Component {
   }
 
   getCenter(x, y) {
-    return isNaN(x)
-      ? new L.LatLng(0, 0)
-      : this.mapCoordinates.cartesianToLatLng({ x, y })
+    return this.mapCoordinates.cartesianToLatLng({ x, y })
   }
 
   bindMap(container) {
@@ -215,8 +216,8 @@ export default class ParcelsMap extends React.Component {
   }
 
   // Called by the Parcel Grid on each tile render
-  getTileAttributes = coords => {
-    const { x, y } = this.mapCoordinates.latLngToCartesian(coords)
+  getTileAttributes = center => {
+    const { x, y } = this.mapCoordinates.latLngToCartesian(center)
     const parcel = this.getParcelData(x, y)
     const addressState = this.props.getAddressState()
     const maxAmount = this.props.getMaxAmount()
