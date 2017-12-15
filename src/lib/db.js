@@ -61,10 +61,14 @@ export default {
       `"id" int NOT NULL DEFAULT nextval('address_states_id_seq'),
       "address" varchar(42) NOT NULL UNIQUE,
       "balance" text NOT NULL,
+      "email" text,
       "latestBidGroupId" int`
     )
     await this.createIndex('address_states', 'address_state_address_idx', [
       'address'
+    ])
+    await this.createIndex('address_states', 'address_state_email_idx', [
+      'email'
     ])
 
     // id => string (hash of `x,y`)
