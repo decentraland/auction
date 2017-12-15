@@ -116,6 +116,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
       this.loadedTiles[tile.id] = rect
     } else if (this.tileChanged(loadedTile, className, fillColor)) {
       const element = loadedTile.getElement()
+      if (!element) return
 
       element.removeAttribute('style')
 
