@@ -81,10 +81,10 @@
 }
 
 .Sidebar .toggle-button {
-  width: 28px;
+  width: 26px;
   height: 88px;
   top: 50%;
-  right: -28px;
+  right: -26px;
   position: absolute;
   background-repeat: no-repeat;
   background-position: center center;

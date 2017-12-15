@@ -12,8 +12,9 @@
 }
 
 .HomePage .top-controls {
-  display: inline-block;
   height: 100%;
+  left: 8px;
+  display: inline-block;
   position: relative;
 }
 
