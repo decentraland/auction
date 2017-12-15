@@ -4,12 +4,13 @@
 }
 
 .IntroModal .modal-header {
+  padding: 15px 15px 0;
   border: none;
   background-color: #FCFCFC;
 }
 
 .IntroModal .banner {
-  padding: 0px 0 10px;
+  padding: 0px 0 25px;
   border-bottom: 1px solid #EDEDED;
   background-color: #FCFCFC;
   text-align: center;
