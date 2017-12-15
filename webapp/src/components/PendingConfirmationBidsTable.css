@@ -1,8 +1,7 @@
 
 .PendingConfirmationBidsTable {
   width: 592px;
-  background-color: #FFF;
-  z-index: 600;
+  z-index: 500;
   position: relative;
   border-radius: 6px;
   margin-top: 20px;
@@ -40,7 +39,8 @@
 }
 
 .PendingConfirmationBidsTable .table {
-  background-color: white;
+  background-color: #FFF;
+  border-radius: 0px 0px 6px 6px;
 }
 
 .PendingConfirmationBidsTable .table-row {
