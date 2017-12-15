@@ -157,8 +157,8 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
   },
 
   onMouseOver(x, y, center) {
-    // this.clearPopup()
-    // this.popup = this.options.addPopup(x, y, center)
+    this.clearPopup()
+    this.popup = this.options.addPopup(x, y, center)
   },
 
   clearPopup() {
