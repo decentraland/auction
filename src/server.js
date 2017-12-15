@@ -293,6 +293,13 @@ app.post(
   server.handleRequest(postOutbidNotification)
 )
 
+const emailExtract = new RegExp("Decentraland Auction: Subscribe ([^ ]+) \\(\\d+\\)")
+
+function takeEmail(message) {
+  const match = emailExtract.exec(message)
+  return match && match[1]
+}
+
 export async function postOutbidNotification(req) {
   let address = null
   let email = null
@@ -310,7 +317,7 @@ export async function postOutbidNotification(req) {
     const extracted = verifyMessage(message, signature)
 
     address = extracted.address
-    email = extracted.message.toString()
+    email = takeEmail(extracted.message.toString())
   }
 
   if (email) {
