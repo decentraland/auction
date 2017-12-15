@@ -15,7 +15,7 @@ import locations from './locations'
 import types from './types'
 import { selectors } from './reducers'
 
-import { buildCoordinate } from './lib/util'
+import { buildCoordinate, flashNotice } from './lib/util'
 import * as addressStateUtils from './lib/addressStateUtils'
 import * as parcelUtils from './lib/parcelUtils'
 import * as pendingBidsUtils from './lib/pendingBidsUtils'
@@ -64,6 +64,8 @@ function* rootSaga() {
   yield takeLatest(types.unsubscribeEmail.request, handleEmailUnsubscribe)
 
   yield takeLatest(types.subscribeEmail.success, handleAddressFetchReload)
+
+  yield put({ type: types.connectWeb3.request })
 }
 
 // -------------------------------------------------------------------------
@@ -408,7 +410,7 @@ function getBidGroupsNonce(bidGroups) {
 function* handleFastBid(action) {
   const parcel = action.parcel
   if (parcel.projectId) {
-    // TODO: Show message, can't bid on project
+    yield call(() => flashNotice(`You can't bid on a project parcel`))
     return
   }
 
@@ -421,7 +423,9 @@ function* handleFastBid(action) {
     return
   }
   if (amount > addressState.data.balance) {
-    // TODO: Not enough balance
+    yield call(() =>
+      flashNotice(`You don't have enough balance to bid on ${x}, ${y}`)
+    )
     return
   }
 
