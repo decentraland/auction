@@ -7,13 +7,13 @@
 }
 
 /* -----------------------------------------------------------------------
- RegisterEmail */
+ SubscribeEmail */
 
-.ExpandedSidebar .RegisterEmail {
+.ExpandedSidebar .SubscribeEmail {
   margin-bottom: 30px;
 }
 
-.ExpandedSidebar .DeRegisterEmail {
+.ExpandedSidebar .UnsubscribeEmail {
   margin-top: 24px;
 }
 

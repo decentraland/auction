@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
-import { changeLocation } from '../actions'
+import { navigateTo } from '../actions'
 import locations from '../locations'
 import { selectors } from '../reducers'
 
@@ -18,7 +18,7 @@ class MinimapContainer extends React.Component {
     })
   }
 
-  update = (x, y) => this.props.changeLocation(locations.parcelDetail(x, y))
+  update = (x, y) => this.props.navigateTo(locations.parcelDetail(x, y))
 
   render() {
     return <Minimap {...this.props.range} update={this.update.bind(this)} />
@@ -29,7 +29,5 @@ export default connect(
   state => ({
     range: selectors.getRange(state)
   }),
-  {
-    changeLocation
-  }
+  { navigateTo }
 )(MinimapContainer)

@@ -30,15 +30,23 @@ class API {
     return this.request('get', '/projects', {})
   }
 
-  postOutbidNotification(email, parcelStateIds) {
+  postSignedOutbidNotification(message, signature, parcelStateIds) {
     return this.request('post', '/outbidNotification', {
-      email,
-      parcelStateIds: parcelStateIds.join(';')
+      message,
+      signature
     })
   }
 
-  deleteOutbidNotification(email) {
-    return this.request('delete', '/outbidNotification', { email })
+  postOutbidNotification(address) {
+    return this.request('post', '/outbidNotification', { address })
+  }
+
+  deleteOutbidNotifications(address) {
+    return this.request('delete', '/outbidNotification', { address })
+  }
+
+  deleteSignedOutbidNotifications(message, signature) {
+    return this.request('delete', '/outbidNotification', { message, signature })
   }
 
   request(method, path, params) {

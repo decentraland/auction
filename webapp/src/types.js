@@ -59,15 +59,15 @@ export default {
     close: 'Close Modal'
   },
 
-  registerEmail: {
-    request: '[Request] Register email',
-    success: '[Success] Email registered',
-    failed: '[Failed] Failed to register email'
+  subscribeEmail: {
+    request: '[Request] Subscribe email',
+    success: '[Success] Email subscribed',
+    failed: '[Failed] Failed to subscribe email'
   },
-  deregisterEmail: {
-    request: '[Request] Deregister email',
-    success: '[Request] Email deregistered',
-    failed: '[Failed] Failed to deregister email'
+  unsubscribeEmail: {
+    request: '[Request] Unsubscribe email',
+    success: '[Success] Email unsubscribed',
+    failed: '[Failed] Failed to unsubscribe email'
   },
 
   sidebar: {
@@ -82,5 +82,5 @@ export default {
 
   fastBid: '[FastBid] Requested fast bid',
 
-  changeLocation: 'Change location URL'
+  navigateTo: 'Navigate to URL'
 }

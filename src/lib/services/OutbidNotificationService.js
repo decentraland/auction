@@ -1,13 +1,17 @@
+import EJS from 'ejs'
 import { env, SMTP } from 'decentraland-commons'
 
-import EJS from 'ejs'
-import { OutbidNotification, Job, ParcelState } from '../models'
+import { Bid, OutbidNotification, Job, ParcelState } from '../models'
 
 const SINGLE_TEMPLATE_NAME = 'outbid-single'
 const SIMPLE_TEMPLATE_NAME = 'outbid-multi'
 
 class OutbidNotificationService {
-  constructor(SMTPClient) {
+  static hoursAgoToDate(hours) {
+    return new Date(new Date().getTime() - hours * 3600 * 1000)
+  }
+
+  constructor() {
     this.OutbidNotification = OutbidNotification
     this.ParcelState = ParcelState
     this.Job = Job
@@ -17,16 +21,6 @@ class OutbidNotificationService {
     if (!this.appUrl) {
       throw new Error('Missing required env APP_URL')
     }
-
-    this.setSMTPClient(SMTPClient)
-  }
-
-  static hoursAgoToDate(hours) {
-    return new Date(new Date().getTime() - hours * 3600 * 1000)
-  }
-
-  toParcelLink(opts) {
-    return `${this.appUrl}/${opts.x}/${opts.y}`
   }
 
   setSMTPClient(SMTPClient = SMTP) {
@@ -70,6 +64,24 @@ class OutbidNotificationService {
     }))
 
     return this
+  }
+
+  async registerParcelNotifications(address, email) {
+    const bids = await Bid.findByAddress(address)
+    const parcelStateIds = bids.map(bid => ParcelState.hashId(bid.x, bid.y))
+
+    for (const parcelStateId of new Set(parcelStateIds)) {
+      const notification = await OutbidNotification.findActiveByParcelStateId(
+        parcelStateId
+      )
+
+      if (!notification) {
+        await OutbidNotification.insert({
+          email,
+          parcelStateId
+        })
+      }
+    }
   }
 
   async notificateOutbids(parcelStates) {
@@ -149,11 +161,8 @@ class OutbidNotificationService {
   }
 
   async sendSummaryMail(email, hoursAgo) {
-    // check if is time to send
-    const isTimeToSend = date => (new Date() - date) / 1000 > hoursAgo * 3600
-
     const lastJob = await Job.findLastByReferenceId(email)
-    if (lastJob && !isTimeToSend(lastJob.createdAt)) {
+    if (lastJob && !this.isTimeToSend(lastJob.createdAt, hoursAgo)) {
       throw new Error(`Last notification sent less than ${hoursAgo} hours ago`)
     }
 
@@ -204,6 +213,14 @@ class OutbidNotificationService {
       ...opts,
       email
     })
+  }
+
+  toParcelLink(opts) {
+    return `${this.appUrl}/${opts.x}/${opts.y}`
+  }
+
+  isTimeToSend(date, hoursAgo) {
+    return (new Date() - date) / 1000 > hoursAgo * 3600
   }
 }
 

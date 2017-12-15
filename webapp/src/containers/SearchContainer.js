@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { changeLocation, fetchProjects } from '../actions'
+import { fetchProjects, navigateTo } from '../actions'
 import locations from '../locations'
 
 import * as parcelUtils from '../lib/parcelUtils'
@@ -26,7 +26,7 @@ class SearchContainer extends React.Component {
 
   onSelect = coordinate => {
     const [x, y] = coordinate.split(',')
-    this.props.changeLocation(locations.parcelDetail(x, y))
+    this.props.navigateTo(locations.parcelDetail(x, y))
   }
 
   getCoordinates() {
@@ -55,5 +55,5 @@ export default connect(
   state => ({
     projects: selectors.getProjectsData(state)
   }),
-  { changeLocation, fetchProjects }
+  { fetchProjects, navigateTo }
 )(SearchContainer)

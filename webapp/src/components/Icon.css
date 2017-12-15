@@ -47,6 +47,18 @@
   background-image: url("../images/pencil.svg");
 }
 
+.Icon-link-graph {
+  width: 126px;
+  height: 24px;
+  background-image: url("../images/link-graph.svg");
+}
+
+.Icon-linked-graph {
+  width: 126px;
+  height: 24px;
+  background-image: url("../images/linked-graph.svg");
+}
+
 .Icon-twitter, .Icon-rocketchat, .Icon-github, .Icon-reddit, .Icon-facebook {
   width: 16px;
   height: 15px;

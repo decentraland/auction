@@ -1,5 +1,4 @@
 import types from './types'
-import localStorage from './lib/localStorage'
 
 const INITIAL_STATE = {
   web3Connected: false,
@@ -27,9 +26,7 @@ const INITIAL_STATE = {
     data: null
   },
 
-  email: {
-    data: localStorage.getItem('email') || ''
-  },
+  email: { loading: true, data: null },
 
   shift: {
     pressed: false
@@ -73,11 +70,17 @@ function getPendingConfirmationBidsData(state) {
 function getOngoingAuctions(state) {
   return state.ongoingAuctions
 }
+function getOngoingAuctionsData(state) {
+  return state.ongoingAuctions.data
+}
 function getModal(state) {
   return state.modal
 }
 function getEmail(state) {
   return state.email
+}
+function getEmailData(state) {
+  return state.email.data
 }
 function getSidebar(state) {
   return state.sidebar
@@ -107,8 +110,10 @@ export const selectors = {
   getPendingConfirmationBids,
   getPendingConfirmationBidsData,
   getOngoingAuctions,
+  getOngoingAuctionsData,
   getModal,
   getEmail,
+  getEmailData,
   getSidebar,
   isShiftPressed,
   getRange,
@@ -265,14 +270,18 @@ function modal(state = INITIAL_STATE.modal, action) {
 
 function email(state = INITIAL_STATE.email, action) {
   switch (action.type) {
-    case types.registerEmail.success:
-      return {
-        data: action.data
-      }
-    case types.deregisterEmail.success:
-      return {
-        data: ''
-      }
+    case types.subscribeEmail.request:
+    case types.unsubscribeEmail.request:
+      return { ...state, loading: true }
+    case types.subscribeEmail.success:
+      return { loading: false, data: action.email }
+    case types.unsubscribeEmail.success:
+      return { loading: false, data: '' }
+    case types.subscribeEmail.failed:
+    case types.unsubscribeEmail.failed:
+      return { ...state, loading: false, error: action.error }
+    case types.fetchAddressState.success:
+      return { loading: false, data: action.addressState.email }
     default:
       return state
   }

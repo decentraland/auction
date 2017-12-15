@@ -9,7 +9,6 @@ import types from './types'
 import { selectors } from './reducers'
 
 import { buildCoordinate } from './lib/util'
-import localStorage from './lib/localStorage'
 import * as addressStateUtils from './lib/addressStateUtils'
 import * as parcelUtils from './lib/parcelUtils'
 import * as pendingBidsUtils from './lib/pendingBidsUtils'
@@ -20,7 +19,7 @@ import api from './lib/api'
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3)
 
-  yield takeEvery(types.changeLocation, handleLocationChange)
+  yield takeEvery(types.navigateTo, handleLocationChange)
 
   yield takeEvery(types.parcelRangeChanged, handleParcelRangeChange)
 
@@ -54,8 +53,10 @@ function* rootSaga() {
   yield takeLatest(types.confirmBids.failed, handleAddressFetchReload)
   yield takeLatest(types.confirmBids.failed, handleAddresStateFinishLoading)
 
-  yield takeLatest(types.registerEmail.request, handleEmailRegister)
-  yield takeLatest(types.deregisterEmail.request, handleEmailDeregister)
+  yield takeLatest(types.subscribeEmail.request, handleEmailSubscribe)
+  yield takeLatest(types.unsubscribeEmail.request, handleEmailUnsubscribe)
+
+  yield takeLatest(types.subscribeEmail.success, handleAddressFetchReload)
 }
 
 // -------------------------------------------------------------------------
@@ -367,44 +368,49 @@ function* handleFastBid(action) {
 // -------------------------------------------------------------------------
 // Email
 
-function* handleEmailRegister(action) {
-  const email = action.data
-  const ongoingAuctions = yield select(selectors.getOngoingAuctions)
-  const parcelStateIds = ongoingAuctions.data.map(bid => `${bid.x},${bid.y}`)
+function* handleEmailSubscribe(action) {
+  const { email } = action
+  const { address } = yield select(selectors.getAddressStateData)
+
+  const payload = email
+  const message = eth.utils.toHex(payload)
 
   try {
-    if (parcelStateIds.length > 0) {
-      yield call(() => api.postOutbidNotification(email, parcelStateIds))
-    }
-    localStorage.setItem('email', email)
+    const signature = yield call(() => eth.remoteSign(message, address))
+    yield call(() =>
+      api.postSignedOutbidNotification(message, signature)
+    )
 
-    yield put({ type: types.registerEmail.success, data: email })
+    yield put({ type: types.subscribeEmail.success, email })
   } catch (error) {
     console.warn(error)
-    yield put({ type: types.registerEmail.failed, error: error.message })
+    yield put({ type: types.subscribeEmail.failed, error: error.message })
   }
 }
 
-function* handleEmailDeregister(action) {
-  const email = yield select(selectors.getEmail)
+function* handleEmailUnsubscribe(action) {
+  const { address, email } = yield select(selectors.getAddressStateData)
+
+  const payload = email
+  const message = eth.utils.toHex(payload)
 
   try {
-    yield call(() => api.deleteOutbidNotification(email.data))
-    localStorage.removeItem('email')
+    const signature = yield call(() => eth.remoteSign(message, address))
 
-    yield put({ type: types.deregisterEmail.success })
+    yield call(() => api.deleteSignedOutbidNotifications(message, signature))
+
+    yield put({ type: types.unsubscribeEmail.success })
   } catch (error) {
     console.warn(error)
-    yield put({ type: types.deregisterEmail.failed, error: error.message })
+    yield put({ type: types.unsubscribeEmail.failed, error: error.message })
   }
 }
 
 function* handleEmailRegisterBids(action) {
-  const email = yield select(selectors.getEmail)
-  const parcelStateIds = action.bids.map(bid => `${bid.x},${bid.y}`)
+  const { address } = yield select(selectors.getAddressStateData)
 
-  if (email.data) {
-    yield call(() => api.postOutbidNotification(email.data, parcelStateIds))
+  if (address) {
+    yield call(() => api.postOutbidNotification(address))
   }
 }
 

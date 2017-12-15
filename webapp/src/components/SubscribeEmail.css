@@ -1,27 +1,30 @@
-.DeRegisterEmail {
+.SubscribeEmail {
   padding: 0 16px;
 }
 
-.DeRegisterEmail .content {
+.SubscribeEmail > div {
   width: 100%;
   padding: 16px;
   border-radius: 5px;
   background-color: #FBFBFB;
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.10);
-  font-size: 14px;
-  color: #3E396B;
 }
 
-.DeRegisterEmail .content h3 {
+.SubscribeEmail .updates-text {
+  font-size: 14px;
+}
+
+.SubscribeEmail .updates-text h3 {
   font-size: 14px;
   font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
 }
 
-.DeRegisterEmail .unsubscribe {
-  top: 13px;
-  position: relative;
-  float: right;
-  font-family: "Source Sans Pro SemiBold", Helvetica, sans-serif;
-  color: #EF303B;
+.SubscribeEmail .link {
+  color: #30D7A9;
   cursor: pointer;
+}
+
+.SubscribeEmail .link:hover {
+  color: #30D7A9;
+  text-decoration: none;
 }
