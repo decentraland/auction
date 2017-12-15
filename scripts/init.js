@@ -26,6 +26,7 @@ async function initializeDatabase() {
   await upsertLockedBalanceEvents()
   await importAddressStates()
   await initParcels()
+  await exceptions()
 
   log.info('All done')
   process.exit()
@@ -117,6 +118,10 @@ async function initParcels() {
 
   await reserveProjects(reserved)
   await reserveProjects({ Roads: roads })
+}
+
+async function exceptions() {
+  await execSync('psql $CONNECTION_STRING -f ./exceptions.sql')
 }
 
 async function reserveProjects(reservation) {
