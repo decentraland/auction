@@ -335,7 +335,7 @@ async function sign(message, address, ethereum, ledger) {
         "44'/60'/0'/0",
         message.substring(2)
       )
-      console.log(result)
+
       let v = result['v'] - 27
       v = v.toString(16)
       if (v.length < 2) {
