@@ -4,12 +4,13 @@
 }
 
 .LinkEmailModal .modal-header {
+  padding: 15px 15px 0;
   border: none;
   background-color: #FCFCFC;
 }
 
 .LinkEmailModal .banner {
-  padding: 20px 0 50px;
+  padding: 20px 0 35px;
   border-bottom: 1px solid #EDEDED;
   background-color: #FCFCFC;
   text-align: center;
