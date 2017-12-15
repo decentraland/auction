@@ -32,6 +32,12 @@ const INITIAL_STATE = {
     pressed: false
   },
 
+  ethereumConnection: {
+    ethereum: null,
+    address: null,
+    ledger: false
+  },
+
   sidebar: {
     open: false
   }
@@ -39,6 +45,9 @@ const INITIAL_STATE = {
 
 function getWeb3Connected(state) {
   return state.web3Connected
+}
+function getEthereumConnection(state) {
+  return state.ethereumConnection
 }
 function getLoading(state) {
   return state.loading
@@ -100,6 +109,7 @@ function hasPlacedBids(state) {
 
 export const selectors = {
   getWeb3Connected,
+  getEthereumConnection,
   getLoading,
   getAddressState,
   getAddressStateData,
@@ -124,6 +134,21 @@ function web3Connected(state = INITIAL_STATE.web3Connected, action) {
   switch (action.type) {
     case types.connectWeb3.success:
       return true
+    case types.connectWeb3.failed:
+      return false
+    default:
+      return state
+  }
+}
+
+function ethereumConnection(state = INITIAL_STATE.ethereumConnection, action) {
+  switch (action.type) {
+    case types.connectWeb3.success:
+      return {
+        ethereum: action.ethereum,
+        address: action.address,
+        ledger: action.ledger
+      }
     case types.connectWeb3.failed:
       return false
     default:
@@ -323,6 +348,7 @@ function shift(state = INITIAL_STATE.shift, action) {
 
 export default {
   web3Connected,
+  ethereumConnection,
   loading,
   addressState,
   projects,

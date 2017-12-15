@@ -1,8 +1,15 @@
 import { delay } from 'redux-saga'
-import { call, takeLatest, select, takeEvery, put } from 'redux-saga/effects'
+import {
+  all,
+  call,
+  takeLatest,
+  select,
+  takeEvery,
+  put
+} from 'redux-saga/effects'
 import { push, replace } from 'react-router-redux'
 
-import { eth, env } from 'decentraland-commons'
+import { eth, env, utils } from 'decentraland-commons'
 
 import locations from './locations'
 import types from './types'
@@ -62,23 +69,62 @@ function* rootSaga() {
 // -------------------------------------------------------------------------
 // Web3
 
-function* connectWeb3(action = {}) {
+async function connectLedger(action = {}) {
+  try {
+    const ledger = window.ledger
+    const comm = await ledger.comm_u2f.create_async(5)
+    const ledgerEth = new ledger.eth(comm)
+    const address = await ledgerEth.getAddress_async(`44'/60'/0'/0`)
+    return {
+      ethereum: ledgerEth,
+      ledger: true,
+      address: address.address.toLowerCase()
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+async function connectBrowser(action = {}) {
   try {
     let retries = 0
-    let connected = yield call(() => eth.reconnect(action.address))
+    let connected = await eth.reconnect(action.address)
 
     while (!connected && retries <= 3) {
-      yield delay(1500)
-      connected = yield call(() => eth.connect(action.address))
+      await utils.sleep(1500)
+      connected = await eth.connect(action.address)
       retries += 1
     }
 
-    if (!connected) throw new Error('Could not connect to web3')
+    if (!connected) return false
+
+    return {
+      ethereum: eth,
+      address: eth.getAddress()
+    }
+  } catch (error) {
+    return false
+  }
+}
+
+function* connectWeb3(action = {}) {
+  try {
+    const { ledger, browser } = yield all({
+      ledger: call(connectLedger),
+      browser: call(connectBrowser)
+    })
+
+    if (!ledger && !browser) throw new Error('Could not connect to web3')
+
+    const address = ledger ? ledger.address : browser.address
+    const ethereum = ledger ? ledger.ethereum : browser.ethereum
 
     yield put({
       type: types.connectWeb3.success,
+      ledger: !!ledger,
+      ethereum,
       web3Connected: true,
-      address: eth.getAddress()
+      address: address
     })
   } catch (error) {
     yield put(replace(locations.walletError))
@@ -144,9 +190,10 @@ function* fetchAddressState() {
       'Tried to get the MANA balance without connecting to ethereum first'
     )
   }
+  const ethereum = yield select(selectors.getEthereumConnection)
 
   const addressState = yield call(() =>
-    api.fetchFullAddressState(eth.getAddress())
+    api.fetchFullAddressState(ethereum.address)
   )
 
   if (!addressState) {
@@ -278,15 +325,41 @@ function* handleOngoingAuctionsFetchRequest(action) {
   }
 }
 
+// -------------------------------------------------------------------------
+// Signing
+
+async function sign(message, address, ethereum, ledger) {
+  if (ledger) {
+    try {
+      const result = await ethereum.signPersonalMessage_async(
+        "44'/60'/0'/0",
+        message.substring(2)
+      )
+      console.log(result)
+      let v = result['v'] - 27
+      v = v.toString(16)
+      if (v.length < 2) {
+        v = '0' + v
+      }
+      return '0x' + result['r'] + result['s'] + v
+    } catch (error) {
+      console.log(error, error.stack)
+    }
+  } else {
+    return await eth.remoteSign(message, address)
+  }
+}
+
 function* handleConfirmBidsRequest(action) {
   const { address, bidGroups } = yield select(selectors.getAddressStateData)
+  const { ethereum, ledger } = yield select(selectors.getEthereumConnection)
   const bids = action.bids
   const parcels = bids.map(bid => buildCoordinate(bid.x, bid.y))
 
   try {
     const payload = buildBidsSignPayload(bids)
     const message = eth.utils.toHex(payload)
-    const signature = yield call(() => eth.remoteSign(message, address))
+    const signature = yield call(() => sign(message, address, ethereum, ledger))
 
     const bidGroup = {
       address,
@@ -310,7 +383,7 @@ function* handleConfirmBidsRequest(action) {
 }
 
 function buildBidsSignPayload(bids) {
-  const header = env.isDevelopment() ? 'MOCK AUCTION' : ''
+  const header = env.isDevelopment() ? 'MOCK AUCTION' : 'Decentraland Auction'
 
   const payloadBids = bids
     .map(bid => `\t- (${buildCoordinate(bid.x, bid.y)}) for ${bid.amount} MANA`)
@@ -371,12 +444,14 @@ function* handleFastBid(action) {
 function* handleEmailSubscribe(action) {
   const { email } = action
   const { address } = yield select(selectors.getAddressStateData)
+  const { ethereum, ledger } = yield select(selectors.getEthereumConnection)
 
-  const payload = email
+  const timestamp = new Date().getTime()
+  const payload = `Decentraland Auction: Subscribe ${email} (${timestamp})`
   const message = eth.utils.toHex(payload)
 
   try {
-    const signature = yield call(() => eth.remoteSign(message, address))
+    const signature = yield call(() => sign(message, address, ethereum, ledger))
     yield call(() => api.postSignedOutbidNotification(message, signature))
 
     yield put({ type: types.subscribeEmail.success, email })
@@ -388,12 +463,14 @@ function* handleEmailSubscribe(action) {
 
 function* handleEmailUnsubscribe(action) {
   const { address, email } = yield select(selectors.getAddressStateData)
+  const { ethereum, ledger } = yield select(selectors.getEthereumConnection)
 
-  const payload = email
+  const timestamp = new Date().getTime()
+  const payload = `Decentraland Auction: Unsubscribe ${email} (${timestamp})`
   const message = eth.utils.toHex(payload)
 
   try {
-    const signature = yield call(() => eth.remoteSign(message, address))
+    const signature = yield call(() => sign(message, address, ethereum, ledger))
 
     yield call(() => api.deleteSignedOutbidNotifications(message, signature))
 
@@ -405,9 +482,9 @@ function* handleEmailUnsubscribe(action) {
 }
 
 function* handleEmailRegisterBids(action) {
-  const { address } = yield select(selectors.getAddressStateData)
+  const { address, email } = yield select(selectors.getAddressStateData)
 
-  if (address) {
+  if (address && email) {
     yield call(() => api.postOutbidNotification(address))
   }
 }
