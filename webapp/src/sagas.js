@@ -281,6 +281,8 @@ function* handleParcelRangeChange(action) {
 
   if (parcelsToFetch.length) {
     yield put({ type: types.fetchParcels.request, parcels: parcelsToFetch })
+  } else {
+    yield put({ type: types.setLoading, loading: false })
   }
 }
 

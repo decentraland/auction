@@ -48,7 +48,6 @@ export default class ParcelsMap extends React.Component {
   }
 
   componentWillMount() {
-    this.panInProgress = false
     this.map = null
     this.parcelGrid = null
     this.mapCoordinates = new LeafletMapCoordinates(this.props.baseZoom)
@@ -149,18 +148,14 @@ export default class ParcelsMap extends React.Component {
     if (this.map) {
       this.parcelGrid.renderTiles(this.map.getBounds())
     }
-    this.panInProgress = false
   }
 
   onMapMoveStart = () => {
-    this.panInProgress = true
     this.props.onMoveStart()
   }
 
   onMapMoveEnd = () => {
-    if (this.panInProgress) {
-      this.debouncedOnMoveEnd()
-    }
+    this.debouncedOnMoveEnd()
   }
 
   onZoomEnd = () => {
@@ -272,7 +267,7 @@ export default class ParcelsMap extends React.Component {
     const addressState = this.props.getAddressState()
     const projects = this.props.getProjects()
 
-    const leafletPopup = L.popup({ direction: 'top' })
+    const leafletPopup = L.popup({ direction: 'top', autoPan: false })
 
     const popup = renderToDOM(
       <ParcelPopup
