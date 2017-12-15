@@ -40,8 +40,8 @@ export default class Search extends React.Component {
       ...style,
       ...this.menuStyle,
       background: 'rgba(255, 255, 255, 1)',
-      minWidth: '425px',
-      left: '165px',
+      minWidth: '465px',
+      left: '125px',
       zIndex: -1,
       borderRadius: '0 0 3px 3px',
       padding: 0
