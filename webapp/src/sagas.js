@@ -75,6 +75,9 @@ function* rootSaga() {
 
 async function connectLedger(action = {}) {
   try {
+    if (window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+      return false
+    }
     const ledger = window.ledger
     const comm = await ledger.comm_u2f.create_async(5)
     const ledgerEth = new ledger.eth(comm)

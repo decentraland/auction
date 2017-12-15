@@ -18,15 +18,11 @@ export default class IntroModal extends React.Component {
       <Modal className="IntroModal modal-lg" onClose={onClose} {...props}>
         <div className="banner">
           <h2>
-            <Icon name="decentraland" /> Welcome to the Terraform Auction Beta
+            <Icon name="decentraland" /> Welcome to the Terraform Auction
           </h2>
         </div>
 
         <div className="modal-body">
-          <h3 className="text">
-            The Decentraland community will begin shaping a new world on
-            December 15th.
-          </h3>
           <div className="text">
             <h4>Parcels</h4>
             <p>
