@@ -244,6 +244,7 @@ export async function postBidGroup(req) {
   }
   const time = new Date().getTime()
   lock = true
+  await db.client.query('BEGIN')
 
   const { bidGroup, error } = await new BidService().processBidGroup(
     newBidGroup
@@ -256,11 +257,22 @@ export async function postBidGroup(req) {
       Error: ${JSON.stringify(error)}
     `)
     serverError.data = error
+    try {
+      await db.client.query('COMMIT')
+    } catch (error) {
+      console.log(`Error saving info`, bidGroup, error.stack)
+      await db.client.connect()
+    }
     lock = false
     throw serverError
   }
 
   await new BidReceiptService().sign(bidGroup)
+  try {
+    await db.client.query('COMMIT')
+  } catch (error) {
+    console.log(`Error commiting!`, bidGroup, err.stack)
+  }
   console.log('[Server] Request handled in time:', new Date().getTime() - time)
   lock = false
 
