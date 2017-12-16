@@ -9,6 +9,10 @@ class AddressState extends Model {
     return this.findOne({ address })
   }
 
+  static async findByEmail(email) {
+    return this.findOne({ email })
+  }
+
   static async findByAddressWithLastBidGroup(address) {
     const rows = await this.db.query(
       `SELECT "address_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM address_states

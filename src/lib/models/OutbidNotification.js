@@ -19,15 +19,12 @@ class OutbidNotification extends Model {
     })
   }
 
-  static findActiveByParcelStateId(parcelStateId) {
-    return this.findOne({
-      parcelStateId,
-      active: true
-    })
+  static findByParcelStateId(parcelStateId) {
+    return this.findOne({ parcelStateId })
   }
 
-  static deactivate(id) {
-    return this.update({ active: false }, { id })
+  static deactivate(email, parcelStateId) {
+    return this.update({ active: false }, { email, parcelStateId })
   }
 }
 
