@@ -246,6 +246,7 @@ export async function postBidGroup(req) {
   while (lock) {
     await utils.sleep(100)
   }
+  const time = new Date().getTime()
   lock = true
 
   const { bidGroup, error } = await new BidService().processBidGroup(
@@ -264,6 +265,7 @@ export async function postBidGroup(req) {
   }
 
   await new BidReceiptService().sign(bidGroup)
+  console.log('[Server] Request handled in time:', new Date().getTime() - time)
   lock = false
 
   return true
