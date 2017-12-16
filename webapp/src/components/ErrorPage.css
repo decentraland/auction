@@ -28,3 +28,10 @@
 .ErrorPage .error-message p {
   font-size: 16px;
 }
+
+.ErrorPage .retry {
+  background-color: #30D7A9;
+  color: #FFFFFF;
+  margin-top: 16px;
+  padding: 8px 24px;
+}

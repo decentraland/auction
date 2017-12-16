@@ -1,5 +1,6 @@
 import React from 'react'
 import ErrorPage from './ErrorPage'
+import Button from './Button'
 
 export default function AddressErrorPage() {
   return (
@@ -7,6 +8,7 @@ export default function AddressErrorPage() {
       <h2>
         Uh-oh.<br /> We couldn&#39;t retrieve your account information.
       </h2>
+
       <div className="error-message">
         <p>
           We couldn&#39;t retrieve any account information associated with your
@@ -46,6 +48,10 @@ export default function AddressErrorPage() {
             wiki
           </a>&nbsp; for answers.
         </p>
+
+        <a className="btn retry" href="/">
+          Retry
+        </a>
       </div>
     </ErrorPage>
   )
