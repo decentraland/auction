@@ -9,6 +9,7 @@ export default function WalletErrorPage() {
         Uh-oh. <br />
         We couldn’t retrieve your wallet information.
       </h2>
+
       <div className="error-message">
         <p>
           Please make sure your&nbsp;
@@ -46,6 +47,10 @@ export default function WalletErrorPage() {
           </a>&nbsp; for answers.
         </p>
       </div>
+
+      <a className="btn retry" href="/">
+        Retry
+      </a>
     </ErrorPage>
   )
 }
