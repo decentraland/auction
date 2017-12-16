@@ -83,10 +83,6 @@ export async function getFullAddressState(req) {
 
   let addressState = await AddressState.findByAddressWithBidGroups(address)
 
-  if (env.isDevelopment() && !addressState) {
-    addressState = await AddressState.insert({ address, balance: '10000000' })
-  }
-
   return addressState
 }
 
