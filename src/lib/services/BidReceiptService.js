@@ -12,6 +12,8 @@ export default class BidReceiptService {
 
     const receipt = {
       receivedAt: bidGroup.receivedAt,
+      message: bidGroup.message,
+      signature: bidGroup.signature,
       bidGroupId: bidGroup.id
     }
 
