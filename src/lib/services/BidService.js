@@ -173,7 +173,7 @@ export default class BidService {
         bidGroup,
         bid
       }
-    } else if (parcelState.isReserved()) {
+    } else if (this.isReserved(parcelState)) {
       validationError = {
         code: ERROR_CODES.reserved,
         bidGroup,
@@ -224,6 +224,10 @@ export default class BidService {
 
   isSufficientIncrement(parcelState, bid) {
     return getBn(bid.amount).lessThan(this.getParcelIncrement(parcelState))
+  }
+
+  isReserved(parcelState) {
+    return !!parcelState.projectId
   }
 
   getParcelIncrement(parcelState) {

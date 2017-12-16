@@ -30,6 +30,7 @@
   "author": "Decentraland",
   "license": "ISC",
   "dependencies": {
+    "bignumber.js": "^5.0.0",
     "body-parser": "^1.18.2",
     "decentraland-commons": "git+https://github.com/decentraland/commons.git#release",
     "ejs": "^2.5.7",

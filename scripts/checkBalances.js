@@ -30,7 +30,7 @@ async function fixDatabase() {
   process.exit()
 }
 
-import BN from 'bn.js'
+import BN from 'bignumber.js'
 
 async function insertMissingAddressStates() {
   log.info('Fetching all addresses from transaction logs')
@@ -47,14 +47,14 @@ async function insertMissingAddressStates() {
   for (const tx of transactions) {
     if (tx.isError === "0" && tx.txreceipt_status === "1" && tx.input.startsWith('0x6b7006d7')) {
       const address = '0x' + tx.input.substr(34, 40)
-      const amount = new BN(new Buffer(tx.input.substr(74), 'hex'))
+      const amount = new BN(tx.input.substr(74), 16)
       const time = parseInt(tx.timeStamp, 10)
 
       if (!balances[address]) {
         balances[address] = {
-          preNov: new BN(),
-          nov: new BN(),
-          dec: new BN()
+          preNov: new BN(0),
+          nov: new BN(0),
+          dec: new BN(0)
         }
       }
       if (time < Nov1) {
@@ -73,13 +73,13 @@ async function insertMissingAddressStates() {
   let missingBalance = 0
   for (const address of addresses) {
     const perMonthRaw = await DistrictEntry.getMonthlyLockedBalanceByAddress(address, 1000)
-    const perMonth = {}
+    const perMonth = { 9: 0, 10: 0, 11: 0, 12: 0}
     for (let entry of perMonthRaw) {
       perMonth[entry.month] = entry.mana
     }
-    const preNovDistricts = new BN().add(new BN(perMonth[9])).add(new BN(perMonth[10]))
-    const novDistricts = new BN().add(new BN(perMonth[11]))
-    const decDistricts = new BN().add(new BN(perMonth[12]))
+    const preNovDistricts = new BN(0).add(new BN(perMonth[9])).add(new BN(perMonth[10]))
+    const novDistricts = new BN(0).add(new BN(perMonth[11]))
+    const decDistricts = new BN(0).add(new BN(perMonth[12]))
     const wei = new BN('1000000000000000000')
     const finalBalance = (balances[address].preNov.div(wei).sub(preNovDistricts)).mul(new BN(1.15))
       .add(balances[address].nov.div(wei).sub(novDistricts).mul(new BN(1.1)))
