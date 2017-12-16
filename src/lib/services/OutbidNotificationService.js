@@ -110,7 +110,7 @@ class OutbidNotificationService {
           data: { parcelStateId, email }
         },
         async () => {
-          await this.sendMail(email, SINGLE_TEMPLATE_NAME, parcelState)
+          // await this.sendMail(email, SINGLE_TEMPLATE_NAME, parcelState)
           await this.OutbidNotification.deactivate(id)
         }
       )
