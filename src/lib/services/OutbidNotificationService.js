@@ -84,7 +84,7 @@ class OutbidNotificationService {
     )
 
     for (const parcelStateId of new Set(parcelStateIds)) {
-      const notification = await OutbidNotification.findActiveByParcelStateId(
+      const notification = await OutbidNotification.findByParcelStateId(
         parcelStateId
       )
 
@@ -93,7 +93,7 @@ class OutbidNotificationService {
           email,
           parcelStateId
         })
-      } else {
+      } else if (!notification.active) {
         await OutbidNotification.update(
           { active: true },
           {
