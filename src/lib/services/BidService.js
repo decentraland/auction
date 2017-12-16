@@ -265,7 +265,7 @@ export default class BidService {
   }
 
   extendBid(endsAt, receivedAt) {
-    endsAt = endsAt || new Date(env.get('MIN_GRACE_PERIOD_DAYS', 1545516000000))
+    endsAt = endsAt || new Date(env.get('MIN_GRACE_PERIOD_DAYS', 1513980000000))
     receivedAt = receivedAt || new Date()
 
     const endsTime = endsAt.getTime()
