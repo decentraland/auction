@@ -9,5 +9,6 @@ export default {
   error: '/error',
   walletError: '/walletError',
   addressError: '/addressError',
-  serverError: '/serverError'
+  serverError: '/serverError',
+  faq: '/faq'
 }
