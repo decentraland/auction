@@ -18,16 +18,6 @@ describe('OutbidNotificationService', function() {
     notificationService.smtp = SMTPClient
   })
 
-  describe('notificateOutbid', () => {
-    it('should throw if the supplied parcel state id does not exist', () => {
-      return expect(
-        notificationService.notificateOutbid(22)
-      ).to.be.rejectedWith(
-        'The parcel state 22 does not exist or has been deleted.'
-      )
-    })
-  })
-
   describe('summary email', () => {
     it('send summary email with only updated parcels', async () => {
       const parcels = [[1, 1], [1, 2]]

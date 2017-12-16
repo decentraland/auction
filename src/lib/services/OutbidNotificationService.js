@@ -87,40 +87,15 @@ class OutbidNotificationService {
           email,
           parcelStateId
         })
+      } else {
+        await OutbidNotification.update(
+          { active: true },
+          {
+            email,
+            parcelStateId
+          }
+        )
       }
-    }
-  }
-
-  async notificateOutbids(parcelStates) {
-    for (let parcelState of parcelStates) {
-      await this.notificateOutbid(parcelState.id)
-    }
-  }
-
-  async notificateOutbid(parcelStateId) {
-    const parcelState = await this.ParcelState.findOne(parcelStateId)
-    if (!parcelState) {
-      throw new Error(
-        `The parcel state ${parcelStateId} does not exist or has been deleted.`
-      )
-    }
-
-    const notifications = await this.OutbidNotification.findActiveByParcelStateId(
-      parcelStateId
-    )
-
-    for (let { id, email } of notifications) {
-      await this.Job.perform(
-        {
-          type: 'outbid_notification',
-          referenceId: id,
-          data: { parcelStateId, email }
-        },
-        async () => {
-          // await this.sendMail(email, SINGLE_TEMPLATE_NAME, parcelState)
-          await this.OutbidNotification.deactivate(id)
-        }
-      )
     }
   }
 
@@ -186,12 +161,13 @@ class OutbidNotificationService {
     }
 
     // find updated parcels and discard parcels you own
-    const parcelStates = await this.ParcelState
-      .findByUpdatedSince(
-        parcelIds,
-        OutbidNotificationService.hoursAgoToDate(hoursAgo)
-      )
-      .filter(parcel => parcel.address !== addressState.address)
+    let parcelStates = await this.ParcelState.findByUpdatedSince(
+      parcelIds,
+      OutbidNotificationService.hoursAgoToDate(hoursAgo)
+    )
+    parcelStates = parcelStates.filter(
+      parcel => parcel.address !== addressState.address
+    )
 
     if (parcelStates.length === 0) {
       throw new Error(`No updated parcels found for user ${email}`)
@@ -212,6 +188,9 @@ class OutbidNotificationService {
           ...summary,
           subject
         })
+        await Promise.all(
+          parcelStates.map(p => this.OutbidNotification.deactivate(email, p.id))
+        )
       }
     )
 

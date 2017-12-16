@@ -26,8 +26,8 @@ class OutbidNotification extends Model {
     })
   }
 
-  static deactivate(id) {
-    return this.update({ active: false }, { id })
+  static deactivate(email, parcelStateId) {
+    return this.update({ active: false }, { email, parcelStateId })
   }
 }
 
