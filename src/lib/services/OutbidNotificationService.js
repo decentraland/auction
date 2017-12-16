@@ -1,7 +1,13 @@
 import EJS from 'ejs'
 import { env, SMTP } from 'decentraland-commons'
 
-import { Bid, OutbidNotification, Job, ParcelState } from '../models'
+import {
+  AddressState,
+  Bid,
+  OutbidNotification,
+  Job,
+  ParcelState
+} from '../models'
 
 const SINGLE_TEMPLATE_NAME = 'outbid-single'
 const SIMPLE_TEMPLATE_NAME = 'outbid-multi'
@@ -12,6 +18,7 @@ class OutbidNotificationService {
   }
 
   constructor() {
+    this.AddressState = AddressState
     this.OutbidNotification = OutbidNotification
     this.ParcelState = ParcelState
     this.Job = Job
@@ -161,24 +168,31 @@ class OutbidNotificationService {
   }
 
   async sendSummaryMail(email, hoursAgo) {
+    // avoid resend
     const lastJob = await Job.findLastByReferenceId(email)
     if (lastJob && !this.isTimeToSend(lastJob.createdAt, hoursAgo)) {
       throw new Error(`Last notification sent less than ${hoursAgo} hours ago`)
     }
 
+    // get address for email
+    const addressState = await AddressState.findByEmail(email)
+
     // get active notifications for user
-    const parcelIds = await this.OutbidNotification.findActiveByEmail(
-      email
-    ).then(rows => rows.map(row => row.parcelStateId))
+    const parcelIds = await this.OutbidNotification
+      .findActiveByEmail(email)
+      .then(rows => rows.map(row => row.parcelStateId))
     if (parcelIds.length === 0) {
       throw new Error(`No active notifications found for user ${email}`)
     }
 
-    // find updated parcels
-    const parcelStates = await this.ParcelState.findByUpdatedSince(
-      parcelIds,
-      OutbidNotificationService.hoursAgoToDate(hoursAgo)
-    )
+    // find updated parcels and discard parcels you own
+    const parcelStates = await this.ParcelState
+      .findByUpdatedSince(
+        parcelIds,
+        OutbidNotificationService.hoursAgoToDate(hoursAgo)
+      )
+      .filter(parcel => parcel.address !== addressState.address)
+
     if (parcelStates.length === 0) {
       throw new Error(`No updated parcels found for user ${email}`)
     }
