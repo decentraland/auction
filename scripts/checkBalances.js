@@ -75,8 +75,10 @@ async function insertMissingAddressStates() {
     const perMonthRaw = await DistrictEntry.getMonthlyLockedBalanceByAddress(address, 1000)
     const perMonth = { 9: 0, 10: 0, 11: 0, 12: 0}
     for (let entry of perMonthRaw) {
-      perMonth[entry.month] = entry.mana
+      perMonth[entry.month] = (perMonth[entry.month] || 0) + entry.mana
     }
+    if (address === '0x6c0b585429fa0cd9dbf6d87bb3e51dac85f42635')
+      console.log(perMonth)
     const preNovDistricts = new BN(0).add(new BN(perMonth[9])).add(new BN(perMonth[10]))
     const novDistricts = new BN(0).add(new BN(perMonth[11]))
     const decDistricts = new BN(0).add(new BN(perMonth[12]))
@@ -86,6 +88,7 @@ async function insertMissingAddressStates() {
       .add(balances[address].dec.div(wei).sub(decDistricts))
 
     const state = await AddressState.findByAddress(address)
+    /*
     if (state && state.balance) {
       if (state.balance === finalBalance.toString()) {
         matches += 1
@@ -122,6 +125,7 @@ async function insertMissingAddressStates() {
         decDistricts.toString()
       )
     }
+    */
   }
   console.log(matches + misses + missingBalance, matches, misses, missingBalance)
 }
