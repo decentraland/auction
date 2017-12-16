@@ -74,8 +74,14 @@ class OutbidNotificationService {
   }
 
   async registerParcelNotifications(address, email) {
-    const bids = await Bid.findByAddress(address)
-    const parcelStateIds = bids.map(bid => ParcelState.hashId(bid.x, bid.y))
+    // register parcels you have bid at any point in life
+    // const bids = await Bid.findByAddress(address)
+    // const parcelStateIds = bids.map(bid => ParcelState.hashId(bid.x, bid.y))
+
+    // register only parcels you are winning
+    const parcelStateIds = await ParcelState.findByAddress(address).then(rows =>
+      rows.map(e => e.id)
+    )
 
     for (const parcelStateId of new Set(parcelStateIds)) {
       const notification = await OutbidNotification.findActiveByParcelStateId(
