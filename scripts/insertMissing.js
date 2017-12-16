@@ -46,10 +46,10 @@ async function insertMissingAddresses() {
 
     const addressState = await AddressState.findByAddress(address)
     if (addressState) {
-      if (balance > 0 && cleared.includes(address)) {
+      if (balance > 0) {
         const winningParcels = await ParcelState.findByAddress(address)
         if (!winningParcels.length) {
-          log.info(`[${address}] Updating balance to original ${balance} - no winning bids, balance originally ${balance}, db had ${addressState.balance} balance`)
+          log.info(`[${address}] Updating balance\toriginal ${balance}\tdb had ${addressState.balance} balance`)
           await AddressState.update({ balance }, { address })
         }
       }
