@@ -43,6 +43,10 @@ export default class PendingConfirmationBidsTable extends React.Component {
         message =
           'This bid was already registered in the server, try refreshing your browser to see it.'
         break
+      case 'RESERVED':
+        message =
+          'That parcel is reserved for a road or a district'
+        break
       case 'INVALID_NONCE':
       case 'INVALID_TIMESTAMP':
         message =

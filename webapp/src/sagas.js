@@ -108,7 +108,7 @@ async function connectBrowser(action = {}) {
 
     return {
       ethereum: web3Eth,
-      address
+      address: address.toLowerCase()
     }
   } catch (error) {
     return false

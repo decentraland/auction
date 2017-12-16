@@ -9,6 +9,7 @@ const ERROR_CODES = {
   invalidTimestamp: 'INVALID_TIMESTAMP',
   parcelErrors: 'PARCEL_ERRORS',
   outOfBounds: 'OUT_OF_BOUNDS',
+  isReserved: 'IS_RESERVED',
   insufficientBalance: 'INSUFFICIENT_BALANCE',
   auctionEnded: 'AUCTION_ENDED',
   insufficientIncrement: 'INSUFFICIENT_INCREMENT'
@@ -169,6 +170,12 @@ export default class BidService {
     if (this.isOutOfBounds(x, y)) {
       validationError = {
         code: ERROR_CODES.outOfBounds,
+        bidGroup,
+        bid
+      }
+    } else if (parcelState.isReserved()) {
+      validationError = {
+        code: ERROR_CODES.reserved,
         bidGroup,
         bid
       }
