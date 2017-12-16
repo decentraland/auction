@@ -1,6 +1,5 @@
 import React from 'react'
 import ErrorPage from './ErrorPage'
-import Button from './Button'
 
 export default function AddressErrorPage() {
   return (
