@@ -5,3 +5,4 @@ export {
   default as OutbidNotificationService
 } from './OutbidNotificationService'
 export { default as ParcelStateService } from './ParcelStateService'
+export { default as StatsService } from './StatsService'

@@ -51,6 +51,22 @@ class AddressState extends Model {
       return addressState
     }
   }
+
+  static summary() {
+    return this.db
+      .query(
+        `SELECT COUNT(*), MAX(balance::int), SUM(balance::int) FROM ${AddressState.tableName}`
+      )
+      .then(r => r[0])
+  }
+
+  static countWithEmail() {
+    return this.db
+      .query(
+        `SELECT COUNT(*) FROM ${AddressState.tableName} WHERE email IS NOT NULL`
+      )
+      .then(r => r[0].count)
+  }
 }
 
 export default AddressState

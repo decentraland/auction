@@ -76,6 +76,12 @@ class BidGroup extends Model {
       `SELECT * FROM bid_groups OFFSET ${offset} LIMIT ${limit}`
     )
   }
+
+  static count() {
+    return this.db
+      .query(`SELECT COUNT(*) FROM ${BidGroup.tableName}`)
+      .then(r => r[0].count)
+  }
 }
 
 export default BidGroup

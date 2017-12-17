@@ -43,6 +43,12 @@ class Job extends Model {
       throw error
     }
   }
+
+  static count() {
+    return this.db
+      .query(`SELECT COUNT(*) FROM ${Job.tableName}`)
+      .then(r => r[0].count)
+  }
 }
 
 export default Job
