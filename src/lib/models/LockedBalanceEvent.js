@@ -25,6 +25,10 @@ class LockedBalanceEvent extends Model {
       .query('SELECT DISTINCT(address) FROM locked_balance_events')
       .then(rows => rows.map(row => row.address))
   }
+
+  static findByAddress(address) {
+    return this.find({ address })
+  }
 }
 
 export default LockedBalanceEvent

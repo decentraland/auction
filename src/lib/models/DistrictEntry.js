@@ -30,6 +30,10 @@ class DistrictEntry extends Model {
       [landCost, address.toLowerCase()]
     )
   }
+
+  static findByAddress(address) {
+    return this.find({ address })
+  }
 }
 
 export default DistrictEntry
