@@ -29,6 +29,7 @@ class StatsService {
         count: parcelSummary.count,
         total: parcelSummary.sum,
         max: parcelSummary.max,
+        owners: await this.ParcelState.countOwners(),
         popular: await this.Bid.popular(10),
         expensive: await this.ParcelState.expensive(10),
         landlords: await this.ParcelState.landlords(10)

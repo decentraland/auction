@@ -113,6 +113,12 @@ class ParcelState extends Model {
     )
   }
 
+  static countOwners() {
+    return this.db
+      .query(`SELECT COUNT(DISTINCT(address)) FROM ${ParcelState.tableName}`)
+      .then(r => r[0].count)
+  }
+
   isReserved() {
     return !!this.get('projectId')
   }
