@@ -42,6 +42,66 @@ function StatsView({ address, addressStats }) {
       <div className="row">
         <div className="col-xs-12">
           <Definition title="Address summary" description={address} />
+          <Definition
+            title="Initial balance (including bonus)"
+            description={asMana(12313)}
+          />
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-xs-6">
+          <Definition title="MANA commited" description={asMana(123123)} />
+
+          <div>
+            <div className="title">Confirmed transactions</div>
+            <Definition>
+              <DefinitionItem
+                title="0xdeadbeef"
+                description="10.000 MANA Oct 10th"
+              />
+              <DefinitionItem
+                title="0xdeadbeef"
+                description="10.000 MANA Oct 10th"
+              />
+              <DefinitionItem
+                title="0xdeadbeef"
+                description="10.000 MANA Oct 10th"
+              />
+            </Definition>
+          </div>
+        </div>
+        <div className="col-xs-6">
+          <Definition title="MANA contributed to districts" description={asMana(123123)} />
+
+          <div>
+            <div className="title">District contributions</div>
+            <Definition>
+              <DefinitionItem
+                title="10.000 LAND Vegas"
+                description="10th Oct"
+              />
+              <DefinitionItem
+                title="10.000 LAND Vegas"
+                description="10th Oct"
+              />
+              <DefinitionItem
+                title="10.000 LAND Vegas"
+                description="10th Oct"
+              />
+            </Definition>
+          </div>
+
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-xs-6">
+          <div className="title">Winning bids</div>
+
+        </div>
+        <div className="col-xs-6">
+          <div className="title">Alls bids</div>
         </div>
       </div>
     </div>
@@ -51,4 +111,12 @@ function StatsView({ address, addressStats }) {
 AddressStats.propTypes = {
   address: PropTypes.string,
   addressStats: stateData(PropTypes.object)
+}
+
+function asMana(mana) {
+  return `${Math.round(mana).toLocaleString()} MANA`
+}
+
+function asLand(lands) {
+  return `${lands.toLocaleString()} LANDs`
 }
