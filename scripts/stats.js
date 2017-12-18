@@ -1,6 +1,5 @@
 #!/usr/bin/env babel-node
 
-import util from 'util'
 import { env, Log } from 'decentraland-commons'
 
 import db from '../src/lib/db'
@@ -18,7 +17,7 @@ async function main() {
     // stats
     const stats = new StatsService()
     const result = await stats.summary()
-    console.log(util.inspect(result, false, null))
+    console.dir(result, { showHidden: false, depth: null, colors: true })
   } catch (err) {
     log.error(err)
   } finally {
