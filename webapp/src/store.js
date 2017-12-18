@@ -4,7 +4,7 @@ import { routerReducer, routerMiddleware } from 'react-router-redux'
 import createHistory from 'history/createBrowserHistory'
 import createSagasMiddleware from 'redux-saga'
 import reduxThunk from 'redux-thunk'
-// import { createLogger } from 'redux-logger'
+import { createLogger } from 'redux-logger'
 import { env } from 'decentraland-commons'
 
 import { createGoogleAnalyticsMiddleware } from './analyticsMiddleware'
@@ -15,7 +15,7 @@ import { started } from './lib/util'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-// const logger = createLogger({ collapsed: () => true })
+const logger = createLogger({ collapsed: () => true })
 
 // dispatch navigation actions from anywhere! like this: store.dispatch(push(locations.root))
 const history = createHistory()
@@ -34,7 +34,7 @@ const store = createStore(
   composeEnhancers(
     applyMiddleware(
       reduxThunk,
-      // logger,
+      logger,
       sagasMiddleware,
       historyMiddleware,
       analyticsMiddleware

@@ -71,7 +71,7 @@ class API {
       }
     }
 
-    // console.log(`[API] ${method} ${path}`, options)
+    console.log(`[API] ${method} ${path}`, options)
 
     return httpClient
       .request(options)

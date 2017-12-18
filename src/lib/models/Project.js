@@ -19,6 +19,15 @@ class Project extends Model {
     return this.db.query('SELECT count(*) as amount FROM projects')
   }
 
+  static findBiggest(limit = 10) {
+    return this.db.query(
+      `SELECT *
+        FROM ${this.tableName}
+        ORDER BY parcels::int DESC LIMIT $1`,
+      [limit]
+    )
+  }
+
   static findByName(name) {
     return this.findOne({ name })
   }

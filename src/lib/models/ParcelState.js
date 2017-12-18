@@ -26,6 +26,13 @@ class ParcelState extends Model {
     return `${x},${y}`
   }
 
+  static async getTotalLockedMana() {
+    const result = await this.db.query(
+      `SELECT SUM(amount) as total FROM ${this.tableName}`
+    )
+    return result.length ? result[0].total : 0
+  }
+
   static async findByIdWithBidGroups(id) {
     const rows = await this.db.query(
       `SELECT "parcel_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM parcel_states
@@ -53,7 +60,7 @@ class ParcelState extends Model {
     where = where.join(' OR ')
 
     return await this.db.query(
-      `SELECT "parcel_states".* FROM parcel_states WHERE ${where}`
+      `SELECT "parcel_states".* FROM ${this.tableName} WHERE ${where}`
     )
   }
 
@@ -69,7 +76,9 @@ class ParcelState extends Model {
 
   static findByUpdatedSince(ids, since) {
     return this.db.query(
-      'SELECT id, x, y, address, amount FROM parcel_states WHERE id = ANY ($1) AND "updatedAt" > $2',
+      `SELECT id, x, y, address, amount
+        FROM ${this.tableName}
+        WHERE id = ANY ($1) AND "updatedAt" > $2`,
       [ids, since]
     )
   }
@@ -79,9 +88,42 @@ class ParcelState extends Model {
     const [maxx, maxy] = coordinates.toArray(max)
 
     return await this.db.query(
-      `SELECT "parcel_states".* FROM parcel_states
-        WHERE parcel_states."x" >= $1 AND parcel_states."y" >= $2
-          AND parcel_states."x" <= $3 AND parcel_states."y" <= $4`,
+      `SELECT * FROM ${this.tableName}
+        WHERE x >= $1 AND y >= $2
+          AND x <= $3 AND y <= $4`,
+      [minx, miny, maxx, maxy]
+    )
+  }
+
+  static findLargestBidders(limit = 10) {
+    return this.db.query(
+      `SELECT address, sum(amount::int) as sum, count(amount) as count
+        FROM ${this.tableName}
+        WHERE address IS NOT NULL
+        GROUP BY address
+        ORDER BY sum DESC LIMIT $1`,
+      [limit]
+    )
+  }
+
+  static averageWinningBid() {
+    return this.db.query(
+      `SELECT AVG(amount::int) as avg
+        FROM ${this.tableName}
+        WHERE address IS NOT NULL`
+    )
+  }
+
+  static averageWinningBidBetween(min, max) {
+    const [minx, miny] = coordinates.toArray(min)
+    const [maxx, maxy] = coordinates.toArray(max)
+
+    return this.db.query(
+      `SELECT AVG(amount::int) as avg
+        FROM ${this.tableName}
+        WHERE x >= $1 AND y >= $2
+          AND x <= $3 AND y <= $4
+          AND address IS NOT NULL`,
       [minx, miny, maxx, maxy]
     )
   }
@@ -96,26 +138,35 @@ class ParcelState extends Model {
   static summary() {
     return this.db
       .query(
-        `SELECT COUNT(*), MAX(amount::int), SUM(amount::int) FROM ${ParcelState.tableName} WHERE address IS NOT NULL`
+        `SELECT COUNT(*), MAX(amount::int), SUM(amount::int)
+          FROM ${this.tableName} WHERE address IS NOT NULL`
       )
       .then(r => r[0])
   }
 
   static findExpensive(limit) {
     return this.db.query(
-      `SELECT id, amount::int FROM ${ParcelState.tableName} WHERE address IS NOT NULL ORDER BY amount::int DESC LIMIT ${limit}`
+      `SELECT id, amount::int
+        FROM ${this.tableName} WHERE address IS NOT NULL
+        ORDER BY amount::int DESC LIMIT $1`,
+      [limit]
     )
   }
 
   static findLandlords(limit) {
     return this.db.query(
-      `SELECT address, COUNT(*) FROM ${ParcelState.tableName} WHERE address IS NOT NULL GROUP BY address ORDER BY count DESC LIMIT ${limit}`
+      `SELECT address, COUNT(*)
+        FROM ${this.tableName}
+        WHERE address IS NOT NULL
+        GROUP BY address
+        ORDER BY count DESC LIMIT $1`,
+      [limit]
     )
   }
 
   static countOwners() {
     return this.db
-      .query(`SELECT COUNT(DISTINCT(address)) FROM ${ParcelState.tableName}`)
+      .query(`SELECT COUNT(DISTINCT(address)) FROM ${this.tableName}`)
       .then(r => r[0].count)
   }
 

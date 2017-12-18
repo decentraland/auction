@@ -1,4 +1,13 @@
-import { AddressState, Bid, BidGroup, Job, ParcelState } from '../models'
+import {
+  Project,
+  AddressState,
+  Bid,
+  BidGroup,
+  Job,
+  ParcelState,
+  LockedBalanceEvent,
+  DistrictEntry
+} from '../models'
 
 class StatsService {
   constructor() {
@@ -41,8 +50,25 @@ class StatsService {
   }
 
   async getGlobalSummary(address) {
-    return {
+    const mostExpensiveBids = await ParcelState.findExpensive(5)
 
+    return {
+      totalMana: await LockedBalanceEvent.getTotalLockedMana(),
+      totalLand: await DistrictEntry.getTotalLand(),
+      manaSpentOnBids: await ParcelState.getTotalAmount(),
+
+      mostExpensiveBid: mostExpensiveBids[0],
+      averageWinningBidCenter: await ParcelState.averageWinningBidBetween(
+        [-22, -16],
+        [22, 13]
+      ),
+      averageWinningBid: await ParcelState.averageWinningBid(),
+
+      mostExpensiveBids,
+      mostPopularParcels: await Bid.findPopular(5),
+      biggestDistricts: await Project.findBiggest(5),
+
+      largestBidders: await ParcelState.findLargestBidders(5)
     }
   }
 
