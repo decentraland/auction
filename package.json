@@ -32,6 +32,7 @@
   "dependencies": {
     "bignumber.js": "^5.0.0",
     "body-parser": "^1.18.2",
+    "cli-table": "^0.3.1",
     "decentraland-commons": "git+https://github.com/decentraland/commons.git#release",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
