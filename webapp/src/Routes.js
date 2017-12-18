@@ -13,6 +13,7 @@ import NotStarted from './components/NotStarted'
 import WalletErrorPage from './components/WalletErrorPage'
 import ServerError from './components/ServerError'
 import AddressErrorPage from './components/AddressErrorPage'
+import FAQPage from './components/FAQPage'
 
 export default function Routes() {
   if (started() || env.isDevelopment()) {
@@ -34,6 +35,7 @@ export default function Routes() {
           path={locations.addressError}
           component={AddressErrorPage}
         />
+        <Route exact path={locations.faq} component={FAQPage} />
         <Route exact path={locations.error} component={WalletErrorPage} />
       </Switch>,
       <IntercomContainer key="2" />
