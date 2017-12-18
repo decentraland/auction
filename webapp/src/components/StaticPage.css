@@ -11,6 +11,14 @@
   color: #3E396B;
 }
 
+
+.StaticPageStreched .content {
+  margin: auto;
+  padding: 0 80px;
+  display: block;
+  text-align: left;
+}
+
 .StaticPage .content h2 {
   margin-top: 0;
   margin-bottom: 40px;

@@ -54,7 +54,7 @@ class API {
   }
 
   fetchAddressStats(address) {
-    return this.request('get', '/addressStats', { address })
+    return this.request('get', `/addressStats/${address}`, {})
   }
 
   request(method, path, params) {

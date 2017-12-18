@@ -6,7 +6,7 @@ import './FAQPage.css'
 
 export default function FAQPage() {
   return (
-    <StaticPage className="FAQPage">
+    <StaticPage className="StaticPageStreched FAQPage">
       <h1>FAQs</h1>
 
       <div className="questions">

@@ -1,13 +1,13 @@
 export default {
   root: '/',
 
+  stats: '/stats',
+  addressStats: '/addressStats/:address',
+
   parcel: '/:x/:y',
   parcelDetail: (x, y) => `/${x}/${y}`,
 
   unsubscribe: '/unsubscribe',
-
-  stats: '/stats',
-  addressStats: '/stats/:address',
 
   faq: '/faq',
 

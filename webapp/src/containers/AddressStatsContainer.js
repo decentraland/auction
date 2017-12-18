@@ -12,6 +12,7 @@ import AddressStats from '../components/AddressStats'
 
 class AddressStatsContainer extends React.Component {
   static propTypes = {
+    address: PropTypes.string,
     addressStats: stateData(PropTypes.object),
     fetchAddressStats: PropTypes.func,
     navigateTo: PropTypes.func
@@ -28,14 +29,14 @@ class AddressStatsContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.stats.error) {
+    if (nextProps.addressStats.error) {
       this.props.navigateTo(locations.root)
     }
   }
 
   render() {
-    const { addressStats } = this.props
-    return <AddressStats addressStats={addressStats} />
+    const { address, addressStats } = this.props
+    return <AddressStats address={address} addressStats={addressStats} />
   }
 }
 

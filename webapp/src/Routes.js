@@ -22,6 +22,14 @@ export default function Routes() {
     return [
       <Switch key="1">
         <Route exact path={locations.root} component={HomePageContainer} />
+
+        <Route
+          exact
+          path={locations.addressStats}
+          component={AddressStatsContainer}
+        />
+        <Route exact path={locations.stats} component={StatsContainer} />
+
         <Route exact path={locations.parcel} component={HomePageContainer} />
 
         <Route
@@ -29,9 +37,6 @@ export default function Routes() {
           path={locations.unsubscribe}
           component={EmailUnsubscribeContainer}
         />
-
-        <Route exact path={locations.stats} component={StatsContainer} />
-        <Route exact path={locations.addressStats} component={AddressStatsContainer} />
 
         <Route exact path={locations.faq} component={FAQPage} />
 

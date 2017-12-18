@@ -305,7 +305,7 @@ export function getStats(req) {
  * @param  {string} address - User address
  * @return {object} - Each property is a new stat calculated for the supplied address
  */
-app.get('/api/stats/:address', server.handleRequest(getAddressStats))
+app.get('/api/addressStats/:address', server.handleRequest(getAddressStats))
 
 export function getAddressStats(req) {
   const address = server.extractFromReq(req, 'address')

@@ -14,7 +14,7 @@ import './Stats.css'
 
 export default function Stats({ stats }) {
   return (
-    <StaticPage className="Stats">
+    <StaticPage className="StaticPageStreched Stats">
       {stats.loading ? <Loading /> : <StatsView stats={stats.data} />}
     </StaticPage>
   )
