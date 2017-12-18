@@ -26,9 +26,9 @@ class ParcelState extends Model {
     return `${x},${y}`
   }
 
-  static async getTotalLockedMana() {
+  static async getTotalAmount() {
     const result = await this.db.query(
-      `SELECT SUM(amount) as total FROM ${this.tableName}`
+      `SELECT SUM(amount::int) as total FROM ${this.tableName}`
     )
     return result.length ? result[0].total : 0
   }
