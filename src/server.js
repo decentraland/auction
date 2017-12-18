@@ -291,13 +291,23 @@ export function getProjects(req) {
 }
 
 /**
- * Get useful stats for an address
- * @param  {string} address - User address
+ * Get useful stats regarding the entire auction
  * @return {object} - Each property is a new stat calculated for the supplied address
  */
 app.get('/api/stats', server.handleRequest(getStats))
 
 export function getStats(req) {
+  return new StatsService().getGlobalSummary()
+}
+
+/**
+ * Get useful stats for an address
+ * @param  {string} address - User address
+ * @return {object} - Each property is a new stat calculated for the supplied address
+ */
+app.get('/api/stats/:address', server.handleRequest(getAddressStats))
+
+export function getAddressStats(req) {
   const address = server.extractFromReq(req, 'address')
 
   // 1. Locked balance transactions, and bonus received per month

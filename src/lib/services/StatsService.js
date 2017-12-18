@@ -40,8 +40,13 @@ class StatsService {
     }
   }
 
-  async getAddressSummary(address) {
+  async getGlobalSummary(address) {
+    return {
 
+    }
+  }
+
+  async getAddressSummary(address) {
     return {
       lockedMana: '',
       bonusPerMonth: {

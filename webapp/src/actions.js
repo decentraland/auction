@@ -96,6 +96,13 @@ export function fetchStats() {
   }
 }
 
+export function fetchAddressStats(address) {
+  return {
+    type: types.fetchAddressStats.request,
+    address
+  }
+}
+
 // -------------------------------------------------------------------------
 // Modal
 

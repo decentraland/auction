@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Navbar from './Navbar'
+
 import './FAQPage.css'
 
 export default function FAQPage() {

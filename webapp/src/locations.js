@@ -7,10 +7,12 @@ export default {
   unsubscribe: '/unsubscribe',
 
   stats: '/stats',
+  addressStats: '/stats/:address',
+
+  faq: '/faq',
 
   error: '/error',
   walletError: '/walletError',
   addressError: '/addressError',
-  serverError: '/serverError',
-  faq: '/faq'
+  serverError: '/serverError'
 }

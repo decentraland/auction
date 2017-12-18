@@ -9,6 +9,7 @@ import HomePageContainer from './containers/HomePageContainer'
 import IntercomContainer from './containers/IntercomContainer'
 import EmailUnsubscribeContainer from './containers/EmailUnsubscribeContainer'
 import StatsContainer from './containers/StatsContainer'
+import AddressStatsContainer from './containers/AddressStatsContainer'
 
 import NotStarted from './components/NotStarted'
 import WalletErrorPage from './components/WalletErrorPage'
@@ -30,6 +31,9 @@ export default function Routes() {
         />
 
         <Route exact path={locations.stats} component={StatsContainer} />
+        <Route exact path={locations.addressStats} component={AddressStatsContainer} />
+
+        <Route exact path={locations.faq} component={FAQPage} />
 
         <Route exact path={locations.walletError} component={WalletErrorPage} />
         <Route exact path={locations.serverError} component={ServerError} />
@@ -38,7 +42,6 @@ export default function Routes() {
           path={locations.addressError}
           component={AddressErrorPage}
         />
-        <Route exact path={locations.faq} component={FAQPage} />
         <Route exact path={locations.error} component={WalletErrorPage} />
       </Switch>,
       <IntercomContainer key="2" />
