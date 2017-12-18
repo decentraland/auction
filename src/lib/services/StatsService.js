@@ -23,16 +23,16 @@ class StatsService {
       bids: {
         count: await this.Bid.count(),
         submissions: await this.BidGroup.count(),
-        submitters: await this.Bid.submitters(10)
+        submitters: await this.Bid.findSubmitters(10)
       },
       parcels: {
         count: parcelSummary.count,
         total: parcelSummary.sum,
         max: parcelSummary.max,
         owners: await this.ParcelState.countOwners(),
-        popular: await this.Bid.popular(10),
-        expensive: await this.ParcelState.expensive(10),
-        landlords: await this.ParcelState.landlords(10)
+        popular: await this.Bid.findPopular(10),
+        expensive: await this.ParcelState.findExpensive(10),
+        landlords: await this.ParcelState.findLandlords(10)
       },
       notifications: {
         sent: await this.Job.count()

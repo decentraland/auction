@@ -101,13 +101,13 @@ class ParcelState extends Model {
       .then(r => r[0])
   }
 
-  static expensive(limit) {
+  static findExpensive(limit) {
     return this.db.query(
       `SELECT id, amount::int FROM ${ParcelState.tableName} WHERE address IS NOT NULL ORDER BY amount::int DESC LIMIT ${limit}`
     )
   }
 
-  static landlords(limit) {
+  static findLandlords(limit) {
     return this.db.query(
       `SELECT address, COUNT(*) FROM ${ParcelState.tableName} WHERE address IS NOT NULL GROUP BY address ORDER BY count DESC LIMIT ${limit}`
     )
