@@ -15,10 +15,6 @@ const ERROR_CODES = {
   insufficientIncrement: 'INSUFFICIENT_INCREMENT'
 }
 
-const daysFromNowToDate = days => {
-  return new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * days)
-}
-
 export default class BidService {
   static ERROR_CODES = ERROR_CODES
 

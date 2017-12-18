@@ -4,7 +4,7 @@ import bodyParser from 'body-parser'
 import path from 'path'
 import git from 'git-rev-sync'
 
-import { server, env, eth, utils } from 'decentraland-commons'
+import { server, env, utils } from 'decentraland-commons'
 import db from './lib/db'
 import coordinatesUtils from './lib/coordinates'
 import omitInArray from './lib/omitInArray'
@@ -260,7 +260,7 @@ export async function postBidGroup(req) {
     try {
       await db.client.query('COMMIT')
     } catch (error) {
-      console.log(`Error saving info`, bidGroup, error.stack)
+      console.log('Error saving info', bidGroup, error.stack)
       await db.client.connect()
     }
     lock = false
@@ -271,7 +271,7 @@ export async function postBidGroup(req) {
   try {
     await db.client.query('COMMIT')
   } catch (error) {
-    console.log(`Error commiting!`, bidGroup, err.stack)
+    console.log('Error commiting!', bidGroup, error.stack)
   }
   console.log('[Server] Request handled in time:', new Date().getTime() - time)
   lock = false
@@ -303,7 +303,9 @@ app.post(
   server.handleRequest(postOutbidNotification)
 )
 
-const emailExtract = new RegExp("Decentraland Auction: Subscribe ([^ ]+) \\(\\d+\\)")
+const emailExtract = new RegExp(
+  'Decentraland Auction: Subscribe ([^ ]+) \\(\\d+\\)'
+)
 
 function takeEmail(message) {
   const match = emailExtract.exec(message)

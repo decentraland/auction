@@ -3,7 +3,6 @@ import { env, SMTP } from 'decentraland-commons'
 
 import {
   AddressState,
-  Bid,
   OutbidNotification,
   Job,
   ParcelState
