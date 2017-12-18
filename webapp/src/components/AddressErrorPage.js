@@ -16,7 +16,7 @@ export default function AddressErrorPage() {
         <br />
         <p>
           Remember that you to participate in the auction
-          <br />you need to have MANA staked on the&nbsp;
+          <br />you need to have committed MANA during the&nbsp;
           <a
             href="https://terraform.decentraland.org"
             target="_blank"
@@ -27,7 +27,7 @@ export default function AddressErrorPage() {
         </p>
         <br />
         <p>
-          If your think this is a mistake, please please contact us using&nbsp;
+          If you think this is a mistake, please contact us using&nbsp;
           <a
             href="https://chat.decentraland.org"
             target="_blank"
