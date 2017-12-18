@@ -93,6 +93,32 @@ class ParcelState extends Model {
     return await super.insert(parcelState)
   }
 
+  static summary() {
+    return this.db
+      .query(
+        `SELECT COUNT(*), MAX(amount::int), SUM(amount::int) FROM ${ParcelState.tableName} WHERE address IS NOT NULL`
+      )
+      .then(r => r[0])
+  }
+
+  static findExpensive(limit) {
+    return this.db.query(
+      `SELECT id, amount::int FROM ${ParcelState.tableName} WHERE address IS NOT NULL ORDER BY amount::int DESC LIMIT ${limit}`
+    )
+  }
+
+  static findLandlords(limit) {
+    return this.db.query(
+      `SELECT address, COUNT(*) FROM ${ParcelState.tableName} WHERE address IS NOT NULL GROUP BY address ORDER BY count DESC LIMIT ${limit}`
+    )
+  }
+
+  static countOwners() {
+    return this.db
+      .query(`SELECT COUNT(DISTINCT(address)) FROM ${ParcelState.tableName}`)
+      .then(r => r[0].count)
+  }
+
   isReserved() {
     return !!this.get('projectId')
   }
