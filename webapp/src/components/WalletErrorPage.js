@@ -1,16 +1,16 @@
 import React from 'react'
 
-import ErrorPage from './ErrorPage'
+import StaticPage from './StaticPage'
 
 export default function WalletErrorPage() {
   return (
-    <ErrorPage>
+    <StaticPage>
       <h2>
         Uh-oh. <br />
         We couldn’t retrieve your wallet information.
       </h2>
 
-      <div className="error-message">
+      <div className="message">
         <p>
           Please make sure your&nbsp;
           <a
@@ -48,9 +48,9 @@ export default function WalletErrorPage() {
         </p>
       </div>
 
-      <a className="btn retry" href="/">
+      <a className="btn btn-primary" href="/">
         Retry
       </a>
-    </ErrorPage>
+    </StaticPage>
   )
 }

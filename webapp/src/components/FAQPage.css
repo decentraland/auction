@@ -6,6 +6,8 @@
   margin: auto;
   max-width: 800px;
   padding: 80px;
+  display: block;
+  text-align: left;
 }
 
 .FAQPage .content h1 {

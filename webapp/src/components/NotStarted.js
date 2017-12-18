@@ -1,16 +1,16 @@
 import React from 'react'
 
-import ErrorPage from './ErrorPage'
+import StaticPage from './StaticPage'
 
 export default function NotStarted() {
   return (
-    <ErrorPage>
+    <StaticPage>
       <h2>
         Welcome!<br />
         <br />
         The auction has not started yet.
       </h2>
-      <div className="error-message">
+      <div className="message">
         <br />
         <p>
           In the meanwhile, check out the&nbsp;
@@ -31,6 +31,6 @@ export default function NotStarted() {
           </a>!
         </p>
       </div>
-    </ErrorPage>
+    </StaticPage>
   )
 }

@@ -1,14 +1,15 @@
 import React from 'react'
-import ErrorPage from './ErrorPage'
+
+import StaticPage from './StaticPage'
 
 export default function AddressErrorPage() {
   return (
-    <ErrorPage>
+    <StaticPage>
       <h2>
         Uh-oh.<br /> We couldn&#39;t retrieve your account information.
       </h2>
 
-      <div className="error-message">
+      <div className="message">
         <p>
           We couldn&#39;t retrieve any account information associated with your
           current address. Are you using the correct address?
@@ -48,10 +49,10 @@ export default function AddressErrorPage() {
           </a>&nbsp; for answers.
         </p>
 
-        <a className="btn retry" href="/">
+        <a className="btn btn-primary" href="/">
           Retry
         </a>
       </div>
-    </ErrorPage>
+    </StaticPage>
   )
 }

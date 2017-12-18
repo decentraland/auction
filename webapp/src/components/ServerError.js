@@ -1,14 +1,14 @@
 import React from 'react'
-import ErrorPage from './ErrorPage'
+import StaticPage from './StaticPage'
 
 export default function ServerError() {
   return (
-    <ErrorPage>
+    <StaticPage>
       <h2>
         Uh-oh. <br />
         We couldn’t retrieve information from the server.
       </h2>
-      <div className="error-message">
+      <div className="message">
         <p>Please try again in a few minutes.</p>
         <br />
         <p>
@@ -41,6 +41,6 @@ export default function ServerError() {
           </a>&nbsp; for answers.
         </p>
       </div>
-    </ErrorPage>
+    </StaticPage>
   )
 }
