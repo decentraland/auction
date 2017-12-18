@@ -1,3 +1,36 @@
 .Stats {
+  color: #3e396b;
+  font-size: 16px;
+}
 
+.Stats .content {
+  margin: auto;
+  padding: 0 80px;
+  display: block;
+  text-align: left;
+}
+
+.Stats .content h1 {
+  font-size: 36px;
+  margin-bottom: 45px;
+  font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
+  text-align: center;
+}
+
+.Stats .row {
+  margin-bottom: 40px;
+}
+
+.Stats .title {
+  font-size: 24px;
+  margin-bottom: 5px;
+  font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
+}
+
+.Stats .largest-bidders .Definition dt {
+  width: 340px;
+}
+
+.Stats .largest-bidders .Definition dd {
+  margin-left: 360px;
 }

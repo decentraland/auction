@@ -106,19 +106,21 @@ class ParcelState extends Model {
     )
   }
 
-  static averageWinningBid() {
-    return this.db.query(
+  static async averageWinningBid() {
+    const result = await this.db.query(
       `SELECT AVG(amount::int) as avg
         FROM ${this.tableName}
         WHERE address IS NOT NULL`
     )
+
+    return result.length ? result[0].avg : 0
   }
 
-  static averageWinningBidBetween(min, max) {
+  static async averageWinningBidBetween(min, max) {
     const [minx, miny] = coordinates.toArray(min)
     const [maxx, maxy] = coordinates.toArray(max)
 
-    return this.db.query(
+    const result = await this.db.query(
       `SELECT AVG(amount::int) as avg
         FROM ${this.tableName}
         WHERE x >= $1 AND y >= $2
@@ -126,6 +128,8 @@ class ParcelState extends Model {
           AND address IS NOT NULL`,
       [minx, miny, maxx, maxy]
     )
+
+    return result.length ? result[0].avg : 0
   }
 
   static async insert(parcelState) {

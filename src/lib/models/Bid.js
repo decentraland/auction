@@ -28,7 +28,7 @@ class Bid extends Model {
 
   static findPopular(limit) {
     return this.db.query(
-      `SELECT x::text || ',' || y::text AS parcelId, COUNT(*)
+      `SELECT x::text || ',' || y::text AS "parcelId", COUNT(*)
         FROM ${Bid.tableName}
         GROUP BY x::text || ',' || y::text
         ORDER BY count DESC LIMIT $1`,

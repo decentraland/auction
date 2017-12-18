@@ -57,7 +57,7 @@ class StatsService {
       totalLand: await DistrictEntry.getTotalLand(),
       manaSpentOnBids: await ParcelState.getTotalAmount(),
 
-      mostExpensiveBid: mostExpensiveBids[0],
+      mostExpensiveBid: mostExpensiveBids[0].amount,
       averageWinningBidCenter: await ParcelState.averageWinningBidBetween(
         [-22, -16],
         [22, 13]
@@ -68,7 +68,7 @@ class StatsService {
       mostPopularParcels: await Bid.findPopular(5),
       biggestDistricts: await Project.findBiggest(5),
 
-      largestBidders: await ParcelState.findLargestBidders(5)
+      largestBidders: await ParcelState.findLargestBidders(10)
     }
   }
 

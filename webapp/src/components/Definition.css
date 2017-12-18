@@ -1,0 +1,23 @@
+
+.Definition dl {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.Definition dt {
+  font-weight: 700;
+  line-height: 1.42857143;
+}
+
+@media (min-width: 768px) {
+  .Definition dt {
+    float: left;
+    width: 180px;
+    clear: left;
+    text-align: right;
+  }
+
+  .Definition dd {
+    margin-left: 200px;
+  }
+}

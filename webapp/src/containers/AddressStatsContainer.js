@@ -27,6 +27,12 @@ class AddressStatsContainer extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.stats.error) {
+      this.props.navigateTo(locations.root)
+    }
+  }
+
   render() {
     const { addressStats } = this.props
     return <AddressStats addressStats={addressStats} />

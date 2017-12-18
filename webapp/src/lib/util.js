@@ -7,6 +7,10 @@ export function buildCoordinate(x, y) {
   return `${x},${y}`
 }
 
+export function splitCoordinate(id) {
+  return id.split(',')
+}
+
 let timeoutId = null
 export function flashNotice(message, timeout = 3000) {
   const notice = <FlashNotice> {message} </FlashNotice>

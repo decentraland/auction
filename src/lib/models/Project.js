@@ -23,7 +23,7 @@ class Project extends Model {
     return this.db.query(
       `SELECT *
         FROM ${this.tableName}
-        ORDER BY parcels::int DESC LIMIT $1`,
+        ORDER BY parcels DESC LIMIT $1`,
       [limit]
     )
   }
