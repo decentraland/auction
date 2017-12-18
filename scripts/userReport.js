@@ -27,15 +27,20 @@ const filterKeys = (original, allowed) => {
     }, {})
 }
 
-const nullToEmpty = v => (v === null ? '' : v)
+const nullToEmpty = value => (value === null ? '' : value)
+const dateToISO = value => (value instanceof Date ? value.toISOString() : value)
 
 const createTable = (fields, values) => {
   const table = new Table({
-    head: fields
+    head: fields,
+    style: { compact: true }
   })
 
   for (const item of values) {
-    table.push(Object.values(filterKeys(item, fields)).map(nullToEmpty))
+    const row = Object.values(filterKeys(item, fields))
+      .map(nullToEmpty)
+      .map(dateToISO)
+    table.push(row)
   }
   return table
 }
