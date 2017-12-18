@@ -50,23 +50,33 @@ export default class IntroModal extends React.Component {
             <p>
               To prevent last-minute takeovers, the bidding window will be
               extended for parcels with bids made within the final 30 hours.
-              This extension is equal to n, where n = 30 - hours_remaining.
+              This extension is equal to n, where{' '}
+              <i>n = 30 - hours_remaining</i>.
             </p>
             <p>
               Once all active bids have finished, unused MANA will be returned
               to users’ wallets.
             </p>
             <p>
-              For testing purposes, please report bugs and errors you encounter
-              in the{' '}
+              You can reopen this at any time by clicking on the <b>?</b> button
+              in the bottom left.
+            </p>
+            <p>
+              For more detailed information, please read the walkthrough{' '}
               <a
-                href="https://chat.decentraland.org/channels/test/auction"
+                href="https://blog.decentraland.org/genesis-city-auction-tutorial-a86500a8cbda"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                #test_auction
-              </a>{' '}
-              channel in RocketChat.
+                here
+              </a>, or visit the auction wiki page{' '}
+              <a
+                href="https://wiki.decentraland.org/index.php?title=The_Genesis_City_Auction"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                here
+              </a>.
             </p>
           </div>
 
