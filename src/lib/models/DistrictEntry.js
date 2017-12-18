@@ -17,7 +17,7 @@ class DistrictEntry extends Model {
 
   static async getTotalLand() {
     const result = await this.db.query(
-      `SELECT SUM(land) as total FROM ${this.tableName}`
+      `SELECT SUM(lands) as total FROM ${this.tableName}`
     )
     return result.length ? result[0].total : 0
   }
