@@ -48,6 +48,12 @@ export default {
     failed: '[Failed] Failed to confirm bids'
   },
 
+  fetchStats: {
+    request: '[Request] Fetch stats requested',
+    success: '[Success] Stats fetched',
+    failed: '[Failed] Failed to fetch stats'
+  },
+
   modal: {
     open: 'Open Modal',
     close: 'Close Modal'

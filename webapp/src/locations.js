@@ -6,6 +6,8 @@ export default {
 
   unsubscribe: '/unsubscribe',
 
+  stats: '/stats',
+
   error: '/error',
   walletError: '/walletError',
   addressError: '/addressError',

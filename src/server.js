@@ -21,7 +21,8 @@ import {
 import {
   BidService,
   BidReceiptService,
-  OutbidNotificationService
+  OutbidNotificationService,
+  StatsService
 } from './lib/services'
 
 env.load()
@@ -287,6 +288,23 @@ app.get('/api/projects', server.handleRequest(getProjects))
 
 export function getProjects(req) {
   return Project.find()
+}
+
+/**
+ * Get useful stats for an address
+ * @param  {string} address - User address
+ * @return {object} - Each property is a new stat calculated for the supplied address
+ */
+app.get('/api/stats', server.handleRequest(getStats))
+
+export function getStats(req) {
+  const address = server.extractFromReq(req, 'address')
+
+  // 1. Locked balance transactions, and bonus received per month
+  // 2. District contributions
+  // 3. Winning bids
+  // 4: final balance
+  return new StatsService().getAddressSummary(address)
 }
 
 /**

@@ -39,6 +39,22 @@ class StatsService {
       }
     }
   }
+
+  async getAddressSummary(address) {
+
+    return {
+      lockedMana: '',
+      bonusPerMonth: {
+        9: 123,
+        10: 134,
+        11: 145,
+        12: 156
+      },
+      districtContributions: [],
+      winningBids: [],
+      balance: '1000'
+    }
+  }
 }
 
 export default StatsService
