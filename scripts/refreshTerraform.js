@@ -10,6 +10,8 @@ const log = new Log('RefreshTerraform')
 
 env.load()
 
+const EVENT_WINDOW_HOURS = 2
+
 async function main() {
   try {
     // init
@@ -17,7 +19,8 @@ async function main() {
 
     // get last balance event
     const lastEvent = await LockedBalanceEvent.findLast()
-    const checkpoint = lastEvent.confirmedAt.getTime()
+    const checkpoint =
+      lastEvent.confirmedAt.getTime() - EVENT_WINDOW_HOURS * 3600 * 1000
 
     // get locked balance events
     const url =
@@ -26,6 +29,8 @@ async function main() {
       checkpoint
     const res = await request.get(url)
     const lockedBalanceEvents = JSON.parse(res)
+
+    if (!lockedBalanceEvents.ok) throw new Error('Error in API call')
 
     // process events
     for (const event of lockedBalanceEvents.data) {
@@ -37,7 +42,7 @@ async function main() {
 
       // new event
       await LockedBalanceEvent.insert(event)
-      log.warn(`[${event.address}] TX (${event.txId}) inserted`)
+      log.info(`[${event.address}] TX (${event.txId}) inserted`)
 
       // update balances
       const addressState = await AddressState.findByAddress(event.address)
