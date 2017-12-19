@@ -155,7 +155,7 @@ function AuctionTableRow({ auction, className, onLandClick }) {
 }
 
 function Districts({ districts }) {
-  if (!districts || districts.data.length === 0) return null
+  if (!districts.data || districts.data.length === 0) return null
 
   return (
     <div className="Districts OngoingAuctions">
