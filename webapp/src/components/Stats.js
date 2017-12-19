@@ -113,13 +113,18 @@ function StatsView({ stats }) {
         <div className="col-xs-4">
           <div className="title text-center">Biggest districts</div>
           <Definition>
-            {biggestDistricts.map((district, index) => (
-              <DefinitionItem
-                key={index}
-                title={district.name}
-                description={asMana(district.parcels)}
-              />
-            ))}
+            {biggestDistricts.map((district, index) => {
+              const [ x, y ] = district.lookup.split(',')
+              return (
+                <DefinitionItem
+                  key={index}
+                  title={
+                  <Link to={locations.parcelDetail(x, y)}>{district.name}</Link>}
+                  description={asMana(district.parcels)}
+                />
+              )
+            }
+            )}
           </Definition>
         </div>
       </div>

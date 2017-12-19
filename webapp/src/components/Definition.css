@@ -27,7 +27,7 @@
 
 @media (min-width: 768px) {
   .Definition dt {
-    min-width: 40%;
+    min-width: 45%;
     text-align: right;
     display: inline-block;
     float: left;

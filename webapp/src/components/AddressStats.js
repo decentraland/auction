@@ -134,7 +134,7 @@ function districtItem(item) {
         {asLand(item.lands)}
       </div>
       <div className='col-xs-12 dateContainer'>
-        {moment(item.confirmedAt).format('MMMM Do, h:mm:ss a')}
+        {moment(+item.userTimestamp).format('MMMM Do, h:mm:ss a')}
       </div>
     </div>
   </div>

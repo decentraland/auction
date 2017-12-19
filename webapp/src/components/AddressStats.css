@@ -1,6 +1,8 @@
 .AddressStats {
   color: #3e396b;
   font-size: 16px;
+  max-width: 1170px;
+  margin: auto;
 }
 
 .AddressStats .content h1 {
@@ -61,6 +63,7 @@
 }
 .AddressStats .districtLand {
   overflow: hidden;
+  top: 2px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }

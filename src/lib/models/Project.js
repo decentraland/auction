@@ -23,6 +23,7 @@ class Project extends Model {
     return this.db.query(
       `SELECT *
         FROM ${this.tableName}
+        WHERE parcels > 0
         ORDER BY parcels DESC LIMIT $1`,
       [limit]
     )

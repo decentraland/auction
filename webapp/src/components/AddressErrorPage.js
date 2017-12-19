@@ -48,6 +48,18 @@ export default function AddressErrorPage() {
             wiki
           </a>&nbsp; for answers.
         </p>
+        <br/>
+        <p>
+          You can also check out the current status of the auction &nbsp;
+          <a
+            href="https://auction.decentraland.org/stats"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            here
+          </a>.
+        </p>
+        <br/>
 
         <a className="btn btn-primary" href="/">
           Retry

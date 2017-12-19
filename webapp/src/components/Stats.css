@@ -1,4 +1,6 @@
 .Stats {
+  max-width: 1170px;
+  margin: auto;
   color: #3e396b;
   font-size: 16px;
 }
