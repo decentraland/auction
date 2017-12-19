@@ -16,6 +16,10 @@
   margin-top: 32px;
 }
 
+.FAQPage .questions {
+  padding-bottom: 50px;
+}
+
 .FAQPage .question p {
   color: #36316D;
   font-size: 16px;
