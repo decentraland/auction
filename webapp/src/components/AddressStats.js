@@ -19,7 +19,7 @@ export default function AddressStats({ address, addressStats }) {
       {addressStats.loading ? (
         <Loading />
       ) : (
-        <StatsView address={address} addressStats={addressStats.data} />
+        <AddressStatsView address={address} addressStats={addressStats.data} />
       )}
     </StaticPage>
   )
@@ -34,7 +34,7 @@ const updated = (a, b) =>
   -(new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())
 const price = (a, b) => -(a.amount - b.amount)
 
-function StatsView({ address, addressStats }) {
+function AddressStatsView({ address, addressStats }) {
   const {
     lockEvents,
     lockedMana,
@@ -42,14 +42,18 @@ function StatsView({ address, addressStats }) {
     winningBids,
     addressState
   } = addressStats
+
   const { balance } = addressState
+
   const contributedDistrictsSummary = `${asLand(
     lockedMana.totalLandMANA / 1000
   )} (${asMana(lockedMana.totalLandMANA)})`
+
   const winningMap = {}
   winningBids.forEach(parcel => {
     winningMap[`${parcel.x},${parcel.y},${parcel.amount}`] = true
   })
+
   const totalBid = asMana(winningBids.reduce((sum, e) => sum + +e.amount, 0))
   const losing = item => !winningMap[`${item.x},${item.y},${item.amount}`]
 
@@ -106,7 +110,9 @@ function StatsView({ address, addressStats }) {
         <div className="row">
           <div className="col-xs-6">
             <div className="title">Winning bids ({totalBid})</div>
-            {winningBids.sort(price).map(parcelWinItem)}
+            {winningBids
+              .sort(price)
+              .map((bid, index) => <ParcelWinItem key={index} {...bid} />)}
           </div>
           <div className="col-xs-6">
             <div className="title">Unsuccesful bids</div>
@@ -118,11 +124,6 @@ function StatsView({ address, addressStats }) {
       </Box>
     </div>
   )
-}
-
-AddressStats.propTypes = {
-  address: PropTypes.string,
-  addressStats: stateData(PropTypes.object)
 }
 
 function districtItem(item) {
@@ -163,7 +164,7 @@ function etherscan(tx) {
   return 'https://etherscan.io/tx/' + tx
 }
 
-function parcelWinItem(item) {
+function ParcelWinItem(item) {
   return (
     <div className="row parcelItem">
       <div className="col-xs-4 parcelLink">
@@ -180,9 +181,14 @@ function parcelWinItem(item) {
 function allBidsItem(item, losing) {
   return item.bids
     .filter(losing)
-    .map(bid =>
-      parcelWinItem({ ...bid, id: item.id, updatedAt: item.createdAt })
-    )
+    .map((bid, index) => (
+      <ParcelWinItem
+        key={index}
+        id={item.id}
+        updatedAt={item.createdAt}
+        {...bid}
+      />
+    ))
 }
 
 function asDate(date) {

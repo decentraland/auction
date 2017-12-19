@@ -58,11 +58,12 @@
   width: 100%;
 }
 
-.Stats .largest-bidders .Definition dt {
-}
-
 .Stats .Definition dt {
   margin-bottom: 12px;
+}
+
+.Stats .Definition dt a {
+  font-weight: normal;
 }
 
 .Stats h4 {
