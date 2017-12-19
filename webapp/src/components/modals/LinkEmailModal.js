@@ -15,7 +15,7 @@ import './LinkEmailModal.css'
 export default class LinkEmailModal extends React.Component {
   static propTypes = {
     ...Modal.propTypes,
-    currentEmail: stateData(PropTypes.string),
+    currentEmail: stateData(PropTypes.bool),
     email: PropTypes.string.isRequired,
     onEmailChange: PropTypes.func.isRequired,
     onSign: PropTypes.func.isRequired

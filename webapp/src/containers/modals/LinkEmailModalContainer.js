@@ -12,7 +12,7 @@ import { LinkEmailModal } from '../../components/modals'
 
 class LinkEmailModalContainer extends React.Component {
   static propTypes = {
-    email: stateData(PropTypes.string),
+    email: stateData(PropTypes.bool),
     subscribeEmail: PropTypes.func
     // Here we should extend ...ModalContainer.propTypes but webpack is broken and doesn't understand the import
     // Try it yourself: import ModalContainer from "./ModalContainer"

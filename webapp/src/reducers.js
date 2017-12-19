@@ -299,9 +299,9 @@ function email(state = INITIAL_STATE.email, action) {
     case types.unsubscribeEmail.request:
       return { ...state, loading: true }
     case types.subscribeEmail.success:
-      return { loading: false, data: action.email }
+      return { loading: false, data: true }
     case types.unsubscribeEmail.success:
-      return { loading: false, data: '' }
+      return { loading: false, data: false }
     case types.subscribeEmail.failed:
     case types.unsubscribeEmail.failed:
       return { ...state, loading: false, error: action.error }

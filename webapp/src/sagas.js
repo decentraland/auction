@@ -473,7 +473,7 @@ function* handleEmailSubscribe(action) {
     const signature = yield call(() => sign(message, address, ethereum, ledger))
     yield call(() => api.postSignedOutbidNotification(message, signature))
 
-    yield put({ type: types.subscribeEmail.success, email })
+    yield put({ type: types.subscribeEmail.success })
   } catch (error) {
     console.warn(error)
     yield put({ type: types.subscribeEmail.failed, error: error.message })
@@ -481,11 +481,11 @@ function* handleEmailSubscribe(action) {
 }
 
 function* handleEmailUnsubscribe(action) {
-  const { address, email } = yield select(selectors.getAddressStateData)
+  const { address } = yield select(selectors.getAddressStateData)
   const { ethereum, ledger } = yield select(selectors.getEthereumConnection)
 
   const timestamp = new Date().getTime()
-  const payload = `Decentraland Auction: Unsubscribe ${email} (${timestamp})`
+  const payload = `Decentraland Auction: Unsubscribe Emails (${timestamp})`
   const message = web3Eth.utils.toHex(payload)
 
   try {
