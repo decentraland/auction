@@ -113,14 +113,11 @@ function StatsView({ stats }) {
           <div className="title text-center">Biggest districts</div>
           <Definition>
             {biggestDistricts.map((district, index) => {
-              const [x, y] = district.lookup.split(',')
               return (
                 <DefinitionItem
                   key={index}
                   title={
-                    <Link to={locations.parcelDetail(x, y)}>
-                      {district.name}
-                    </Link>
+                    <Link to={getHref(district.lookup)}>{district.name}</Link>
                   }
                   description={asMana(district.parcels)}
                 />
