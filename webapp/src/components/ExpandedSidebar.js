@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import locations from '../locations'
 import { distanceInWordsToNow } from '../lib/dateUtils'
-import { buildCoordinate, shortenAddress } from '../lib/util'
+import { buildCoordinate, shortenAddress, splitCoordinate } from '../lib/util'
 import { stateData } from '../lib/propTypes'
 
 import SubscribeEmailContainer from '../containers/SubscribeEmailContainer'
@@ -198,9 +198,10 @@ function DistrictTableRow({ district }) {
   return (
     <div className={`table-row`}>
       <div className="col-land">{district.sum}</div>
-
       <div className="col-name">
-        <Link to="/">{district.name}</Link>
+        <Link to={locations.parcelDetail(...splitCoordinate(district.lookup))}>
+          {district.name}
+        </Link>
       </div>
       <div className="col-status-value">Placed</div>
     </div>
