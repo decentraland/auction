@@ -39,9 +39,13 @@ function AddressStatsView({ address, addressStats }) {
     lockEvents,
     lockedMana,
     districtContributions,
-    winningBids,
-    addressState
+    winningBids
   } = addressStats
+
+  const addressState = addressStats.addressState || {
+    balance: 0,
+    bidGroups: []
+  }
 
   const { balance } = addressState
 

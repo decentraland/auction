@@ -31,14 +31,18 @@ class AddressStatsContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (
       nextProps.addressStats.error ||
-      !this.hasLockedMana(nextProps.addressStats)
+      this.neverLockedMana(nextProps.addressStats)
     ) {
       this.props.navigateTo(locations.root)
     }
   }
 
-  hasLockedMana(addressStats) {
-    return addressStats.data && addressStats.data.lockedMana
+  neverLockedMana(addressStats) {
+    return (
+      !addressStats.loading &&
+      addressStats.data &&
+      !addressStats.data.lockedMana
+    )
   }
 
   render() {
