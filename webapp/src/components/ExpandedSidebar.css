@@ -135,8 +135,8 @@
 /* -----------------------------------------------------------------------
  Districts */
 
+.Districts .table .col-name    { width: 40%; }
 .Districts .table .col-land    { width: 15%; }
-.Districts .table .col-name    { width: 30%; }
 .Districts .table .col-status  { width: 10%; }
 
 /* -----------------------------------------------------------------------

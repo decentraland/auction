@@ -178,8 +178,8 @@ function DistrictTable({ districts }) {
   return (
     <div className="table">
       <div className="table-row table-header">
-        <div className="col-land">Parcels</div>
         <div className="col-name">District</div>
+        <div className="col-land">Parcels</div>
         <div className="col-status">Status</div>
       </div>
 
@@ -194,15 +194,15 @@ function DistrictTable({ districts }) {
   )
 }
 
-function DistrictTableRow({ district }) {
+function DistrictTableRow({ district, className }) {
   return (
-    <div className={`table-row`}>
-      <div className="col-land">{district.sum}</div>
+    <div className={`table-row ${className}`}>
       <div className="col-name">
         <Link to={locations.parcelDetail(...splitCoordinate(district.lookup))}>
           {district.name}
         </Link>
       </div>
+      <div className="col-land">{district.sum}</div>
       <div className="col-status-value">Placed</div>
     </div>
   )
