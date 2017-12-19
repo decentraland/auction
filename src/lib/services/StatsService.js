@@ -9,6 +9,8 @@ import {
   DistrictEntry
 } from '../models'
 
+import AddressService from './AddressService'
+
 class StatsService {
   constructor() {
     this.AddressState = AddressState
@@ -60,7 +62,7 @@ class StatsService {
       mostExpensiveBid: mostExpensiveBids[0].amount,
       averageWinningBidCenter: await ParcelState.averageWinningBidBetween(
         [-22, -16],
-        [22, 13]
+        [22, 16]
       ),
       averageWinningBid: await ParcelState.averageWinningBid(),
 
@@ -73,17 +75,18 @@ class StatsService {
   }
 
   async getAddressSummary(address) {
+    address = address.toLowerCase()
+    const lockEvents = await LockedBalanceEvent.findByAddress(address)
+    const lockedMana = await new AddressService().lockedMANABalanceOf(address)
+    const submissions = await DistrictEntry.getSummarySubmissions(address)
+    const winningBids = await ParcelState.findByAddress(address)
+    const addressState = await AddressState.findByAddressWithBidGroups(address)
     return {
-      lockedMana: '',
-      bonusPerMonth: {
-        9: 123,
-        10: 134,
-        11: 145,
-        12: 156
-      },
-      districtContributions: [],
-      winningBids: [],
-      balance: '1000'
+      lockedMana,
+      lockEvents,
+      districtContributions: submissions,
+      winningBids: winningBids,
+      addressState
     }
   }
 }

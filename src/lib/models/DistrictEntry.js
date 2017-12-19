@@ -28,6 +28,23 @@ class DistrictEntry extends Model {
     ])
   }
 
+  static getSummarySubmissions(address) {
+    return this.db.query(`SELECT "${
+        this.tableName
+      }".id, projects.name, "${
+        this.tableName
+      }".lands, "${
+        this.tableName
+      }"."userTimestamp" FROM "${
+        this.tableName
+      }" LEFT JOIN projects ON projects.id::text LIKE "${
+        this.tableName
+      }".project_id WHERE address = $1`, [
+        address
+      ]
+    )
+  }
+
   static getMonthlyLockedBalanceByAddress(address, landCost) {
     return this.db.query(
       `SELECT EXTRACT(month from TO_TIMESTAMP("userTimestamp"::bigint / 1000)) AS month, SUM(lands) * $1 AS mana
