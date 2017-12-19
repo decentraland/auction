@@ -64,8 +64,12 @@ export default function FAQPage() {
           <h3>When will the auction end?</h3>
           <div className="dash" />
           <p>
-            The auction will run for seven days, or until 10PM GMT on Friday,
-            December 22.
+            The auction will run for at least seven days, until 10PM GMT on
+            Friday, December 22. The auction will end when all parcels have been
+            auctioned. When a parcel receives a new bid, the deadline for that
+            parcel gets extended by 30 hours. &nbsp; Given that the minimum
+            increase for bids is 25%, we expect that the auction won&#39;t last
+            for more than a few more days.
           </p>
         </div>
         <div className="question">
