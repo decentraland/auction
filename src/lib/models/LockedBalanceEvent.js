@@ -34,6 +34,18 @@ class LockedBalanceEvent extends Model {
   static findByAddress(address) {
     return this.find({ address })
   }
+
+  static findOneByTxId(txId) {
+    return this.findOne({ txId })
+  }
+
+  static findLast() {
+    return this.db
+      .query(
+        `SELECT * FROM ${this.tableName} ORDER BY "confirmedAt" DESC LIMIT 1`
+      )
+      .then(rows => rows[0])
+  }
 }
 
 export default LockedBalanceEvent
