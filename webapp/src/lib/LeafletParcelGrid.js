@@ -1,12 +1,15 @@
 import L from 'leaflet'
 import debounce from 'lodash.debounce'
 
+import { buildCoordinate } from '../lib/util'
+
 const LeafletParcelGrid = L.FeatureGroup.extend({
   include: L.Mixin.Events,
   options: {
     getTileAttributes: () => {},
     onTileClick: () => {},
     addPopup: () => {},
+    center: {},
     tileSize: 64,
     delayFactor: 0.05,
     smoothFactor: 2,
@@ -30,6 +33,7 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
     L.FeatureGroup.prototype.onAdd.call(this, map)
     this.map = map
     this.popup = null
+    this.centerMarker = null
     this.debouncedOnMouseOver = debounce(this.onMouseOver, 215)
     this.setupGrid(map.getBounds())
 
@@ -46,10 +50,13 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
     map.off('resize', this.resizeHandler, this)
   },
 
+  setCenter(center = {}) {
+    this.options.center = center
+  },
+
   clearLayers(...args) {
     L.FeatureGroup.prototype.clearLayers(this, ...args)
-    this.loadedTiles = {}
-    this.loadedCoordinates = {}
+    this.setupData()
   },
 
   moveHandler(event) {
@@ -70,12 +77,16 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
     this.tileSize = this.options.tileSize
 
     this.setupSize()
-
-    this.loadedTiles = {}
-    this.loadedCoordinates = {}
+    this.setupData()
 
     this.clearLayers()
     this.renderTiles(bounds)
+  },
+
+  setupData() {
+    this.coordinatesToCenter = {}
+    this.loadedTiles = {}
+    this.loadedCoordinates = {}
   },
 
   setupSize() {
@@ -85,26 +96,32 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
 
   renderTiles(bounds) {
     const tiles = this.getCellsInBounds(bounds)
+
     this.fire('newtiles', tiles)
 
     for (let index = tiles.length - 1; index >= 0; index--) {
-      this.loadCell(tiles[index], this.options.delayFactor * index)
+      const tile = tiles[index]
+      this.loadCell(tile, this.options.delayFactor * index)
     }
+
+    this.loadCenterMarker()
   },
 
   loadCell(tile, renderDelay) {
     const { className, dataset, fillColor } = this.options.getTileAttributes(
       tile.bounds.getNorthWest()
     )
+    const { x, y } = dataset
 
     const loadedTile = this.loadedTiles[tile.id]
+
+    this.coordinatesToCenter[buildCoordinate(x, y)] = tile.center
 
     if (!loadedTile) {
       const attributes = Object.assign({}, this.options.style, {
         className,
         fillColor
       })
-      const { x, y } = dataset
       const rect = this.getRectangleLayer(tile, attributes, x, y)
 
       setTimeout(() => this.addLayer(rect), renderDelay)
@@ -164,6 +181,27 @@ const LeafletParcelGrid = L.FeatureGroup.extend({
 
   clearPopup() {
     if (this.popup) this.popup.remove()
+  },
+
+  loadCenterMarker() {
+    const { x, y } = this.options.center
+    const center = this.coordinatesToCenter[buildCoordinate(x, y)]
+    if (!center) return
+
+    if (this.centerMarker) {
+      this.map.removeLayer(this.centerMarker)
+      this.centerMarker = null
+    }
+
+    this.centerMarker = L.marker(center, {
+      icon: new L.DivIcon({
+        className: 'reticle',
+        iconSize: new L.Point(0, 0),
+        html: '+'
+      })
+    })
+
+    setTimeout(() => this.addLayer(this.centerMarker))
   },
 
   loadCellCoordinates(x, y, tile) {

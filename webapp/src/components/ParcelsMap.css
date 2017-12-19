@@ -12,6 +12,14 @@
   margin-left: 1px !important;
 }
 
+#map .reticle {
+  margin-top: -28px !important;
+  margin-left: -10px !important;
+  font-size: 36px;
+  font-size: 2.8em;
+  color: #666;
+}
+
 #map .coordinates-zoom-11 { font-size: 1.3em; }
 #map .coordinates-zoom-10 { font-size: 1.1em; }
 #map .coordinates-zoom-9 { font-size: 0.8em; }
