@@ -36,6 +36,10 @@ async function main() {
       }
 
       // new event
+      await LockedBalanceEvent.insert(event)
+      log.warn(`[${event.address}] TX (${event.txId}) inserted`)
+
+      // update balances
       const addressState = await AddressState.findByAddress(event.address)
       if (addressState) {
         await AddressState.addBalance(event.address, event.mana)
@@ -47,9 +51,6 @@ async function main() {
         })
         log.info(`[${event.address}] New address with balance: ${event.mana}`)
       }
-
-      await LockedBalanceEvent.insert(event)
-      log.warn(`[${event.address}] TX (${event.txId}) inserted`)
     }
   } catch (err) {
     log.error(err)
