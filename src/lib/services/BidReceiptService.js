@@ -52,9 +52,7 @@ export default class BidReceiptService {
   }
 
   getServerMessage(bidGroup) {
-    return `${bidGroup.id}||${bidGroup.receivedAt.getTime()}||${
-      bidGroup.message
-    }`
+    return `${bidGroup.id}||${bidGroup.receivedAt.getTime()}||${bidGroup.message}`
   }
 
   getServerPrivateKey() {

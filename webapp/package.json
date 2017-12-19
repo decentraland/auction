@@ -20,6 +20,7 @@
     "history": "^4.7.2",
     "leaflet": "^1.2.0",
     "lodash.debounce": "^4.0.8",
+    "moment": "^2.20.0",
     "prop-types": "^15.5.10",
     "react": "^16.0.0",
     "react-autocomplete": "^1.7.2",

@@ -66,7 +66,15 @@ function UserData({ addressState, ongoingAuctions }) {
           Couldn&#39;t fetch your current balance. Try refreshing the page.
         </div>
       ) : (
-        <div className="mana-value">{addressState.data.balance} MANA</div>
+        <div className="mana-value">
+          {addressState.data.balance} MANA
+          <Link
+            to={locations.addressDetails(addressState.data.address)}
+            className="pull-right"
+          >
+            See your stats
+          </Link>
+        </div>
       )}
     </div>
   )

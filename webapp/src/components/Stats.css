@@ -1,0 +1,77 @@
+.Stats {
+  max-width: 1170px;
+  margin: auto;
+  color: #3e396b;
+  font-size: 16px;
+}
+
+.Stats .content h1 {
+  font-size: 36px;
+  margin-bottom: 45px;
+  font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
+  text-align: center;
+}
+
+.Stats .Box {
+  max-width: 920px;
+  margin: auto;
+  margin-bottom: 65px;
+}
+
+.Stats .Box .Definition dt {
+  width: 45%;
+  height: 38px;
+  text-align: right;
+  display: inline-block;
+}
+
+.Stats .Box .Definition dd {
+  top: 0;
+  width: 45%;
+  height: 38px;
+  text-align: left;
+  display: inline-block;
+}
+
+@media (max-width: 600px) {
+  .Stats .Box .Definition dt,
+  .Stats .Box .Definition dd {
+    width: inherit;
+  }
+}
+
+.Stats .row {
+  margin-bottom: 10px;
+}
+
+.Stats .title {
+  font-size: 24px;
+  margin-bottom: 5px;
+  font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
+}
+
+.Stats .largest-bidders {
+  margin-top: 35px;
+}
+.Stats .largest-bidders .Definition {
+  margin-left: 7%;
+  width: 100%;
+}
+
+.Stats .Definition dt {
+  margin-bottom: 12px;
+}
+
+.Stats .Definition dt a {
+  font-weight: normal;
+}
+
+.Stats h4 {
+  text-align: center;
+  color: #999;
+  margin-top: 5px;
+  margin-bottom: 18px;
+}
+.Stats .Box {
+  padding-bottom: 0px;
+}

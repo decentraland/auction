@@ -49,6 +49,14 @@ class API {
     return this.request('delete', '/outbidNotification', { message, signature })
   }
 
+  fetchStats() {
+    return this.request('get', '/stats', {})
+  }
+
+  fetchAddressStats(address) {
+    return this.request('get', `/addressStats/${address}`, {})
+  }
+
   request(method, path, params) {
     let options = {
       method,

@@ -1,0 +1,93 @@
+.AddressStats {
+  color: #3e396b;
+  font-size: 16px;
+  max-width: 1170px;
+  margin: auto;
+  margin-bottom: 15px;
+}
+
+.AddressStats .content h1 {
+  font-size: 36px;
+  margin-bottom: 15px;
+  font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
+  text-align: center;
+}
+
+.AddressStats h3 {
+  text-align: center;
+  font-size: 16pt;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.AddressStats h4 {
+  text-align: center;
+  color: #999;
+  margin-top: 5px;
+  margin-bottom: 18px;
+}
+
+.AddressStats .Box {
+  margin: auto;
+  margin-bottom: 30px;
+}
+
+.AddressStats .title {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.AddressStats .lock-event {
+  margin-bottom: 15px;
+}
+
+.AddressStats .lock-event .tx-container {
+  font-size: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.AddressStats .lock-event .mana-container {
+  text-align: right;
+  padding-right: 18px;
+}
+
+.AddressStats .district-info {
+  margin-bottom: 15px;
+}
+
+.AddressStats .district-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.AddressStats .district-land {
+  overflow: hidden;
+  top: 2px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+@media (max-width: 768px) {
+  .AddressStats .winning-bids {
+    margin-bottom: 20px;
+  }
+}
+
+.AddressStats .parcel-link {
+  text-align: right;
+}
+.AddressStats .mana-amount {
+  text-align: center;
+}
+.AddressStats .header {
+  font-weight: bold;
+}
+.AddressStats .parcel-item.header {
+  margin-bottom: 5px;
+}
+.AddressStats .updated-at {
+  text-align: left;
+}

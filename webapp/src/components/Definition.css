@@ -1,0 +1,26 @@
+
+.Definition {
+  overflow: hidden;
+}
+
+.Definition dt {
+  font-weight: 700;
+}
+
+.Definition dt {
+  width: 45%;
+  min-width: 45%;
+  text-align: right;
+  display: inline-block;
+  float: left;
+  clear: left;
+  word-break: break-word;
+}
+
+.Definition dd {
+  text-align: left;
+  min-width: 40%;
+  display: inline-block;
+  float: left;
+  clear: right;
+}

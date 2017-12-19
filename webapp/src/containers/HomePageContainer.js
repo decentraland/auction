@@ -18,6 +18,10 @@ class HomePageContainer extends React.Component {
     addressState: stateData(PropTypes.object).isRequired
   }
 
+  componentDidMount() {
+    this.props.connectWeb3()
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.isRequiredDataReady() && !localStorage.getItem('seenIntro')) {
       this.props.openModal('IntroModal')

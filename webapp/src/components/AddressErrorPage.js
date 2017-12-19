@@ -1,14 +1,19 @@
 import React from 'react'
-import ErrorPage from './ErrorPage'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
-export default function AddressErrorPage() {
+import locations from '../locations'
+
+import StaticPage from './StaticPage'
+
+export default function AddressErrorPage({ address }) {
   return (
-    <ErrorPage>
+    <StaticPage>
       <h2>
         Uh-oh.<br /> We couldn&#39;t retrieve your account information.
       </h2>
 
-      <div className="error-message">
+      <div className="message">
         <p>
           We couldn&#39;t retrieve any account information associated with your
           current address. Are you using the correct address?
@@ -47,11 +52,37 @@ export default function AddressErrorPage() {
             wiki
           </a>&nbsp; for answers.
         </p>
+        <br />
+        <p>
+          You can also check out the current status of the auction &nbsp;
+          <a
+            href="https://auction.decentraland.org/stats"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            here
+          </a>.
+        </p>
+        <br />
 
-        <a className="btn retry" href="/">
-          Retry
-        </a>
+        <div>
+          <a className="btn btn-primary" href="/">
+            Retry
+          </a>
+        </div>
+
+        <br />
+
+        {address && (
+          <Link to={locations.addressDetails(address)}>
+            Visit your address stats
+          </Link>
+        )}
       </div>
-    </ErrorPage>
+    </StaticPage>
   )
+}
+
+AddressErrorPage.propTypes = {
+  address: PropTypes.string
 }

@@ -88,6 +88,22 @@ export function confirmBids(bids) {
 }
 
 // -------------------------------------------------------------------------
+// Stats
+
+export function fetchStats() {
+  return {
+    type: types.fetchStats.request
+  }
+}
+
+export function fetchAddressStats(address) {
+  return {
+    type: types.fetchAddressStats.request,
+    address
+  }
+}
+
+// -------------------------------------------------------------------------
 // Modal
 
 export function openModal(name, data) {
@@ -145,6 +161,7 @@ export function closeSidebar() {
   }
 }
 
+// -------------------------------------------------------------------------
 // Shift key
 
 export function shiftDown() {

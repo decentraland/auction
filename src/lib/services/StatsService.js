@@ -1,4 +1,15 @@
-import { AddressState, Bid, BidGroup, Job, ParcelState } from '../models'
+import {
+  Project,
+  AddressState,
+  Bid,
+  BidGroup,
+  Job,
+  ParcelState,
+  LockedBalanceEvent,
+  DistrictEntry
+} from '../models'
+
+import AddressService from './AddressService'
 
 class StatsService {
   constructor() {
@@ -37,6 +48,45 @@ class StatsService {
       notifications: {
         sent: await this.Job.count()
       }
+    }
+  }
+
+  async getGlobalSummary(address) {
+    const mostExpensiveBids = await ParcelState.findExpensive(5)
+
+    return {
+      totalMana: await LockedBalanceEvent.getTotalLockedMana(),
+      totalLand: await DistrictEntry.getTotalLand(),
+      manaSpentOnBids: await ParcelState.getTotalAmount(),
+
+      mostExpensiveBid: mostExpensiveBids.length && mostExpensiveBids[0].amount,
+      averageWinningBidCenter: await ParcelState.averageWinningBidBetween(
+        [-22, -16],
+        [22, 16]
+      ),
+      averageWinningBid: await ParcelState.averageWinningBid(),
+
+      mostExpensiveBids,
+      mostPopularParcels: await Bid.findPopular(5),
+      biggestDistricts: await Project.findBiggest(5),
+
+      largestBidders: await ParcelState.findLargestBidders(10)
+    }
+  }
+
+  async getAddressSummary(address) {
+    address = address.toLowerCase()
+    const lockEvents = await LockedBalanceEvent.findByAddress(address)
+    const lockedMana = await new AddressService().lockedMANABalanceOf(address)
+    const submissions = await DistrictEntry.getSummarySubmissions(address)
+    const winningBids = await ParcelState.findByAddress(address)
+    const addressState = await AddressState.findByAddressWithBidGroups(address)
+    return {
+      lockedMana,
+      lockEvents,
+      districtContributions: submissions,
+      winningBids: winningBids,
+      addressState
     }
   }
 }

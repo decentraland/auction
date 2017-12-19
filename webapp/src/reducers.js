@@ -1,8 +1,14 @@
 import types from './types'
 
 const INITIAL_STATE = {
-  web3Connected: false,
   loading: false, // Comunicate that *something* is loading. Should be manually set to false again
+
+  web3Connected: false,
+  ethereumConnection: {
+    ethereum: null,
+    address: null,
+    ledger: false
+  },
 
   addressState: { loading: true },
 
@@ -28,14 +34,11 @@ const INITIAL_STATE = {
 
   email: { loading: true, data: null },
 
+  stats: { loading: true },
+  addressStats: { loading: true },
+
   shift: {
     pressed: false
-  },
-
-  ethereumConnection: {
-    ethereum: null,
-    address: null,
-    ledger: false
   },
 
   sidebar: {
@@ -91,6 +94,12 @@ function getEmail(state) {
 function getEmailData(state) {
   return state.email.data
 }
+function getStats(state) {
+  return state.stats
+}
+function getAddressStats(state) {
+  return state.addressStats
+}
 function getSidebar(state) {
   return state.sidebar
 }
@@ -124,6 +133,8 @@ export const selectors = {
   getModal,
   getEmail,
   getEmailData,
+  getStats,
+  getAddressStats,
   getSidebar,
   isShiftPressed,
   getRange,
@@ -312,6 +323,32 @@ function email(state = INITIAL_STATE.email, action) {
   }
 }
 
+function stats(state = INITIAL_STATE.stats, action) {
+  switch (action.type) {
+    case types.fetchStats.request:
+      return { ...state, loading: true }
+    case types.fetchStats.success:
+      return { loading: false, data: action.stats }
+    case types.fetchStats.failed:
+      return { ...state, loading: false, error: action.error }
+    default:
+      return state
+  }
+}
+
+function addressStats(state = INITIAL_STATE.addressStats, action) {
+  switch (action.type) {
+    case types.fetchAddressStats.request:
+      return { ...state, loading: true }
+    case types.fetchAddressStats.success:
+      return { loading: false, data: action.addressStats }
+    case types.fetchAddressStats.failed:
+      return { ...state, loading: false, error: action.error }
+    default:
+      return state
+  }
+}
+
 function sidebar(state = INITIAL_STATE.sidebar, action) {
   switch (action.type) {
     case types.sidebar.open:
@@ -358,6 +395,8 @@ export default {
   ongoingAuctions,
   modal,
   email,
+  stats,
+  addressStats,
   sidebar,
   shift
 }

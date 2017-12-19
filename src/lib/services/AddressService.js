@@ -51,12 +51,23 @@ export default class AddressService {
       (total, value) => total + value,
       0
     )
+    // total MANA sent to contract
+    const totalLockedInContract = Object.values(monthlyLockedBalances).reduce(
+      (total, value) => (value ? total + value : total),
+      0
+    )
 
     // total MANA locked
     return {
+      lockedInContract: totalLockedInContract,
       monthlyLockedBalances,
       monthlyLandBalances,
       totalLandMANA: totalLockedToDistricts,
+      perMonth: {
+        beforeNovBalanceToAuction,
+        duringNovBalanceToAuction,
+        afterNovBalanceToAuction
+      },
       totalLockedMANA:
         Math.floor(beforeNovBalanceToAuction * BEFORE_NOVEMBER_DISCOUNT) +
         Math.floor(duringNovBalanceToAuction * DURING_NOVEMBER_DISCOUNT) +

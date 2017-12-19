@@ -67,28 +67,41 @@ function* rootSaga() {
 
   yield takeLatest(types.subscribeEmail.success, handleAddressFetchReload)
 
-  yield put({ type: types.connectWeb3.request })
+  yield takeLatest(types.fetchStats.request, handleStatsFetchRequest)
+  yield takeLatest(
+    types.fetchAddressStats.request,
+    handleAddressStatsFetchRequest
+  )
 }
 
 // -------------------------------------------------------------------------
 // Web3
 
-async function connectLedger(action = {}) {
+async function connectLedger(action = {}, retries = 0) {
   try {
     if (window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
       return false
     }
+
     const ledger = window.ledger
-    const comm = await ledger.comm_u2f.create_async(5)
+    const comm = await ledger.comm_u2f.create_async(2)
     const ledgerEth = new ledger.eth(comm)
     const address = await ledgerEth.getAddress_async(`44'/60'/0'/0`)
+
     return {
       ethereum: ledgerEth,
       ledger: true,
       address: address.address.toLowerCase()
     }
   } catch (error) {
-    return false
+    let result = false
+
+    if (retries < 3) {
+      await utils.sleep(1000)
+      result = connectLedger(action, retries + 1)
+    }
+
+    return result
   }
 }
 
@@ -505,6 +518,31 @@ function* handleEmailRegisterBids(action) {
 
   if (address && email) {
     yield call(() => api.postOutbidNotification(address))
+  }
+}
+
+// -------------------------------------------------------------------------
+// Stats
+
+function* handleStatsFetchRequest(action) {
+  try {
+    const stats = yield call(() => api.fetchStats())
+
+    yield put({ type: types.fetchStats.success, stats })
+  } catch (error) {
+    console.warn(error)
+    yield put({ type: types.fetchStats.failed, error: error.message })
+  }
+}
+
+function* handleAddressStatsFetchRequest(action) {
+  try {
+    const addressStats = yield call(() => api.fetchAddressStats(action.address))
+
+    yield put({ type: types.fetchAddressStats.success, addressStats })
+  } catch (error) {
+    console.warn(error)
+    yield put({ type: types.fetchAddressStats.failed, error: error.message })
   }
 }
 

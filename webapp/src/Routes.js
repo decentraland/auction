@@ -7,12 +7,14 @@ import { env } from 'decentraland-commons'
 
 import HomePageContainer from './containers/HomePageContainer'
 import IntercomContainer from './containers/IntercomContainer'
-import EmailUnsubcribeContainer from './containers/EmailUnsubcribeContainer'
+import EmailUnsubscribeContainer from './containers/EmailUnsubscribeContainer'
+import StatsContainer from './containers/StatsContainer'
+import AddressStatsContainer from './containers/AddressStatsContainer'
+import AddressErrorPageContainer from './containers/AddressErrorPageContainer'
 
 import NotStarted from './components/NotStarted'
 import WalletErrorPage from './components/WalletErrorPage'
 import ServerError from './components/ServerError'
-import AddressErrorPage from './components/AddressErrorPage'
 import FAQPage from './components/FAQPage'
 
 export default function Routes() {
@@ -20,22 +22,31 @@ export default function Routes() {
     return [
       <Switch key="1">
         <Route exact path={locations.root} component={HomePageContainer} />
+
+        <Route
+          exact
+          path={locations.addressStats}
+          component={AddressStatsContainer}
+        />
+        <Route exact path={locations.stats} component={StatsContainer} />
+
         <Route exact path={locations.parcel} component={HomePageContainer} />
 
         <Route
           exact
           path={locations.unsubscribe}
-          component={EmailUnsubcribeContainer}
+          component={EmailUnsubscribeContainer}
         />
+
+        <Route exact path={locations.faq} component={FAQPage} />
 
         <Route exact path={locations.walletError} component={WalletErrorPage} />
         <Route exact path={locations.serverError} component={ServerError} />
         <Route
           exact
           path={locations.addressError}
-          component={AddressErrorPage}
+          component={AddressErrorPageContainer}
         />
-        <Route exact path={locations.faq} component={FAQPage} />
         <Route exact path={locations.error} component={WalletErrorPage} />
       </Switch>,
       <IntercomContainer key="2" />
