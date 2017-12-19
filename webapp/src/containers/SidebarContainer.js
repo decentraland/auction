@@ -3,7 +3,12 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { selectors } from '../reducers'
-import { fetchOngoingAuctions, openSidebar, closeSidebar } from '../actions'
+import {
+  fetchOngoingAuctions,
+  fetchDistricts,
+  openSidebar,
+  closeSidebar
+} from '../actions'
 import { stateData } from '../lib/propTypes'
 
 import Sidebar from '../components/Sidebar'
@@ -13,7 +18,9 @@ class SidebarContainer extends React.Component {
     addressState: stateData(PropTypes.object).isRequired,
     parcelStates: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array),
+    districts: stateData(PropTypes.array),
     fetchOngoingAuctions: PropTypes.func,
+    fetchDistricts: PropTypes.func,
     sidebar: PropTypes.shape({
       open: PropTypes.boolean
     }),
@@ -23,6 +30,7 @@ class SidebarContainer extends React.Component {
 
   componentWillMount() {
     this.props.fetchOngoingAuctions()
+    this.props.fetchDistricts()
   }
 
   changeVisibility = visible => {
@@ -70,7 +78,7 @@ class SidebarContainer extends React.Component {
   }
 
   render() {
-    const { addressState, ongoingAuctions, sidebar } = this.props
+    const { addressState, ongoingAuctions, districts, sidebar } = this.props
 
     return (
       <Sidebar
@@ -78,6 +86,7 @@ class SidebarContainer extends React.Component {
         isLoading={this.isLoading()}
         addressState={addressState}
         ongoingAuctions={ongoingAuctions}
+        districts={districts}
         dashboard={this.getDashboardData()}
         changeVisibility={this.changeVisibility}
       />
@@ -90,8 +99,9 @@ export default connect(
     addressState: selectors.getAddressState(state),
     parcelStates: selectors.getParcelStates(state),
     ongoingAuctions: selectors.getOngoingAuctions(state),
+    districts: selectors.getDistricts(state),
     loading: selectors.getLoading(state),
     sidebar: selectors.getSidebar(state)
   }),
-  { fetchOngoingAuctions, openSidebar, closeSidebar }
+  { fetchOngoingAuctions, fetchDistricts, openSidebar, closeSidebar }
 )(SidebarContainer)

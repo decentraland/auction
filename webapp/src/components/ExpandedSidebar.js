@@ -17,7 +17,7 @@ import SidebarDashboard from './SidebarDashboard'
 import './ExpandedSidebar.css'
 
 export default function ExpandedSidebar(props) {
-  const { addressState, ongoingAuctions, dashboard, onHide } = props
+  const { addressState, ongoingAuctions, districts, dashboard, onHide } = props
 
   return (
     <div className="ExpandedSidebar fadein">
@@ -31,7 +31,7 @@ export default function ExpandedSidebar(props) {
       </div>
 
       <OngoingAuctions ongoingAuctions={ongoingAuctions} onHide={onHide} />
-
+      <Districts districts={districts} />
       <UnsubscribeEmailContainer />
 
       <Footer />
@@ -150,6 +150,59 @@ function AuctionTableRow({ auction, className, onLandClick }) {
       <div className="col-amount">{auction.amount} MANA</div>
       <div className="col-time-left">{timeLeft}</div>
       <div className="col-address">{shortenAddress(auction.address)}</div>
+    </div>
+  )
+}
+
+function Districts({ districts }) {
+  if (!districts || districts.length === 0) return null
+
+  return (
+    <div className="Districts OngoingAuctions">
+      <div className="heading">District contributions</div>
+      {districts.loading ? (
+        <Loading />
+      ) : districts.error ? (
+        <div className="table-row-empty text-danger">
+          We are having troubles fetching your districts. Please try again in a
+          few minutes.
+        </div>
+      ) : (
+        <DistrictTable districts={districts.data} />
+      )}
+    </div>
+  )
+}
+
+function DistrictTable({ districts }) {
+  return (
+    <div className="table">
+      <div className="table-row table-header">
+        <div className="col-land">Parcels of Land</div>
+        <div className="col-name">District</div>
+        <div className="col-status">Status</div>
+      </div>
+
+      {districts.map((district, index) => (
+        <DistrictTableRow
+          key={index}
+          district={district}
+          className={index % 2 === 0 ? 'gray' : ''}
+        />
+      ))}
+    </div>
+  )
+}
+
+function DistrictTableRow({ district }) {
+  return (
+    <div className={`table-row`}>
+      <div className="col-land">{district.sum}</div>
+
+      <div className="col-name">
+        <Link to="/">{district.name}</Link>
+      </div>
+      <div className="col-status-value">Placed</div>
     </div>
   )
 }

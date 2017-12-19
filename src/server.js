@@ -13,6 +13,7 @@ import verifyMessage from './lib/verifyMessage'
 import {
   AddressState,
   BidGroup,
+  DistrictEntry,
   ParcelState,
   Project,
   OutbidNotification
@@ -85,6 +86,19 @@ export async function getFullAddressState(req) {
   let addressState = await AddressState.findByAddressWithBidGroups(address)
 
   return addressState
+}
+
+/**
+ * Districts fetch by address.
+ * @param  {string} address - User address
+ * @return {object}         - A list of districts where the address did contribute
+ */
+
+app.get('/api/districts/:address', server.handleRequest(getDistricts))
+
+export function getDistricts(req) {
+  const address = server.extractFromReq(req, 'address').toLowerCase()
+  return DistrictEntry.findContributedByAddress(address)
 }
 
 /**

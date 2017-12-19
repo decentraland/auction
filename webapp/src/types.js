@@ -42,6 +42,12 @@ export default {
     failed: '[Failed] Failed to fetch ongoing auctions'
   },
 
+  fetchDistricts: {
+    request: '[Request] Districts requested',
+    success: '[Success] Districts fetched',
+    failed: '[Failed] Failed to fetch districts'
+  },
+
   confirmBids: {
     request: '[Request] Confirm bids requested',
     success: '[Success] Bids confirmed',

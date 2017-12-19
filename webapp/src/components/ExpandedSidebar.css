@@ -133,6 +133,15 @@
 }
 
 /* -----------------------------------------------------------------------
+ Districts */
+
+.Districts .table-row .col-status-value { color: #4F225F;}
+
+.Districts .table .col-name    { width: 30%; }
+.Districts .table .col-land    { width: 40%; }
+.Districts .table .col-status  { width: 30%; }
+
+/* -----------------------------------------------------------------------
  Footer */
 
 .Footer {
