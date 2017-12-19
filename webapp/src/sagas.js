@@ -50,6 +50,8 @@ function* rootSaga() {
     handleOngoingAuctionsFetchRequest
   )
 
+  yield takeEvery(types.fetchDistricts.request, handleDistrictsFetchRequest)
+
   yield takeEvery(types.fastBid, handleFastBid)
 
   yield takeLatest(types.confirmBids.request, handleAddresStateStartLoading)
@@ -353,6 +355,27 @@ function* handleOngoingAuctionsFetchRequest(action) {
       type: types.fetchOngoingAuctions.failed,
       error: error.message
     })
+  }
+}
+
+// -------------------------------------------------------------------------
+// Districts
+
+function* handleDistrictsFetchRequest() {
+  let addressState = yield select(selectors.getAddressStateData)
+  let districts = yield select(selectors.getDistrictsData)
+
+  // Return early
+  if (districts && districts.length > 0) {
+    yield put({ type: types.fetchDistricts.success, districts })
+    return
+  }
+
+  try {
+    const districts = yield call(() => api.fetchDistricts(addressState.address))
+    yield put({ type: types.fetchDistricts.success, districts })
+  } catch (error) {
+    yield put({ type: types.fetchDistricts.failed, error: error.message })
   }
 }
 

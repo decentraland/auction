@@ -26,6 +26,10 @@ class API {
     return this.request('post', '/bidGroup', { bidGroup })
   }
 
+  fetchDistricts(address) {
+    return this.request('get', `/districts/${address}`, {})
+  }
+
   fetchProjects(address) {
     return this.request('get', '/projects', {})
   }

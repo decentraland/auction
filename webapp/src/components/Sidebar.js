@@ -15,6 +15,7 @@ export default class Sidebar extends React.Component {
     isLoading: PropTypes.bool,
     addressState: stateData(PropTypes.object).isRequired,
     ongoingAuctions: stateData(PropTypes.array).isRequired,
+    districts: stateData(PropTypes.array).isRequired,
     dashboard: PropTypes.object.isRequired,
     changeVisibility: PropTypes.func.isRequired
   }
@@ -42,7 +43,13 @@ export default class Sidebar extends React.Component {
   }
 
   render() {
-    let { visible, addressState, ongoingAuctions, dashboard } = this.props
+    let {
+      visible,
+      addressState,
+      ongoingAuctions,
+      districts,
+      dashboard
+    } = this.props
 
     return (
       <div className={`Sidebar ${this.getVisibilityClassName()}`}>
@@ -57,6 +64,7 @@ export default class Sidebar extends React.Component {
             addressState={addressState}
             dashboard={dashboard}
             ongoingAuctions={ongoingAuctions}
+            districts={districts}
             onHide={this.hide}
           />
         ) : (

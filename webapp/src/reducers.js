@@ -25,6 +25,7 @@ const INITIAL_STATE = {
   pendingConfirmationBids: { data: [] },
 
   ongoingAuctions: { loading: true },
+  districts: { loading: true, data: [] },
 
   modal: {
     open: false,
@@ -85,6 +86,12 @@ function getOngoingAuctions(state) {
 function getOngoingAuctionsData(state) {
   return state.ongoingAuctions.data
 }
+function getDistricts(state) {
+  return state.districts
+}
+function getDistrictsData(state) {
+  return state.districts.data
+}
 function getModal(state) {
   return state.modal
 }
@@ -130,6 +137,8 @@ export const selectors = {
   getPendingConfirmationBidsData,
   getOngoingAuctions,
   getOngoingAuctionsData,
+  getDistricts,
+  getDistrictsData,
   getModal,
   getEmail,
   getEmailData,
@@ -289,6 +298,19 @@ function ongoingAuctions(state = INITIAL_STATE.ongoingAuctions, action) {
   }
 }
 
+function districts(state = INITIAL_STATE.districts, action) {
+  switch (action.type) {
+    case types.fetchDistricts.request:
+      return { loading: true }
+    case types.fetchDistricts.success:
+      return { loading: false, data: action.districts }
+    case types.fetchDistricts.failed:
+      return { ...state, loading: false, error: action.error }
+    default:
+      return state
+  }
+}
+
 function modal(state = INITIAL_STATE.modal, action) {
   switch (action.type) {
     case types.modal.open:
@@ -393,6 +415,7 @@ export default {
   range,
   pendingConfirmationBids,
   ongoingAuctions,
+  districts,
   modal,
   email,
   stats,

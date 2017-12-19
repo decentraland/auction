@@ -104,6 +104,15 @@ export function fetchAddressStats(address) {
 }
 
 // -------------------------------------------------------------------------
+// Districts
+
+export function fetchDistricts() {
+  return {
+    type: types.fetchDistricts.request
+  }
+}
+
+// -------------------------------------------------------------------------
 // Modal
 
 export function openModal(name, data) {

@@ -136,6 +136,14 @@ export default {
       "message" BYTEA DEFAULT NULL,
       "signature" BYTEA DEFAULT NULL`
     )
+    await this.createIndex('district_entries', 'district_entries_address_idx', [
+      'address'
+    ])
+    await this.createIndex(
+      'district_entries',
+      'district_entries_project_id_idx',
+      ['project_id']
+    )
 
     await this.createTable(
       'locked_balance_events',
