@@ -153,6 +153,11 @@ export default {
       "mana" DECIMAL NOT NULL,
       "confirmedAt" timestamp NOT NULL`
     )
+    await this.createIndex(
+      'locked_balance_events',
+      'locked_balance_events_tx_id_idx',
+      ['"txId"']
+    )
 
     await this.createTable(
       'buy_transactions',
