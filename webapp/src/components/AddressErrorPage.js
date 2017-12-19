@@ -48,7 +48,7 @@ export default function AddressErrorPage() {
             wiki
           </a>&nbsp; for answers.
         </p>
-        <br/>
+        <br />
         <p>
           You can also check out the current status of the auction &nbsp;
           <a
@@ -59,7 +59,7 @@ export default function AddressErrorPage() {
             here
           </a>.
         </p>
-        <br/>
+        <br />
 
         <a className="btn btn-primary" href="/">
           Retry

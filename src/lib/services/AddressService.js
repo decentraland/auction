@@ -53,7 +53,7 @@ export default class AddressService {
     )
     // total MANA sent to contract
     const totalLockedInContract = Object.values(monthlyLockedBalances).reduce(
-      (total, value) => value ? total + value : total,
+      (total, value) => (value ? total + value : total),
       0
     )
 

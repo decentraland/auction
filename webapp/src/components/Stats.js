@@ -27,7 +27,6 @@ Stats.propTypes = {
 
 function StatsView({ stats }) {
   const {
-    totalMana,
     totalLand,
     manaSpentOnBids,
     mostExpensiveBid,
@@ -44,41 +43,41 @@ function StatsView({ stats }) {
       <h1>Terraform Auction: Summary</h1>
 
       <Box>
-      <h4>Current Status</h4>
-      <div className="row">
-        <div className="col-xs-6">
-          <Definition
-            title="Auctioned Lands"
-            description={asLand(totalLand)}
-          />
-          <Definition
-            title="MANA Spent"
-            description={`${asMana(manaSpentOnBids)}`}
-          />
-          <Definition
-            title="District Lands"
-            description={`${asLand(36031)}`}
-          />
-          <Definition
-            title="MANA to be Burned"
-            description={`${asMana(+manaSpentOnBids + 36031000)}`}
-          />
+        <h4>Current Status</h4>
+        <div className="row">
+          <div className="col-xs-6">
+            <Definition
+              title="Auctioned Lands"
+              description={asLand(totalLand)}
+            />
+            <Definition
+              title="MANA Spent"
+              description={`${asMana(manaSpentOnBids)}`}
+            />
+            <Definition
+              title="District Lands"
+              description={`${asLand(36031)}`}
+            />
+            <Definition
+              title="MANA to be Burned"
+              description={`${asMana(+manaSpentOnBids + 36031000)}`}
+            />
+          </div>
+          <div className="col-xs-6">
+            <Definition
+              title="Most Expensive Bid"
+              description={asMana(mostExpensiveBid)}
+            />
+            <Definition
+              title="Average Price (center)"
+              description={asMana(averageWinningBidCenter)}
+            />
+            <Definition
+              title="Average Price (all parcels)"
+              description={asMana(averageWinningBid)}
+            />
+          </div>
         </div>
-        <div className="col-xs-6">
-          <Definition
-            title="Most Expensive Bid"
-            description={asMana(mostExpensiveBid)}
-          />
-          <Definition
-            title="Average Price (center)"
-            description={asMana(averageWinningBidCenter)}
-          />
-          <Definition
-            title="Average Price (all parcels)"
-            description={asMana(averageWinningBid)}
-          />
-        </div>
-      </div>
       </Box>
 
       <div className="row">
@@ -114,17 +113,19 @@ function StatsView({ stats }) {
           <div className="title text-center">Biggest districts</div>
           <Definition>
             {biggestDistricts.map((district, index) => {
-              const [ x, y ] = district.lookup.split(',')
+              const [x, y] = district.lookup.split(',')
               return (
                 <DefinitionItem
                   key={index}
                   title={
-                  <Link to={locations.parcelDetail(x, y)}>{district.name}</Link>}
+                    <Link to={locations.parcelDetail(x, y)}>
+                      {district.name}
+                    </Link>
+                  }
                   description={asMana(district.parcels)}
                 />
               )
-            }
-            )}
+            })}
           </Definition>
         </div>
       </div>
@@ -138,7 +139,7 @@ function StatsView({ stats }) {
                 key={index}
                 title={
                   <Link to={locations.addressDetails(bidder.address)}>
-                    { bidder.address }
+                    {bidder.address}
                   </Link>
                 }
                 description={`${asMana(bidder.sum)} in ${asLand(bidder.count)}`}

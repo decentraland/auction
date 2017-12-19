@@ -39,7 +39,9 @@ class Project extends Model {
   }
 
   static updateParcelCount() {
-    return this.db.query(`UPDATE projects set parcels = (SELECT sum(district_entries.lands) FROM district_entries WHERE district_entries.project_id = projects.id)`)
+    return this.db.query(
+      'UPDATE projects set parcels = (SELECT sum(district_entries.lands) FROM district_entries WHERE district_entries.project_id = projects.id)'
+    )
   }
 }
 

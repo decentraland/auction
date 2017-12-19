@@ -46,7 +46,7 @@ export default function WalletErrorPage() {
             wiki
           </a>&nbsp; for answers.
         </p>
-        <br/>
+        <br />
         <p>
           You can also check out the current status of the auction &nbsp;
           <a

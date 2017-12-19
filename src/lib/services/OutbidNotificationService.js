@@ -1,12 +1,7 @@
 import EJS from 'ejs'
 import { env, SMTP } from 'decentraland-commons'
 
-import {
-  AddressState,
-  OutbidNotification,
-  Job,
-  ParcelState
-} from '../models'
+import { AddressState, OutbidNotification, Job, ParcelState } from '../models'
 
 const SINGLE_TEMPLATE_NAME = 'outbid-single'
 const SIMPLE_TEMPLATE_NAME = 'outbid-multi'
@@ -49,14 +44,10 @@ class OutbidNotificationService {
       from: `The Decentraland Team <${emailSender}>`,
       to: opts.email,
       subject: 'The Parcel has been outbid!',
-      text: `The parcel ${opts.x},${opts.y} now belongs to ${
-        opts.address
-      } for ${opts.amount}. Visit ${this.toParcelLink(
+      text: `The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}. Visit ${this.toParcelLink(
         opts
       )} to place a new bid!`,
-      html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${
-        opts.address
-      } for ${opts.amount}.<br/>Visit ${this.toParcelLink(
+      html: `<p>The parcel ${opts.x},${opts.y} now belongs to ${opts.address} for ${opts.amount}.<br/>Visit ${this.toParcelLink(
         opts
       )} to place a new bid!</p>`
     }))
@@ -123,9 +114,7 @@ class OutbidNotificationService {
       'This is the summary of parcel outbids from the last notification:\n\n'
 
     for (const parcel of parcelStates) {
-      text += `The parcel ${parcel.x},${parcel.y} now belongs to ${
-        parcel.address
-      } for ${parcel.amount}.\n`
+      text += `The parcel ${parcel.x},${parcel.y} now belongs to ${parcel.address} for ${parcel.amount}.\n`
       text += `Visit ${this.toParcelLink(parcel)} to place a new bid!\n\n`
     }
 
