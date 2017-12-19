@@ -8,7 +8,7 @@ export function buildCoordinate(x, y) {
 }
 
 export function splitCoordinate(id) {
-  return id ? id.split(',') : [0,0]
+  return id ? id.split(',') : [0, 0]
 }
 
 let timeoutId = null
