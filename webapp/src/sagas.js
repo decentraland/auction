@@ -84,7 +84,7 @@ async function connectLedger(action = {}, retries = 0) {
     }
 
     const ledger = window.ledger
-    const comm = await ledger.comm_u2f.create_async(5)
+    const comm = await ledger.comm_u2f.create_async(2)
     const ledgerEth = new ledger.eth(comm)
     const address = await ledgerEth.getAddress_async(`44'/60'/0'/0`)
 
@@ -96,8 +96,8 @@ async function connectLedger(action = {}, retries = 0) {
   } catch (error) {
     let result = false
 
-    if (retries <= 3) {
-      await utils.sleep(1500)
+    if (retries < 3) {
+      await utils.sleep(1000)
       result = connectLedger(action, retries + 1)
     }
 

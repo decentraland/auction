@@ -10,11 +10,11 @@ import IntercomContainer from './containers/IntercomContainer'
 import EmailUnsubscribeContainer from './containers/EmailUnsubscribeContainer'
 import StatsContainer from './containers/StatsContainer'
 import AddressStatsContainer from './containers/AddressStatsContainer'
+import AddressErrorPageContainer from './containers/AddressErrorPageContainer'
 
 import NotStarted from './components/NotStarted'
 import WalletErrorPage from './components/WalletErrorPage'
 import ServerError from './components/ServerError'
-import AddressErrorPage from './components/AddressErrorPage'
 import FAQPage from './components/FAQPage'
 
 export default function Routes() {
@@ -45,7 +45,7 @@ export default function Routes() {
         <Route
           exact
           path={locations.addressError}
-          component={AddressErrorPage}
+          component={AddressErrorPageContainer}
         />
         <Route exact path={locations.error} component={WalletErrorPage} />
       </Switch>,

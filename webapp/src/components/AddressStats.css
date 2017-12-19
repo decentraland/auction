@@ -3,6 +3,7 @@
   font-size: 16px;
   max-width: 1170px;
   margin: auto;
+  margin-bottom: 15px;
 }
 
 .AddressStats .content h1 {
@@ -36,55 +37,57 @@
   margin-bottom: 20px;
 }
 
-.AddressStats .lockEvent {
+.AddressStats .lock-event {
   margin-bottom: 15px;
 }
 
-.AddressStats .lockEvent .txContainer {
+.AddressStats .lock-event .tx-container {
   font-size: 16px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.AddressStats .lockEvent .manaContainer {
+.AddressStats .lock-event .mana-container {
   text-align: right;
   padding-right: 18px;
 }
 
-.AddressStats .districtInfo {
+.AddressStats .district-info {
   margin-bottom: 15px;
 }
 
-.AddressStats .districtName {
+.AddressStats .district-name {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.AddressStats .districtLand {
+.AddressStats .district-land {
   overflow: hidden;
   top: 2px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.AddressStats .parcelLink {
+
+@media (max-width: 768px) {
+  .AddressStats .winning-bids {
+    margin-bottom: 20px;
+  }
+}
+
+.AddressStats .parcel-link {
   text-align: right;
 }
-.AddressStats .manaAmount {
+.AddressStats .mana-amount {
   text-align: center;
 }
 .AddressStats .header {
   font-weight: bold;
 }
-.AddressStats .parcelItem.header {
+.AddressStats .parcel-item.header {
   margin-bottom: 5px;
 }
-.AddressStats .updatedAt {
+.AddressStats .updated-at {
   text-align: left;
 }
-
-.AddressStats {
-  margin-bottom: 15px;
-}
-

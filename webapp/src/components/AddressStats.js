@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 import moment from 'moment'
 
 import { stateData } from '../lib/propTypes'
-
 import locations from '../locations'
+
 import Box from './Box'
 import StaticPage from './StaticPage'
 import Loading from './Loading'
@@ -65,7 +65,7 @@ function AddressStatsView({ address, addressStats }) {
       <Box>
         <h4>Address Summary</h4>
         <div className="row">
-          <div className="col-xs-6">
+          <div className="col-xs-12 col-sm-6">
             <Definition
               title="Initial Balance"
               description={asMana(
@@ -74,7 +74,7 @@ function AddressStatsView({ address, addressStats }) {
             />
             <Definition title="Current Balance" description={asMana(balance)} />
           </div>
-          <div className="col-xs-6">
+          <div className="col-xs-12 col-sm-6">
             <Definition
               title="MANA sent to Contract"
               description={asMana(lockedMana.lockedInContract)}
@@ -90,13 +90,13 @@ function AddressStatsView({ address, addressStats }) {
       <Box>
         <h4>Terraform Registration</h4>
         <div className="row">
-          <div className="col-xs-6">
+          <div className="col-xs-12 col-sm-6">
             <div>
               <div className="title">Confirmed transactions</div>
               <Definition>{lockEvents.map(lockEventItem)}</Definition>
             </div>
           </div>
-          <div className="col-xs-6">
+          <div className="col-xs-12 col-sm-6">
             <div>
               <div className="title">District contributions</div>
               <Definition>{districtContributions.map(districtItem)}</Definition>
@@ -108,13 +108,13 @@ function AddressStatsView({ address, addressStats }) {
       <Box>
         <h4>Auction Bids</h4>
         <div className="row">
-          <div className="col-xs-6">
+          <div className="col-xs-12 col-sm-6 winning-bids">
             <div className="title">Winning bids ({totalBid})</div>
             {winningBids
               .sort(price)
               .map((bid, index) => <ParcelWinItem key={index} {...bid} />)}
           </div>
-          <div className="col-xs-6">
+          <div className="col-xs-12 col-sm-6">
             <div className="title">Unsuccesful bids</div>
             {addressState.bidGroups
               .sort(updated)
@@ -130,11 +130,11 @@ function districtItem(item) {
   return (
     <div className="districtInfo">
       <div className="row">
-        <div className="col-xs-9 districtName">
+        <div className="col-xs-9">
           <strong>{item.name}</strong>
         </div>
-        <div className="col-xs-3 districtLand">{asLand(item.lands)}</div>
-        <div className="col-xs-12 dateContainer">
+        <div className="col-xs-3">{asLand(item.lands)}</div>
+        <div className="col-xs-12">
           {moment(+item.userTimestamp).format('MMMM Do, h:mm:ss a')}
         </div>
       </div>
@@ -144,9 +144,9 @@ function districtItem(item) {
 
 function lockEventItem(item) {
   return (
-    <div className="lockEvent">
+    <div className="lock-event">
       <div className="row">
-        <div className="col-xs-12 txContainer">
+        <div className="col-xs-12 tx-container">
           <a href={etherscan(item.txId)} target="_blank">
             <tt>{item.txId}</tt>
           </a>
@@ -154,7 +154,7 @@ function lockEventItem(item) {
         <div className="col-xs-6">
           {moment(item.createdAt).format('MMMM Do, h:mm:ss a')}
         </div>
-        <div className="xs-col-xs-6 manaContainer">{asMana(item.mana)}</div>
+        <div className="xs-col-xs-6 mana-container">{asMana(item.mana)}</div>
       </div>
     </div>
   )
@@ -166,14 +166,14 @@ function etherscan(tx) {
 
 function ParcelWinItem(item) {
   return (
-    <div className="row parcelItem">
-      <div className="col-xs-4 parcelLink">
+    <div className="row parcel-item">
+      <div className="col-xs-4 parcel-link">
         <Link to={locations.parcelDetail(item.x, item.y)}>
           {item.x}, {item.y}
         </Link>
       </div>
-      <div className="col-xs-4 manaAmount">{asMana(item.amount)}</div>
-      <div className="col-xs-4 updatedAt">{asDate(item.updatedAt)}</div>
+      <div className="col-xs-4 mana-amount">{asMana(item.amount)}</div>
+      <div className="col-xs-4 updated-at">{asDate(item.updatedAt)}</div>
     </div>
   )
 }

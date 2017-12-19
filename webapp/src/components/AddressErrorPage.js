@@ -1,8 +1,12 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
+
+import locations from '../locations'
 
 import StaticPage from './StaticPage'
 
-export default function AddressErrorPage() {
+export default function AddressErrorPage({ address }) {
   return (
     <StaticPage>
       <h2>
@@ -61,10 +65,24 @@ export default function AddressErrorPage() {
         </p>
         <br />
 
-        <a className="btn btn-primary" href="/">
-          Retry
-        </a>
+        <div>
+          <a className="btn btn-primary" href="/">
+            Retry
+          </a>
+        </div>
+
+        <br />
+
+        {address && (
+          <Link to={locations.addressDetails(address)}>
+            Visit your address stats
+          </Link>
+        )}
       </div>
     </StaticPage>
   )
+}
+
+AddressErrorPage.propTypes = {
+  address: PropTypes.string
 }
