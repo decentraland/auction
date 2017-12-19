@@ -29,7 +29,11 @@ class AddressStatsContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.addressStats.error) {
+    if (nextProps.addressStats.error || (
+      !nextProps.addressStats.loading
+      && nextProps.addressStats.data
+      && !nextProps.addressStats.data.lockedMana
+    )) {
       this.props.navigateTo(locations.root)
     }
   }

@@ -6,21 +6,39 @@
 
 .Definition dt {
   font-weight: 700;
-  line-height: 1.42857143;
+}
+
+@media (min-width: 768px) {
+  .Box .Definition dt {
+    width: 45%;
+    height: 38px;
+    text-align: right;
+    display: inline-block;
+  }
+
+  .Box .Definition dd {
+    top: 0;
+    width: 45%;
+    height: 38px;
+    text-align: left;
+    display: inline-block;
+  }
 }
 
 @media (min-width: 768px) {
   .Definition dt {
-    float: left;
-    width: 180px;
-    clear: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    min-width: 40%;
     text-align: right;
+    display: inline-block;
+    float: left;
+    clear: left;
   }
 
   .Definition dd {
-    margin-left: 200px;
+    text-align: left;
+    min-width: 40%;
+    display: inline-block;
+    float: left;
+    clear: right;
   }
 }

@@ -9,3 +9,79 @@
   font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
   text-align: center;
 }
+
+.AddressStats h3 {
+  text-align: center;
+  font-size: 16pt;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.AddressStats h4 {
+  text-align: center;
+  color: #999;
+  margin-top: 5px;
+  margin-bottom: 18px;
+}
+
+.AddressStats .Box {
+  margin: auto;
+  margin-bottom: 30px;
+}
+
+.AddressStats .title {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.AddressStats .lockEvent {
+  margin-bottom: 15px;
+}
+
+.AddressStats .lockEvent .txContainer {
+  font-size: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.AddressStats .lockEvent .manaContainer {
+  text-align: right;
+  padding-right: 18px;
+}
+
+.AddressStats .districtInfo {
+  margin-bottom: 15px;
+}
+
+.AddressStats .districtName {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.AddressStats .districtLand {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.AddressStats .parcelLink {
+  text-align: right;
+}
+.AddressStats .manaAmount {
+  text-align: center;
+}
+.AddressStats .header {
+  font-weight: bold;
+}
+.AddressStats .parcelItem.header {
+  margin-bottom: 5px;
+}
+.AddressStats .updatedAt {
+  text-align: left;
+}
+
+.AddressStats {
+  margin-bottom: 15px;
+}
+

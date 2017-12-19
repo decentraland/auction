@@ -7,6 +7,7 @@ import { stateData } from '../lib/propTypes'
 import { splitCoordinate } from '../lib/util'
 
 import StaticPage from './StaticPage'
+import Box from './Box'
 import Loading from './Loading'
 import Definition, { DefinitionItem } from './Definition'
 
@@ -40,39 +41,45 @@ function StatsView({ stats }) {
 
   return (
     <div className="container-fluid">
-      <h1>Decentraland Auction Stats</h1>
+      <h1>Terraform Auction: Summary</h1>
 
+      <Box>
+      <h4>Current Status</h4>
       <div className="row">
-        <div className="col-xs-12 col-sm-offset-2 col-sm-4">
+        <div className="col-xs-6">
           <Definition
-            title="Total MANA for Genesis:"
-            description={asMana(totalMana)}
-          />
-          <Definition
-            title="LANDs auctioned so far:"
+            title="Auctioned Lands"
             description={asLand(totalLand)}
           />
           <Definition
-            title="MANA spent on bids:"
-            description={asMana(manaSpentOnBids)}
+            title="MANA Spent"
+            description={`${asMana(manaSpentOnBids)}`}
+          />
+          <Definition
+            title="District Lands"
+            description={`${asLand(36031)}`}
+          />
+          <Definition
+            title="MANA to be Burned"
+            description={`${asMana(+manaSpentOnBids + 36031000)}`}
           />
         </div>
-
-        <div className="col-xs-12 col-sm-4">
+        <div className="col-xs-6">
           <Definition
-            title="Most expensive bid:"
+            title="Most Expensive Bid"
             description={asMana(mostExpensiveBid)}
           />
           <Definition
-            title="Average winning bid in Genesis Center:"
+            title="Average Price (center)"
             description={asMana(averageWinningBidCenter)}
           />
           <Definition
-            title="Average winning bid:"
+            title="Average Price (all parcels)"
             description={asMana(averageWinningBid)}
           />
         </div>
       </div>
+      </Box>
 
       <div className="row">
         <div className="col-xs-4">
@@ -118,13 +125,17 @@ function StatsView({ stats }) {
       </div>
 
       <div className="row largest-bidders">
-        <div className="col-xs-12 col-sm-offset-2 col-sm-8 text-center">
+        <div className="col-xs-12 text-center">
           <div className="title">Largest bidders</div>
           <Definition>
             {largestBidders.map((bidder, index) => (
               <DefinitionItem
                 key={index}
-                title={bidder.address}
+                title={
+                  <Link to={locations.addressDetails(bidder.address)}>
+                    { bidder.address }
+                  </Link>
+                }
                 description={`${asMana(bidder.sum)} in ${asLand(bidder.count)}`}
               />
             ))}
@@ -144,5 +155,5 @@ function asMana(mana) {
 }
 
 function asLand(lands) {
-  return `${lands.toLocaleString()} LANDs`
+  return `${Math.round(lands).toLocaleString()} LAND`
 }

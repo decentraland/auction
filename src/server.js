@@ -314,7 +314,7 @@ export function getAddressStats(req) {
   // 2. District contributions
   // 3. Winning bids
   // 4: final balance
-  return new StatsService().getAddressSummary(address)
+  return new StatsService().getAddressSummary(address.toLowerCase())
 }
 
 /**

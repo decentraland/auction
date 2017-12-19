@@ -1,9 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import moment from 'moment'
 
 import { stateData } from '../lib/propTypes'
 
+import locations from '../locations'
+import Box from './Box'
 import StaticPage from './StaticPage'
 import Loading from './Loading'
 import Definition, { DefinitionItem } from './Definition'
@@ -48,31 +51,38 @@ function StatsView({ address, addressStats }) {
   winningBids.forEach(parcel => {
     winningMap[`${parcel.x},${parcel.y},${parcel.amount}`] = true
   })
+  const totalBid = asMana(winningBids.reduce((sum, e) => sum + (+e.amount), 0))
   const losing = item => !winningMap[`${item.x},${item.y},${item.amount}`]
 
   return (
     <div className="container-fluid">
-      <h1>Decentraland Auction</h1>
+      <h1>Terraform Auction: Address Summary</h1>
+      <h3>{address}</h3>
 
+      <Box>
+      <h4>Address Summary</h4>
       <div className="row">
-        <div className="col-xs-12">
-          <Definition title="Address summary" description={address} />
+        <div className="col-xs-6">
           <Definition
-            title="Initial balance"
+            title="Initial Balance"
             description={asMana(lockedMana.totalLockedMANA - lockedMana.totalLandMANA)}
           />
           <Definition
-            title="Current balance"
+            title="Current Balance"
             description={asMana(balance)}
           />
         </div>
+        <div className="col-xs-6">
+          <Definition title="MANA sent to Contract" description={asMana(lockedMana.lockedInContract)} />
+          <Definition title="District Contributions" description={contributedDistrictsSummary} />
+        </div>
       </div>
+      </Box>
 
+      <Box>
+      <h4>Terraform Registration</h4>
       <div className="row">
         <div className="col-xs-6">
-          <Definition title="MANA commited" description={asMana(lockedMana.lockedInContract)} />
-          <Definition title="Contributed to districts" description={contributedDistrictsSummary} />
-
           <div>
             <div className="title">Confirmed transactions</div>
             <Definition>
@@ -90,22 +100,21 @@ function StatsView({ address, addressStats }) {
 
         </div>
       </div>
+    </Box>
 
+      <Box>
+      <h4>Auction Bids</h4>
       <div className="row">
         <div className="col-xs-6">
-          <div className="title">Winning bids</div>
-          <Definition>
-            { winningBids.sort(price).map(parcelWinItem) }
-          </Definition>
-
+          <div className="title">Winning bids ({totalBid})</div>
+          { winningBids.sort(price).map(parcelWinItem) }
         </div>
         <div className="col-xs-6">
           <div className="title">Unsuccesful bids</div>
-          <Definition>
-            { addressState.bidGroups.sort(updated).map(bidGroup => allBidsItem(bidGroup, losing)) }
-          </Definition>
+          { addressState.bidGroups.sort(updated).map(bidGroup => allBidsItem(bidGroup, losing)) }
         </div>
       </div>
+      </Box>
     </div>
   )
 }
@@ -116,18 +125,55 @@ AddressStats.propTypes = {
 }
 
 function districtItem(item) {
-  return <DefinitionItem key={item.id} title={item.name} description={asLand(item.lands)} />
+  return <div className='districtInfo'>
+    <div className='row'>
+      <div className='col-xs-9 districtName'>
+        <strong>{item.name}</strong>
+      </div>
+      <div className='col-xs-3 districtLand'>
+        {asLand(item.lands)}
+      </div>
+      <div className='col-xs-12 dateContainer'>
+        {moment(item.confirmedAt).format('MMMM Do, h:mm:ss a')}
+      </div>
+    </div>
+  </div>
 }
 
 function lockEventItem(item) {
-  return <DefinitionItem key={item.id} title={item.txId} description={asDate(item)} />
+  return <div className='lockEvent'>
+    <div className='row'>
+      <div className='col-xs-12 txContainer'>
+        <a href={etherscan(item.txId)} target="_blank">
+          <tt>{item.txId}</tt>
+        </a>
+      </div>
+      <div className='col-xs-6'>
+        {moment(item.createdAt).format('MMMM Do, h:mm:ss a')}
+      </div>
+      <div className='xs-col-xs-6 manaContainer'>
+        {asMana(item.mana)}
+      </div>
+    </div>
+  </div>
+}
+
+function etherscan(tx) {
+  return 'https://etherscan.io/tx/' + tx
 }
 
 function parcelWinItem(item) {
-  return <DefinitionItem key={`${item.x},${item.y},${item.amount},${item.id}`}
-    title={`${item.x}, ${item.y} - ${item.amount} MANA`}
-    description={asDate(item.updatedAt)}
-  />
+  return <div className='row parcelItem'>
+      <div className='col-xs-4 parcelLink'>
+        <Link to={locations.parcelDetail(item.x, item.y)}>{item.x}, {item.y}</Link>
+      </div>
+      <div className='col-xs-4 manaAmount'>
+        {asMana(item.amount)}
+      </div>
+      <div className='col-xs-4 updatedAt'>
+        {asDate(item.updatedAt)}
+      </div>
+    </div>
 }
 
 function allBidsItem(item, losing) {
@@ -141,7 +187,11 @@ function asDate(date) {
 }
 
 function asMana(mana) {
-  return `${Math.round(mana).toLocaleString()} MANA`
+  return `${localAmount(mana)} MANA`
+}
+
+function localAmount(mana) {
+  return `${Math.round(mana).toLocaleString()}`
 }
 
 function asLand(lands) {
