@@ -49,7 +49,7 @@ class DistrictEntry extends Model {
 
   static findContributedByAddress(address) {
     return this.db.query(
-      'SELECT (SELECT P.name FROM projects P WHERE P.id = project_id) AS name, SUM(lands) FROM district_entries WHERE address = $1 GROUP BY project_id',
+      'SELECT P.name, P.lookup, SUM(D.lands) FROM district_entries D JOIN projects P ON D.project_id = P.id WHERE D.address = $1 GROUP BY P.name, P.lookup',
       [address.toLowerCase()]
     )
   }
