@@ -11,12 +11,17 @@
   color: #3E396B;
 }
 
-
 .StaticPageStreched .content {
   margin: auto;
   padding: 0 80px;
   display: block;
   text-align: left;
+}
+
+@media (max-width: 768px) {
+  .StaticPageStreched .content {
+    padding: 0 30px;
+  }
 }
 
 .StaticPage .content h2 {

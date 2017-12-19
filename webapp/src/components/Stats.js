@@ -45,7 +45,7 @@ function StatsView({ stats }) {
       <Box>
         <h4>Current Status</h4>
         <div className="row">
-          <div className="col-xs-6">
+          <div className="col-xs-12 col-sm-6">
             <Definition
               title="Auctioned Lands"
               description={asLand(totalLand)}
@@ -63,7 +63,7 @@ function StatsView({ stats }) {
               description={`${asMana(+manaSpentOnBids + 36031000)}`}
             />
           </div>
-          <div className="col-xs-6">
+          <div className="col-xs-12 col-sm-6">
             <Definition
               title="Most Expensive Bid"
               description={asMana(mostExpensiveBid)}
@@ -81,7 +81,7 @@ function StatsView({ stats }) {
       </Box>
 
       <div className="row">
-        <div className="col-xs-4">
+        <div className="col-xs-12 col-sm-4">
           <div className="title text-center">Most expensive bids</div>
           <Definition>
             {mostExpensiveBids.map((bid, index) => (
@@ -94,7 +94,7 @@ function StatsView({ stats }) {
           </Definition>
         </div>
 
-        <div className="col-xs-4">
+        <div className="col-xs-12 col-sm-4">
           <div className="title text-center">Most popular parcels</div>
           <Definition>
             {mostPopularParcels.map((parcel, index) => (
@@ -109,7 +109,7 @@ function StatsView({ stats }) {
           </Definition>
         </div>
 
-        <div className="col-xs-4">
+        <div className="col-xs-12 col-sm-4">
           <div className="title text-center">Biggest districts</div>
           <Definition>
             {biggestDistricts.map((district, index) => {

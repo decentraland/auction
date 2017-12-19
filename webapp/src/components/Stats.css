@@ -15,7 +15,29 @@
 .Stats .Box {
   max-width: 920px;
   margin: auto;
-  margin-bottom: 50px;
+  margin-bottom: 65px;
+}
+
+.Stats .Box .Definition dt {
+  width: 45%;
+  height: 38px;
+  text-align: right;
+  display: inline-block;
+}
+
+.Stats .Box .Definition dd {
+  top: 0;
+  width: 45%;
+  height: 38px;
+  text-align: left;
+  display: inline-block;
+}
+
+@media (max-width: 600px) {
+  .Stats .Box .Definition dt,
+  .Stats .Box .Definition dd {
+    width: inherit;
+  }
 }
 
 .Stats .row {
@@ -29,7 +51,7 @@
 }
 
 .Stats .largest-bidders {
-  margin-top: 40px;
+  margin-top: 35px;
 }
 .Stats .largest-bidders .Definition {
   margin-left: 7%;

@@ -1,7 +1,6 @@
 
-.Definition dl {
-  margin-top: 0;
-  margin-bottom: 20px;
+.Definition {
+  overflow: hidden;
 }
 
 .Definition dt {
@@ -9,29 +8,14 @@
 }
 
 @media (min-width: 768px) {
-  .Box .Definition dt {
-    width: 45%;
-    height: 38px;
-    text-align: right;
-    display: inline-block;
-  }
-
-  .Box .Definition dd {
-    top: 0;
-    width: 45%;
-    height: 38px;
-    text-align: left;
-    display: inline-block;
-  }
-}
-
-@media (min-width: 768px) {
   .Definition dt {
+    width: 45%;
     min-width: 45%;
     text-align: right;
     display: inline-block;
     float: left;
     clear: left;
+    word-break: break-word;
   }
 
   .Definition dd {
