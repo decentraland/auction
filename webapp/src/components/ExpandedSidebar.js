@@ -178,7 +178,7 @@ function DistrictTable({ districts }) {
   return (
     <div className="table">
       <div className="table-row table-header">
-        <div className="col-land">Parcels of Land</div>
+        <div className="col-land">Parcels</div>
         <div className="col-name">District</div>
         <div className="col-status">Status</div>
       </div>
