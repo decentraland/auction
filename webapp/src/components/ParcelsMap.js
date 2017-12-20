@@ -265,7 +265,7 @@ export default class ParcelsMap extends React.Component {
   addPopup = (x, y, latlng) => {
     const parcel = this.getParcelData(x, y)
 
-    if (!parcel) return
+    if (!parcel || !this.map) return
 
     const addressState = this.props.getAddressState()
     const projects = this.props.getProjects()
