@@ -14,7 +14,7 @@ export default function CurrentBidStatus({ addressState, parcel, projects }) {
     )
 
   if (isReserved) {
-    const project = parcelUtils.getProjectForParcel(parcel, projects)
+    const project = parcelUtils.getProjectForParcel(parcel, projects.data || [])
 
     if (project) {
       status.push(
