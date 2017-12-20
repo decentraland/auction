@@ -178,9 +178,9 @@ function DistrictTable({ districts }) {
   return (
     <div className="table">
       <div className="table-row table-header">
-        <div className="col-name">District</div>
-        <div className="col-land">Parcels</div>
-        <div className="col-status">Status</div>
+        <div className="col-name">DISTRICT</div>
+        <div className="col-land">PARCELS</div>
+        <div className="col-status">STATUS</div>
       </div>
 
       {districts.map((district, index) => (
