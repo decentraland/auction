@@ -248,7 +248,8 @@ function Footer() {
         <Link to="https://decentraland.org/whitepaper.pdf" target="_blank">
           Whitepaper
         </Link>
-        <Link to="/faq">FAQ</Link>
+        <Link to={locations.stats}>Stats</Link>
+        <Link to={locations.faq}>FAQ</Link>
       </div>
       <div className="copyright">
         Copyright 2017 Decentraland. All rights reserved.
