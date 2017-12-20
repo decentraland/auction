@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+import locations from '../locations'
+
 import Icon from './Icon'
 
 import './Navbar.css'
@@ -17,7 +19,15 @@ export default function Navbar() {
       <div id="navbar" className="navbar-container">
         <ul className="nav navbar-nav navbar-right">
           <li>
-            <Link to="https://decentraland.org/whitepaper.pdf">Whitepaper</Link>
+            <Link to={locations.root}>Auction</Link>
+          </li>
+
+          <li>
+            <Link to={locations.stats}>Stats</Link>
+          </li>
+
+          <li>
+            <Link to={locations.faq}>FAQ</Link>
           </li>
 
           <li>
