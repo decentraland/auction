@@ -12,6 +12,7 @@ import { push, replace } from 'react-router-redux'
 import { env, utils } from 'decentraland-commons'
 import { eth as web3Eth } from 'decentraland-commons'
 
+import { isChrome } from './lib/browser'
 import locations from './locations'
 import types from './types'
 import { selectors } from './reducers'
@@ -81,7 +82,8 @@ function* rootSaga() {
 
 async function connectLedger(action = {}, retries = 0) {
   try {
-    if (window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+    if (!isChrome()) {
+      // Ledger only works on chrome apparently
       return false
     }
 
