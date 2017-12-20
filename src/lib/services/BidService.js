@@ -15,6 +15,8 @@ const ERROR_CODES = {
   insufficientIncrement: 'INSUFFICIENT_INCREMENT'
 }
 
+export const AUCTION_END = new Date(env.get('AUCTION_END', 1513980000000))
+
 export default class BidService {
   static ERROR_CODES = ERROR_CODES
 
@@ -175,6 +177,12 @@ export default class BidService {
         bidGroup,
         bid
       }
+    } else if (this.cantStartAfterGracePeriod(parcelState)) {
+      validationError = {
+        code: ERROR_CODES.auctionEnded,
+        bidGroup,
+        bid
+      }
     } else {
       let newBalance = this.calculateNewBalance(
         addresState,
@@ -222,6 +230,11 @@ export default class BidService {
     return getBn(bid.amount).lessThan(this.getParcelIncrement(parcelState))
   }
 
+  noBidsAfterGracePeriod(parcelState, bid) {
+    return !parcelState.endsAt
+      && new Date().getTime() > AUCTION_END.getTime()
+  }
+
   isReserved(parcelState) {
     return !!parcelState.projectId
   }
@@ -261,7 +274,7 @@ export default class BidService {
   }
 
   extendBid(endsAt, receivedAt) {
-    endsAt = endsAt || new Date(env.get('AUCTION_END', 1513980000000))
+    endsAt = endsAt || AUCTION_END
     receivedAt = receivedAt || new Date()
 
     const endsTime = endsAt.getTime()
