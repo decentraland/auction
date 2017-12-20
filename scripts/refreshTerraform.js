@@ -40,6 +40,8 @@ async function main() {
         continue
       }
 
+      db.query('BEGIN')
+
       // new event
       await LockedBalanceEvent.insert(event)
       log.info(`[${event.address}] TX (${event.txId}) inserted`)
@@ -55,6 +57,11 @@ async function main() {
           balance: event.mana
         })
         log.info(`[${event.address}] New address with balance: ${event.mana}`)
+      }
+      try {
+        await db.client.query('COMMIT')
+      } catch(e) {
+        console.log(`Error saving info!`)
       }
     }
   } catch (err) {
