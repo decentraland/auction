@@ -167,7 +167,9 @@ export default class ParcelsMap extends React.Component {
   }
 
   onMoveEnd = () => {
-    this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+    if (this.map) {
+      this.props.onMoveEnd(this.getCurrentPositionAndBounds())
+    }
   }
 
   getCurrentPositionAndBounds() {
