@@ -103,11 +103,11 @@ function AuctionTable({ auctions, onLandClick }) {
     return (
       <div className="table">
         <div className="table-row table-header">
-          <div className="col-land">Land</div>
-          <div className="col-status">Status</div>
-          <div className="col-amount">Amount</div>
-          <div className="col-time-left">Time left</div>
-          <div className="col-address" />
+          <div className="col-land">LAND</div>
+          <div className="col-status">STATUS</div>
+          <div className="col-amount">AMOUNT</div>
+          <div className="col-time-left">TIME LEFT</div>
+          <div className="col-address">ADDRESS</div>
         </div>
 
         {auctions.map((auction, index) => (
@@ -178,9 +178,9 @@ function DistrictTable({ districts }) {
   return (
     <div className="table">
       <div className="table-row table-header">
-        <div className="col-name">District</div>
-        <div className="col-land">Parcels</div>
-        <div className="col-status">Status</div>
+        <div className="col-name">DISTRICT</div>
+        <div className="col-land">PARCELS</div>
+        <div className="col-status">STATUS</div>
       </div>
 
       {districts.map((district, index) => (

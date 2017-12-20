@@ -120,10 +120,13 @@
 .OngoingAuctions .table .col-time-left { width: 20%; }
 .OngoingAuctions .table .col-address   { width: 25%; }
 
-.OngoingAuctions .col-status {
-  font-size: 14px;
+.OngoingAuctions .table-row .col-status {
   font-weight: 700;
   background-color: transparent;
+}
+
+.OngoingAuctions .table-header .col-status {
+  font-weight: normal;
 }
 
 @media (max-width: 620px) {

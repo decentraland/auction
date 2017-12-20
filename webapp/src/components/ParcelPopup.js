@@ -1,5 +1,6 @@
 import React from 'react'
 
+import locations from '../locations'
 import { shortenAddress } from '../lib/util'
 import * as dateUtils from '../lib/dateUtils'
 import * as parcelUtils from '../lib/parcelUtils'
@@ -32,7 +33,11 @@ export default function ParcelPopup(props) {
         </div>
 
         {parcel.address && (
-          <div className="secondary">{shortenAddress(parcel.address)} </div>
+          <div className="address-link">
+            <a href={locations.addressDetails(parcel.address)} target="_blank">
+              {shortenAddress(parcel.address)}
+            </a>
+          </div>
         )}
 
         <CurrentBidStatus

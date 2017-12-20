@@ -52,7 +52,15 @@
   text-transform: capitalize;
 }
 
-.parcel-popup .secondary,
+.parcel-popup .address-link a {
+  color: #30D7A9;
+}
+
+.parcel-popup .address-link a:hover {
+  color: #30D7A9;
+  text-decoration: none;
+}
+
 .parcel-popup .current-bid-status {
   color: #B2B2B2;
 }
