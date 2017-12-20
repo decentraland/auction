@@ -14,6 +14,7 @@ import AddressErrorPageContainer from './containers/AddressErrorPageContainer'
 
 import NotStarted from './components/NotStarted'
 import WalletErrorPage from './components/WalletErrorPage'
+import BalanceErrorPage from './components/BalanceErrorPage'
 import ServerError from './components/ServerError'
 import FAQPage from './components/FAQPage'
 
@@ -41,6 +42,7 @@ export default function Routes() {
         <Route exact path={locations.faq} component={FAQPage} />
 
         <Route exact path={locations.walletError} component={WalletErrorPage} />
+        <Route exact path={locations.balanceError} component={BalanceErrorPage} />
         <Route exact path={locations.serverError} component={ServerError} />
         <Route
           exact

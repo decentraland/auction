@@ -14,6 +14,7 @@ export default {
 
   error: '/error',
   walletError: '/walletError',
+  balanceError: '/balanceError',
   addressError: '/addressError',
   serverError: '/serverError'
 }
