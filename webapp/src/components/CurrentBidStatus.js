@@ -14,10 +14,20 @@ export default function CurrentBidStatus({ addressState, parcel, projects }) {
     )
 
   if (isReserved) {
-    const project = parcelUtils.projectForParcel(parcel, projects)
+    const project = parcelUtils.getProjectForParcel(parcel, projects)
 
     if (project) {
-      status.push(<div key="2">{project.name}</div>)
+      status.push(
+        <div key="2">
+          {project.link ? (
+            <a href={project.link} target="_blank">
+              {project.name}
+            </a>
+          ) : (
+            project.name
+          )}
+        </div>
+      )
     }
   }
 

@@ -52,11 +52,11 @@
   text-transform: capitalize;
 }
 
-.parcel-popup .address-link a {
+.parcel-popup .body a {
   color: #30D7A9;
 }
 
-.parcel-popup .address-link a:hover {
+.parcel-popup .body a:hover {
   color: #30D7A9;
   text-decoration: none;
 }
