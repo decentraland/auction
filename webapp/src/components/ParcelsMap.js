@@ -72,7 +72,7 @@ export default class ParcelsMap extends React.Component {
     const shouldDebounce = this.props.tileSize !== nextProps.tileSize
 
     if (shouldUpdateCenter) {
-      const newCenter = this.getCenter(nextProps.x, nextProps.y)
+      const newCenter = this.getLatLng(nextProps.x, nextProps.y)
       this.setView(newCenter)
     }
 
@@ -129,7 +129,13 @@ export default class ParcelsMap extends React.Component {
     this.map.zoomControl.setPosition('topright')
     this.map.setMaxBounds(this.mapCoordinates.toLatLngBounds(bounds))
     this.map.addLayer(this.parcelGrid)
-    this.map.setView(this.getCenter(x, y))
+    this.map.setView(this.getLatLng(x, y))
+
+    if (!this.isNearTheCenter()) {
+      // Only trigger this outside the bounds of the center,
+      // 0,0 and it's surroundings are always fetched on load.
+      this.onMapMoveEnd()
+    }
 
     this.attachMapEvents()
 
@@ -198,7 +204,12 @@ export default class ParcelsMap extends React.Component {
     this.props.onParcelBid(parcel)
   }
 
-  getCenter(x, y) {
+  isNearTheCenter() {
+    const { x, y } = this.props
+    return x >= -20 && x <= 20 && y >= -12 && y <= 12
+  }
+
+  getLatLng(x, y) {
     return this.mapCoordinates.cartesianToLatLng({ x, y })
   }
 
