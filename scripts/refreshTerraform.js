@@ -40,7 +40,8 @@ async function main() {
         continue
       }
 
-      db.query('BEGIN')
+      await db.query('BEGIN')
+      await db.client.query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
 
       // new event
       await LockedBalanceEvent.insert(event)
