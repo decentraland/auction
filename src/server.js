@@ -260,6 +260,7 @@ export async function postBidGroup(req) {
   const time = new Date().getTime()
   lock = true
   await db.client.query('BEGIN')
+  await db.client.query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
 
   const { bidGroup, error } = await new BidService().processBidGroup(
     newBidGroup
