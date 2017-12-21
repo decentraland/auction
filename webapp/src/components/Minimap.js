@@ -73,9 +73,9 @@ export default class Minimap extends React.Component {
   newCenter(deltaX, deltaY) {
     deltaX /= scale
     deltaY /= scale
-    const x = this.averageX + deltaX
-    const y = this.averageY - deltaY
-    return { x: this.boundCoord(x), y: this.boundCoord(y) }
+    const x = this.boundCoord(this.averageX + deltaX)
+    const y = this.boundCoord(this.averageY - deltaY)
+    return { x: Math.floor(x), y: Math.floor(y) }
   }
 
   submitChange(deltaX, deltaY, otherState) {

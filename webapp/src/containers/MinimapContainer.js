@@ -18,7 +18,9 @@ class MinimapContainer extends React.Component {
     })
   }
 
-  update = (x, y) => this.props.navigateTo(locations.parcelDetail(x, y))
+  update = (x, y) => {
+    this.props.navigateTo(locations.parcelDetail(x, y))
+  }
 
   render() {
     return <Minimap {...this.props.range} update={this.update.bind(this)} />
