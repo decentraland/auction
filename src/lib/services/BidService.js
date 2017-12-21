@@ -179,7 +179,8 @@ export default class BidService {
       validationError = {
         code: ERROR_CODES.auctionEnded,
         bidGroup,
-        bid
+        bid,
+        endsAt: this.getAuctionEnd()
       }
     } else {
       let newBalance = this.calculateNewBalance(
@@ -282,7 +283,7 @@ export default class BidService {
   }
 
   getAuctionEnd() {
-    return new Date(env.get('AUCTION_END', 1513980000000))
+    return new Date(env.get('AUCTION_END', 1513980000000)) // 22th December
   }
 }
 
