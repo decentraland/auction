@@ -47,7 +47,7 @@ class StatsService {
       },
       notifications: {
         sent: await this.Job.count()
-      }
+      },
     }
   }
 
@@ -70,7 +70,9 @@ class StatsService {
       mostPopularParcels: await Bid.findPopular(5),
       biggestDistricts: await Project.findBiggest(5),
 
-      largestBidders: await ParcelState.findLargestBidders(10)
+      largestBidders: await ParcelState.findLargestBidders(10),
+      pendingParcels: await ParcelState.countOpen(),
+      expectedEnd: await ParcelState.expectedEnd()
     }
   }
 

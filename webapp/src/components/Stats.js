@@ -35,7 +35,9 @@ function StatsView({ stats }) {
     mostExpensiveBids,
     mostPopularParcels,
     biggestDistricts,
-    largestBidders
+    largestBidders,
+    pendingParcels,
+    expectedEnd
   } = stats
 
   return (
@@ -75,6 +77,14 @@ function StatsView({ stats }) {
             <Definition
               title="Average Price (all parcels)"
               description={asMana(averageWinningBid)}
+            />
+            <Definition
+              title="Pending Parcel Auctions"
+              description={asLand(pendingParcels)}
+            />
+            <Definition
+              title="Expected Auction End"
+              description={formatAsHoursAndMinutes(expectedEnd)}
             />
           </div>
         </div>
@@ -119,7 +129,7 @@ function StatsView({ stats }) {
                   title={
                     <Link to={getHref(district.lookup)}>{district.name}</Link>
                   }
-                  description={asMana(district.parcels)}
+                  description={asLand(district.parcels)}
                 />
               )
             })}
@@ -151,6 +161,20 @@ function StatsView({ stats }) {
 
 function getHref(id) {
   return locations.parcelDetail(...splitCoordinate(id))
+}
+
+function formatAsHoursAndMinutes(timestamp) {
+  const delta = new Date(timestamp).getTime() - new Date().getTime()
+  if (delta < 0) {
+    return `Finished ${deltaTimeAsHoursAndMinutes(-delta)} ago`
+  }
+  return deltaTimeAsHoursAndMinutes(delta)
+}
+
+function deltaTimeAsHoursAndMinutes(delta) {
+  const hours = Math.floor(delta / (60 * 60 * 1000))
+  const minutes = Math.floor(delta / (60 * 1000)) % 60
+  return `${hours}h:${minutes}m`
 }
 
 function asMana(mana) {
