@@ -1,9 +1,16 @@
+import { env } from 'decentraland-commons'
+
 /* eslint-disable */
 var _rollbarConfig = {
   accessToken: "163a02bef36e4055a670efd7453701c6",
   captureUncaught: true,
   payload: {
-    environment: "production"
+    environment: "production",
+    client: {
+      javascript: {
+        version: env.get('REACT_APP_VERSION', '')
+      }
+    }
   },
   checkIgnore: function(isUncaught, args, payload) {
      if (window.location.hostname === 'localhost') {
