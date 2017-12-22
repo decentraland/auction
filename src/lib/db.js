@@ -87,6 +87,9 @@ export default {
     await this.createIndex('parcel_states', 'parcel_states_address_idx', [
       'address'
     ])
+    await this.createIndex('parcel_states', 'parcel_states_amount_idx', [
+      'amount'
+    ])
 
     await this.createTable(
       'projects',
