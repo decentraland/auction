@@ -48,43 +48,47 @@ function StatsView({ stats }) {
     <div className="container-fluid">
       <h1>Terraform Auction: Summary</h1>
 
-      <Box>
+      <div>
         <h4>Current Status</h4>
-        <div className="row">
-          <div className="col-xs-12 col-sm-6">
+        <Box className="row">
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="Auctioned Lands"
               description={asLand(totalLand)}
             />
+          </div>
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="MANA Spent"
               description={`${asMana(manaSpentOnBids)}`}
             />
+          </div>
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="District Lands"
               description={`${asLand(36031)}`}
             />
+          </div>
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="MANA to be Burned"
               description={`${asMana(+manaSpentOnBids + 36031000)}`}
             />
           </div>
-          <div className="col-xs-12 col-sm-6">
-            <Definition
-              title="Most Expensive Bid"
-              description={asMana(mostExpensiveBid)}
-            />
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="Average Price (center)"
               description={asMana(averageWinningBidCenter)}
             />
+          </div>
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="Average Price (all parcels)"
               description={asMana(averageWinningBid)}
             />
           </div>
-        </div>
-      </Box>
+        </Box>
+      </div>
 
       {isAuctionEnded() && (
         <Box>
