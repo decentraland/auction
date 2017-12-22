@@ -83,7 +83,7 @@ function StatsView({ stats }) {
               description={asLand(pendingParcels)}
             />
             <Definition
-              title="Expected Auction End"
+              title="Auction End Date"
               description={formatAsHoursAndMinutes(expectedEnd)}
             />
           </div>
@@ -168,13 +168,13 @@ function formatAsHoursAndMinutes(timestamp) {
   if (delta < 0) {
     return `Finished ${deltaTimeAsHoursAndMinutes(-delta)} ago`
   }
-  return deltaTimeAsHoursAndMinutes(delta)
+  return `In ${deltaTimeAsHoursAndMinutes(delta)}`
 }
 
 function deltaTimeAsHoursAndMinutes(delta) {
   const hours = Math.floor(delta / (60 * 60 * 1000))
   const minutes = Math.floor(delta / (60 * 1000)) % 60
-  return `${hours}h:${minutes}m`
+  return `${hours} hours and ${minutes} minutes`
 }
 
 function asMana(mana) {
