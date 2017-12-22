@@ -74,10 +74,7 @@ class StatsService {
       ParcelState.getTotalAmount(),
 
       ParcelState.findExpensive(6),
-      ParcelState.averageWinningBidBetween(
-        [-22, -16],
-        [22, 16]
-      ),
+      ParcelState.averageWinningBidBetween([-22, -16], [22, 16]),
       ParcelState.averageWinningBid(),
 
       Bid.findPopular(6),
