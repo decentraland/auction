@@ -19,7 +19,11 @@ const AUCTION_END = new Date(env.get('REACT_APP_AUCTION_END', 1513980000000))
 export default function Stats({ stats }) {
   return (
     <StaticPage className="StaticPageStreched Stats">
-      {stats.loading ? <Loading /> : <StatsView stats={stats.data} />}
+      {stats.loading || !stats.data ? (
+        <Loading />
+      ) : (
+        <StatsView stats={stats.data} />
+      )}
     </StaticPage>
   )
 }
@@ -32,13 +36,11 @@ function StatsView({ stats }) {
   const {
     totalLand,
     manaSpentOnBids,
-    mostExpensiveBid,
     averageWinningBidCenter,
     averageWinningBid,
     mostExpensiveBids,
     mostPopularParcels,
     biggestDistricts,
-    largestBidders,
     pendingParcels,
     expectedEnd,
     recentlyUpdatedParcels
@@ -46,168 +48,226 @@ function StatsView({ stats }) {
 
   return (
     <div className="container-fluid">
-      <h1>Terraform Auction: Summary</h1>
+      <h1>Auction Summary</h1>
 
-      <Box>
-        <h4>Current Status</h4>
-        <div className="row">
-          <div className="col-xs-12 col-sm-6">
+      <div>
+        <h4>Global Stats</h4>
+        <Box className="row">
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="Auctioned Lands"
               description={asLand(totalLand)}
             />
+          </div>
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="MANA Spent"
               description={`${asMana(manaSpentOnBids)}`}
             />
+          </div>
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="District Lands"
               description={`${asLand(36031)}`}
             />
+          </div>
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="MANA to be Burned"
               description={`${asMana(+manaSpentOnBids + 36031000)}`}
             />
           </div>
-          <div className="col-xs-12 col-sm-6">
-            <Definition
-              title="Most Expensive Bid"
-              description={asMana(mostExpensiveBid)}
-            />
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="Average Price (center)"
               description={asMana(averageWinningBidCenter)}
             />
+          </div>
+          <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="Average Price (all parcels)"
               description={asMana(averageWinningBid)}
             />
           </div>
-        </div>
-      </Box>
+        </Box>
+      </div>
 
       {isAuctionEnded() && (
-        <Box>
+        <div>
           <h4>Pending Bids before Auction Ends</h4>
-          <div className="row">
-            <div className="col-xs-12 col-sm-6">
+          <Box className="row">
+            <div className="col-xs-12 col-sm-6 box-left">
               <Definition
                 title="Pending Parcel Auctions"
                 description={asLand(pendingParcels)}
               />
             </div>
-            <div className="col-xs-12 col-sm-6">
+            <div className="col-xs-12 col-sm-6 box-right">
               <Definition
                 title="Auction Expected End Time"
                 description={formatAsHoursAndMinutes(expectedEnd)}
               />
             </div>
-            <div className="col-xs-12 col-sm-12 text-center">
-              <div className="title text-center">Most recent bids</div>
-              <Definition>
-                {recentlyUpdatedParcels.map((parcel, index) => (
-                  <DefinitionItem
-                    key={index}
-                    title={
-                      <Link to={getHrefForCoords(parcel.x, parcel.y)}>
-                        {parcel.x}, {parcel.y}
-                      </Link>
-                    }
-                    description={`${deltaTimeAsHoursAndMinutes(
-                      new Date().getTime() -
-                        new Date(parcel.updatedAt).getTime()
-                    )} ago`}
-                  />
-                ))}
-              </Definition>
+
+            <div className="col-xs-12 definition-list">
+              <div className="title">Most recent bids</div>
+              <RecentlyUpdatedParcels
+                recentlyUpdatedParcels={recentlyUpdatedParcels}
+              />
             </div>
-          </div>
-        </Box>
+          </Box>
+        </div>
       )}
 
-      <div className="row">
-        <div className="col-xs-12 col-sm-4">
-          <div className="title text-center">Most expensive bids</div>
-          <Definition>
-            {mostExpensiveBids.map((bid, index) => (
-              <DefinitionItem
-                key={index}
-                title={<Link to={getHref(bid.id)}>{bid.id}</Link>}
-                description={asMana(bid.amount)}
-              />
-            ))}
-          </Definition>
-        </div>
+      <div>
+        <h4>Leaderboards</h4>
 
-        <div className="col-xs-12 col-sm-4">
-          <div className="title text-center">Most popular parcels</div>
-          <Definition>
-            {mostPopularParcels.map((parcel, index) => (
-              <DefinitionItem
-                key={index}
-                title={
-                  <Link to={getHref(parcel.parcelId)}>{parcel.parcelId}</Link>
-                }
-                description={`${parcel.count} bids`}
-              />
-            ))}
-          </Definition>
-        </div>
+        <Box className="row">
+          <div className="col-xs-12 definition-list">
+            <div className="title">Most expensive bids</div>
+            <MostExpensiveBids mostExpensiveBids={mostExpensiveBids} />
+          </div>
 
-        <div className="col-xs-12 col-sm-4">
-          <div className="title text-center">Biggest districts</div>
-          <Definition>
-            {biggestDistricts.map((district, index) => {
-              return (
-                <DefinitionItem
-                  key={index}
-                  title={
-                    <Link to={getHref(district.lookup)}>{district.name}</Link>
-                  }
-                  description={asLand(district.parcels)}
-                />
-              )
-            })}
-          </Definition>
-        </div>
-      </div>
+          <div className="col-xs-12 definition-list">
+            <div className="title">Most popular parcels</div>
+            <MostPopularParcels mostPopularParcels={mostPopularParcels} />
+          </div>
 
-      <div className="row largest-bidders">
-        <div className="col-xs-12 text-center">
-          <div className="title">Largest bidders</div>
-          <Definition>
-            {largestBidders.map((bidder, index) => (
-              <DefinitionItem
-                key={index}
-                title={
-                  <Link to={locations.addressDetails(bidder.address)}>
-                    {bidder.address}
-                  </Link>
-                }
-                description={`${asMana(bidder.sum)} in ${asLand(bidder.count)}`}
-              />
-            ))}
-          </Definition>
-        </div>
+          <div className="col-xs-12 definition-list">
+            <div className="title">Biggest districts</div>
+            <BiggestDistricts biggestDistricts={biggestDistricts} />
+          </div>
+        </Box>
       </div>
     </div>
   )
 }
+
+function RecentlyUpdatedParcels({ recentlyUpdatedParcels }) {
+  return (
+    <Definition className="row">
+      {recentlyUpdatedParcels.map((parcel, index) => (
+        <div key={index} className="col-xs-12 col-sm-4">
+          <DefinitionItem
+            title={<ParcelPosition parcel={parcel} index={index + 1} />}
+            description={
+              <Link to={getHref(parcel.parcelId)}>
+                {parcel.x}, {parcel.y}
+              </Link>
+            }
+          />
+        </div>
+      ))}
+    </Definition>
+  )
+}
+
+function MostExpensiveBids({ mostExpensiveBids }) {
+  return (
+    <Definition className="row">
+      {mostExpensiveBids.map((bid, index) => (
+        <div key={index} className="col-xs-12 col-sm-4">
+          <DefinitionItem
+            title={<BidPosition bid={bid} index={index + 1} />}
+            description={<Link to={getHref(bid.id)}>{bid.id}</Link>}
+          />
+        </div>
+      ))}
+    </Definition>
+  )
+}
+
+function MostPopularParcels({ mostPopularParcels }) {
+  return (
+    <Definition className="row">
+      {mostPopularParcels.map((parcel, index) => (
+        <div key={index} className="col-xs-12 col-sm-4">
+          <DefinitionItem
+            title={<ParcelBidPosition parcel={parcel} index={index + 1} />}
+            description={
+              <Link to={getHref(parcel.parcelId)}>{parcel.parcelId}</Link>
+            }
+          />
+        </div>
+      ))}
+    </Definition>
+  )
+}
+
+function BiggestDistricts({ biggestDistricts }) {
+  return (
+    <Definition className="row">
+      {biggestDistricts.map((district, index) => (
+        <div key={index} className="col-xs-12 col-sm-4">
+          <DefinitionItem
+            title={<DistrictPosition district={district} index={index + 1} />}
+            description={
+              <Link to={getHref(district.lookup)}>{district.name}</Link>
+            }
+          />
+        </div>
+      ))}
+    </Definition>
+  )
+}
+
+function ParcelPosition({ parcel, index }) {
+  return (
+    <div>
+      <div className="position">
+        #{index} <small>{lastParcelUpdate(parcel)}</small>
+      </div>
+      <div className="mana">{asMana(parcel.amount.toLocaleString())}</div>
+    </div>
+  )
+}
+
+function BidPosition({ bid, index }) {
+  return (
+    <div>
+      <div className="position">#{index}</div>
+      <div className="mana">{asMana(bid.amount)}</div>
+    </div>
+  )
+}
+
+function ParcelBidPosition({ parcel, index }) {
+  return (
+    <div>
+      <div className="position">#{index}</div>
+      <div className="mana">{parcel.count} bids</div>
+    </div>
+  )
+}
+
+function DistrictPosition({ district, index }) {
+  return (
+    <div>
+      <div className="position">#{index}</div>
+      <div className="mana">{asLand(district.parcels.toLocaleString())}</div>
+    </div>
+  )
+}
+
+// -------------------------------------------------------------------------
+// Utils
 
 function isAuctionEnded() {
   return Date.now() > AUCTION_END.getTime()
 }
 
 function getHref(id) {
-  return getHrefForCoords(...splitCoordinate(id))
+  return locations.parcelDetail(...splitCoordinate(id))
 }
 
-function getHrefForCoords(x, y) {
-  return locations.parcelDetail(x, y)
+function lastParcelUpdate(parcel) {
+  return `${deltaTimeAsHoursAndMinutes(
+    Date.now() - new Date(parcel.updatedAt).getTime()
+  )} ago`
 }
 
 function formatAsHoursAndMinutes(timestamp) {
-  const delta = new Date(timestamp).getTime() - new Date().getTime()
+  const delta = new Date(timestamp).getTime() - Date.now()
   if (delta < 0) {
     return `Finished ${deltaTimeAsHoursAndMinutes(-delta)} ago`
   }

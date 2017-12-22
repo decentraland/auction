@@ -151,13 +151,16 @@ class ParcelState extends Model {
     return date.getTime() - date.getTimezoneOffset() * 60 * 1000
   }
 
-  static async recentlyUpdated() {
+  static async recentlyUpdated(limit = 5) {
     return (await this.db.query(
       `SELECT  "${this.tableName}".* FROM ${this.tableName}
         ORDER BY "${this.tableName}"."updatedAt" DESC
-        LIMIT 5`
+        LIMIT $1`,
+      [limit]
     )).map(e => {
-      e.updatedAt.setTime(e.updatedAt.getTime() - e.updatedAt.getTimezoneOffset() * 60 * 1000)
+      e.updatedAt.setTime(
+        e.updatedAt.getTime() - e.updatedAt.getTimezoneOffset() * 60 * 1000
+      )
       return e
     })
   }

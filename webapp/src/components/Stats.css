@@ -12,50 +12,36 @@
   text-align: center;
 }
 
+.Stats h4 {
+  margin-top: 5px;
+  margin-bottom: 18px;
+  font-size: 24px;
+  color: #23527C;
+}
+
 .Stats .Box {
-  max-width: 920px;
+  padding: 0;
   margin: auto;
   margin-bottom: 65px;
 }
 
-.Stats .Box .Definition dt {
-  width: 45%;
-  height: 38px;
-  text-align: right;
-  display: inline-block;
+.Stats .Box.row {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.Stats .Box .Definition dd {
-  top: 0;
-  width: 45%;
-  height: 38px;
-  text-align: left;
-  display: inline-block;
+.Stats .Box .box-left {
+  border-bottom: 1px solid #ECECEC;
+  border-right: 1px solid #ECECEC;
 }
 
-@media (max-width: 600px) {
-  .Stats .Box .Definition dt,
-  .Stats .Box .Definition dd {
-    width: inherit;
-  }
+.Stats .Box .box-right {
+  border-bottom: 1px solid #ECECEC;
 }
 
-.Stats .row {
-  margin-bottom: 10px;
-}
-
-.Stats .title {
+.Stats .Definition dd {
   font-size: 24px;
-  margin-bottom: 5px;
-  font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
-}
-
-.Stats .largest-bidders {
-  margin-top: 35px;
-}
-.Stats .largest-bidders .Definition {
-  margin-left: 7%;
-  width: 100%;
+  color: #23527C;
 }
 
 .Stats .Definition dt {
@@ -66,12 +52,49 @@
   font-weight: normal;
 }
 
-.Stats h4 {
-  text-align: center;
-  color: #999;
-  margin-top: 5px;
-  margin-bottom: 18px;
+.Stats .title {
+  margin-bottom: 5px;
+  margin-left: 15px;
+  color: #3E3A6B;
 }
-.Stats .Box {
-  padding-bottom: 0px;
+
+.Stats .definition-list {
+  margin-top: 1em;
+}
+
+.Stats .definition-list dt {
+  margin-bottom: 0;
+}
+
+.Stats .definition-list .position {
+  font-size: 18px;
+}
+
+.Stats .definition-list .mana {
+  font-size: 24px;
+  color: #23527C;
+}
+
+.Stats .definition-list dd {
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.Stats .largest-bidders {
+  margin-top: 35px;
+}
+
+.Stats .largest-bidders .Definition {
+  margin-left: 7%;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .Stats .Box .box-section {
+    border-right: 1px solid #ECECEC;
+  }
+
+  .Stats .Box .Definition {
+    padding-left: 15px;
+  }
 }

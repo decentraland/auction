@@ -47,33 +47,29 @@ class StatsService {
       },
       notifications: {
         sent: await this.Job.count()
-      },
+      }
     }
   }
 
   async getGlobalSummary(address) {
-    const mostExpensiveBids = await ParcelState.findExpensive(5)
-
     return {
       totalMana: await LockedBalanceEvent.getTotalLockedMana(),
       totalLand: await DistrictEntry.getTotalLand(),
       manaSpentOnBids: await ParcelState.getTotalAmount(),
 
-      mostExpensiveBid: mostExpensiveBids.length && mostExpensiveBids[0].amount,
       averageWinningBidCenter: await ParcelState.averageWinningBidBetween(
         [-22, -16],
         [22, 16]
       ),
       averageWinningBid: await ParcelState.averageWinningBid(),
 
-      mostExpensiveBids,
-      mostPopularParcels: await Bid.findPopular(5),
-      biggestDistricts: await Project.findBiggest(5),
+      mostExpensiveBids: await ParcelState.findExpensive(6),
+      mostPopularParcels: await Bid.findPopular(6),
+      biggestDistricts: await Project.findBiggest(6),
 
-      largestBidders: await ParcelState.findLargestBidders(10),
       pendingParcels: await ParcelState.countOpen(),
       expectedEnd: await ParcelState.expectedEnd(),
-      recentlyUpdatedParcels: await ParcelState.recentlyUpdated()
+      recentlyUpdatedParcels: await ParcelState.recentlyUpdated(6)
     }
   }
 
