@@ -17,7 +17,7 @@ import './AddressStats.css'
 export default function AddressStats({ address, addressStats }) {
   return (
     <StaticPage className="StaticPageStreched AddressStats">
-      {addressStats.loading ? (
+      {addressStats.loading || !addressStats.data ? (
         <Loading />
       ) : (
         <AddressStatsView address={address} addressStats={addressStats.data} />
