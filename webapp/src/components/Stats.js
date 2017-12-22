@@ -217,7 +217,7 @@ function ParcelPosition({ parcel, index }) {
       <div className="position">
         #{index} <small>{lastParcelUpdate(parcel)}</small>
       </div>
-      <div className="mana">{asMana(parcel.amount.toLocaleString())}</div>
+      <div className="mana">{asMana(parcel.amount)}</div>
     </div>
   )
 }
@@ -244,7 +244,7 @@ function DistrictPosition({ district, index }) {
   return (
     <div>
       <div className="position">#{index}</div>
-      <div className="mana">{asLand(district.parcels.toLocaleString())}</div>
+      <div className="mana">{asLand(district.parcels)}</div>
     </div>
   )
 }

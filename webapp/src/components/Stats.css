@@ -80,15 +80,6 @@
   font-size: 16px;
 }
 
-.Stats .largest-bidders {
-  margin-top: 35px;
-}
-
-.Stats .largest-bidders .Definition {
-  margin-left: 7%;
-  width: 100%;
-}
-
 @media (min-width: 768px) {
   .Stats .Box .box-section {
     border-right: 1px solid #ECECEC;

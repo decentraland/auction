@@ -74,12 +74,12 @@ class StatsService {
   }
 
   async getAddressSummary(address) {
-    address = address.toLowerCase()
     const lockEvents = await LockedBalanceEvent.findByAddress(address)
     const lockedMana = await new AddressService().lockedMANABalanceOf(address)
     const submissions = await DistrictEntry.getSummarySubmissions(address)
     const winningBids = await ParcelState.findByAddress(address)
     const addressState = await AddressState.findByAddressWithBidGroups(address)
+
     return {
       lockedMana,
       lockEvents,
