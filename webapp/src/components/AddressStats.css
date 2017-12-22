@@ -8,67 +8,81 @@
 
 .AddressStats .content h1 {
   font-size: 36px;
-  margin-bottom: 15px;
+  margin-bottom: 45px;
   font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
   text-align: center;
 }
 
-.AddressStats h3 {
-  text-align: center;
-  font-size: 16pt;
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
 .AddressStats h4 {
-  text-align: center;
-  color: #999;
   margin-top: 5px;
   margin-bottom: 18px;
+  font-size: 24px;
+  color: #23527C;
 }
 
 .AddressStats .Box {
+  padding: 0;
   margin: auto;
-  margin-bottom: 30px;
+  margin-bottom: 65px;
+}
+
+.AddressStats .Box.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.AddressStats .Box .box-left {
+  border-bottom: 1px solid #ECECEC;
+  border-right: 1px solid #ECECEC;
+}
+
+.AddressStats .Box .box-right {
+  border-bottom: 1px solid #ECECEC;
+}
+
+.AddressStats .Definition dd {
+  font-size: 24px;
+  color: #23527C;
+}
+
+.AddressStats .Definition dt {
+  margin-bottom: 12px;
+}
+
+.AddressStats .Definition dt a {
+  font-weight: normal;
 }
 
 .AddressStats .title {
-  text-align: center;
-  font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+  margin-left: 15px;
+  color: #3E3A6B;
 }
 
-.AddressStats .lock-event {
+.AddressStats .definition-long-list {
+  margin-top: 1em;
+}
+
+.AddressStats .definition-long-list dt {
+  margin-bottom: 0;
+}
+
+.AddressStats .definition-long-list dd {
   margin-bottom: 15px;
-}
-
-.AddressStats .lock-event .tx-container {
   font-size: 16px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
-.AddressStats .lock-event .mana-container {
-  text-align: right;
-  padding-right: 18px;
+.AddressStats .definition-long-list .mana {
+  font-size: 24px;
+  color: #23527C;
 }
 
-.AddressStats .district-info {
-  margin-bottom: 15px;
+.AddressStats .definition-long-list small {
+  font-size: 15px;
+  color: #999;
 }
 
-.AddressStats .district-name {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.AddressStats .district-land {
-  overflow: hidden;
-  top: 2px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
+/*
 
 @media (max-width: 768px) {
   .AddressStats .winning-bids {
@@ -91,3 +105,4 @@
 .AddressStats .updated-at {
   text-align: left;
 }
+*/

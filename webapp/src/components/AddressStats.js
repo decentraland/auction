@@ -3,13 +3,14 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 
-import { stateData } from '../lib/propTypes'
 import locations from '../locations'
+import { stateData } from '../lib/propTypes'
+import { shortenAddress } from '../lib/util'
 
 import Box from './Box'
 import StaticPage from './StaticPage'
 import Loading from './Loading'
-import Definition from './Definition'
+import Definition, { DefinitionItem } from './Definition'
 
 import './AddressStats.css'
 
@@ -30,154 +31,218 @@ AddressStats.propTypes = {
   addressStats: stateData(PropTypes.object)
 }
 
-const updated = (a, b) =>
-  -(new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime())
-const price = (a, b) => -(a.amount - b.amount)
-
-function AddressStatsView({ address, addressStats }) {
-  const {
-    lockEvents,
-    lockedMana,
-    districtContributions,
-    winningBids
-  } = addressStats
-
-  const addressState = addressStats.addressState || {
-    balance: 0,
-    bidGroups: []
+class AddressStatsView extends React.Component {
+  getUpdatedSorter() {
+    return (a, b) =>
+      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   }
 
-  const { balance } = addressState
+  getPriceSorter() {
+    return (a, b) => b.amount - a.amount
+  }
 
-  const contributedDistrictsSummary = `${asLand(
-    lockedMana.totalLandMANA / 1000
-  )} (${asMana(lockedMana.totalLandMANA)})`
+  getContributedDistrictsSummary() {
+    const { lockedMana } = this.props.addressStats
 
-  const winningMap = {}
-  winningBids.forEach(parcel => {
-    winningMap[`${parcel.x},${parcel.y},${parcel.amount}`] = true
-  })
+    return `${asLand(lockedMana.totalLandMANA / 1000)} (${asMana(
+      lockedMana.totalLandMANA
+    )})`
+  }
 
-  const totalBid = asMana(winningBids.reduce((sum, e) => sum + +e.amount, 0))
-  const losing = item => !winningMap[`${item.x},${item.y},${item.amount}`]
+  getLosingBidFilter() {
+    const { winningBids } = this.props.addressStats
 
-  return (
-    <div className="container-fluid">
-      <h1>Terraform Auction: Address Summary</h1>
-      <h3>{address}</h3>
+    const winningMap = {}
+    winningBids.forEach(parcel => {
+      winningMap[`${parcel.x},${parcel.y},${parcel.amount}`] = true
+    })
 
-      <Box>
-        <h4>Address Summary</h4>
-        <div className="row">
-          <div className="col-xs-12 col-sm-6">
-            <Definition
-              title="Initial Balance"
-              description={asMana(
-                lockedMana.totalLockedMANA - lockedMana.totalLandMANA
+    return item => !winningMap[`${item.x},${item.y},${item.amount}`]
+  }
+
+  getTotalWinningBids() {
+    const { winningBids } = this.props.addressStats
+    return asMana(winningBids.reduce((sum, e) => sum + +e.amount, 0))
+  }
+
+  hasTerraformActivity() {
+    const { lockEvents, districtContributions } = this.props.addressStats
+    return lockEvents.length > 0 || districtContributions.length > 0
+  }
+
+  hasBids() {
+    const { winningBids } = this.props.addressStats
+    const { bidGroups } = this.getAddressState()
+    return winningBids.length > 0 || bidGroups.length > 0
+  }
+
+  getAddressState() {
+    return (
+      this.props.addressStats.addressState || {
+        balance: 0,
+        bidGroups: []
+      }
+    )
+  }
+
+  render() {
+    const { address, addressStats } = this.props
+    const {
+      lockEvents,
+      lockedMana,
+      districtContributions,
+      winningBids
+    } = addressStats
+
+    const { balance, bidGroups } = this.getAddressState()
+
+    return (
+      <div className="container-fluid">
+        <h1>Auction Address</h1>
+
+        <div>
+          <h4>Address: {address}</h4>
+          <Box className="row">
+            <div className="col-xs-12 col-sm-6 box-section">
+              <Definition
+                title="Initial Balance"
+                description={asMana(
+                  lockedMana.totalLockedMANA - lockedMana.totalLandMANA
+                )}
+              />
+              <Definition
+                title="Current Balance"
+                description={asMana(balance)}
+              />
+            </div>
+            <div className="col-xs-12 col-sm-6 box-section">
+              <Definition
+                title="MANA sent to Contract"
+                description={asMana(lockedMana.lockedInContract)}
+              />
+              <Definition
+                title="District Contributions"
+                description={this.getContributedDistrictsSummary()}
+              />
+            </div>
+          </Box>
+        </div>
+
+        {this.hasTerraformActivity() && (
+          <div>
+            <h4>Terraform Registration</h4>
+            <Box className="row">
+              {lockEvents.length > 0 && (
+                <div className="col-xs-12 col-sm-6 box-section definition-long-list">
+                  <div className="title">Confirmed transactions</div>
+                  <Definition>{lockEvents.map(LockEventItem)}</Definition>
+                </div>
               )}
-            />
-            <Definition title="Current Balance" description={asMana(balance)} />
-          </div>
-          <div className="col-xs-12 col-sm-6">
-            <Definition
-              title="MANA sent to Contract"
-              description={asMana(lockedMana.lockedInContract)}
-            />
-            <Definition
-              title="District Contributions"
-              description={contributedDistrictsSummary}
-            />
-          </div>
-        </div>
-      </Box>
 
-      <Box>
-        <h4>Terraform Registration</h4>
-        <div className="row">
-          <div className="col-xs-12 col-sm-6">
-            <div>
-              <div className="title">Confirmed transactions</div>
-              <Definition>{lockEvents.map(lockEventItem)}</Definition>
-            </div>
+              {districtContributions.length > 0 && (
+                <div className="col-xs-12 col-sm-6 box-section definition-long-list">
+                  <div className="title">District contributions</div>
+                  <Definition>
+                    {districtContributions.map(DistrictItem)}
+                  </Definition>
+                </div>
+              )}
+            </Box>
           </div>
-          <div className="col-xs-12 col-sm-6">
-            <div>
-              <div className="title">District contributions</div>
-              <Definition>{districtContributions.map(districtItem)}</Definition>
-            </div>
-          </div>
-        </div>
-      </Box>
+        )}
 
-      <Box>
-        <h4>Auction Bids</h4>
-        <div className="row">
-          <div className="col-xs-12 col-sm-6 winning-bids">
-            <div className="title">Winning bids ({totalBid})</div>
-            {winningBids
-              .sort(price)
-              .map((bid, index) => <ParcelWinItem key={index} {...bid} />)}
-          </div>
-          <div className="col-xs-12 col-sm-6">
-            <div className="title">Unsuccesful bids</div>
-            {addressState.bidGroups
-              .sort(updated)
-              .map(bidGroup => allBidsItem(bidGroup, losing))}
-          </div>
-        </div>
-      </Box>
-    </div>
-  )
-}
+        {this.hasBids() && (
+          <div>
+            <h4>Auction Bids</h4>
 
-function districtItem(item) {
-  return (
-    <div className="districtInfo">
-      <div className="row">
-        <div className="col-xs-9">
-          <strong>{item.name}</strong>
-        </div>
-        <div className="col-xs-3">{asLand(item.lands)}</div>
-        <div className="col-xs-12">
-          {moment(+item.userTimestamp).format('MMMM Do, h:mm:ss a')}
-        </div>
+            <Box className="row">
+              {winningBids.length > 0 && (
+                <div className="col-xs-12 col-sm-6 definition-long-list">
+                  <div className="title">
+                    Winning bids ({this.getTotalWinningBids()})
+                  </div>
+                  <Definition>
+                    {winningBids
+                      .sort(this.getPriceSorter())
+                      .map((bid, index) => (
+                        <ParcelWinItem key={index} {...bid} />
+                      ))}
+                  </Definition>
+                </div>
+              )}
+
+              {bidGroups.length > 0 && (
+                <div className="col-xs-12 col-sm-6 definition-long-list">
+                  <div className="title">Unsuccesful bids</div>
+                  <Definition>
+                    {bidGroups
+                      .sort(this.getUpdatedSorter())
+                      .map(bidGroup =>
+                        allBidsItem(bidGroup, this.getLosingBidFilter())
+                      )}
+                  </Definition>
+                </div>
+              )}
+            </Box>
+          </div>
+        )}
       </div>
-    </div>
-  )
+    )
+  }
 }
 
-function lockEventItem(item) {
+function LockEventItem(item, index) {
   return (
-    <div className="lock-event">
-      <div className="row">
-        <div className="col-xs-12 tx-container">
-          <a href={etherscan(item.txId)} target="_blank">
-            <tt>{item.txId}</tt>
-          </a>
-        </div>
-        <div className="col-xs-6">
-          {moment(item.createdAt).format('MMMM Do, h:mm:ss a')}
-        </div>
-        <div className="xs-col-xs-6 mana-container">{asMana(item.mana)}</div>
-      </div>
+    <div key={index} className="col-xs-12">
+      <DefinitionItem
+        title={
+          <div>
+            <Link to={getEtherscanLink(item.txId)}>
+              {shortenAddress(item.txId)}
+            </Link>
+            <small>{asFullDate(item.createdAt)}</small>
+          </div>
+        }
+        description={<div className="mana">{asMana(item.mana)}</div>}
+      />
     </div>
   )
 }
 
-function etherscan(tx) {
+function DistrictItem(item, index) {
+  return (
+    <div key={index} className="col-xs-12">
+      <DefinitionItem
+        title={<small>{asFullDate(+item.userTimestamp)}</small>}
+        description={
+          <div>
+            <div className="mana">{asLand(item.lands)}</div>
+            <Link to={item.link}>{item.name}</Link>
+          </div>
+        }
+      />
+    </div>
+  )
+}
+
+function getEtherscanLink(tx) {
   return 'https://etherscan.io/tx/' + tx
 }
 
 function ParcelWinItem(item) {
   return (
-    <div className="row parcel-item">
-      <div className="col-xs-4 parcel-link">
-        <Link to={locations.parcelDetail(item.x, item.y)}>
-          {item.x}, {item.y}
-        </Link>
-      </div>
-      <div className="col-xs-4 mana-amount">{asMana(item.amount)}</div>
-      <div className="col-xs-4 updated-at">{asDate(item.updatedAt)}</div>
+    <div className="col-xs-12">
+      <DefinitionItem
+        title={<small>{asDate(item.updatedAt)}</small>}
+        description={
+          <div>
+            <div className="mana">{asMana(item.amount)}</div>
+            <Link to={locations.parcelDetail(item.x, item.y)}>
+              {item.x}, {item.y}
+            </Link>
+          </div>
+        }
+      />
     </div>
   )
 }
@@ -197,6 +262,10 @@ function allBidsItem(item, losing) {
 
 function asDate(date) {
   return moment(date).format('ddd Do, H:mm')
+}
+
+function asFullDate(date) {
+  return moment(date).format('MMMM Do, h:mm:ss a')
 }
 
 function asMana(mana) {
