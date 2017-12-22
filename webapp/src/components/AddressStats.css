@@ -50,6 +50,7 @@
 }
 
 .AddressStats .Definition dt a {
+  display: block;
   font-weight: normal;
 }
 
