@@ -72,7 +72,8 @@ class StatsService {
 
       largestBidders: await ParcelState.findLargestBidders(10),
       pendingParcels: await ParcelState.countOpen(),
-      expectedEnd: await ParcelState.expectedEnd()
+      expectedEnd: await ParcelState.expectedEnd(),
+      recentlyUpdatedParcels: await ParcelState.recentlyUpdated()
     }
   }
 

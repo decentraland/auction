@@ -146,7 +146,20 @@ class ParcelState extends Model {
       `SELECT MAX(${this.tableName}."endsAt") as end
         FROM ${this.tableName}`
     )
-    return result.length ? result[0].end : 0
+    if (!result.length) return 0
+    const date = result[0].end
+    return date.getTime() - date.getTimezoneOffset() * 60 * 1000
+  }
+
+  static async recentlyUpdated() {
+    return (await this.db.query(
+      `SELECT  "${this.tableName}".* FROM ${this.tableName}
+        ORDER BY "${this.tableName}"."updatedAt" DESC
+        LIMIT 5`
+    )).map(e => {
+      e.updatedAt.setTime(e.updatedAt.getTime() - e.updatedAt.getTimezoneOffset() * 60 * 1000)
+      return e
+    })
   }
 
   static async insert(parcelState) {

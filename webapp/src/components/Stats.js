@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { env } from 'decentraland-commons'
 
 import locations from '../locations'
 import { stateData } from '../lib/propTypes'
@@ -12,6 +13,8 @@ import Loading from './Loading'
 import Definition, { DefinitionItem } from './Definition'
 
 import './Stats.css'
+
+const AUCTION_END = new Date(env.get('REACT_APP_AUCTION_END', 1513980000000))
 
 export default function Stats({ stats }) {
   return (
@@ -37,8 +40,11 @@ function StatsView({ stats }) {
     biggestDistricts,
     largestBidders,
     pendingParcels,
-    expectedEnd
+    expectedEnd,
+    recentlyUpdatedParcels
   } = stats
+
+  const auctionEnded = new Date().getTime() > AUCTION_END.getTime()
 
   return (
     <div className="container-fluid">
@@ -78,17 +84,43 @@ function StatsView({ stats }) {
               title="Average Price (all parcels)"
               description={asMana(averageWinningBid)}
             />
+          </div>
+        </div>
+      </Box>
+
+      { auctionEnded &&
+      <Box>
+        <h4>Pending Bids before Auction Ends</h4>
+        <div className="row">
+          <div className="col-xs-12 col-sm-6">
             <Definition
               title="Pending Parcel Auctions"
               description={asLand(pendingParcels)}
             />
+          </div>
+          <div className="col-xs-12 col-sm-6">
             <Definition
-              title="Auction End Date"
+              title="Auction Expected End Time"
               description={formatAsHoursAndMinutes(expectedEnd)}
             />
           </div>
+          <div className="col-xs-12 col-sm-12 text-center">
+            <div className="title text-center">Most recent bids</div>
+            <Definition>
+              {recentlyUpdatedParcels.map((parcel, index) => (
+                <DefinitionItem
+                  key={index}
+                  title={
+                    <Link to={getHrefForCoords(parcel.x, parcel.y)}>{parcel.x}, {parcel.y}</Link>
+                  }
+                  description={`${deltaTimeAsHoursAndMinutes(new Date().getTime() - new Date(parcel.updatedAt).getTime())} ago`}
+                />
+              ))}
+            </Definition>
+          </div>
         </div>
       </Box>
+      }
 
       <div className="row">
         <div className="col-xs-12 col-sm-4">
@@ -160,7 +192,11 @@ function StatsView({ stats }) {
 }
 
 function getHref(id) {
-  return locations.parcelDetail(...splitCoordinate(id))
+  return getHrefForCoords(...splitCoordinate(id))
+}
+
+function getHrefForCoords(x, y) {
+  return locations.parcelDetail(x, y)
 }
 
 function formatAsHoursAndMinutes(timestamp) {
@@ -174,7 +210,14 @@ function formatAsHoursAndMinutes(timestamp) {
 function deltaTimeAsHoursAndMinutes(delta) {
   const hours = Math.floor(delta / (60 * 60 * 1000))
   const minutes = Math.floor(delta / (60 * 1000)) % 60
-  return `${hours} hours and ${minutes} minutes`
+  if (hours === 0 && minutes === 0) {
+    return `less than a minute`
+  }
+  if (hours === 0) {
+    return `${minutes} minute${minutes > 1 ? 's' : ''}`
+  }
+  return `${hours} hour${hours > 1 ? 's' : ''
+    } and ${minutes} minute${minutes > 1 ? 's' : ''}`
 }
 
 function asMana(mana) {
