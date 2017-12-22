@@ -61,8 +61,8 @@ async function main() {
       }
       try {
         await db.client.query('COMMIT')
-      } catch(e) {
-        console.log(`Error saving info!`)
+      } catch (e) {
+        log.error('Error saving info!')
       }
     }
   } catch (err) {
