@@ -90,6 +90,9 @@ export default {
     await this.createIndex('parcel_states', 'parcel_states_ends_at_idx', [
       '"endsAt"'
     ])
+    await this.createIndex('parcel_states', 'parcel_states_amount_idx', [
+      'amount'
+    ])
 
     await this.createTable(
       'projects',
