@@ -211,7 +211,7 @@ function ParcelPosition({ parcel, index }) {
   return (
     <div>
       <div className="position">
-        #{index}th <small>{lastParcelUpdate(parcel)}</small>
+        #{index} <small>{lastParcelUpdate(parcel)}</small>
       </div>
       <div className="mana">{asMana(parcel.amount.toLocaleString())}</div>
     </div>
@@ -221,7 +221,7 @@ function ParcelPosition({ parcel, index }) {
 function BidPosition({ bid, index }) {
   return (
     <div>
-      <div className="position">#{index}th</div>
+      <div className="position">#{index}</div>
       <div className="mana">{asMana(bid.amount)}</div>
     </div>
   )
@@ -230,7 +230,7 @@ function BidPosition({ bid, index }) {
 function ParcelBidPosition({ parcel, index }) {
   return (
     <div>
-      <div className="position">#{index}th</div>
+      <div className="position">#{index}</div>
       <div className="mana">{parcel.count} bids</div>
     </div>
   )
@@ -239,7 +239,7 @@ function ParcelBidPosition({ parcel, index }) {
 function DistrictPosition({ district, index }) {
   return (
     <div>
-      <div className="position">#{index}th</div>
+      <div className="position">#{index}</div>
       <div className="mana">{asLand(district.parcels.toLocaleString())}</div>
     </div>
   )
