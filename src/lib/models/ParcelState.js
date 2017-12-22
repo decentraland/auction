@@ -132,6 +132,36 @@ class ParcelState extends Model {
     return result.length ? result[0].avg : 0
   }
 
+  static async countOpen() {
+    const result = await this.db.query(
+      `SELECT COUNT(*) as count
+        FROM ${this.tableName}
+        WHERE ${this.tableName}."endsAt" > NOW()`
+    )
+    return result.length ? result[0].count : 0
+  }
+
+  static async expectedEnd() {
+    const result = await this.db.query(
+      `SELECT MAX(${this.tableName}."endsAt") as end
+        FROM ${this.tableName}`
+    )
+    if (!result.length) return 0
+    const date = result[0].end
+    return date.getTime() - date.getTimezoneOffset() * 60 * 1000
+  }
+
+  static async recentlyUpdated() {
+    return (await this.db.query(
+      `SELECT  "${this.tableName}".* FROM ${this.tableName}
+        ORDER BY "${this.tableName}"."updatedAt" DESC
+        LIMIT 5`
+    )).map(e => {
+      e.updatedAt.setTime(e.updatedAt.getTime() - e.updatedAt.getTimezoneOffset() * 60 * 1000)
+      return e
+    })
+  }
+
   static async insert(parcelState) {
     const { x, y } = parcelState
     parcelState.id = ParcelState.hashId(x, y)
