@@ -14,3 +14,14 @@ UPDATE address_states SET address='0x1fCE36dDBB058757851D9391E65606cE4EBcaE8A' W
   Tried to stake on Oct. 31 but lock transaction took too long -- Bonus of 500 MANA
 */
 UPDATE address_states SET balance=(balance::int * 1.1)::text WHERE address='0x80ACB88C37422c7A8A132ce260b0040b02645DDb';
+
+
+/**
+ * After Auction
+ {
+"address": "0x6e129c4bef43eb234a10b969f15bc564511bec6c",
+"msg": "My address has been compromised. Please, for the Decentraland auction, use this new address: 0xfA6236e28e9Af20424d2a16Daccd481B63375473. Time: 17:02 GMT+1 22/12/2017",
+"sig": "0x8f2446b0a2fa301da7ae7191d429847cc28ca8bfc1cef29880417d41a826f12f684668186dc3bdb6baf3fc72209cc8ab662478297197c9b7a765e184c9838d9a1b",
+"version": "2"
+}
+ */
