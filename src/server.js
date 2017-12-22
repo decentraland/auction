@@ -259,38 +259,39 @@ export async function postBidGroup(req) {
   }
   const time = new Date().getTime()
   lock = true
-  await db.client.query('BEGIN')
-  await db.client.query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
 
-  const { bidGroup, error } = await new BidService().processBidGroup(
-    newBidGroup
-  )
+  let bidGroup, error, logicError
 
-  if (error) {
-    const serverError = new Error(`
-      An error occurred trying to bid.
-      Received: ${JSON.stringify(newBidGroup)}
-      Error: ${JSON.stringify(error)}
-    `)
-    serverError.data = error
-    try {
-      await db.client.query('COMMIT')
-    } catch (error) {
-      console.log('Error saving info', bidGroup, error.stack)
-      await db.client.connect()
-    }
-    lock = false
-    throw serverError
-  }
-
-  await new BidReceiptService().sign(bidGroup)
   try {
+    await db.client.query('BEGIN')
+    await db.client.query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE')
+    { bidGroup, error } = await new BidService().processBidGroup(
+      newBidGroup
+    )
+
+    if (error) {
+      logicError = new Error(`
+        An error occurred trying to bid.
+        Received: ${JSON.stringify(newBidGroup)}
+        Error: ${JSON.stringify(error)}
+      `)
+      logicError.data = error
+      console.log('Error saving info', bidGroup, error.stack)
+    }
+
+    await new BidReceiptService().sign(bidGroup)
     await db.client.query('COMMIT')
-  } catch (error) {
-    console.log('Error commiting!', bidGroup, error.stack)
+
+  } catch (err) {
+    await db.client.query('ROLLBACK')
+    throw new Error(`Unable to create transaction`)
+  } finally {
+    lock = false
+    console.log('[Server] Request handled in time:', new Date().getTime() - time)
+    if (logicError) {
+      throw logicError
+    }
   }
-  console.log('[Server] Request handled in time:', new Date().getTime() - time)
-  lock = false
 
   return true
 }
