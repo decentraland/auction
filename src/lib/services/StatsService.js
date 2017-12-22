@@ -52,24 +52,57 @@ class StatsService {
   }
 
   async getGlobalSummary(address) {
+    const [
+      totalMana,
+      totalLand,
+      manaSpentOnBids,
+
+      mostExpensiveBids,
+      averageWinningBidCenter,
+      averageWinningBid,
+
+      mostPopularParcels,
+      biggestDistricts,
+
+      largestBidders,
+      pendingParcels,
+      expectedEnd,
+      recentlyUpdatedParcels
+    ] = await Promise.all([
+      LockedBalanceEvent.getTotalLockedMana(),
+      DistrictEntry.getTotalLand(),
+      ParcelState.getTotalAmount(),
+
+      ParcelState.findExpensive(6),
+      ParcelState.averageWinningBidBetween([-22, -16], [22, 16]),
+      ParcelState.averageWinningBid(),
+
+      Bid.findPopular(6),
+      Project.findBiggest(6),
+
+      ParcelState.findLargestBidders(10),
+      ParcelState.countOpen(),
+      ParcelState.expectedEnd(),
+      ParcelState.recentlyUpdated()
+    ])
+
     return {
-      totalMana: await LockedBalanceEvent.getTotalLockedMana(),
-      totalLand: await DistrictEntry.getTotalLand(),
-      manaSpentOnBids: await ParcelState.getTotalAmount(),
+      totalMana,
+      totalLand,
+      manaSpentOnBids,
 
-      averageWinningBidCenter: await ParcelState.averageWinningBidBetween(
-        [-22, -16],
-        [22, 16]
-      ),
-      averageWinningBid: await ParcelState.averageWinningBid(),
+      mostExpensiveBid: mostExpensiveBids.length && mostExpensiveBids[0].amount,
+      averageWinningBidCenter,
+      averageWinningBid,
 
-      mostExpensiveBids: await ParcelState.findExpensive(6),
-      mostPopularParcels: await Bid.findPopular(6),
-      biggestDistricts: await Project.findBiggest(6),
+      mostExpensiveBids,
+      mostPopularParcels,
+      biggestDistricts,
 
-      pendingParcels: await ParcelState.countOpen(),
-      expectedEnd: await ParcelState.expectedEnd(),
-      recentlyUpdatedParcels: await ParcelState.recentlyUpdated(6)
+      largestBidders,
+      pendingParcels,
+      expectedEnd: expectedEnd,
+      recentlyUpdatedParcels
     }
   }
 
