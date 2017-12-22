@@ -68,7 +68,7 @@ function StatsView({ stats }) {
           <div className="col-xs-12 col-sm-4 box-section">
             <Definition
               title="District Lands"
-              description={`${asLand(36031)}`}
+              description={`${asLand(36041)}`}
             />
           </div>
           <div className="col-xs-12 col-sm-4 box-section">

@@ -54,7 +54,7 @@ class StatsService {
   async getGlobalSummary(address) {
     const [
       totalMana,
-      totalLand,
+      parcelSummary,
       manaSpentOnBids,
 
       mostExpensiveBids,
@@ -70,7 +70,7 @@ class StatsService {
       recentlyUpdatedParcels
     ] = await Promise.all([
       LockedBalanceEvent.getTotalLockedMana(),
-      DistrictEntry.getTotalLand(),
+      ParcelState.summary(),
       ParcelState.getTotalAmount(),
 
       ParcelState.findExpensive(6),
@@ -88,7 +88,7 @@ class StatsService {
 
     return {
       totalMana,
-      totalLand,
+      totalLand: parcelSummary.count,
       manaSpentOnBids,
 
       mostExpensiveBid: mostExpensiveBids.length && mostExpensiveBids[0].amount,
