@@ -56,7 +56,7 @@ class AddressState extends Model {
 
   static addBalance(address, balance) {
     return this.db.query(
-      `UPDATE ${AddressState.tableName} SET balance = (balance::int + $1)::text WHERE address = $2`,
+      `UPDATE ${AddressState.tableName} SET balance = (balance::float + $1)::int::text WHERE address = $2`,
       [balance, address]
     )
   }
