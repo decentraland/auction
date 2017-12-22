@@ -14,18 +14,20 @@ async function exportAddress() {
   const parcelStates = await ParcelState.findByAddress(address.toLowerCase())
   parcelStates.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount)) // in-memory sort...I know I know
 
-  const csv = ['Parcel,Amount,Date']
+  const csv = ['Parcel,Amount (MANA),Date']
   let total = 0
 
   for (const parcel of parcelStates) {
     csv.push(
-      `"${parcel.id}",${parcel.amount} MANA,"${parcel.updatedAt.toLocaleString()}"`
+      `"${parcel.id}",${parcel.amount},"${parcel.updatedAt.toLocaleString()}"`
     )
     total += parseFloat(parcel.amount)
   }
 
   csv.push(`TOTAL,${total}`)
-  csv.push(`For more info,visit,https://auction.decentraland.org/addressStats/${address}`)
+  csv.push(
+    `For more info,visit,https://auction.decentraland.org/addressStats/${address}`
+  )
 
   const fileName = `${address}.csv`
   fs.writeFileSync(fileName, csv.join('\r\n'), 'utf8')
