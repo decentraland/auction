@@ -199,7 +199,7 @@ function LockEventItem(item, index) {
           <div>
             <Link to={getEtherscanLink(item.txId)}>
               {shortenAddress(item.txId)}
-            </Link>
+            </Link> &nbsp;
             <small>{asFullDate(item.createdAt)}</small>
           </div>
         }
