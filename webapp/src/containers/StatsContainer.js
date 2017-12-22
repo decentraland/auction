@@ -22,7 +22,9 @@ class StatsContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.stats.error) {
+    const { stats } = nextProps
+
+    if (!stats.loading && (!stats.data || !!stats.error)) {
       this.props.navigateTo(locations.root)
     }
   }

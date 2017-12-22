@@ -19,7 +19,11 @@ const AUCTION_END = new Date(env.get('REACT_APP_AUCTION_END', 1513980000000))
 export default function Stats({ stats }) {
   return (
     <StaticPage className="StaticPageStreched Stats">
-      {stats.loading ? <Loading /> : <StatsView stats={stats.data} />}
+      {stats.loading || !stats.data ? (
+        <Loading />
+      ) : (
+        <StatsView stats={stats.data} />
+      )}
     </StaticPage>
   )
 }
