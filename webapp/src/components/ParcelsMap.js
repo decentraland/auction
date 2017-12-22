@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import L from 'leaflet'
 import debounce from 'lodash.debounce'
+import { env } from 'decentraland-commons'
 
 import { buildCoordinate } from '../lib/util'
 import * as parcelUtils from '../lib/parcelUtils'
@@ -228,6 +229,10 @@ export default class ParcelsMap extends React.Component {
     }
   }
 
+  hasAuctionEnded() {
+    return new Date().getTime() > new Date(env.get('AUCTION_END', 1513980000000)).getTime()
+  }
+
   // Called by the Parcel Grid on each tile render
   getTileAttributes = center => {
     const { x, y } = this.mapCoordinates.latLngToCartesian(center)
@@ -264,7 +269,8 @@ export default class ParcelsMap extends React.Component {
       !parcel ||
       parcel.error ||
       parcelUtils.isReserved(parcel) ||
-      parcelUtils.hasEnded(parcel)
+      parcelUtils.hasEnded(parcel) ||
+      (!parcel.amount && this.hasAuctionEnded())
 
     if (unBiddable) return
 
