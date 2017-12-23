@@ -83,11 +83,7 @@ export default class PendingConfirmationBidsTable extends React.Component {
         ).toLocaleDateString()}`
         break
       case 'INSUFFICIENT_INCREMENT':
-        message = `The bid of ${
-          error.bidAmount
-        } MANA on ${parcelId} is not enough. The minimum is ${
-          error.minimumAmount
-        } MANA`
+        message = `The bid of ${error.bidAmount} MANA on ${parcelId} is not enough. The minimum is ${error.minimumAmount} MANA`
         break
       default:
         message = ''
