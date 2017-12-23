@@ -230,7 +230,10 @@ export default class ParcelsMap extends React.Component {
   }
 
   hasAuctionEnded() {
-    return new Date().getTime() > new Date(env.get('AUCTION_END', 1513980000000)).getTime()
+    return (
+      new Date().getTime() >
+      new Date(env.get('AUCTION_END', 1513980000000)).getTime()
+    )
   }
 
   // Called by the Parcel Grid on each tile render
