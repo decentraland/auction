@@ -151,7 +151,7 @@ function RecentlyUpdatedParcels({ recentlyUpdatedParcels }) {
           <DefinitionItem
             title={<ParcelPosition parcel={parcel} index={index + 1} />}
             description={
-              <Link to={getHref(parcel.parcelId)}>
+              <Link to={getHref(parcel.id)}>
                 {parcel.x}, {parcel.y}
               </Link>
             }
