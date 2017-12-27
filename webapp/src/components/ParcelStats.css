@@ -19,6 +19,12 @@
   color: #23527C;
 }
 
+.ParcelStats .empty {
+  padding-top: 15px;
+  padding-left: 15px;
+  font-size: 16px;
+}
+
 .ParcelStats .Box {
   padding: 0;
   margin: auto;
@@ -28,15 +34,6 @@
 .ParcelStats .Box.row {
   display: flex;
   flex-wrap: wrap;
-}
-
-.ParcelStats .Box .box-left {
-  border-bottom: 1px solid #ECECEC;
-  border-right: 1px solid #ECECEC;
-}
-
-.ParcelStats .Box .box-right {
-  border-bottom: 1px solid #ECECEC;
 }
 
 .ParcelStats .Definition dd {
@@ -81,10 +78,6 @@
 }
 
 @media (min-width: 768px) {
-  .ParcelStats .Box .box-section {
-    border-right: 1px solid #ECECEC;
-  }
-
   .ParcelStats .Box .Definition {
     padding-left: 15px;
   }

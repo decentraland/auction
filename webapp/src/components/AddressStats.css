@@ -82,28 +82,3 @@
   font-size: 15px;
   color: #999;
 }
-
-/*
-
-@media (max-width: 768px) {
-  .AddressStats .winning-bids {
-    margin-bottom: 20px;
-  }
-}
-
-.AddressStats .parcel-link {
-  text-align: right;
-}
-.AddressStats .mana-amount {
-  text-align: center;
-}
-.AddressStats .header {
-  font-weight: bold;
-}
-.AddressStats .parcel-item.header {
-  margin-bottom: 5px;
-}
-.AddressStats .updated-at {
-  text-align: left;
-}
-*/

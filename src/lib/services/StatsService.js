@@ -53,7 +53,6 @@ class StatsService {
 
   async getGlobalSummary(address) {
     const [
-      totalMana,
       parcelSummary,
       manaSpentOnBids,
 
@@ -64,12 +63,10 @@ class StatsService {
       mostPopularParcels,
       biggestDistricts,
 
-      largestBidders,
       pendingParcels,
       expectedEnd,
       recentlyUpdatedParcels
     ] = await Promise.all([
-      LockedBalanceEvent.getTotalLockedMana(),
       ParcelState.summary(),
       ParcelState.getTotalAmount(),
 
@@ -80,18 +77,15 @@ class StatsService {
       Bid.findPopular(6),
       Project.findBiggest(6),
 
-      ParcelState.findLargestBidders(10),
       ParcelState.countOpen(),
       ParcelState.expectedEnd(),
       ParcelState.recentlyUpdated()
     ])
 
     return {
-      totalMana,
       totalLand: parcelSummary.count,
       manaSpentOnBids,
 
-      mostExpensiveBid: mostExpensiveBids.length && mostExpensiveBids[0].amount,
       averageWinningBidCenter,
       averageWinningBid,
 
@@ -99,9 +93,8 @@ class StatsService {
       mostPopularParcels,
       biggestDistricts,
 
-      largestBidders,
       pendingParcels,
-      expectedEnd: expectedEnd,
+      expectedEnd,
       recentlyUpdatedParcels
     }
   }
@@ -123,7 +116,11 @@ class StatsService {
   }
 
   async getParcelSummary(x, y) {
-    return await this.getGlobalSummary()
+    const id = ParcelState.hashId(x, y)
+
+    return {
+      parcelState: await ParcelState.findFullById(id)
+    }
   }
 }
 
