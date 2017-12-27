@@ -74,7 +74,7 @@ export default function AddressErrorPage({ address }) {
         <br />
 
         {address && (
-          <Link to={locations.addressDetails(address)}>
+          <Link to={locations.addressStatsDetails(address)}>
             Visit your address stats
           </Link>
         )}

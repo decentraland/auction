@@ -69,7 +69,7 @@ function UserData({ addressState, ongoingAuctions }) {
         <div className="mana-value">
           {addressState.data.balance} MANA
           <Link
-            to={locations.addressDetails(addressState.data.address)}
+            to={locations.addressStatsDetails(addressState.data.address)}
             className="pull-right"
           >
             See your stats

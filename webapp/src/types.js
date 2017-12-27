@@ -66,6 +66,12 @@ export default {
     failed: '[Failed] Failed to fetch address stats'
   },
 
+  fetchParcelStats: {
+    request: '[Request] Fetch parcel stats requested',
+    success: '[Success] Parcel stats fetched',
+    failed: '[Failed] Failed to fetch parcel stats'
+  },
+
   modal: {
     open: 'Open Modal',
     close: 'Close Modal'

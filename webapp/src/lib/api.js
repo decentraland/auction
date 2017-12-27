@@ -61,6 +61,10 @@ class API {
     return this.request('get', `/addressStats/${address}`, {})
   }
 
+  fetchParcelStats(x, y) {
+    return this.request('get', `/parcelStats/${x}/${y}`, {})
+  }
+
   request(method, path, params) {
     let options = {
       method,

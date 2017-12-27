@@ -121,6 +121,10 @@ class StatsService {
       addressState
     }
   }
+
+  async getParcelSummary(x, y) {
+    return await this.getGlobalSummary()
+  }
 }
 
 export default StatsService

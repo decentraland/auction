@@ -34,7 +34,7 @@ export default function ParcelPopup(props) {
 
         {parcel.address && (
           <div className="address-link">
-            <a href={locations.addressDetails(parcel.address)} target="_blank">
+            <a href={locations.addressStatsDetails(parcel.address)} target="_blank">
               {shortenAddress(parcel.address)}
             </a>
           </div>
