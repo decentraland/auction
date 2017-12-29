@@ -3,7 +3,13 @@ import BidGroup from './BidGroup'
 
 class AddressState extends Model {
   static tableName = 'address_states'
-  static columnNames = ['address', 'balance', 'latestBidGroupId', 'email']
+  static columnNames = [
+    'address',
+    'balance',
+    'latestBidGroupId',
+    'email',
+    'returnAmount'
+  ]
 
   static async findByAddress(address) {
     return this.findOne({ address })

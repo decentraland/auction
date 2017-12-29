@@ -26,33 +26,26 @@ async function checkBalances() {
   let mismatch = 0
   let total = 0
   for (const address of addresses) {
-    // get initial balance
-    const lockedMANA = await addressService.lockedMANABalanceOf(address)
-    const initialBalance = lockedMANA.totalLockedMANA - lockedMANA.totalLandMANA
+    try {
+      const {
+        initialBalance,
+        currentBalance,
+        bidding,
+        parcels,
+        isMatch
+      } = await addressService.checkBalance(address)
 
-    // get current balance
-    const addressState = await AddressState.findByAddress(address)
-    if (addressState) {
-      total += 1
-      const currentBalance = addressState.balance
-
-      // get bids
-      const winningParcels = await ParcelState.findByAddress(address)
-      const bidding = winningParcels.reduce(
-        (sum, item) => sum + parseInt(item.amount, 10),
-        0
-      )
-
-      // balance mismatch
-      if (initialBalance - bidding != currentBalance) {
+      if (!isMatch) {
         mismatch += 1
         log.info(
           `(${address}) init:${initialBalance}\tbids:${bidding}\tcurrent:${currentBalance}\tcalc:${initialBalance -
-            bidding}\twinning:${winningParcels.length}`
+            bidding}\twinning:${parcels.length}`
         )
       }
-    } else {
-      log.warn(`(${address}) address state not found!`)
+
+      total += 1
+    } catch (err) {
+      log.error(err.message)
     }
   }
   log.info(`Found ${mismatch} discrepancies out of ${total} addresses`)
