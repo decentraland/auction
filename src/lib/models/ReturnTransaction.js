@@ -13,6 +13,10 @@ class ReturnTransaction extends Model {
   static findByAddress(address) {
     return this.findOne({ address })
   }
+
+  static findAllByAddress(address) {
+    return this.find({ address })
+  }
 }
 
 export default ReturnTransaction

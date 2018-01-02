@@ -4,8 +4,8 @@ import minimist from 'minimist'
 import { eth, env, Log } from 'decentraland-commons'
 import db from '../src/lib/db'
 import {
+  AddressState,
   BuyTransaction,
-  LockedBalanceEvent,
   ParcelState,
   ReturnTransaction
 } from '../src/lib/models'
@@ -13,53 +13,11 @@ import AddressService from '../src/lib/services/AddressService'
 
 const log = new Log('LoadBids')
 
+// TODO add function to return MANA to one address
+
 env.load()
 
 const DEFAULT_BATCH_SIZE = 20
-
-//The maximum is inclusive and the minimum is inclusive
-const getRandomInt = (min, max) => {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
-
-// Load test parcels
-const initTestParcels = async () => {
-  const configs = [
-    {
-      address: '0x1',
-      count: 50
-    },
-    {
-      address: '0x2',
-      count: 10
-    }
-  ]
-
-  try {
-    await ParcelState.db.query('DELETE FROM parcel_states')
-
-    let j = 0
-    for (const config of configs) {
-      for (let i = 0; i < config.count; i++) {
-        await ParcelState.insert({
-          x: j * 1000 + i,
-          y: j * 1000 + i,
-          amount: String(getRandomInt(1000, 10000)),
-          address: config.address,
-          endsAt: new Date(),
-          bidGroupId: 1,
-          bidIndex: 0,
-          projectId: null
-        })
-      }
-      j++
-    }
-  } catch (err) {
-    log.error(err)
-  }
-}
 
 const setIntervalAndExecute = (fn, t) => {
   fn()
@@ -154,9 +112,7 @@ const buildBuyTxData = (address, parcels) => {
     .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0))
 
   log.info(
-    `(proc) [${address}] ${
-      parcels.length
-    } bids found = total cost: ${totalCost}`
+    `(proc) [${address}] ${parcels.length} bids found = total cost: ${totalCost}`
   )
   log.info(`(proc) [${address}] X- > ${JSON.stringify(X)}`)
   log.info(`(proc) [${address}] Y -> ${JSON.stringify(Y)}`)
@@ -178,9 +134,7 @@ const findParcelsToBuy = async (address, batchSize) => {
       .splice(0, batchSize)
 
     log.info(
-      `(proc) [${address}] Progress => ${doneParcels.length} out of ${
-        parcels.length
-      } = selected ${sendParcels.length}`
+      `(proc) [${address}] Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}`
     )
     return sendParcels
   } catch (err) {
@@ -279,58 +233,82 @@ const loadAllParcels = async (contract, batchSize) => {
   }
 }
 
+const updateReturnMANA = async () => {
+  const addressService = new AddressService()
+
+  // get all addresses
+  const addresses = await AddressState.find().then(rows =>
+    rows.map(row => row.address)
+  )
+
+  for (const address of addresses) {
+    try {
+      // validate balance
+      const { currentBalance, isMatch } = await addressService.checkBalance(
+        address
+      )
+      if (!isMatch) {
+        throw new Error(`${address} balance mismatch`)
+      }
+
+      // calculate withdrawn amount
+      const returnTxs = await ReturnTransaction.findAllByAddress(address)
+      const withdrawnAmountWei = returnTxs
+        .map(tx => eth.utils.toBigNumber(tx.amount))
+        .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0))
+
+      // calculate return amount
+      // TODO take into account discounts
+      const returnAmountWei = eth.web3.toWei(
+        eth.utils.toBigNumber(currentBalance)
+      )
+
+      // update state
+      await AddressState.update(
+        {
+          returnAmount: returnAmountWei.toString(10),
+          withdrawnAmount: withdrawnAmountWei.toString(10)
+        },
+        { address }
+      )
+    } catch (err) {
+      log.error(err.message)
+    }
+  }
+}
+
 const returnAllMANA = async contract => {
   try {
-    // get all addresses that locked MANA
-    const addresses = await LockedBalanceEvent.getLockedAddresses()
+    // loop all address states
+    const addressStates = await AddressState.find()
+    for (const addressState of addressStates) {
+      const address = addressState.address
 
-    for (const address of addresses) {
-      // if already sent avoid
-      const returnTx = await ReturnTransaction.findByAddress(address)
-      if (returnTx) {
-        log.info(`(return) [${address}] TX already sent for address`)
-        continue
-      }
-
-      // get locked MANA including discounts
-      const { totalLockedMANA } = await AddressService.lockedMANABalanceOf(
-        address
+      const returnAmountWei = eth.utils.toBigNumber(addressState.returnAmount)
+      const withdrawnAmountWei = eth.utils.toBigNumber(
+        addressState.withdrawnAmount
       )
-      log.info(`(return) [${address}] locked(${totalLockedMANA})`)
-
-      // get burned MANA by all buy transactions
-      const totalBurnedMANA = await BuyTransaction.totalBurnedMANAByAddress(
-        address
-      )
-
-      // total MANA reserved
-      log.info(`(return) [${address}] reserved(${totalLockedMANA})`)
 
       // calculate remaining MANA to return
-      const remainingMANA = eth.web3
-        .toWei(eth.utils.toBigNumber(totalLockedMANA))
-        .minus(totalBurnedMANA)
+      const remainingAmountWei = returnAmountWei.minus(withdrawnAmountWei)
+
+      // total MANA to return
+      log.info(
+        `(return) [${address}] remaining(${remainingAmountWei.toString(10)})`
+      )
 
       // send tx
-      if (remainingMANA > 0) {
-        log.info(
-          `(return) [${address}] burned(${totalBurnedMANA.toString(
-            10
-          )}) = ${remainingMANA.toString(10)}`
-        )
-        const txId = await contract.transferBackMANA(address, remainingMANA)
-        txQueue.addPendingTx(txId)
+      log.info(`(return) [${address}] = ${remainingAmountWei.toString(10)}`)
+      const txId = await contract.transferBackMANA(address, remainingAmountWei)
+      txQueue.addPendingTx(txId)
 
-        log.info(`(return) [${address}] Broadcasted tx : ${txId}`)
-        await ReturnTransaction.insert({
-          txId,
-          address,
-          amount: remainingMANA.toString(10),
-          status: 'pending'
-        })
-      } else {
-        log.error(`(return) [${address}] Remaining MANA is below 0`)
-      }
+      log.info(`(return) [${address}] Broadcasted tx : ${txId}`)
+      await ReturnTransaction.insert({
+        txId,
+        address,
+        amount: remainingAmountWei.toString(10),
+        status: 'pending'
+      })
     }
   } catch (err) {
     log.error(err)
@@ -353,7 +331,6 @@ async function main() {
     // init
     await db.connect()
     await eth.connect('', '', { httpProviderUrl: 'http://localhost:18545' })
-    await initTestParcels()
 
     const contract = eth.getContract('LANDTerraformSale')
     log.info(`Using LANDTerraformSale contract at address ${contract.address}`)
@@ -375,6 +352,8 @@ async function main() {
     } else if (argv.returnmana === true) {
       setupBlockWatch('latest', ReturnTransaction)
       await returnAllMANA(contract)
+    } else if (argv.returnupdate === true) {
+      await updateReturnMANA()
     } else {
       console.log(
         'Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnmana'

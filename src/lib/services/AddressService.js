@@ -97,6 +97,7 @@ export default class AddressService {
     const { bidding, parcels } = await this.getWinningParcels(address)
 
     return {
+      addressState: addressState,
       initialBalance: initialBalance,
       currentBalance: currentBalance,
       bidding: bidding,
