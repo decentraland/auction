@@ -90,18 +90,23 @@ export default class AddressService {
     const currentBalance = addressState.balance
 
     // get initial balance
-    const lockedMANA = await this.lockedMANABalanceOf(address)
-    const initialBalance = lockedMANA.totalLockedMANA - lockedMANA.totalLandMANA
+    const {
+      totalLockedMANA,
+      totalLandMANA,
+      lockedInContract
+    } = await this.lockedMANABalanceOf(address)
+    const initialBalance = totalLockedMANA - totalLandMANA
 
     // get bids
     const { bidding, parcels } = await this.getWinningParcels(address)
 
     return {
-      addressState: addressState,
-      initialBalance: initialBalance,
-      currentBalance: currentBalance,
-      bidding: bidding,
-      parcels: parcels,
+      addressState,
+      initialBalance,
+      currentBalance,
+      lockedInContract,
+      bidding,
+      parcels,
       isMatch: initialBalance - bidding == currentBalance
     }
   }

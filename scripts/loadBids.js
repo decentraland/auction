@@ -244,9 +244,13 @@ const updateReturnMANA = async () => {
   for (const address of addresses) {
     try {
       // validate balance
-      const { currentBalance, isMatch } = await addressService.checkBalance(
-        address
-      )
+      const {
+        initialBalance,
+        currentBalance,
+        bidding,
+        lockedInContract,
+        isMatch
+      } = await addressService.checkBalance(address)
       if (!isMatch) {
         throw new Error(`${address} balance mismatch`)
       }
@@ -258,10 +262,15 @@ const updateReturnMANA = async () => {
         .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0))
 
       // calculate return amount
-      // TODO take into account discounts
-      const returnAmountWei = eth.web3.toWei(
-        eth.utils.toBigNumber(currentBalance)
-      )
+      const returnAmountWei =
+        initialBalance > 0
+          ? eth.web3.toWei(
+              eth.utils
+                .toBigNumber(lockedInContract)
+                .div(eth.utils.toBigNumber(initialBalance))
+                .mul(eth.utils.toBigNumber(currentBalance))
+            )
+          : 0
 
       // update state
       await AddressState.update(
@@ -270,6 +279,11 @@ const updateReturnMANA = async () => {
           withdrawnAmount: withdrawnAmountWei.toString(10)
         },
         { address }
+      )
+      log.info(
+        `(update) [${address}]\n\tinContract:${lockedInContract} initial:${initialBalance} current:${currentBalance} spent:${bidding}\n\treturnAmount:${returnAmountWei.toString(
+          10
+        )} withdrawnAmount:${withdrawnAmountWei.toString(10)}`
       )
     } catch (err) {
       log.error(err.message)
@@ -356,7 +370,7 @@ async function main() {
       await updateReturnMANA()
     } else {
       console.log(
-        'Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnmana'
+        'Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnmana\n\t--returnupdate'
       )
       process.exit(0)
     }
