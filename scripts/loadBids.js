@@ -249,6 +249,7 @@ const updateReturnMANA = async () => {
         currentBalance,
         bidding,
         lockedInContract,
+        totalLandMANA,
         isMatch
       } = await addressService.checkBalance(address)
       if (!isMatch) {
@@ -264,12 +265,14 @@ const updateReturnMANA = async () => {
       // calculate return amount
       const returnAmountWei =
         initialBalance > 0
-          ? eth.web3.toWei(
-              eth.utils
-                .toBigNumber(lockedInContract)
-                .div(eth.utils.toBigNumber(initialBalance))
-                .mul(eth.utils.toBigNumber(currentBalance))
-            )
+          ? eth.web3
+              .toWei(
+                eth.utils
+                  .toBigNumber(lockedInContract)
+                  .div(eth.utils.toBigNumber(initialBalance))
+                  .mul(eth.utils.toBigNumber(currentBalance))
+              )
+              .truncated()
           : 0
 
       // update state
@@ -281,7 +284,7 @@ const updateReturnMANA = async () => {
         { address }
       )
       log.info(
-        `(update) [${address}]\n\tinContract:${lockedInContract} initial:${initialBalance} current:${currentBalance} spent:${bidding}\n\treturnAmount:${returnAmountWei.toString(
+        `(update) [${address}]\n\tinContract:${lockedInContract} districts:${totalLandMANA} initial:${initialBalance} spent:${bidding} current:${currentBalance}\n\treturnAmount:${returnAmountWei.toString(
           10
         )} withdrawnAmount:${withdrawnAmountWei.toString(10)}`
       )

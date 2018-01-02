@@ -105,6 +105,7 @@ export default class AddressService {
       initialBalance,
       currentBalance,
       lockedInContract,
+      totalLandMANA,
       bidding,
       parcels,
       isMatch: initialBalance - bidding == currentBalance
