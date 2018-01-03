@@ -352,9 +352,6 @@ async function main() {
     const contract = eth.getContract('LANDTerraformSale')
     log.info(`Using LANDTerraformSale contract at address ${contract.address}`)
 
-    // setup watch for mined txs
-    setupBlockWatch('latest')
-
     // commands
     if (argv.verifybuys === true) {
       await watchPendingTxs(BuyTransaction, 30000)
@@ -371,6 +368,7 @@ async function main() {
       await returnAllMANA(contract)
     } else if (argv.returnupdate === true) {
       await updateReturnMANA()
+      process.exit(0)
     } else {
       console.log(
         'Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnmana\n\t--returnupdate'
