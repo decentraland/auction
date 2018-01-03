@@ -13,8 +13,6 @@ import AddressService from '../src/lib/services/AddressService'
 
 const log = new Log('LoadBids')
 
-// TODO add function to return MANA to one address
-
 env.load()
 
 const DEFAULT_BATCH_SIZE = 20
@@ -233,99 +231,112 @@ const loadAllParcels = async (contract, batchSize) => {
   }
 }
 
-const updateReturnMANA = async () => {
-  const addressService = new AddressService()
+const updateReturnMANA = async address => {
+  try {
+    const addressService = new AddressService()
 
-  // get all addresses
-  const addresses = await AddressState.find().then(rows =>
-    rows.map(row => row.address)
-  )
-
-  for (const address of addresses) {
-    try {
-      // validate balance
-      const {
-        initialBalance,
-        currentBalance,
-        bidding,
-        lockedInContract,
-        totalLandMANA,
-        isMatch
-      } = await addressService.checkBalance(address)
-      if (!isMatch) {
-        throw new Error(`${address} balance mismatch`)
-      }
-
-      // calculate withdrawn amount
-      const returnTxs = await ReturnTransaction.findAllByAddress(address)
-      const withdrawnAmountWei = returnTxs
-        .map(tx => eth.utils.toBigNumber(tx.amount))
-        .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0))
-
-      // calculate return amount
-      const returnAmountWei =
-        initialBalance > 0
-          ? eth.web3
-              .toWei(
-                eth.utils
-                  .toBigNumber(lockedInContract)
-                  .div(eth.utils.toBigNumber(initialBalance))
-                  .mul(eth.utils.toBigNumber(currentBalance))
-              )
-              .truncated()
-          : 0
-
-      // update state
-      await AddressState.update(
-        {
-          returnAmount: returnAmountWei.toString(10),
-          withdrawnAmount: withdrawnAmountWei.toString(10)
-        },
-        { address }
-      )
-      log.info(
-        `(update) [${address}]\n\tinContract:${lockedInContract} districts:${totalLandMANA} initial:${initialBalance} spent:${bidding} current:${currentBalance}\n\treturnAmount:${returnAmountWei.toString(
-          10
-        )} withdrawnAmount:${withdrawnAmountWei.toString(10)}`
-      )
-    } catch (err) {
-      log.error(err.message)
+    // validate balance
+    const {
+      initialBalance,
+      currentBalance,
+      bidding,
+      lockedInContract,
+      totalLandMANA,
+      isMatch
+    } = await addressService.checkBalance(address)
+    if (!isMatch) {
+      throw new Error(`${address} balance mismatch`)
     }
+
+    // calculate withdrawn amount
+    const returnTxs = await ReturnTransaction.findAllByAddress(address)
+    const withdrawnAmountWei = returnTxs
+      .map(tx => eth.utils.toBigNumber(tx.amount))
+      .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0))
+
+    // calculate return amount
+    const returnAmountWei =
+      initialBalance > 0
+        ? eth.web3
+            .toWei(
+              eth.utils
+                .toBigNumber(lockedInContract)
+                .div(eth.utils.toBigNumber(initialBalance))
+                .mul(eth.utils.toBigNumber(currentBalance))
+            )
+            .truncated()
+        : 0
+
+    // update state
+    await AddressState.update(
+      {
+        returnAmount: returnAmountWei.toString(10),
+        withdrawnAmount: withdrawnAmountWei.toString(10)
+      },
+      { address }
+    )
+    log.info(
+      `(update) [${address}]\n\tinContract:${lockedInContract} districts:${totalLandMANA} initial:${initialBalance} spent:${bidding} current:${currentBalance}\n\treturnAmount:${returnAmountWei.toString(
+        10
+      )} withdrawnAmount:${withdrawnAmountWei.toString(10)}`
+    )
+  } catch (err) {
+    log.error(err.message)
+  }
+}
+
+const updateAllReturnMANA = async () => {
+  try {
+    const addresses = await AddressState.findAllAddresses()
+    for (const address of addresses) {
+      await updateReturnMANA(address)
+    }
+  } catch (err) {
+    log.error(err)
+  }
+}
+
+const returnMANA = async (contract, address) => {
+  try {
+    const addressState = await AddressState.findByAddress(address)
+
+    // calculate remaining MANA to return
+    const returnAmountWei = eth.utils.toBigNumber(addressState.returnAmount)
+    const withdrawnAmountWei = eth.utils.toBigNumber(
+      addressState.withdrawnAmount
+    )
+    const remainingAmountWei = returnAmountWei.minus(withdrawnAmountWei)
+
+    // total MANA to return
+    log.info(
+      `(return) [${address}] remaining(${remainingAmountWei.toString(10)})`
+    )
+
+    // send tx
+    log.info(`(return) [${address}] = ${remainingAmountWei.toString(10)}`)
+    const txId = await contract.transferBackMANA(address, remainingAmountWei)
+    txQueue.addPendingTx(txId)
+
+    // save in db
+    log.info(`(return) [${address}] Broadcasted tx : ${txId}`)
+    await ReturnTransaction.insert({
+      txId,
+      address,
+      amount: remainingAmountWei.toString(10),
+      status: 'pending'
+    })
+  } catch (err) {
+    log.error(err)
   }
 }
 
 const returnAllMANA = async contract => {
   try {
-    // loop all address states
-    const addressStates = await AddressState.find()
-    for (const addressState of addressStates) {
-      const address = addressState.address
+    await updateAllReturnMANA()
 
-      const returnAmountWei = eth.utils.toBigNumber(addressState.returnAmount)
-      const withdrawnAmountWei = eth.utils.toBigNumber(
-        addressState.withdrawnAmount
-      )
-
-      // calculate remaining MANA to return
-      const remainingAmountWei = returnAmountWei.minus(withdrawnAmountWei)
-
-      // total MANA to return
-      log.info(
-        `(return) [${address}] remaining(${remainingAmountWei.toString(10)})`
-      )
-
-      // send tx
-      log.info(`(return) [${address}] = ${remainingAmountWei.toString(10)}`)
-      const txId = await contract.transferBackMANA(address, remainingAmountWei)
-      txQueue.addPendingTx(txId)
-
-      log.info(`(return) [${address}] Broadcasted tx : ${txId}`)
-      await ReturnTransaction.insert({
-        txId,
-        address,
-        amount: remainingAmountWei.toString(10),
-        status: 'pending'
-      })
+    const addresses = await AddressState.findAllAddresses()
+    for (const address of addresses) {
+      await returnMANA(contract, address)
     }
   } catch (err) {
     log.error(err)
@@ -334,7 +345,7 @@ const returnAllMANA = async contract => {
 
 const parseArgs = () =>
   minimist(process.argv.slice(2), {
-    string: ['loadaddress'],
+    string: ['loadaddress', 'returnaddress'],
     default: {
       nbatch: DEFAULT_BATCH_SIZE
     }
@@ -366,8 +377,11 @@ async function main() {
     } else if (argv.returnmana === true) {
       setupBlockWatch('latest', ReturnTransaction)
       await returnAllMANA(contract)
+    } else if (argv.returnaddress) {
+      setupBlockWatch('latest', ReturnTransaction)
+      await returnMANA(contract, argv.returnaddress)
     } else if (argv.returnupdate === true) {
-      await updateReturnMANA()
+      await updateAllReturnMANA()
       process.exit(0)
     } else {
       console.log(
