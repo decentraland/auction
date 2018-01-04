@@ -374,7 +374,7 @@ async function main() {
     } else if (argv.loadaddress) {
       setupBlockWatch('latest', BuyTransaction)
       await loadParcelsForAddress(contract, argv.loadaddress, argv.nbatch)
-    } else if (argv.returnmana === true) {
+    } else if (argv.returnallmana === true) {
       setupBlockWatch('latest', ReturnTransaction)
       await returnAllMANA(contract)
     } else if (argv.returnaddress) {
@@ -385,7 +385,7 @@ async function main() {
       process.exit(0)
     } else {
       console.log(
-        'Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnmana\n\t--returnupdate'
+        'Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnallmana\n\t--returnupdate'
       )
       process.exit(0)
     }
