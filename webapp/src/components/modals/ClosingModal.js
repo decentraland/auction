@@ -36,8 +36,8 @@ export default class ClosingModal extends React.Component {
           <div className="text">
             <h4>MANA Return</h4>
             <p>
-              Unused MANA will be returned, no including bonuses. If you don't
-              see your returned MANA and believe there has been a mistake, check
+              Unused MANA will be returned to your account. If you don't see
+              your returned MANA and believe there has been a mistake, check
               your address stats page for transactions and make sure you're
               using the address you used for the auction. If you still see a
               mistake, reach out to us on{' '}
