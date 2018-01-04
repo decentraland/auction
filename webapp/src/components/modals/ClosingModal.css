@@ -1,13 +1,27 @@
 .ClosingModal {
   color: #3E396B;
   user-select: text;
-  background-image: url("../../images/closing-bg.jpg");
+}
+
+.ClosingModal a { 
+  font-weight: bold;
+}
+
+.ClosingModal .modal-content:before {
+  background: url("../../images/closing-bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+  opacity: 0.2;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  content: '';
 }
 
 .ClosingModal .modal-header {
   padding: 15px 15px 0;
   border: none;
-  background-color: #FCFCFC;
 }
 
 .ClosingModal .banner {
@@ -29,9 +43,15 @@
 
 .ClosingModal .banner h2 {
   font-size: 28px;
+  font-weight: bold;
   margin-top: 0;
   padding-top: 0;
   font-family: "Source Sans Pro Light", Helvetica, sans-serif;
+}
+
+.ClosingModal .banner p {
+  position: relative;
+  z-index: 999;
 }
 
 .ClosingModal .banner .Icon-decentraland {
