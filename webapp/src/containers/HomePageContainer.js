@@ -10,6 +10,8 @@ import localStorage from '../lib/localStorage'
 
 import HomePage from '../components/HomePage'
 
+const AUCTION_CLOSED = true
+
 class HomePageContainer extends React.Component {
   static propTypes = {
     connectWeb3: PropTypes.func,
@@ -23,9 +25,13 @@ class HomePageContainer extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.isRequiredDataReady() && !localStorage.getItem('seenIntro')) {
-      this.props.openModal('IntroModal')
-      localStorage.setItem('seenIntro', new Date().getTime())
+    if (AUCTION_CLOSED) {
+      this.props.openModal('ClosingModal')
+    } else {
+      if (this.isRequiredDataReady() && !localStorage.getItem('seenIntro')) {
+        this.props.openModal('IntroModal')
+        localStorage.setItem('seenIntro', new Date().getTime())
+      }
     }
   }
 
