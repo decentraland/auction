@@ -1,5 +1,6 @@
 #!/usr/bin/env babel-node
 
+import fs from 'fs'
 import minimist from 'minimist'
 import { eth, env, Log } from 'decentraland-commons'
 import db from '../src/lib/db'
@@ -231,7 +232,7 @@ const loadAllParcels = async (contract, batchSize) => {
   }
 }
 
-const updateReturnMANA = async address => {
+const returnMANAUpdate = async address => {
   try {
     const addressService = new AddressService()
 
@@ -285,27 +286,32 @@ const updateReturnMANA = async address => {
   }
 }
 
-const updateAllReturnMANA = async () => {
+// calculate remaining MANA to return
+const calculateRemainingAmount = addressState => {
+  const returnAmountWei = eth.utils.toBigNumber(addressState.returnAmount)
+  const withdrawnAmountWei = eth.utils.toBigNumber(addressState.withdrawnAmount)
+  return returnAmountWei.minus(withdrawnAmountWei)
+}
+
+const returnMANAUpdateAll = async () => {
   try {
     const addresses = await AddressState.findAllAddresses()
     for (const address of addresses) {
-      await updateReturnMANA(address)
+      await returnMANAUpdate(address)
     }
   } catch (err) {
     log.error(err)
   }
 }
 
-const returnMANA = async (contract, address) => {
+const returnMANAAddress = async (contract, address) => {
   try {
+    await returnMANAUpdate(address)
+
     const addressState = await AddressState.findByAddress(address)
 
     // calculate remaining MANA to return
-    const returnAmountWei = eth.utils.toBigNumber(addressState.returnAmount)
-    const withdrawnAmountWei = eth.utils.toBigNumber(
-      addressState.withdrawnAmount
-    )
-    const remainingAmountWei = returnAmountWei.minus(withdrawnAmountWei)
+    const remainingAmountWei = calculateRemainingAmount(addressState)
 
     // total MANA to return
     log.info(
@@ -330,13 +336,53 @@ const returnMANA = async (contract, address) => {
   }
 }
 
-const returnAllMANA = async contract => {
+const returnMANABatch = async (contract, filename) => {
   try {
-    await updateAllReturnMANA()
+    // open addresses file
+    const addresses = fs
+      .readFileSync(filename, 'utf8')
+      .split('\n')
+      .map(address => address.toLowerCase())
+
+    // refresh amounts
+    for (const address of addresses) {
+      await returnMANAUpdate(address)
+    }
+
+    // match with addresses from db
+    const addressStates = await Promise.all(
+      addresses.map(address => AddressState.findByAddress(address))
+    )
+    const sendAddresses = addressStates.map(state => state.address)
+    const amounts = addressStates.map(state => calculateRemainingAmount(state))
+
+    // send tx
+    log.info(`(return) About to send MANA to ${sendAddresses.length} addresses`)
+    const txId = await contract.transferBackMANAMany(sendAddresses, amounts)
+    txQueue.addPendingTx(txId)
+
+    // save in db
+    log.info(`(return) Broadcasted tx : ${txId}`)
+    for (let i = 0; i < addresses.length; i++) {
+      await ReturnTransaction.insert({
+        txId,
+        address: sendAddresses[i],
+        amount: amounts[i].toString(10),
+        status: 'pending'
+      })
+    }
+  } catch (err) {
+    log.error(err)
+  }
+}
+
+const returnMANAAll = async contract => {
+  try {
+    await returnMANAUpdateAll()
 
     const addresses = await AddressState.findAllAddresses()
     for (const address of addresses) {
-      await returnMANA(contract, address)
+      await returnMANAAddress(contract, address)
     }
   } catch (err) {
     log.error(err)
@@ -345,7 +391,7 @@ const returnAllMANA = async contract => {
 
 const parseArgs = () =>
   minimist(process.argv.slice(2), {
-    string: ['loadaddress', 'returnaddress'],
+    string: ['loadaddress', 'returnaddress', 'returnbatchmana'],
     default: {
       nbatch: DEFAULT_BATCH_SIZE
     }
@@ -374,18 +420,21 @@ async function main() {
     } else if (argv.loadaddress) {
       setupBlockWatch('latest', BuyTransaction)
       await loadParcelsForAddress(contract, argv.loadaddress, argv.nbatch)
-    } else if (argv.returnallmana === true) {
+    } else if (argv.returnmanaall === true) {
       setupBlockWatch('latest', ReturnTransaction)
-      await returnAllMANA(contract)
+      await returnMANAAll(contract)
     } else if (argv.returnaddress) {
       setupBlockWatch('latest', ReturnTransaction)
-      await returnMANA(contract, argv.returnaddress)
-    } else if (argv.returnupdate === true) {
-      await updateAllReturnMANA()
+      await returnMANAAddress(contract, argv.returnmanaaddress)
+    } else if (argv.returnmanabatch === true) {
+      setupBlockWatch('latest', ReturnTransaction)
+      await returnMANABatch(contract, argv.returnbatchmana)
+    } else if (argv.returnmanaupdate === true) {
+      await returnMANAUpdateAll()
       process.exit(0)
     } else {
       console.log(
-        'Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnallmana\n\t--returnupdate'
+        'Invalid command. \nAvailable commands: \n\t--verifybuys\n\t--verifyreturns\n\t--load\n\t--loadaddress\n\t--returnmanaall\n\t--returnmanaaddress\n\t--returnmanabatch\n\t--returnmanaupdate'
       )
       process.exit(0)
     }
