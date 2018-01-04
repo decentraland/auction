@@ -391,7 +391,7 @@ const returnMANAAll = async contract => {
 
 const parseArgs = () =>
   minimist(process.argv.slice(2), {
-    string: ['loadaddress', 'returnaddress', 'returnbatchmana'],
+    string: ['loadaddress', 'returnmanaaddress', 'returnmanabatch'],
     default: {
       nbatch: DEFAULT_BATCH_SIZE
     }
@@ -423,12 +423,12 @@ async function main() {
     } else if (argv.returnmanaall === true) {
       setupBlockWatch('latest', ReturnTransaction)
       await returnMANAAll(contract)
-    } else if (argv.returnaddress) {
+    } else if (argv.returnmanaaddress) {
       setupBlockWatch('latest', ReturnTransaction)
       await returnMANAAddress(contract, argv.returnmanaaddress)
     } else if (argv.returnmanabatch === true) {
       setupBlockWatch('latest', ReturnTransaction)
-      await returnMANABatch(contract, argv.returnbatchmana)
+      await returnMANABatch(contract, argv.returnmanabatch)
     } else if (argv.returnmanaupdate === true) {
       await returnMANAUpdateAll()
       process.exit(0)
