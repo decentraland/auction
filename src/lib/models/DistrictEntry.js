@@ -22,6 +22,14 @@ class DistrictEntry extends Model {
     return result.length ? result[0].total : 0
   }
 
+  static getTotalLandByAddress(address) {
+    return this.db
+      .query(`SELECT SUM(lands) FROM ${this.tableName} WHERE address = $1`, [
+        address
+      ])
+      .then(rows => (rows.length ? rows[0].sum : 0))
+  }
+
   static getSubmissions(address) {
     return this.db.query(`SELECT * FROM ${this.tableName} WHERE address = $1`, [
       address
@@ -31,7 +39,8 @@ class DistrictEntry extends Model {
   static getSummarySubmissions(address) {
     return this.db.query(
       `SELECT "${this.tableName}".id, projects.name, "${this
-        .tableName}".lands, "${this.tableName}"."userTimestamp", projects.link FROM "${this
+        .tableName}".lands, "${this
+        .tableName}"."userTimestamp", projects.link FROM "${this
         .tableName}" LEFT JOIN projects ON projects.id::text LIKE "${this
         .tableName}".project_id WHERE address = $1`,
       [address]

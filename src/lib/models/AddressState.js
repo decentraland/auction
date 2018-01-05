@@ -3,7 +3,14 @@ import BidGroup from './BidGroup'
 
 class AddressState extends Model {
   static tableName = 'address_states'
-  static columnNames = ['address', 'balance', 'latestBidGroupId', 'email']
+  static columnNames = [
+    'address',
+    'balance',
+    'latestBidGroupId',
+    'email',
+    'returnAmount',
+    'withdrawnAmount'
+  ]
 
   static async findByAddress(address) {
     return this.findOne({ address })
@@ -11,6 +18,10 @@ class AddressState extends Model {
 
   static async findByEmail(email) {
     return this.findOne({ email })
+  }
+
+  static async findAllAddresses() {
+    return this.find().then(rows => rows.map(r => r.address))
   }
 
   static async findByAddressWithLastBidGroup(address) {

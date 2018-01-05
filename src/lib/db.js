@@ -182,7 +182,7 @@ export default {
     await this.createTable(
       'return_transactions',
       `"id" int NOT NULL DEFAULT nextval('return_transactions_id_seq'),
-      "txId" text NOT NULL UNIQUE,
+      "txId" text NOT NULL,
       "address" text NOT NULL,
       "amount" text NOT NULL,
       "status" text NOT NULL,

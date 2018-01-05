@@ -1,4 +1,9 @@
-import { DistrictEntry, LockedBalanceEvent } from '../models'
+import {
+  AddressState,
+  DistrictEntry,
+  LockedBalanceEvent,
+  ParcelState
+} from '../models'
 
 const LAND_MANA_COST = 1000
 
@@ -74,6 +79,51 @@ export default class AddressService {
         Math.floor(afterNovBalanceToAuction * AFTER_NOVEMBER_DISCOUNT) +
         totalLockedToDistricts
     }
+  }
+
+  async checkBalance(address) {
+    // get current balance
+    const addressState = await AddressState.findByAddress(address)
+    if (!addressState) {
+      throw new Error(`(${address}) address state not found!`)
+    }
+    const currentBalance = addressState.balance
+
+    // get initial balance
+    const {
+      totalLockedMANA,
+      totalLandMANA,
+      lockedInContract
+    } = await this.lockedMANABalanceOf(address)
+    const initialBalance = totalLockedMANA - totalLandMANA
+
+    // get bids
+    const { bidding, parcels } = await this.getWinningParcels(address)
+
+    return {
+      addressState,
+      initialBalance,
+      currentBalance,
+      lockedInContract,
+      totalLandMANA,
+      bidding,
+      parcels,
+      isMatch: initialBalance - bidding == currentBalance
+    }
+  }
+
+  async getMANALockedToDistricts(address) {
+    const total = await DistrictEntry.getTotalLandByAddress(address)
+    return total * LAND_MANA_COST
+  }
+
+  async getWinningParcels(address) {
+    const parcels = await ParcelState.findByAddress(address)
+    const bidding = parcels.reduce(
+      (sum, item) => sum + parseInt(item.amount, 10),
+      0
+    )
+    return { bidding, parcels }
   }
 
   static fillByMonth(...args) {
