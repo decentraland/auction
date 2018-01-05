@@ -256,14 +256,18 @@ const returnMANAUpdate = async address => {
       .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0))
 
     // calculate return amount
+    const totalForGenesis = eth.utils
+      .toBigNumber(lockedInContract)
+      .minus(eth.utils.toBigNumber(totalLandMANA))
+
     const returnAmountWei =
       initialBalance > 0
         ? eth.utils.web3utils
             .toWei(
               eth.utils
-                .toBigNumber(lockedInContract)
+                .toBigNumber(currentBalance)
+                .mul(totalForGenesis)
                 .div(eth.utils.toBigNumber(initialBalance))
-                .mul(eth.utils.toBigNumber(currentBalance))
             )
             .truncated()
         : 0
