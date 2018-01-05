@@ -20,18 +20,27 @@ class HomePageContainer extends React.Component {
     addressState: stateData(PropTypes.object).isRequired
   }
 
+  constructor(props) {
+    super(props)
+
+    this.seenClosingModal = false
+  }
+
   componentDidMount() {
     this.props.connectWeb3()
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (AUCTION_CLOSED) {
+    if (AUCTION_CLOSED && this.seenClosingModal) return
+
+    const isReady = this.isRequiredDataReady()
+
+    if (isReady && AUCTION_CLOSED) {
       this.props.openModal('ClosingModal')
-    } else {
-      if (this.isRequiredDataReady() && !localStorage.getItem('seenIntro')) {
-        this.props.openModal('IntroModal')
-        localStorage.setItem('seenIntro', new Date().getTime())
-      }
+      this.seenClosingModal = true
+    } else if (isReady && !localStorage.getItem('seenIntro')) {
+      this.props.openModal('IntroModal')
+      localStorage.setItem('seenIntro', new Date().getTime())
     }
   }
 
