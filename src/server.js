@@ -324,12 +324,21 @@ app.get('/api/addressStats/:address', server.handleRequest(getAddressStats))
 
 export function getAddressStats(req) {
   const address = server.extractFromReq(req, 'address')
-
-  // 1. Locked balance transactions, and bonus received per month
-  // 2. District contributions
-  // 3. Winning bids
-  // 4: final balance
   return new StatsService().getAddressSummary(address.toLowerCase())
+}
+
+/**
+ * Get useful stats for an parcel
+ * @param  {string} x - Parcel coordinate
+ * @param  {string} y - Parcel coordinate
+ * @return {object} - Each property is a new stat calculated for the parcel
+ */
+app.get('/api/parcelStats/:x/:y', server.handleRequest(getParcelStats))
+
+export function getParcelStats(req) {
+  const x = server.extractFromReq(req, 'x')
+  const y = server.extractFromReq(req, 'y')
+  return new StatsService().getParcelSummary(x, y)
 }
 
 /**

@@ -3,7 +3,10 @@ export default {
 
   stats: '/stats',
   addressStats: '/addressStats/:address',
-  addressDetails: address => `/addressStats/${address}`,
+  addressStatsDetails: address => `/addressStats/${address}`,
+
+  parcelStats: '/parcelStats/:x/:y',
+  parcelStatsDetails: (x, y) => `/parcelStats/${x}/${y}`,
 
   parcel: '/:x/:y',
   parcelDetail: (x, y) => `/${x}/${y}`,

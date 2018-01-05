@@ -1,0 +1,84 @@
+.ParcelStats {
+  max-width: 1170px;
+  margin: auto;
+  color: #3e396b;
+  font-size: 16px;
+}
+
+.ParcelStats .content h1 {
+  font-size: 36px;
+  margin-bottom: 45px;
+  font-family: 'Source Sans Pro Light', Helvetica, sans-serif;
+  text-align: center;
+}
+
+.ParcelStats h4 {
+  margin-top: 5px;
+  margin-bottom: 18px;
+  font-size: 24px;
+  color: #23527C;
+}
+
+.ParcelStats .empty {
+  padding-top: 15px;
+  padding-left: 15px;
+  font-size: 16px;
+}
+
+.ParcelStats .Box {
+  padding: 0;
+  margin: auto;
+  margin-bottom: 65px;
+}
+
+.ParcelStats .Box.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ParcelStats .Definition dd {
+  font-size: 24px;
+  color: #23527C;
+}
+
+.ParcelStats .Definition dt {
+  margin-bottom: 12px;
+}
+
+.ParcelStats .Definition dt a {
+  font-weight: normal;
+}
+
+.ParcelStats .title {
+  margin-bottom: 5px;
+  margin-left: 15px;
+  color: #3E3A6B;
+}
+
+.ParcelStats .definition-list {
+  margin-top: 1em;
+}
+
+.ParcelStats .definition-list dt {
+  margin-bottom: 0;
+}
+
+.ParcelStats .definition-list .position {
+  font-size: 18px;
+}
+
+.ParcelStats .definition-list .mana {
+  font-size: 24px;
+  color: #23527C;
+}
+
+.ParcelStats .definition-list dd {
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+@media (min-width: 768px) {
+  .ParcelStats .Box .Definition {
+    padding-left: 15px;
+  }
+}

@@ -10,6 +10,7 @@ import IntercomContainer from './containers/IntercomContainer'
 import EmailUnsubscribeContainer from './containers/EmailUnsubscribeContainer'
 import StatsContainer from './containers/StatsContainer'
 import AddressStatsContainer from './containers/AddressStatsContainer'
+import ParcelStatsContainer from './containers/ParcelStatsContainer'
 import AddressErrorPageContainer from './containers/AddressErrorPageContainer'
 
 import NotStarted from './components/NotStarted'
@@ -29,6 +30,11 @@ export default function Routes() {
           component={AddressStatsContainer}
         />
         <Route exact path={locations.stats} component={StatsContainer} />
+        <Route
+          exact
+          path={locations.parcelStats}
+          component={ParcelStatsContainer}
+        />
 
         <Route exact path={locations.parcel} component={HomePageContainer} />
 

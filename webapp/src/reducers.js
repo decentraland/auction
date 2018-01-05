@@ -37,6 +37,7 @@ const INITIAL_STATE = {
 
   stats: { loading: true },
   addressStats: { loading: true },
+  parcelStats: { loading: true },
 
   shift: {
     pressed: false
@@ -107,6 +108,9 @@ function getStats(state) {
 function getAddressStats(state) {
   return state.addressStats
 }
+function getParcelStats(state) {
+  return state.parcelStats
+}
 function getSidebar(state) {
   return state.sidebar
 }
@@ -144,6 +148,7 @@ export const selectors = {
   getEmailData,
   getStats,
   getAddressStats,
+  getParcelStats,
   getSidebar,
   isShiftPressed,
   getRange,
@@ -371,6 +376,19 @@ function addressStats(state = INITIAL_STATE.addressStats, action) {
   }
 }
 
+function parcelStats(state = INITIAL_STATE.parcelStats, action) {
+  switch (action.type) {
+    case types.fetchParcelStats.request:
+      return { ...state, loading: true }
+    case types.fetchParcelStats.success:
+      return { loading: false, data: action.parcelStats }
+    case types.fetchParcelStats.failed:
+      return { ...state, loading: false, error: action.error }
+    default:
+      return state
+  }
+}
+
 function sidebar(state = INITIAL_STATE.sidebar, action) {
   switch (action.type) {
     case types.sidebar.open:
@@ -420,6 +438,7 @@ export default {
   email,
   stats,
   addressStats,
+  parcelStats,
   sidebar,
   shift
 }

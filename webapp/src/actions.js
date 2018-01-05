@@ -103,6 +103,14 @@ export function fetchAddressStats(address) {
   }
 }
 
+export function fetchParcelStats(x, y) {
+  return {
+    type: types.fetchParcelStats.request,
+    x,
+    y
+  }
+}
+
 // -------------------------------------------------------------------------
 // Districts
 

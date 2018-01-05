@@ -257,7 +257,7 @@ function isAuctionEnded() {
 }
 
 function getHref(id) {
-  return locations.parcelDetail(...splitCoordinate(id))
+  return locations.parcelStatsDetails(...splitCoordinate(id))
 }
 
 function lastParcelUpdate(parcel) {

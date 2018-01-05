@@ -23,8 +23,6 @@ import * as parcelUtils from './lib/parcelUtils'
 import * as pendingBidsUtils from './lib/pendingBidsUtils'
 import api from './lib/api'
 
-// TODO: We need to avoid having a infinite spinner when an error occurs and the user navigates back to the root location.
-//       We can listen to URL changes and try to load web3 in that particular case
 function* rootSaga() {
   yield takeLatest(types.connectWeb3.request, connectWeb3)
   yield takeLatest(types.connectWeb3.success, handleAddressFetchRequest)
@@ -74,6 +72,10 @@ function* rootSaga() {
   yield takeLatest(
     types.fetchAddressStats.request,
     handleAddressStatsFetchRequest
+  )
+  yield takeLatest(
+    types.fetchParcelStats.request,
+    handleParcelStatsFetchRequest
   )
 }
 
@@ -568,6 +570,18 @@ function* handleAddressStatsFetchRequest(action) {
   } catch (error) {
     console.warn(error)
     yield put({ type: types.fetchAddressStats.failed, error: error.message })
+  }
+}
+
+function* handleParcelStatsFetchRequest(action) {
+  try {
+    const { x, y } = action
+    const parcelStats = yield call(() => api.fetchParcelStats(x, y))
+
+    yield put({ type: types.fetchParcelStats.success, parcelStats })
+  } catch (error) {
+    console.warn(error)
+    yield put({ type: types.fetchParcelStats.failed, error: error.message })
   }
 }
 

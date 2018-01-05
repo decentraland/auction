@@ -33,6 +33,29 @@ class ParcelState extends Model {
     return result.length ? result[0].total : 0
   }
 
+  static async findFullById(id) {
+    const rows = await this.db.query(
+      `SELECT parcel_states.*, row_to_json(bids.*) as "bid", row_to_json(projects.*) as "project"
+        FROM ${this.tableName}
+        LEFT JOIN bids ON parcel_states."x" = bids."x" AND parcel_states."y" = bids."y"
+        LEFT JOIN projects ON parcel_states."projectId" = projects."id"
+        WHERE parcel_states."id" = $1
+        ORDER BY bids.amount::int DESC`,
+      [id]
+    )
+
+    if (rows.length > 0) {
+      const result = rows[0]
+
+      if (result.bid) {
+        result.bids = rows.map(row => row.bid)
+        delete result.bid
+      }
+
+      return result
+    }
+  }
+
   static async findByIdWithBidGroups(id) {
     const rows = await this.db.query(
       `SELECT "parcel_states".*, row_to_json(bid_groups.*) as "bidGroup" FROM parcel_states
@@ -153,7 +176,8 @@ class ParcelState extends Model {
 
   static async recentlyUpdated(limit = 5) {
     return (await this.db.query(
-      `SELECT  "${this.tableName}".* FROM ${this.tableName}
+      `SELECT  "${this.tableName}".*
+        FROM ${this.tableName}
         ORDER BY "${this.tableName}"."updatedAt" DESC
         LIMIT $1`,
       [limit]
@@ -176,7 +200,8 @@ class ParcelState extends Model {
     return this.db
       .query(
         `SELECT COUNT(*), MAX(amount::int), SUM(amount::int)
-          FROM ${this.tableName} WHERE address IS NOT NULL`
+          FROM ${this.tableName}
+          WHERE address IS NOT NULL`
       )
       .then(r => r[0])
   }
@@ -184,7 +209,8 @@ class ParcelState extends Model {
   static findExpensive(limit) {
     return this.db.query(
       `SELECT id, amount::int
-        FROM ${this.tableName} WHERE address IS NOT NULL
+        FROM ${this.tableName}
+        WHERE address IS NOT NULL
         ORDER BY amount::int DESC LIMIT $1`,
       [limit]
     )

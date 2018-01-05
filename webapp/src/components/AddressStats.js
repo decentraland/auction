@@ -237,7 +237,7 @@ function ParcelWinItem(item) {
         description={
           <div>
             <div className="mana">{asMana(item.amount)}</div>
-            <Link to={locations.parcelDetail(item.x, item.y)}>
+            <Link to={locations.parcelStatsDetails(item.x, item.y)}>
               {item.x}, {item.y}
             </Link>
           </div>
