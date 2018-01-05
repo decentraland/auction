@@ -8,7 +8,8 @@ class AddressState extends Model {
     'balance',
     'latestBidGroupId',
     'email',
-    'returnAmount'
+    'returnAmount',
+    'withdrawnAmount'
   ]
 
   static async findByAddress(address) {
