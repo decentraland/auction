@@ -1,4 +1,5 @@
 import { Model } from 'decentraland-commons'
+import BuyTransaction from './BuyTransaction'
 
 class ReturnTransaction extends Model {
   static tableName = 'return_transactions'
