@@ -317,6 +317,9 @@ const returnMANAAddress = async (contract, address) => {
     log.info(
       `(return) [${address}] remaining(${remainingAmountWei.toString(10)})`
     )
+    if (remainingAmountWei == 0) {
+      throw new Error(`(return) [${address}] no amount to return`)
+    }
 
     // send tx
     log.info(`(return) [${address}] = ${remainingAmountWei.toString(10)}`)
@@ -353,8 +356,17 @@ const returnMANABatch = async (contract, filename) => {
     const addressStates = await Promise.all(
       addresses.map(address => AddressState.findByAddress(address))
     )
-    const sendAddresses = addressStates.map(state => state.address)
-    const amounts = addressStates.map(state => calculateRemainingAmount(state))
+
+    // filter out address with no amounts to return
+    const sendAddresses = []
+    const amounts = []
+    addressStates.forEach(state => {
+      const amount = calculateRemainingAmount(state)
+      if (amount > 0) {
+        sendAddresses.push(state.address)
+        amounts.push(amount)
+      }
+    })
 
     // send tx
     log.info(`(return) About to send MANA to ${sendAddresses.length} addresses`)
