@@ -61,7 +61,7 @@ const onNewBlock = (blockHash, watchedModel) => {
   log.info(`(block) Found new block ${blockHash}`)
   printState()
 
-  eth.web3.eth.getBlock(blockHash, (err, block) => {
+  eth.getBlock(blockHash, (err, block) => {
     if (err || !block) {
       log.error(err)
       return
@@ -258,7 +258,7 @@ const returnMANAUpdate = async address => {
     // calculate return amount
     const returnAmountWei =
       initialBalance > 0
-        ? eth.web3
+        ? eth.utils.web3utils
             .toWei(
               eth.utils
                 .toBigNumber(lockedInContract)
@@ -353,9 +353,9 @@ const returnMANABatch = async (contract, filename) => {
     }
 
     // match with addresses from db
-    const addressStates = await Promise.all(
+    const addressStates = (await Promise.all(
       addresses.map(address => AddressState.findByAddress(address))
-    )
+    )).filter(e => e !== undefined)
 
     // filter out address with no amounts to return
     const sendAddresses = []
@@ -368,6 +368,11 @@ const returnMANABatch = async (contract, filename) => {
       }
     })
 
+    // bail out if no addresses with funds
+    if (sendAddresses.length === 0) {
+      throw new Error('(return) No addresses with funds to return')
+    }
+
     // send tx
     log.info(`(return) About to send MANA to ${sendAddresses.length} addresses`)
     const txId = await contract.transferBackMANAMany(sendAddresses, amounts)
@@ -375,7 +380,7 @@ const returnMANABatch = async (contract, filename) => {
 
     // save in db
     log.info(`(return) Broadcasted tx : ${txId}`)
-    for (let i = 0; i < addresses.length; i++) {
+    for (let i = 0; i < sendAddresses.length; i++) {
       await ReturnTransaction.insert({
         txId,
         address: sendAddresses[i],
@@ -384,7 +389,7 @@ const returnMANABatch = async (contract, filename) => {
       })
     }
   } catch (err) {
-    log.error(err)
+    log.error(err.message)
   }
 }
 
