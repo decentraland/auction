@@ -438,7 +438,7 @@ async function main() {
     } else if (argv.returnmanaaddress) {
       setupBlockWatch('latest', ReturnTransaction)
       await returnMANAAddress(contract, argv.returnmanaaddress)
-    } else if (argv.returnmanabatch === true) {
+    } else if (argv.returnmanabatch) {
       setupBlockWatch('latest', ReturnTransaction)
       await returnMANABatch(contract, argv.returnmanabatch)
     } else if (argv.returnmanaupdate === true) {
