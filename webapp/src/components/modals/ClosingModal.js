@@ -50,7 +50,7 @@ export default class ClosingModal extends React.Component {
           <div className="text">
             <h4>Auction Statistics</h4>
             <p>
-              MANA to be burned: 161,351,111. Average parcel price: 3,647 MANA.
+              MANA to be burned: 161,483,050. Average parcel price: 3,651 MANA.
               For a full list of{' '}
               <a href="https://auction.decentraland.org/stats">
                 global auction stats
