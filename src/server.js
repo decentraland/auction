@@ -28,6 +28,8 @@ import {
 
 env.load()
 
+const AUCTION_CLOSED = true
+
 const SERVER_PORT = env.get('SERVER_PORT', 5000)
 
 const app = express()
@@ -66,7 +68,12 @@ app.get(
 
 export function getSimpleAddressState(req) {
   const address = server.extractFromReq(req, 'address')
-  return AddressState.findByAddress(address.toLowerCase())
+
+  let addressState = AddressState.findByAddress(address.toLowerCase())
+  if (AUCTION_CLOSED) {
+    addressState.balance = 0
+  }
+  return addressState
 }
 
 /**
@@ -84,7 +91,9 @@ export async function getFullAddressState(req) {
   address = address.toLowerCase()
 
   let addressState = await AddressState.findByAddressWithBidGroups(address)
-
+  if (AUCTION_CLOSED) {
+    addressState.balance = 0
+  }
   return addressState
 }
 
