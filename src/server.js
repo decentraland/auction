@@ -331,14 +331,20 @@ export function getStats(req) {
  */
 app.get('/api/addressStats/:address', server.handleRequest(getAddressStats))
 
-export function getAddressStats(req) {
+export async function getAddressStats(req) {
   const address = server.extractFromReq(req, 'address')
 
   // 1. Locked balance transactions, and bonus received per month
   // 2. District contributions
   // 3. Winning bids
   // 4: final balance
-  return new StatsService().getAddressSummary(address.toLowerCase())
+  const stats = await new StatsService().getAddressSummary(
+    address.toLowerCase()
+  )
+  if (AUCTION_CLOSED) {
+    stats.addressState.balance = 0
+  }
+  return stats
 }
 
 /**
