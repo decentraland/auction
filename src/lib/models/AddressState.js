@@ -16,6 +16,10 @@ class AddressState extends Model {
     return this.findOne({ address })
   }
 
+  static async findAll(address) {
+    return this.find()
+  }
+
   static async findByEmail(email) {
     return this.findOne({ email })
   }

@@ -2,7 +2,7 @@
 
 import fs from 'fs'
 import minimist from 'minimist'
-import { eth, env, Log } from 'decentraland-commons'
+import { utils, eth, env, Log } from 'decentraland-commons'
 import db from '../src/lib/db'
 import {
   AddressState,
@@ -16,11 +16,23 @@ const log = new Log('LoadBids')
 
 env.load()
 
-const DEFAULT_BATCH_SIZE = 20
+const DEFAULT_BATCH_SIZE = 50
 
 const setIntervalAndExecute = (fn, t) => {
   fn()
   return setInterval(fn, t)
+}
+
+import inquirer from 'inquirer'
+async function confirm(text) {
+  const res = await inquirer.prompt({
+    type: 'confirm',
+    name: 'confirm',
+    message: text,
+    default: false
+  })
+
+  return res.confirm
 }
 
 // tx queue management
@@ -246,6 +258,9 @@ const returnMANAUpdate = async address => {
       isMatch
     } = await addressService.checkBalance(address)
     if (!isMatch) {
+      log.info(
+        `(update) [${address}]\n\tinContract:${lockedInContract} districts:${totalLandMANA} initial:${initialBalance} spent:${bidding} current:${currentBalance}`
+      )
       throw new Error(`${address} balance mismatch`)
     }
 
@@ -262,14 +277,13 @@ const returnMANAUpdate = async address => {
 
     const returnAmountWei =
       initialBalance > 0
-        ? eth.utils.web3utils
+        ? eth.utils
             .toWei(
               eth.utils
                 .toBigNumber(currentBalance)
-                .mul(totalForGenesis)
                 .div(eth.utils.toBigNumber(initialBalance))
+                .mul(totalForGenesis)
             )
-            .truncated()
         : 0
 
     // update state
@@ -280,20 +294,26 @@ const returnMANAUpdate = async address => {
       },
       { address }
     )
-    log.info(
-      `(update) [${address}]\n\tinContract:${lockedInContract} districts:${totalLandMANA} initial:${initialBalance} spent:${bidding} current:${currentBalance}\n\treturnAmount:${returnAmountWei.toString(
-        10
-      )} withdrawnAmount:${withdrawnAmountWei.toString(10)}`
-    )
+    // log.info(
+    //   `(update) [${address}]\n\tinContract:${lockedInContract} districts:${totalLandMANA} initial:${initialBalance} spent:${bidding} current:${currentBalance}\n\treturnAmount:${returnAmountWei.toString(
+    //     10
+    //   )} withdrawnAmount:${withdrawnAmountWei.toString(10)}`
+    // )
   } catch (err) {
     log.error(err.message)
   }
 }
 
 // calculate remaining MANA to return
-const calculateRemainingAmount = addressState => {
+const calculateRemainingAmount = async(addressState) => {
   const returnAmountWei = eth.utils.toBigNumber(addressState.returnAmount)
-  const withdrawnAmountWei = eth.utils.toBigNumber(addressState.withdrawnAmount)
+  const returnTxs = await ReturnTransaction.findAllByAddress(addressState.address)
+  if (!returnTxs.length) {
+    return returnAmountWei
+  }
+  const withdrawnAmountWei = returnTxs
+    .map(tx => eth.utils.toBigNumber(tx.amount))
+    .reduce((sum, value) => sum.plus(value), eth.utils.toBigNumber(0))
   return returnAmountWei.minus(withdrawnAmountWei)
 }
 
@@ -327,7 +347,14 @@ const returnMANAAddress = async (contract, address) => {
 
     // send tx
     log.info(`(return) [${address}] = ${remainingAmountWei.toString(10)}`)
-    const txId = await contract.transferBackMANA(address, remainingAmountWei)
+    await eth.web3.personal.unlockAccount(eth.getAddress(), 'asdfqwer1234', 100000)
+    const txId = await contract.transferBackMANA(
+      address,
+      remainingAmountWei, {
+        gas: 2000000,
+        gasPrice: 80 * 1e9
+      }
+    )
     txQueue.addPendingTx(txId)
 
     // save in db
@@ -356,6 +383,15 @@ const returnMANABatch = async (contract, filename) => {
       await returnMANAUpdate(address)
     }
 
+    return await returnMANABatchAddresses(contract, addresses)
+
+  } catch (err) {
+    log.error(err)
+  }
+}
+
+const returnMANABatchAddresses = async (contract, addresses) => {
+  try {
     // match with addresses from db
     const addressStates = (await Promise.all(
       addresses.map(address => AddressState.findByAddress(address))
@@ -364,22 +400,33 @@ const returnMANABatch = async (contract, filename) => {
     // filter out address with no amounts to return
     const sendAddresses = []
     const amounts = []
-    addressStates.forEach(state => {
-      const amount = calculateRemainingAmount(state)
+    await Promise.all(addressStates.map(async(state) => {
+      const amount = await calculateRemainingAmount(state)
       if (amount > 0) {
         sendAddresses.push(state.address)
         amounts.push(amount)
       }
-    })
+    }))
 
     // bail out if no addresses with funds
     if (sendAddresses.length === 0) {
-      throw new Error('(return) No addresses with funds to return')
+      log.warn('(return) No addresses with funds to return')
+      return
     }
 
     // send tx
     log.info(`(return) About to send MANA to ${sendAddresses.length} addresses`)
-    const txId = await contract.transferBackMANAMany(sendAddresses, amounts)
+    for (let i = 0; i < sendAddresses.length; i++) {
+      console.log(`${sendAddresses[i]}, ${amounts[i]}`)
+    }
+    await eth.web3.personal.unlockAccount(eth.getAddress(), 'asdfqwer1234', 100000)
+    const txId = await contract.transferBackMANAMany(
+      sendAddresses,
+      amounts, {
+        gas: 2000000,
+        gasPrice: 80 * 1e9
+      }
+    )
     txQueue.addPendingTx(txId)
 
     // save in db
@@ -393,7 +440,8 @@ const returnMANABatch = async (contract, filename) => {
       })
     }
   } catch (err) {
-    log.error(err.message)
+    log.error(err.message, err.stack)
+    process.exit(1)
   }
 }
 
@@ -401,10 +449,27 @@ const returnMANAAll = async contract => {
   try {
     await returnMANAUpdateAll()
 
-    const addresses = await AddressState.findAllAddresses()
+    const addressesList = await AddressState.findAll()
+
+    const addresses = []
+    await Promise.all(addressesList.map(async(state) => {
+      const amount = await calculateRemainingAmount(state)
+      if (amount.toString(10) > 0) {
+        addresses.push(state.address)
+      }
+    }))
+
+    let batch = []
+
     for (const address of addresses) {
-      await returnMANAAddress(contract, address)
+      batch.push(address)
     }
+        await returnMANABatchAddresses(contract, batch)
+        batch = []
+        while (txQueue.length) {
+          log.info('Waiting for confirmation...')
+          await utils.sleep(1000)
+        }
   } catch (err) {
     log.error(err)
   }
@@ -427,8 +492,8 @@ async function main() {
     await db.connect()
     await eth.connect('', '', { httpProviderUrl: 'http://localhost:18545' })
 
-    const contract = eth.getContract('LANDTerraformSale')
-    log.info(`Using LANDTerraformSale contract at address ${contract.address}`)
+    const contract = eth.getContract('ReturnMANA')
+    log.info(`Using ReturnMANA contract at address ${contract.address}`)
 
     // commands
     if (argv.verifybuys === true) {

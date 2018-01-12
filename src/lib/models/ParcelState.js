@@ -65,7 +65,10 @@ class ParcelState extends Model {
   }
 
   static findAllAddresses() {
-    return this.db.query(`SELECT DISTINCT(address) FROM ${this.tableName}`)
+    return this.db.query(
+      `SELECT DISTINCT(address) FROM ${this
+        .tableName} WHERE address IS NOT NULL`
+    )
   }
 
   static findByAddress(address) {
