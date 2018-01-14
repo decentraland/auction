@@ -27,8 +27,18 @@ env.load()
 const txMap = {}
 
 const insertTxs = async txs => {
-  for (const tx in txs) {
-    await BuyTransaction.insert(tx)
+  for (const tx of txs) {
+    try {
+      const buyTx = await BuyTransaction.find({ txId: tx.txId })
+      if (!buyTx) {
+        await BuyTransaction.insert(tx)
+        log.info(`[INSERT] tx: ${tx.txId}`)
+      } else {
+        log.info(`[SKIP] tx: ${tx.txId}`)
+      }
+    } catch (err) {
+      log.error(err)
+    }
   }
 }
 
@@ -48,13 +58,13 @@ const onNewEvent = async (contract, event) => {
         txId: txId,
         receipt: receipt,
         status: 'completed',
+        totalCost: '',
         address: event.args.holder,
         parcelStatesIds: [parcelId]
       }
     } else {
       txMap[txId].parcelStatesIds.push(parcelId)
     }
-    console.log(txMap[txId])
   } catch (err) {
     log.error(err)
   }
@@ -70,6 +80,9 @@ const watch = contract => {
     for (let i = 0; i < results.length; i++) {
       await onNewEvent(contract, results[i])
     }
+
+    // insert txs
+    await insertTxs(Object.values(txMap))
   }
   return fn
 }
@@ -100,9 +113,6 @@ async function main() {
 
     // get events
     createEvent.get(watch(contract))
-
-    // insert txs
-    insertTxs(Object.values(txMap))
   } catch (err) {
     log.error(err)
   }
