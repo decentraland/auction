@@ -30,6 +30,10 @@ class LANDRegistry extends Contract {
     return this.call('ownerOfLand', x, y)
   }
 
+  decodeTokenId(value) {
+    return this.call('decodeTokenId', value)
+  }
+
   assignNewParcel(x, y, address, opts = {}) {
     log.info(`(assigning) (${x},${y}) land parcel to ${address}`)
     return this.transaction(
@@ -37,14 +41,7 @@ class LANDRegistry extends Contract {
       x,
       y,
       address,
-      Object.assign(
-        {},
-        {
-          gas: 4000000,
-          gasPrice: 28 * 1e9
-        },
-        opts
-      )
+      Object.assign({}, { gas: 4000000, gasPrice: 28 * 1e9 }, opts)
     )
   }
 
@@ -55,14 +52,7 @@ class LANDRegistry extends Contract {
       x,
       y,
       address,
-      Object.assign(
-        {},
-        {
-          gas: 4000000,
-          gasPrice: 28 * 1e9
-        },
-        opts
-      )
+      Object.assign({}, { gas: 4000000, gasPrice: 28 * 1e9 }, opts)
     )
   }
 }
