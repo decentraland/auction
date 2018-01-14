@@ -24,12 +24,14 @@ env.load()
 //      operator: '0x52e4e32428c123a1f83da9839f139734a5a5b2b9',
 //      data: '' } },
 
+const N_ITEMS_PROCESS = 0
+
 const txMap = {}
 
 const insertTxs = async txs => {
   for (const tx of txs) {
     try {
-      const buyTx = await BuyTransaction.find({ txId: tx.txId })
+      const buyTx = await BuyTransaction.findOne({ txId: tx.txId })
       if (!buyTx) {
         await BuyTransaction.insert(tx)
         log.info(`[INSERT] tx: ${tx.txId}`)
@@ -79,6 +81,9 @@ const watch = contract => {
 
     for (let i = 0; i < results.length; i++) {
       await onNewEvent(contract, results[i])
+      if (N_ITEMS_PROCESS > 0 && i === N_ITEMS_PROCESS) {
+        break
+      }
     }
 
     // insert txs
