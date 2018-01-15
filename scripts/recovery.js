@@ -5,9 +5,22 @@ import db from '../src/lib/db'
 import { BuyTransaction } from '../src/lib/models'
 import LANDRegistry from './contracts/LANDRegistry'
 
+const BigNumber = require('bignumber.js')
 const log = new Log('Recovery')
 
 env.load()
+
+const max = new BigNumber('0x7fffffffffffffffffffffffffffffff')
+const base = new BigNumber('0x100000000000000000000000000000000')
+
+function decodeTokenId(hexRepresentation) {
+  const yLength = hexRepresentation.length - 32
+  let x = new BigNumber('0x' + hexRepresentation.slice(yLength, hexRepresentation.length))
+  let y = new BigNumber('0x' + (hexRepresentation.slice(0, yLength) || '0'))
+  if (x.gt(max)) x = base.minus(x).times(-1)
+  if (y.gt(max)) y = base.minus(y).times(-1)
+  return [ x.toString(10), y.toString(10) ]
+}
 
 // [Event format]
 // { address: '0x36fc2821c1dba31ed04682b2277c89f33fd885b7',
@@ -47,12 +60,7 @@ const insertTxs = async txs => {
 const onNewEvent = async (contract, event) => {
   try {
     const txId = event.transactionHash
-    const parcelId = await contract
-      .decodeTokenId(event.args.assetId)
-      .then(coords => {
-        const [x, y] = coords
-        return [x.toString(), y.toString()].join(',')
-      })
+    const parcelId = decodeTokenId(event.args.assetId.toString(16)).join(',')
 
     if (!(txId in txMap)) {
       const receipt = await eth.fetchTxReceipt(txId)
@@ -78,13 +86,17 @@ const watch = contract => {
       log.error(err)
       return
     }
+    console.log(`Processing ${results.length} events`)
 
     for (let i = 0; i < results.length; i++) {
-      await onNewEvent(contract, results[i])
+      if (results[i].event == 'Create') {
+        await onNewEvent(contract, results[i])
+      }
       if (N_ITEMS_PROCESS > 0 && i === N_ITEMS_PROCESS) {
         break
       }
     }
+    console.log('Saving')
 
     // insert txs
     await insertTxs(Object.values(txMap))
@@ -107,17 +119,16 @@ async function main() {
 
     // contract
     const contract = eth.getContract('LANDRegistry')
-    const createEvent = contract.instance.Create(
-      {},
+
+    // Get events
+    const events = contract.instance.allEvents(
       {
-        fromBlock: 0,
-        toBlock: 'latest',
-        address: '0x36fc2821c1dba31ed04682b2277c89f33fd885b7'
+        fromBlock: 4600000,
+        toBlock: 'latest'
       }
     )
+    events.get(watch(contract))
 
-    // get events
-    createEvent.get(watch(contract))
   } catch (err) {
     log.error(err)
   }
