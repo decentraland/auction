@@ -35,7 +35,7 @@ services:
       POSTGRES_USER: magiklander
       POSTGRES_DB: auction
     networks:
-      - db
+      - web
 
 networks:
   web:

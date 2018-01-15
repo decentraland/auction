@@ -65,9 +65,13 @@ class ParcelState extends Model {
   }
 
   static findAllAddresses() {
+    // return this.db.query(
+    //   `SELECT DISTINCT(address) FROM ${this
+    //     .tableName} WHERE address IS NOT NULL`
+    // )
     return this.db.query(
-      `SELECT DISTINCT(address) FROM ${this
-        .tableName} WHERE address IS NOT NULL`
+      `SELECT address, COUNT(*) FROM ${this
+        .tableName} WHERE address IS NOT NULL GROUP BY address HAVING COUNT(*) >= 10`
     )
   }
 
