@@ -123,14 +123,16 @@ const buildBuyTxData = (address, parcels) => {
   return { address, X, Y }
 }
 
-const fetchAllAssigned = async(contract, address, sendParcels) => {
+const fetchAllAssigned = async (contract, address, sendParcels) => {
   const result = {}
-  await Promise.all(sendParcels.map(async (parcel) => {
-    const owner = await contract.ownerOfLand(parcel.x, parcel.y)
-    if (owner.toLowerCase() !== address) {
-      result[`${parcel.x},${parcel.y}`] = true
-    }
-  }))
+  await Promise.all(
+    sendParcels.map(async parcel => {
+      const owner = await contract.ownerOfLand(parcel.x, parcel.y)
+      if (owner.toLowerCase() !== address) {
+        result[`${parcel.x},${parcel.y}`] = true
+      }
+    })
+  )
   return result
 }
 
@@ -143,8 +145,7 @@ const findParcelsToBuy = async (contract, address, batchSize) => {
     const doneParcels = await BuyTransaction.findProcessedParcels(address)
 
     // select parcels to send
-    let sendParcels = parcels
-      .filter(e => !doneParcels.includes(e.id))
+    let sendParcels = parcels.filter(e => !doneParcels.includes(e.id))
 
     // check on network if token already assigned
     const assignedOnes = await fetchAllAssigned(contract, address, sendParcels)
@@ -153,7 +154,9 @@ const findParcelsToBuy = async (contract, address, batchSize) => {
       .filter(e => assignedOnes[`${e.x},${e.y}`])
       .splice(0, batchSize)
     log.info(
-      `(proc) [${address}] Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}\n${sendParcels.map(e=> e.x)};${sendParcels.map(y=>y.y)}`
+      `(proc) [${address}] Progress => ${doneParcels.length} out of ${parcels.length} = selected ${sendParcels.length}\n${sendParcels.map(
+        e => e.x
+      )};${sendParcels.map(y => y.y)}`
     )
     return sendParcels
   } catch (err) {
@@ -189,9 +192,10 @@ const loadParcelsForAddress = async (contract, address, batchSize) => {
       const txId = await contract.assignMultipleParcels(
         txData.X,
         txData.Y,
-        txData.address, {
+        txData.address,
+        {
           gas: 3000000,
-          gasPrice: 51e9
+          gasPrice: 17e9
         }
       )
       txQueue.addPendingTx(txId)
@@ -208,7 +212,7 @@ const loadParcelsForAddress = async (contract, address, batchSize) => {
       })
       log.info(`(proc) [${address}] Saved tx : ${txId}`)
       while (txQueue.length > 4) {
-        await sleep(1000);
+        await sleep(1000)
       }
     }
   } catch (err) {
@@ -227,12 +231,14 @@ const verifyPendingTxs = async watchedModel => {
 
       if (receipt === null) {
         log.info(`(tx) [${txId}] pending`)
-      } else if (receipt.status === 0) {
+      } else if (receipt.status == 0) {
         log.info(`(tx) [${txId}] error`)
         await watchedModel.update({ receipt, status: 'error' }, { txId })
-      } else if (receipt.status === 1) {
+      } else if (receipt.status == 1) {
         log.info(`(tx) [${txId}] completed`)
         await watchedModel.update({ receipt, status: 'completed' }, { txId })
+      } else {
+        log.info(`(tx) [${txId}] ${receipt.status}`)
       }
     }
   } catch (err) {
@@ -253,11 +259,11 @@ const loadAllParcels = async (contract, batchSize) => {
     for (const row of rows) {
       await loadParcelsForAddress(contract, row.address, batchSize)
       while (txQueue.length > 4) {
-        await sleep(1000);
+        await sleep(1000)
       }
     }
     while (txQueue.length > 4) {
-      await sleep(1000);
+      await sleep(1000)
     }
   } catch (err) {
     log.error(err)
@@ -279,11 +285,9 @@ async function main() {
 
     // init
     await db.connect()
-    await eth.connect(
-      '',
-      [ LANDRegistry ],
-      { httpProviderUrl: 'http://localhost:18545' }
-    )
+    await eth.connect('', [LANDRegistry], {
+      httpProviderUrl: 'http://localhost:18545'
+    })
 
     const contract = eth.getContract('LANDRegistry')
     log.info(`Using LANDRegistry contract at address ${contract.address}`)
